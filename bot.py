@@ -1387,7 +1387,7 @@ async def premium_menu(update, ctx):
 
     msg = tx("premium_menu", lang) + chr(10) + chr(10) + tx("premium_features", lang)
     await q.message.edit_text(msg, reply_markup=kb_premium(lang), parse_mode=ParseMode.MARKDOWN)
-    return STATE_MAIN_MENU
+    return STATE_PREMIUM
 
 async def process_payment(update, ctx):
     q = update.callback_query
