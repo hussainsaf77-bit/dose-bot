@@ -731,9 +731,9 @@ async def main_cb(u, ctx):
         await q.message.edit_text(tx("child_prompt", lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
         return STATE_CHILD_DRUG
     elif q.data == "m_premium":
-        return await premium_menu(update, ctx)
+        return await premium_menu(u, ctx)
     elif q.data in ("pay_month","pay_3month","pay_6month","pay_year"):
-        return await process_payment(update, ctx)
+        return await process_payment(u, ctx)
     elif q.data == "m_bmi":
         ctx.user_data.pop("bmi_step", None)
         ctx.user_data.pop("bmi_w", None)
@@ -1307,29 +1307,6 @@ async def bmi_text(update, ctx):
     await show_main(update.message, lang)
     return STATE_MAIN_MENU
 
-def main():
-    print(f"✅ تم تحميل {len(DRUGS_DB)} دواء")
-    app = Application.builder().token(BOT_TOKEN).build()
-    app.add_handler(build_conv())
-    app.add_handler(CommandHandler("stats", stats_cmd))
-    app.add_handler(PreCheckoutQueryHandler(pre_checkout))
-    app.add_handler(MessageHandler(filters.SUCCESSFUL_PAYMENT, successful_payment))
-    # استعادة التذكيرات
-    import asyncio
-    asyncio.get_event_loop().run_until_complete(restore_reminders(app)) if False else None
-    app.post_init = restore_reminders
-    print("🚀 البوت يعمل!")
-    app.run_polling(drop_pending_updates=True)
-
-if __name__ == "__main__":
-    main()
-
-# ═══════════════════════════════════════
-# حاسبة BMI - كود نظيف
-# ═══════════════════════════════════════
-
-
-# ═══════════════════════════════════════
 # نظام الاشتراكات المميزة
 # ═══════════════════════════════════════
 
@@ -1458,3 +1435,27 @@ async def successful_payment(update, ctx):
     expiry = activate_premium(uid, plan["days"])
     msg = tx("payment_success", lang).format(date=expiry)
     await update.message.reply_text(msg, parse_mode=ParseMode.MARKDOWN)
+
+def main():
+    print(f"✅ تم تحميل {len(DRUGS_DB)} دواء")
+    app = Application.builder().token(BOT_TOKEN).build()
+    app.add_handler(build_conv())
+    app.add_handler(CommandHandler("stats", stats_cmd))
+    app.add_handler(PreCheckoutQueryHandler(pre_checkout))
+    app.add_handler(MessageHandler(filters.SUCCESSFUL_PAYMENT, successful_payment))
+    # استعادة التذكيرات
+    import asyncio
+    asyncio.get_event_loop().run_until_complete(restore_reminders(app)) if False else None
+    app.post_init = restore_reminders
+    print("🚀 البوت يعمل!")
+    app.run_polling(drop_pending_updates=True)
+
+if __name__ == "__main__":
+    main()
+
+# ═══════════════════════════════════════
+# حاسبة BMI - كود نظيف
+# ═══════════════════════════════════════
+
+
+# ═══════════════════════════════════════
