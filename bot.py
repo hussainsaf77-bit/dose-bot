@@ -16,7 +16,8 @@ if os.path.exists(_env_file):
                 os.environ.setdefault(_k.strip(), _v.strip())
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (Application, CommandHandler, CallbackQueryHandler,
-    MessageHandler, ConversationHandler, ContextTypes, filters, JobQueue)
+    MessageHandler, ConversationHandler, ContextTypes, filters, JobQueue,
+    PreCheckoutQueryHandler)
 from telegram.constants import ParseMode
 try:
     import httpx
@@ -70,6 +71,25 @@ TEXTS = {
 "btn_child": "🍼 جرعات الأطفال",
 "btn_remind": "⏰ التذكير بالأدوية",
 "btn_settings": "⚙️ الإعدادات",
+"btn_premium": "⭐ الاشتراك المميز",
+"premium_menu": "⭐ *الاشتراك المميز*\n\nاختر خطتك:",
+"btn_month": "🗓️ شهري — 200 ⭐ (~$4)",
+"btn_3month": "📅 3 أشهر — 500 ⭐ (~$10) وفّر 17%",
+"btn_6month": "📆 6 أشهر — 900 ⭐ (~$18) وفّر 25%",
+"btn_year": "🎯 سنوي — 1500 ⭐ (~$30) وفّر 37%",
+"premium_features": (
+    "✨ *مميزات الاشتراك:*\n\n"
+    "🔍 بحث في 500+ دواء\n"
+    "📸 تحليل صور غير محدود\n"
+    "🔔 تذكيرات غير محدودة\n"
+    "📄 تقارير طبية PDF\n"
+    "⚡ أولوية في الدعم\n"
+    "🆕 ميزات جديدة أولاً"
+),
+"already_premium": "✅ أنت مشترك مميز حتى: {date}",
+"payment_sent": "⭐ شكراً! جارٍ تفعيل اشتراكك...",
+"payment_success": "🎉 *تم تفعيل اشتراكك المميز!*\n\nصالح حتى: {date}",
+"not_premium": "⭐ هذه الميزة للمشتركين المميزين فقط.\nاضغط لمعرفة المزيد:",
 "btn_bmi": "📊 الوزن المثالي (BMI)",
 "bmi_prompt_weight": "⚖️ أدخل وزن الطفل بالكيلوغرام:",
 "bmi_prompt_height": "📏 أدخل طول الطفل بالسنتيمتر:",
@@ -125,6 +145,25 @@ TEXTS = {
 "btn_child": "🍼 Child Doses",
 "btn_remind": "⏰ Reminders",
 "btn_settings": "⚙️ Settings",
+"btn_premium": "⭐ Premium Subscription",
+"premium_menu": "⭐ *Premium Subscription*\n\nChoose your plan:",
+"btn_month": "🗓️ Monthly — 200 ⭐ (~$4)",
+"btn_3month": "📅 3 Months — 500 ⭐ (~$10) Save 17%",
+"btn_6month": "📆 6 Months — 900 ⭐ (~$18) Save 25%",
+"btn_year": "🎯 Yearly — 1500 ⭐ (~$30) Save 37%",
+"premium_features": (
+    "✨ *Premium Features:*\n\n"
+    "🔍 Search 500+ drugs\n"
+    "📸 Unlimited image analysis\n"
+    "🔔 Unlimited reminders\n"
+    "📄 Medical PDF reports\n"
+    "⚡ Priority support\n"
+    "🆕 New features first"
+),
+"already_premium": "✅ You are subscribed until: {date}",
+"payment_sent": "⭐ Thank you! Activating your subscription...",
+"payment_success": "🎉 *Premium activated!*\n\nValid until: {date}",
+"not_premium": "⭐ This feature is for premium subscribers only.\nTap to learn more:",
 "btn_bmi": "📊 Ideal Weight (BMI)",
 "bmi_prompt_weight": "⚖️ Enter child weight in kg:",
 "bmi_prompt_height": "📏 Enter child height in cm:",
@@ -536,6 +575,7 @@ def kb_main(lang):
         [InlineKeyboardButton(tx("btn_child", lang), callback_data="m_child")],
         [InlineKeyboardButton(tx("btn_bmi", lang), callback_data="m_bmi")],
         [InlineKeyboardButton(tx("btn_remind", lang), callback_data="m_remind")],
+        [InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],
         [InlineKeyboardButton(tx("btn_settings", lang), callback_data="m_settings")]])
 
 def kb_back(lang):
@@ -690,6 +730,10 @@ async def main_cb(u, ctx):
     elif q.data == "m_child":
         await q.message.edit_text(tx("child_prompt", lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
         return STATE_CHILD_DRUG
+    elif q.data == "m_premium":
+        return await premium_menu(update, ctx)
+    elif q.data in ("pay_month","pay_3month","pay_6month","pay_year"):
+        return await process_payment(update, ctx)
     elif q.data == "m_bmi":
         ctx.user_data.pop("bmi_step", None)
         ctx.user_data.pop("bmi_w", None)
@@ -1268,6 +1312,8 @@ def main():
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(build_conv())
     app.add_handler(CommandHandler("stats", stats_cmd))
+    app.add_handler(PreCheckoutQueryHandler(pre_checkout))
+    app.add_handler(MessageHandler(filters.SUCCESSFUL_PAYMENT, successful_payment))
     # استعادة التذكيرات
     import asyncio
     asyncio.get_event_loop().run_until_complete(restore_reminders(app)) if False else None
@@ -1282,3 +1328,133 @@ if __name__ == "__main__":
 # حاسبة BMI - كود نظيف
 # ═══════════════════════════════════════
 
+
+# ═══════════════════════════════════════
+# نظام الاشتراكات المميزة
+# ═══════════════════════════════════════
+
+import json
+from datetime import datetime, timedelta
+
+SUBS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "subscriptions.json")
+
+PLANS = {
+    "month":  {"stars": 200,  "days": 30,  "label": "شهري"},
+    "3month": {"stars": 500,  "days": 90,  "label": "3 أشهر"},
+    "6month": {"stars": 900,  "days": 180, "label": "6 أشهر"},
+    "year":   {"stars": 1500, "days": 365, "label": "سنوي"},
+}
+
+def load_subs():
+    try:
+        with open(SUBS_FILE, encoding="utf-8") as f:
+            return json.load(f)
+    except:
+        return {}
+
+def save_subs(data):
+    with open(SUBS_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+def is_premium(user_id):
+    subs = load_subs()
+    uid = str(user_id)
+    if uid not in subs:
+        return False
+    expiry = datetime.fromisoformat(subs[uid]["expiry"])
+    return expiry > datetime.now()
+
+def get_expiry(user_id):
+    subs = load_subs()
+    uid = str(user_id)
+    if uid not in subs:
+        return None
+    return subs[uid]["expiry"]
+
+def activate_premium(user_id, days):
+    subs = load_subs()
+    uid = str(user_id)
+    now = datetime.now()
+    if uid in subs:
+        current = datetime.fromisoformat(subs[uid]["expiry"])
+        if current > now:
+            expiry = current + timedelta(days=days)
+        else:
+            expiry = now + timedelta(days=days)
+    else:
+        expiry = now + timedelta(days=days)
+    subs[uid] = {"expiry": expiry.isoformat(), "activated": now.isoformat()}
+    save_subs(subs)
+    return expiry.strftime("%Y-%m-%d")
+
+def kb_premium(lang):
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton(tx("btn_month", lang), callback_data="pay_month")],
+        [InlineKeyboardButton(tx("btn_3month", lang), callback_data="pay_3month")],
+        [InlineKeyboardButton(tx("btn_6month", lang), callback_data="pay_6month")],
+        [InlineKeyboardButton(tx("btn_year", lang), callback_data="pay_year")],
+        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")],
+    ])
+
+async def premium_menu(update, ctx):
+    q = update.callback_query
+    await q.answer()
+    lang = get_lang(ctx)
+    uid = update.effective_user.id
+
+    if is_premium(uid):
+        expiry = get_expiry(uid)
+        msg = tx("already_premium", lang).format(date=expiry[:10])
+        await q.message.edit_text(msg, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+        return STATE_MAIN_MENU
+
+    msg = tx("premium_menu", lang) + chr(10) + chr(10) + tx("premium_features", lang)
+    await q.message.edit_text(msg, reply_markup=kb_premium(lang), parse_mode=ParseMode.MARKDOWN)
+    return STATE_MAIN_MENU
+
+async def process_payment(update, ctx):
+    q = update.callback_query
+    await q.answer()
+    lang = get_lang(ctx)
+    plan_key = q.data.replace("pay_", "")
+    plan = PLANS.get(plan_key)
+
+    if not plan:
+        return STATE_MAIN_MENU
+
+    stars = plan["stars"]
+    title = "⭐ " + ("اشتراك مميز" if lang=="ar" else "Premium Subscription")
+    desc = plan["label"] if lang=="ar" else plan_key.replace("month","month").replace("year","year")
+
+    try:
+        await ctx.bot.send_invoice(
+            chat_id=update.effective_chat.id,
+            title=title,
+            description=("✨ وصول كامل لجميع ميزات البوت" if lang=="ar"
+                        else "✨ Full access to all bot features"),
+            payload=f"premium_{plan_key}_{update.effective_user.id}",
+            currency="XTR",
+            prices=[{"label": title, "amount": stars}],
+        )
+    except Exception as e:
+        logger.error(f"Invoice error: {e}")
+        await q.message.reply_text(
+            "❌ خطأ في إنشاء الفاتورة" if lang=="ar" else "❌ Invoice error",
+            reply_markup=kb_back(lang)
+        )
+    return STATE_MAIN_MENU
+
+async def pre_checkout(update, ctx):
+    query = update.pre_checkout_query
+    await query.answer(ok=True)
+
+async def successful_payment(update, ctx):
+    lang = get_lang(ctx)
+    payload = update.message.successful_payment.invoice_payload
+    parts = payload.split("_")
+    plan_key = parts[1] if len(parts) > 1 else "month"
+    plan = PLANS.get(plan_key, PLANS["month"])
+    uid = update.effective_user.id
+    expiry = activate_premium(uid, plan["days"])
+    msg = tx("payment_success", lang).format(date=expiry)
+    await update.message.reply_text(msg, parse_mode=ParseMode.MARKDOWN)
