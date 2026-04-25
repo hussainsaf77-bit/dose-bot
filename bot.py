@@ -1068,7 +1068,7 @@ def build_conv():
                 CallbackQueryHandler(pick_lang, pattern="^lang_")],
             STATE_MAIN_MENU: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
-                CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|change_lang)")],
+                CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|change_lang|pay_)")],
             STATE_BMI_WEIGHT: [
                 CallbackQueryHandler(bmi_cb, pattern="^bmi_"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, bmi_text)],
