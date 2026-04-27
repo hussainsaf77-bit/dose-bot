@@ -398,7 +398,9 @@ def search_drugs(q):
             }
     # تحويل الاسم التجاري للعلمي
     mapped = TRADE_MAP.get(q, q_mapped)
-    # أيضاً نجرب البحث المباشر في aliases
+    # تطبيع النص - استبدال المسافات بشرطة سفلية والعكس
+    q_normalized = q.replace(" ", "_").replace("-", "_")
+    mapped_normalized = mapped.replace(" ", "_").replace("-", "_")
     out = []
     seen = set()
     for d in DRUGS_DB:
