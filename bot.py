@@ -868,12 +868,12 @@ async def drug_search_image(u, ctx):
     if len(res) == 1:
         await u.message.reply_text("📸 " + name + chr(10) + chr(10) + fmt_drug(res[0], lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
         return STATE_DRUG_SEARCH
-        btns = [[InlineKeyboardButton(
+    btns = [[InlineKeyboardButton(
         str(d.get("name_ar" if lang=="ar" else "name_en", "?")),
         callback_data=f"ds_{i}")] for i, d in enumerate(res)]
-        btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
-        await u.message.reply_text("📸 " + name + chr(10) + chr(10) + tx("multi_results", lang), reply_markup=InlineKeyboardMarkup(btns), parse_mode=ParseMode.MARKDOWN)
-        return STATE_DRUG_SEARCH
+    btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
+    await u.message.reply_text("📸 " + name + chr(10) + chr(10) + tx("multi_results", lang), reply_markup=InlineKeyboardMarkup(btns), parse_mode=ParseMode.MARKDOWN)
+    return STATE_DRUG_SEARCH
 
 async def drug_search(u, ctx):
     lang = get_lang(ctx)
