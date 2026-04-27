@@ -614,7 +614,6 @@ async def analyze_image(img_bytes, lang):
         import re as _re
         txt = txt.split("\n")[0].strip()
         logger.info(f"Raw image response: {txt}")
-                logger.info(f"🔍 SEARCH FOR: '{txt}'")
 
         # استخراج التركيز إذا موجود بصيغة DRUG|CONCENTRATION
         concentration = None
