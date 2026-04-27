@@ -592,6 +592,7 @@ def calc_child(drug, w, lang):
 
 async def analyze_image(img_bytes, lang):
     if not HTTPX_OK or not ANTHROPIC_API_KEY:
+    logger.info(f"🔍 analyze_image called, HTTPX_OK={HTTPX_OK}, KEY_LEN={len(ANTHROPIC_API_KEY)}")
         logger.warning("No API key")
         return ""
     b64 = base64.b64encode(img_bytes).decode()
