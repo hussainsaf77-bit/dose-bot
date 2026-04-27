@@ -964,8 +964,63 @@ async def child_weight(u, ctx):
     if not d:
         await show_main(u.message, lang)
         return STATE_MAIN_MENU
-    await u.message.reply_text(calc_child(d, w, lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
-    return STATE_CHILD_WEIGHT
+    ctx.user_data["child_weight"] = w
+    # نسأل عن التركيز
+    conc = d.get("concentration", "")
+    if conc and conc != "unknown":
+        # إذا عندنا تركيز افتراضي نعرضه مع خيار تغييره
+        btns = [
+            [InlineKeyboardButton(f"✅ {conc} (افتراضي)", callback_data=f"conc_{conc}")],
+            [InlineKeyboardButton("🔢 تركيز مختلف", callback_data="conc_custom")],
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")],
+        ]
+        msg = "التركيز الافتراضي: " + conc + " - هل هذا صحيح؟"
+        await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup(btns), parse_mode=ParseMode.MARKDOWN)
+    else:
+        btns = [
+            [InlineKeyboardButton("120mg/5ml", callback_data="conc_120mg/5ml")],
+            [InlineKeyboardButton("250mg/5ml", callback_data="conc_250mg/5ml")],
+            [InlineKeyboardButton("100mg/5ml", callback_data="conc_100mg/5ml")],
+            [InlineKeyboardButton("200mg/5ml", callback_data="conc_200mg/5ml")],
+            [InlineKeyboardButton("🔢 تركيز آخر", callback_data="conc_custom")],
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")],
+        ]
+        await u.message.reply_text("💊 اختر تركيز الشراب:", reply_markup=InlineKeyboardMarkup(btns))
+    return STATE_CHILD_CONC
+
+async def child_conc(u, ctx):
+    """معالجة اختيار التركيز"""
+    lang = get_lang(ctx)
+    q = u.callback_query
+    if q:
+        await q.answer()
+        data = q.data
+        if data == "back":
+            return await go_back(u, ctx)
+        if data == "conc_custom":
+            btns = [[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]
+            await q.message.edit_text("ادخل التركيز. مثال: 250mg/5ml", reply_markup=InlineKeyboardMarkup(btns))
+            return STATE_CHILD_CONC
+        if data.startswith("conc_"):
+            conc_str = data.replace("conc_", "")
+            d = ctx.user_data.get("child_drug")
+            w = ctx.user_data.get("child_weight", 0)
+            # نضع التركيز مؤقتاً في الدواء
+            d_copy = dict(d)
+            d_copy["concentration"] = conc_str
+            result = calc_child(d_copy, w, lang)
+            await q.message.edit_text(result, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+            return STATE_CHILD_WEIGHT
+    else:
+        # إدخال نصي للتركيز
+        txt = u.message.text.strip()
+        d = ctx.user_data.get("child_drug")
+        w = ctx.user_data.get("child_weight", 0)
+        d_copy = dict(d)
+        d_copy["concentration"] = txt
+        result = calc_child(d_copy, w, lang)
+        await u.message.reply_text(result, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+        return STATE_CHILD_WEIGHT
 
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
@@ -1173,6 +1228,9 @@ def build_conv():
             STATE_CHILD_WEIGHT: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, child_weight)],
+            STATE_CHILD_CONC: [
+                CallbackQueryHandler(child_conc, pattern="^(conc_|back)"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, child_conc)],
             STATE_REM_MENU: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(rem_menu)],
