@@ -23500,7 +23500,8 @@
     "interactions": "مضادات الهيستامين، أمانتادين",
     "interactions_en": "Antihistamines, Amantadine",
     "renal": "آمن",
-    "renal_dose": "Safe"
+    "renal_dose": "Safe",
+    "concentration": "5mg/5ml"
   },
   {
     "name_en": "timolol_eye",
