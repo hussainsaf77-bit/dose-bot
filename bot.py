@@ -313,7 +313,7 @@ def search_drugs(q):
         "plavix":"clopidogrel","بلافيكس":"clopidogrel",
         "lantus":"insulin_glargine","لانتوس":"insulin_glargine",
                         "zantac":"ranitidine","زانتاك":"ranitidine",
-                "scobinal":"hyoscine_butylbromide","سكوبينال":"hyoscine_butylbromide",
+                "scobinal":"hyoscine_butylbromide","scobinal analysis":"hyoscine_butylbromide","scobinal syrup":"hyoscine_butylbromide","سكوبينال":"hyoscine_butylbromide",
                 "buscopan":"hyoscine_butylbromide","بوسكوبان":"hyoscine_butylbromide",
                 "claritine":"loratadine","claritin":"loratadine","كلاريتين":"loratadine",
                 "zyrtec":"cetirizine","زيرتيك":"cetirizine",
