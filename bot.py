@@ -521,7 +521,7 @@ async def analyze_image(img_bytes, lang):
                     "messages": [{"role": "user", "content": [
                         {"type": "image", "source": {"type": "base64",
                             "media_type": "image/jpeg", "data": b64}},
-                        {"type": "text", "text": "Read ALL text on this medicine packaging. Extract: 1) The active ingredient generic name in English. 2) The concentration (e.g. 250mg/5ml, 100mg/5ml, 125mg/5ml). Return ONLY in this exact format: DRUG_NAME|CONCENTRATION. Examples: paracetamol|120mg/5ml or ibuprofen|100mg/5ml or amoxicillin|250mg/5ml. If concentration not visible write DRUG_NAME|unknown. If drug unclear return UNKNOWN."}
+                        {"type": "text", "text": "You are a pharmacist reading medicine packaging. Read ALL text carefully. Extract: 1) The GENERIC/ACTIVE ingredient name in English (not the brand name). Common mappings: Panadol/Calpol/Tylenol=paracetamol, Brufen/Advil/Nurofen=ibuprofen, Augmentin=amoxicillin+clavulanate, Amoxil=amoxicillin, Flagyl=metronidazole, Zithromax=azithromycin, Ventolin=salbutamol, Nexium=esomeprazole, Losec=omeprazole, Voltaren=diclofenac, Claritine=loratadine, Zyrtec=cetirizine. 2) The concentration (e.g. 250mg/5ml, 100mg/5ml, 125mg/5ml, 500mg). Return ONLY in this exact format: GENERIC_NAME|CONCENTRATION. Examples: paracetamol|120mg/5ml or ibuprofen|100mg/5ml or amoxicillin|250mg/5ml. If concentration not visible write DRUG_NAME|unknown. If drug unclear return UNKNOWN."}
                     ]}]})
         logger.info(f"Image API status: {r.status_code}")
         logger.info(f"Image API response: {r.text[:200]}")
