@@ -50,7 +50,7 @@ if os.path.exists(_env_path):
                 _ek, _ev = _el.split("=", 1)
                 os.environ[_ek.strip()] = _ev.strip()
 
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY = "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")
+ANTHROPIC_API_KEY = "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"
 logger.info(f"API Key loaded: {len(ANTHROPIC_API_KEY)} chars")
 DRUGS_FILE = "drugs.json"
 REMINDER_SOUND = "reminder.mp3"
@@ -592,7 +592,6 @@ def calc_child(drug, w, lang):
 
 async def analyze_image(img_bytes, lang):
     if not HTTPX_OK or not ANTHROPIC_API_KEY:
-    logger.info(f"🔍 analyze_image called, HTTPX_OK={HTTPX_OK}, KEY_LEN={len(ANTHROPIC_API_KEY)}")
         logger.warning("No API key")
         return ""
     b64 = base64.b64encode(img_bytes).decode()
