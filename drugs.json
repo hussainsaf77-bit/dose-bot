@@ -95,7 +95,8 @@
       "Rash",
       "تلف كبدي (بجرعات عالية)"
     ],
-    "name_en": "paracetamol"
+    "name_en": "paracetamol",
+    "concentration": "120mg/5ml"
   },
   {
     "name_ar": "أموكسيسيلين",
@@ -190,7 +191,8 @@
       "تقيؤ",
       "داء المبيضات الفموي"
     ],
-    "name_en": "amoxicillin"
+    "name_en": "amoxicillin",
+    "concentration": "250mg/5ml"
   },
   {
     "name_ar": "إيبوبروفين",
@@ -293,7 +295,8 @@
       "Dizziness",
       "Headache"
     ],
-    "name_en": "ibuprofen"
+    "name_en": "ibuprofen",
+    "concentration": "100mg/5ml"
   },
   {
     "name_ar": "لوراتادين",
@@ -381,7 +384,8 @@
       "Fatigue",
       "عصبية"
     ],
-    "name_en": "loratadine"
+    "name_en": "loratadine",
+    "concentration": "5mg/5ml"
   },
   {
     "name_ar": "سيتيريزين",
@@ -469,7 +473,8 @@
       "Headache",
       "Dizziness"
     ],
-    "name_en": "cetirizine"
+    "name_en": "cetirizine",
+    "concentration": "5mg/5ml"
   },
   {
     "name_ar": "ميتفورمين",
@@ -885,7 +890,8 @@
     ],
     "side_effects": [],
     "side_effects_en": [],
-    "name_en": "prednisolone"
+    "name_en": "prednisolone",
+    "concentration": "5mg/5ml"
   },
   {
     "name_ar": "سالبوتامول",
@@ -966,7 +972,8 @@
     ],
     "side_effects": [],
     "side_effects_en": [],
-    "name_en": "salbutamol"
+    "name_en": "salbutamol",
+    "concentration": "2mg/5ml"
   },
   {
     "name_ar": "أسبرين",
@@ -2176,7 +2183,8 @@
     ],
     "side_effects": [],
     "side_effects_en": [],
-    "name_en": "metronidazole"
+    "name_en": "metronidazole",
+    "concentration": "200mg/5ml"
   },
   {
     "name_ar": "دوكسيسايكلين",
@@ -2342,7 +2350,8 @@
     ],
     "side_effects": [],
     "side_effects_en": [],
-    "name_en": "azithromycin"
+    "name_en": "azithromycin",
+    "concentration": "200mg/5ml"
   },
   {
     "name_ar": "سيبروفلوكساسين",
@@ -2510,7 +2519,8 @@
     ],
     "side_effects": [],
     "side_effects_en": [],
-    "name_en": "cephalexin"
+    "name_en": "cephalexin",
+    "concentration": "125mg/5ml"
   },
   {
     "name_ar": "فلوكونازول",
@@ -3174,7 +3184,8 @@
     ],
     "side_effects": [],
     "side_effects_en": [],
-    "name_en": "ondansetron"
+    "name_en": "ondansetron",
+    "concentration": "4mg/5ml"
   },
   {
     "name_ar": "رانيتيدين",
@@ -6795,7 +6806,8 @@
     ],
     "side_effects": [],
     "side_effects_en": [],
-    "name_en": "diclofenac"
+    "name_en": "diclofenac",
+    "concentration": "9mg/5ml"
   },
   {
     "name_ar": "ميتوكلوبراميد",
@@ -6877,7 +6889,8 @@
     ],
     "side_effects": [],
     "side_effects_en": [],
-    "name_en": "metoclopramide"
+    "name_en": "metoclopramide",
+    "concentration": "5mg/5ml"
   },
   {
     "name_ar": "لوبيراميد",
@@ -11684,7 +11697,8 @@
     "side_effects": [],
     "interactions_en": [],
     "side_effects_en": [],
-    "name_en": "amoxicillin_clavulanate"
+    "name_en": "amoxicillin_clavulanate",
+    "concentration": "457mg/5ml"
   },
   {
     "name_ar": "بيبيراسيلين/تازوباكتام",
@@ -11834,7 +11848,8 @@
     "side_effects": [],
     "interactions_en": [],
     "side_effects_en": [],
-    "name_en": "cefuroxime"
+    "name_en": "cefuroxime",
+    "concentration": "125mg/5ml"
   },
   {
     "name_ar": "سيفترياكسون",
@@ -12227,7 +12242,8 @@
     ],
     "side_effects": [],
     "side_effects_en": [],
-    "name_en": "clarithromycin"
+    "name_en": "clarithromycin",
+    "concentration": "125mg/5ml"
   },
   {
     "name_ar": "إريثروميسين",
@@ -12314,7 +12330,8 @@
     ],
     "side_effects": [],
     "side_effects_en": [],
-    "name_en": "erythromycin"
+    "name_en": "erythromycin",
+    "concentration": "125mg/5ml"
   },
   {
     "name_ar": "مينوسايكلين",
@@ -20902,7 +20919,8 @@
     "side_effects_en": [],
     "lactation_en": "Allowed with caution",
     "pregnancy_en": "ممنوع في الثلث الثالث",
-    "name_en": "naproxen"
+    "name_en": "naproxen",
+    "concentration": "125mg/5ml"
   },
   {
     "name_ar": "ميلوكسيكام",
@@ -27104,7 +27122,8 @@
     "interactions": "وارفارين، ACE inhibitors",
     "interactions_en": "Warfarin, ACE inhibitors",
     "renal": "تجنب إذا GFR<30",
-    "renal_dose": "Avoid if GFR<30"
+    "renal_dose": "Avoid if GFR<30",
+    "concentration": "100mg/5ml"
   },
   {
     "name_en": "dexamethasone_iv",
