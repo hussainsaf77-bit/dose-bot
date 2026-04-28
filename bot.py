@@ -396,6 +396,17 @@ def search_drugs(q):
                 "ketalar":"ketamine","كيتالار":"ketamine",
                 "dormicum":"midazolam","دورميكم":"midazolam",
                 "aspirin":"acetylsalicylic_acid","أسبرين":"acetylsalicylic_acid",
+                "باراسيتامول":"paracetamol","بنادول":"paracetamol","بانادول":"paracetamol",
+                "إيبوبروفين":"ibuprofen","ايبوبروفين":"ibuprofen","نيوروفين":"ibuprofen","نيورفين":"ibuprofen",
+                "أموكسيسيلين":"amoxicillin","اموكسيسيلين":"amoxicillin",
+                "ميترونيدازول":"metronidazole","ميتفورمين":"metformin",
+                "سيتيريزين":"cetirizine","لوراتادين":"loratadine",
+                "أزيثروميسين":"azithromycin","كلاريثروميسين":"clarithromycin",
+                "سالبيوتامول":"salbutamol","فنتولين":"salbutamol",
+                "هيوسين":"hyoscine_butylbromide","هيوسين بيوتيلبروميد":"hyoscine_butylbromide",
+                "analysis of panadol":"paracetamol","panadol baby":"paracetamol",
+                "panadol baby &":"paracetamol","scobinal analysis":"hyoscine_butylbromide",
+                "looking at the":"unknown","analysis of":"unknown",
             }
     # تحويل الاسم التجاري للعلمي
     mapped = TRADE_MAP.get(q, q_mapped)
