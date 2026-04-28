@@ -639,6 +639,7 @@ async def analyze_image(img_bytes, lang):
                 break
                 # بحث ذكي في الكلمات المُرجعة
 
+        drug_name = txt.split("|")[0].strip().lower()
         if "|" in txt:
             parts = txt.split("|", 1)
             drug_name = parts[0].strip()
