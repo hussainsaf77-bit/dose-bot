@@ -539,6 +539,12 @@ def calc_child(drug, w, lang):
         }
         name_key = drug.get("name_en", "").lower()
         conc = CONCENTRATIONS.get(name_key, 0)
+        # استخدام التركيز المحدد من المستخدم
+        _user_conc = drug.get("concentration", "")
+        if _user_conc and _user_conc != "unknown":
+            import re as _re3
+            _mc = _re3.search(r"([\d.]+)\s*mg\s*/\s*([\d.]+)\s*ml", _user_conc, _re3.IGNORECASE)
+            if _mc: conc = float(_mc.group(1)) / float(_mc.group(2)) * 5
         # استخدام التركيز من الصورة إذا متوفر
         import builtins
         img_conc = getattr(builtins, "_last_concentration", None)
