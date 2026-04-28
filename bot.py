@@ -632,6 +632,38 @@ async def analyze_image(img_bytes, lang):
         import re as _re
         txt = txt.split("\n")[0].strip()
         logger.info(f"Raw image response: {txt}")
+        ARABIC_MAP = {"باراسيتامول":"paracetamol","بنادول":"paracetamol","بانادول":"paracetamol","panadol":"paracetamol","إيبوبروفين":"ibuprofen","نيوروفين":"ibuprofen","nurofen":"ibuprofen","brufen":"ibuprofen","أموكسيسيلين":"amoxicillin","amoxil":"amoxicillin","ميترونيدازول":"metronidazole","فلاجيل":"metronidazole","أزيثروميسين":"azithromycin","زيثروماكس":"azithromycin","سيتيريزين":"cetirizine","زيرتيك":"cetirizine","لوراتادين":"loratadine","كلاريتين":"loratadine","هيوسين":"hyoscine_butylbromide","سكوبينال":"hyoscine_butylbromide","buscopan":"hyoscine_butylbromide","سالبيوتامول":"salbutamol","فنتولين":"salbutamol","ميتفورمين":"metformin","جلوكوفاج":"metformin","كلاريثروميسين":"clarithromycin","كلاسيد":"clarithromycin","بريدنيزولون":"prednisolone","أوندانسيترون":"ondansetron","زوفران":"ondansetron"}
+        for _k, _v in ARABIC_MAP.items():
+            if _k in txt or _k.lower() in txt.lower():
+                txt = _v
+                break
+                # بحث ذكي في الكلمات المُرجعة
+                ARABIC_MAP = {
+                    "باراسيتامول":"paracetamol","بنادول":"paracetamol","بانادول":"paracetamol",
+                    "panadol":"paracetamol","calpol":"paracetamol","tylenol":"paracetamol",
+                    "إيبوبروفين":"ibuprofen","ايبوبروفين":"ibuprofen","نيوروفين":"ibuprofen",
+                    "نيورفين":"ibuprofen","nurofen":"ibuprofen","brufen":"ibuprofen",
+                    "أموكسيسيلين":"amoxicillin","اموكسيسيلين":"amoxicillin","amoxil":"amoxicillin",
+                    "ميترونيدازول":"metronidazole","فلاجيل":"metronidazole","flagyl":"metronidazole",
+                    "أزيثروميسين":"azithromycin","زيثروماكس":"azithromycin","zithromax":"azithromycin",
+                    "سيتيريزين":"cetirizine","زيرتيك":"cetirizine","zyrtec":"cetirizine",
+                    "لوراتادين":"loratadine","كلاريتين":"loratadine","claritin":"loratadine",
+                    "هيوسين":"hyoscine_butylbromide","سكوبينال":"hyoscine_butylbromide","buscopan":"hyoscine_butylbromide",
+                    "سالبيوتامول":"salbutamol","فنتولين":"salbutamol","ventolin":"salbutamol",
+                    "ميتفورمين":"metformin","جلوكوفاج":"metformin","glucophage":"metformin",
+                    "كلاريثروميسين":"clarithromycin","كلاسيد":"clarithromycin","klacid":"clarithromycin",
+                    "ديسلوراتادين":"desloratadine","إيريوس":"desloratadine","aerius":"desloratadine",
+                    "سيفالكسين":"cephalexin","أموكسيكلاف":"amoxicillin_clavulanate","أوجمنتين":"amoxicillin_clavulanate",
+                    "بريدنيزولون":"prednisolone","ديكساميثازون":"dexamethasone",
+                    "أوندانسيترون":"ondansetron","زوفران":"ondansetron",
+                    "دومبيريدون":"domperidone","فلوكونازول":"fluconazole",
+                }
+                txt_lower = txt.lower()
+                for ar_key, en_val in ARABIC_MAP.items():
+                    if ar_key in txt or ar_key in txt_lower:
+                        txt = en_val
+                        logger.info(f"Arabic match: {ar_key} -> {en_val}")
+                        break
 
         # استخراج التركيز إذا موجود بصيغة DRUG|CONCENTRATION
         concentration = None
