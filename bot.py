@@ -966,28 +966,47 @@ async def child_weight(u, ctx):
         await show_main(u.message, lang)
         return STATE_MAIN_MENU
     ctx.user_data["child_weight"] = w
-    # نسأل عن التركيز
-    conc = d.get("concentration", "")
-    if conc and conc != "unknown":
-        # إذا عندنا تركيز افتراضي نعرضه مع خيار تغييره
-        btns = [
-            [InlineKeyboardButton(f"✅ {conc} (افتراضي)", callback_data=f"conc_{conc}")],
-            [InlineKeyboardButton("🔢 تركيز مختلف", callback_data="conc_custom")],
-            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")],
-        ]
-        msg = "التركيز الافتراضي: " + conc + " - هل هذا صحيح؟"
-        await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup(btns), parse_mode=ParseMode.MARKDOWN)
-    else:
-        btns = [
-            [InlineKeyboardButton("120mg/5ml", callback_data="conc_120mg/5ml")],
-            [InlineKeyboardButton("250mg/5ml", callback_data="conc_250mg/5ml")],
-            [InlineKeyboardButton("100mg/5ml", callback_data="conc_100mg/5ml")],
-            [InlineKeyboardButton("200mg/5ml", callback_data="conc_200mg/5ml")],
-            [InlineKeyboardButton("🔢 تركيز آخر", callback_data="conc_custom")],
-            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")],
-        ]
-        await u.message.reply_text("💊 اختر تركيز الشراب:", reply_markup=InlineKeyboardMarkup(btns))
+    # تراكيز شائعة لكل دواء
+    DRUG_CONCS = {
+        "paracetamol": ["120mg/5ml", "125mg/5ml", "160mg/5ml", "250mg/5ml"],
+        "ibuprofen": ["100mg/5ml", "200mg/5ml"],
+        "amoxicillin": ["125mg/5ml", "250mg/5ml"],
+        "amoxicillin_clavulanate": ["125mg/5ml", "250mg/5ml", "457mg/5ml"],
+        "azithromycin": ["100mg/5ml", "200mg/5ml"],
+        "metronidazole": ["125mg/5ml", "200mg/5ml"],
+        "cetirizine": ["5mg/5ml"],
+        "loratadine": ["5mg/5ml"],
+        "prednisolone": ["5mg/5ml", "15mg/5ml"],
+        "hyoscine_butylbromide": ["5mg/5ml"],
+        "hyoscine": ["5mg/5ml"],
+        "clarithromycin": ["125mg/5ml", "250mg/5ml"],
+        "cephalexin": ["125mg/5ml", "250mg/5ml"],
+        "salbutamol": ["2mg/5ml"],
+        "domperidone": ["5mg/5ml"],
+        "ondansetron": ["4mg/5ml"],
+        "fluconazole": ["50mg/5ml", "100mg/5ml"],
+    }
+    name_key = d.get("name_en","").lower()
+    concs = DRUG_CONCS.get(name_key, [])
+    default_conc = d.get("concentration", "")
+    btns = []
+    shown = set()
+    if default_conc and default_conc != "unknown":
+        btns.append([InlineKeyboardButton("✅ " + default_conc + " (افتراضي)", callback_data="conc_" + default_conc)])
+        shown.add(default_conc)
+    for c in concs:
+        if c not in shown:
+            btns.append([InlineKeyboardButton(c, callback_data="conc_" + c)])
+            shown.add(c)
+    if not btns:
+        for c in ["120mg/5ml", "250mg/5ml", "100mg/5ml", "200mg/5ml"]:
+            btns.append([InlineKeyboardButton(c, callback_data="conc_" + c)])
+    btns.append([InlineKeyboardButton("🔢 تركيز آخر", callback_data="conc_custom")])
+    btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
+    msg = "💊 اختر تركيز الشراب:" if lang == "ar" else "💊 Select concentration:"
+    await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup(btns))
     return STATE_CHILD_CONC
+
 
 async def child_conc(u, ctx):
     """معالجة اختيار التركيز"""
