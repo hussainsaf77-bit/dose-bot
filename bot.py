@@ -638,36 +638,6 @@ async def analyze_image(img_bytes, lang):
                 txt = _v
                 break
                 # بحث ذكي في الكلمات المُرجعة
-                ARABIC_MAP = {
-                    "باراسيتامول":"paracetamol","بنادول":"paracetamol","بانادول":"paracetamol",
-                    "panadol":"paracetamol","calpol":"paracetamol","tylenol":"paracetamol",
-                    "إيبوبروفين":"ibuprofen","ايبوبروفين":"ibuprofen","نيوروفين":"ibuprofen",
-                    "نيورفين":"ibuprofen","nurofen":"ibuprofen","brufen":"ibuprofen",
-                    "أموكسيسيلين":"amoxicillin","اموكسيسيلين":"amoxicillin","amoxil":"amoxicillin",
-                    "ميترونيدازول":"metronidazole","فلاجيل":"metronidazole","flagyl":"metronidazole",
-                    "أزيثروميسين":"azithromycin","زيثروماكس":"azithromycin","zithromax":"azithromycin",
-                    "سيتيريزين":"cetirizine","زيرتيك":"cetirizine","zyrtec":"cetirizine",
-                    "لوراتادين":"loratadine","كلاريتين":"loratadine","claritin":"loratadine",
-                    "هيوسين":"hyoscine_butylbromide","سكوبينال":"hyoscine_butylbromide","buscopan":"hyoscine_butylbromide",
-                    "سالبيوتامول":"salbutamol","فنتولين":"salbutamol","ventolin":"salbutamol",
-                    "ميتفورمين":"metformin","جلوكوفاج":"metformin","glucophage":"metformin",
-                    "كلاريثروميسين":"clarithromycin","كلاسيد":"clarithromycin","klacid":"clarithromycin",
-                    "ديسلوراتادين":"desloratadine","إيريوس":"desloratadine","aerius":"desloratadine",
-                    "سيفالكسين":"cephalexin","أموكسيكلاف":"amoxicillin_clavulanate","أوجمنتين":"amoxicillin_clavulanate",
-                    "بريدنيزولون":"prednisolone","ديكساميثازون":"dexamethasone",
-                    "أوندانسيترون":"ondansetron","زوفران":"ondansetron",
-                    "دومبيريدون":"domperidone","فلوكونازول":"fluconazole",
-                }
-                txt_lower = txt.lower()
-                for ar_key, en_val in ARABIC_MAP.items():
-                    if ar_key in txt or ar_key in txt_lower:
-                        txt = en_val
-                        logger.info(f"Arabic match: {ar_key} -> {en_val}")
-                        break
-
-        # استخراج التركيز إذا موجود بصيغة DRUG|CONCENTRATION
-        concentration = None
-        drug_name = txt
 
         if "|" in txt:
             parts = txt.split("|", 1)
