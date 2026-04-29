@@ -550,21 +550,19 @@ def calc_child(drug, w, lang):
         }
         name_key = drug.get("name_en", "").lower()
         conc = CONCENTRATIONS.get(name_key, 0)
-        # استخدام التركيز المحدد من المستخدم
+        # الصورة أولاً (أولوية أدنى)
+        import builtins
+        img_conc = getattr(builtins, "_last_concentration", None)
+        if img_conc:
+            mg_val, ml_val = img_conc
+            conc = (mg_val / ml_val) * 5
+            builtins._last_concentration = None
+        # اختيار المستخدم يتجاوز الصورة (أولوية عليا)
         _user_conc = drug.get("concentration", "")
         if _user_conc and _user_conc != "unknown":
             import re as _re3
             _mc = _re3.search(r"([\d.]+)\s*mg\s*/\s*([\d.]+)\s*ml", _user_conc, _re3.IGNORECASE)
             if _mc: conc = float(_mc.group(1)) / float(_mc.group(2)) * 5
-        # استخدام التركيز من الصورة إذا متوفر
-        import builtins
-        img_conc = getattr(builtins, "_last_concentration", None)
-        if img_conc:
-            mg_val, ml_val = img_conc
-            conc_from_img = (mg_val / ml_val) * 5
-            conc = conc_from_img
-            builtins._last_concentration = None
-            logger.info(f"Using image concentration: {mg_val}mg/{ml_val}ml = {conc}mg/5ml")
 
         if mn and mx:
             mpk_min = float(str(mn)); mpk_max = float(str(mx))
