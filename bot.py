@@ -607,6 +607,7 @@ def calc_child(drug, w, lang):
     return "\n".join(lines)
 
 async def analyze_image(img_bytes, lang):
+    logger.info(f"analyze_image called, key_len={len(ANTHROPIC_API_KEY)}, httpx={HTTPX_OK}")
     if not HTTPX_OK or not ANTHROPIC_API_KEY:
         logger.warning("No API key")
         return ""
