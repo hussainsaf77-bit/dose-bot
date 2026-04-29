@@ -5,6 +5,79 @@ from datetime import datetime
 import pytz
 TIMEZONE = pytz.timezone("Asia/Riyadh")
 
+# قاموس الدول والمناطق الزمنية
+COUNTRY_TIMEZONES = {
+    # العربية
+    "السعودية":"Asia/Riyadh","سعودية":"Asia/Riyadh","saudi":"Asia/Riyadh","ksa":"Asia/Riyadh",
+    "الإمارات":"Asia/Dubai","امارات":"Asia/Dubai","uae":"Asia/Dubai","dubai":"Asia/Dubai",
+    "الكويت":"Asia/Kuwait","kuwait":"Asia/Kuwait",
+    "قطر":"Asia/Qatar","qatar":"Asia/Qatar",
+    "البحرين":"Asia/Bahrain","bahrain":"Asia/Bahrain",
+    "عمان":"Asia/Muscat","oman":"Asia/Muscat",
+    "اليمن":"Asia/Aden","yemen":"Asia/Aden",
+    "العراق":"Asia/Baghdad","iraq":"Asia/Baghdad",
+    "سوريا":"Asia/Damascus","syria":"Asia/Damascus",
+    "لبنان":"Asia/Beirut","lebanon":"Asia/Beirut",
+    "الأردن":"Asia/Amman","jordan":"Asia/Amman",
+    "فلسطين":"Asia/Gaza","palestine":"Asia/Gaza",
+    "مصر":"Africa/Cairo","egypt":"Africa/Cairo",
+    "السودان":"Africa/Khartoum","sudan":"Africa/Khartoum",
+    "ليبيا":"Africa/Tripoli","libya":"Africa/Tripoli",
+    "تونس":"Africa/Tunis","tunisia":"Africa/Tunis",
+    "الجزائر":"Africa/Algiers","algeria":"Africa/Algiers",
+    "المغرب":"Africa/Casablanca","morocco":"Africa/Casablanca",
+    "موريتانيا":"Africa/Nouakchott","mauritania":"Africa/Nouakchott",
+    "الصومال":"Africa/Mogadishu","somalia":"Africa/Mogadishu",
+    "جيبوتي":"Africa/Djibouti","djibouti":"Africa/Djibouti",
+    "تركيا":"Europe/Istanbul","turkey":"Europe/Istanbul",
+    "إيران":"Asia/Tehran","iran":"Asia/Tehran",
+    "باكستان":"Asia/Karachi","pakistan":"Asia/Karachi",
+    "أفغانستان":"Asia/Kabul","afghanistan":"Asia/Kabul",
+    # أوروبا
+    "بريطانيا":"Europe/London","uk":"Europe/London","england":"Europe/London",
+    "فرنسا":"Europe/Paris","france":"Europe/Paris",
+    "ألمانيا":"Europe/Berlin","germany":"Europe/Berlin",
+    "هولندا":"Europe/Amsterdam","netherlands":"Europe/Amsterdam",
+    "بلجيكا":"Europe/Brussels","belgium":"Europe/Brussels",
+    "السويد":"Europe/Stockholm","sweden":"Europe/Stockholm",
+    "النرويج":"Europe/Oslo","norway":"Europe/Oslo",
+    "الدنمارك":"Europe/Copenhagen","denmark":"Europe/Copenhagen",
+    "سويسرا":"Europe/Zurich","switzerland":"Europe/Zurich",
+    "إسبانيا":"Europe/Madrid","spain":"Europe/Madrid",
+    "إيطاليا":"Europe/Rome","italy":"Europe/Rome",
+    "اليونان":"Europe/Athens","greece":"Europe/Athens",
+    "النمسا":"Europe/Vienna","austria":"Europe/Vienna",
+    "بولندا":"Europe/Warsaw","poland":"Europe/Warsaw",
+    # أمريكا
+    "كندا":"America/Toronto","canada":"America/Toronto",
+    "أمريكا":"America/New_York","usa":"America/New_York","us":"America/New_York",
+    "المكسيك":"America/Mexico_City","mexico":"America/Mexico_City",
+    "البرازيل":"America/Sao_Paulo","brazil":"America/Sao_Paulo",
+    "الأرجنتين":"America/Argentina/Buenos_Aires","argentina":"America/Argentina/Buenos_Aires",
+    # آسيا
+    "الهند":"Asia/Kolkata","india":"Asia/Kolkata",
+    "الصين":"Asia/Shanghai","china":"Asia/Shanghai",
+    "اليابان":"Asia/Tokyo","japan":"Asia/Tokyo",
+    "كوريا":"Asia/Seoul","korea":"Asia/Seoul",
+    "ماليزيا":"Asia/Kuala_Lumpur","malaysia":"Asia/Kuala_Lumpur",
+    "إندونيسيا":"Asia/Jakarta","indonesia":"Asia/Jakarta",
+    "أستراليا":"Australia/Sydney","australia":"Australia/Sydney",
+}
+
+def get_timezone(ctx):
+    tz_str = ctx.user_data.get("timezone", "Asia/Riyadh")
+    try:
+        return pytz.timezone(tz_str)
+    except:
+        return pytz.timezone("Asia/Riyadh")
+
+def detect_country_tz(text):
+    text = text.strip().lower()
+    for key, tz in COUNTRY_TIMEZONES.items():
+        if key in text or text in key:
+            return tz
+    return None
+
 # قراءة .env
 _env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
 if os.path.exists(_env_file):
@@ -62,7 +135,8 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_REM_EDIT_FIELD, STATE_REM_EDIT_VAL,
  STATE_BMI_WEIGHT, STATE_BMI_HEIGHT,
  STATE_BMI_AGE, STATE_BMI_DRUG,
- STATE_CHILD_CONC, STATE_PREMIUM) = range(18)
+ STATE_CHILD_CONC, STATE_PREMIUM,
+ STATE_COUNTRY) = range(19)
 
 TEXTS = {
 "ar": {
@@ -818,7 +892,29 @@ async def start(u, ctx):
 async def pick_lang(u, ctx):
     q = u.callback_query; await q.answer()
     ctx.user_data["lang"] = "ar" if q.data == "lang_ar" else "en"
-    await show_main(q.message, get_lang(ctx), edit=True)
+    lang = get_lang(ctx)
+    # نسأل عن الدولة إذا لم تُحدد بعد
+    if not ctx.user_data.get("timezone"):
+        msg = ("🌍 اكتب اسم دولتك لضبط التوقيت" if lang == "ar" else "🌍 Type your country for timezone")
+        await q.message.edit_text(msg)
+        return STATE_COUNTRY
+    await show_main(q.message, lang, edit=True)
+    return STATE_MAIN_MENU
+
+async def set_country(u, ctx):
+    lang = get_lang(ctx)
+    txt = u.message.text.strip()
+    tz = detect_country_tz(txt)
+    if tz:
+        ctx.user_data["timezone"] = tz
+        country_name = txt
+        msg = f"✅ تم ضبط التوقيت: {tz}" if lang == "ar" else f"✅ Timezone set: {tz}"
+        await u.message.reply_text(msg)
+    else:
+        msg = "⚠️ لم أتعرف على الدولة، سيتم استخدام توقيت الرياض افتراضياً" if lang == "ar" else "⚠️ Country not found, using Riyadh timezone as default"
+        await u.message.reply_text(msg)
+        ctx.user_data["timezone"] = "Asia/Riyadh"
+    await show_main(u.message, lang)
     return STATE_MAIN_MENU
 
 async def go_back(u, ctx):
@@ -1245,6 +1341,8 @@ def build_conv():
             CommandHandler("start", start),
         ],
         states={
+            STATE_COUNTRY: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, set_country)],
             STATE_LANGUAGE: [
                 CallbackQueryHandler(pick_lang, pattern="^lang_")],
             STATE_MAIN_MENU: [
