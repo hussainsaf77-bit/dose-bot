@@ -1360,7 +1360,7 @@ def build_conv():
                 CallbackQueryHandler(pick_lang, pattern="^lang_")],
             STATE_MAIN_MENU: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
-                CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|change_lang|pay_)")],
+                CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_)")],
             STATE_BMI_WEIGHT: [
                 CallbackQueryHandler(bmi_cb, pattern="^bmi_"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, bmi_text)],
@@ -1734,7 +1734,8 @@ async def successful_payment(update, ctx):
 
 def main():
     print(f"✅ تم تحميل {len(DRUGS_DB)} دواء")
-    app = Application.builder().token(BOT_TOKEN).build()
+    persistence = PicklePersistence(filepath="bot_data.pkl")
+    app = Application.builder().token(BOT_TOKEN).persistence(persistence).build()
     app.add_handler(build_conv())
     app.add_handler(CommandHandler("stats", stats_cmd))
     app.add_handler(PreCheckoutQueryHandler(pre_checkout))
