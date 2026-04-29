@@ -825,10 +825,14 @@ async def send_alert(ctx):
         except:
             pass
 
-def sched(app, chat_id, drug, time_str, freq, lang):
+def sched(app, chat_id, drug, time_str, freq, lang, tz_str="Asia/Riyadh"):
     try:
         h, m = map(int, time_str.split(":"))
-        now = datetime.now(TIMEZONE)
+        try:
+            user_tz = pytz.timezone(tz_str)
+        except:
+            user_tz = TIMEZONE
+        now = datetime.now(user_tz)
         first_time = now.replace(hour=h, minute=m, second=0, microsecond=0)
         if first_time <= now:
             from datetime import timedelta
@@ -1232,7 +1236,7 @@ async def rem_add_freq(u, ctx):
     rems = get_rems(ctx)
     rems.append({"id": len(rems)+1, "drug": drug, "time": time_s, "freq": f})
     save_rems(ctx)
-    sched(ctx.application, u.effective_chat.id, drug, time_s, f, lang)
+    sched(ctx.application, u.effective_chat.id, drug, time_s, f, lang, ctx.user_data.get("timezone", "Asia/Riyadh"))
     await u.message.reply_text(tx("rem_saved", lang).format(drug=drug, time=time_s, freq=f),
         reply_markup=kb_remind(lang))
     return STATE_REM_MENU
