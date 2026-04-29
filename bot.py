@@ -50,7 +50,7 @@ if os.path.exists(_env_path):
                 _ek, _ev = _el.split("=", 1)
                 os.environ[_ek.strip()] = _ev.strip()
 
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "") or "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"
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 logger.info(f"API Key loaded: {len(ANTHROPIC_API_KEY)} chars")
 DRUGS_FILE = "drugs.json"
 REMINDER_SOUND = "reminder.mp3"
