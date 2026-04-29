@@ -632,7 +632,8 @@ async def analyze_image(img_bytes, lang):
         import re as _re
         txt = txt.split("\n")[0].strip()
         logger.info(f"Raw image response: {txt}")
-        await u.message.reply_text("🔍 DEBUG: " + repr(txt)[:100]) if hasattr(u, "message") and u.message else None
+        if not txt or txt == "UNKNOWN":
+            return ""
         ARABIC_MAP = {"باراسيتامول":"paracetamol","بنادول":"paracetamol","بانادول":"paracetamol","panadol":"paracetamol","إيبوبروفين":"ibuprofen","نيوروفين":"ibuprofen","nurofen":"ibuprofen","brufen":"ibuprofen","أموكسيسيلين":"amoxicillin","amoxil":"amoxicillin","ميترونيدازول":"metronidazole","فلاجيل":"metronidazole","أزيثروميسين":"azithromycin","زيثروماكس":"azithromycin","سيتيريزين":"cetirizine","زيرتيك":"cetirizine","لوراتادين":"loratadine","كلاريتين":"loratadine","هيوسين":"hyoscine_butylbromide","سكوبينال":"hyoscine_butylbromide","buscopan":"hyoscine_butylbromide","سالبيوتامول":"salbutamol","فنتولين":"salbutamol","ميتفورمين":"metformin","جلوكوفاج":"metformin","كلاريثروميسين":"clarithromycin","كلاسيد":"clarithromycin","بريدنيزولون":"prednisolone","أوندانسيترون":"ondansetron","زوفران":"ondansetron","فيفادول":"paracetamol","فيفا دول":"paracetamol","vifadol":"paracetamol","دومبي":"domperidone","dompy":"domperidone","dompé":"domperidone","سكوبينال":"hyoscine_butylbromide","scobinal":"hyoscine_butylbromide","hyoscine butylbromide":"hyoscine_butylbromide","نيوروفين":"ibuprofen","nurofen for children":"ibuprofen","فنتولين":"salbutamol","ventolin syrup":"salbutamol","salbutamol syrup":"salbutamol","أوجمنتين":"amoxicillin_clavulanate","augmentin":"amoxicillin_clavulanate","كلافوموكس":"amoxicillin_clavulanate","زيناتا":"cefuroxime","زينات":"cefuroxime","بروف":"ibuprofen","brufen":"ibuprofen","برووف":"ibuprofen","دومبي":"domperidone","دوم بي":"domperidone","domperidone":"domperidone","دومبيريدون":"domperidone"}
         for _k, _v in ARABIC_MAP.items():
             if _k in txt or _k.lower() in txt.lower():
