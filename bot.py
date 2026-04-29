@@ -88,6 +88,7 @@ if os.path.exists(_env_file):
                 _k, _v = _line.split("=", 1)
                 os.environ.setdefault(_k.strip(), _v.strip())
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import PicklePersistence
 from telegram.ext import (Application, CommandHandler, CallbackQueryHandler,
     MessageHandler, ConversationHandler, ContextTypes, filters, JobQueue,
     PreCheckoutQueryHandler)
