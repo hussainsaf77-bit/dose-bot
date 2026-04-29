@@ -622,7 +622,7 @@ async def analyze_image(img_bytes, lang):
                     "messages": [{"role": "user", "content": [
                         {"type": "image", "source": {"type": "base64",
                             "media_type": "image/jpeg", "data": b64}},
-                        {"type": "text", "text": "Read this medicine label. Return ONLY: DRUGNAME|CONCENTRATION. Examples: paracetamol|120mg/5ml or ibuprofen|100mg/5ml. Use generic name. If unclear: UNKNOWN."}
+                        {"type": "text", "text": "You are a pharmacist. Look at this medicine packaging and identify: 1) The active ingredient (generic name in English). 2) The concentration. Return ONLY in format: generic_name|concentration. Examples: paracetamol|120mg/5ml, ibuprofen|100mg/5ml, hyoscine_butylbromide|5mg/5ml, metronidazole|200mg/5ml, amoxicillin|250mg/5ml. If you cannot read it clearly return: UNKNOWN|unknown"}
                     ]}]})
         logger.info(f"Image API status: {r.status_code}")
         logger.info(f"Image API response: {r.text[:200]}")
