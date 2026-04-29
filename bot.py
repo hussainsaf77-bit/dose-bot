@@ -885,7 +885,7 @@ def ideal_weight(height_cm, age):
 async def auto_welcome(u, ctx):
     """ترحيب تلقائي عند أي رسالة بدون حالة محادثة"""
     if not ctx.user_data.get("lang"):
-        ctx.user_data.clear()
+        _tz = ctx.user_data.get("timezone"); ctx.user_data.clear(); ctx.user_data["timezone"] = _tz if _tz else ctx.user_data.get("timezone")
         await u.message.reply_text(tx("welcome", "ar"), reply_markup=kb_lang(), parse_mode=ParseMode.MARKDOWN)
         return STATE_LANGUAGE
     lang = get_lang(ctx)
@@ -893,7 +893,7 @@ async def auto_welcome(u, ctx):
     return STATE_MAIN_MENU
 
 async def start(u, ctx):
-    ctx.user_data.clear()
+    _tz = ctx.user_data.get("timezone"); ctx.user_data.clear(); ctx.user_data["timezone"] = _tz if _tz else ctx.user_data.get("timezone")
     await u.message.reply_text(tx("welcome", "ar"), reply_markup=kb_lang(), parse_mode=ParseMode.MARKDOWN)
     return STATE_LANGUAGE
 
@@ -1309,7 +1309,7 @@ async def rem_edit_val(u, ctx):
 
 async def fallback(u, ctx):
     if not ctx.user_data.get("lang"):
-        ctx.user_data.clear()
+        _tz = ctx.user_data.get("timezone"); ctx.user_data.clear(); ctx.user_data["timezone"] = _tz if _tz else ctx.user_data.get("timezone")
         await u.message.reply_text(tx("welcome", "ar"), reply_markup=kb_lang(), parse_mode=ParseMode.MARKDOWN)
         return STATE_LANGUAGE
     await show_main(u.message, get_lang(ctx))
