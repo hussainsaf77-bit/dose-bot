@@ -202,6 +202,7 @@ TEXTS = {
 "rem_not_found": "❌ التذكير غير موجود.",
 "alert": "🔔 *تذكير!*\n\n💊 حان وقت: *{drug}*",
 "settings": "⚙️ *الإعدادات*",
+"change_country": "🌍 تغيير الدولة",
 "change_lang": "🌐 تغيير اللغة",
 "sel_del": "🗑️ اختر تذكيراً للحذف:",
 "sel_edit": "✏️ اختر تذكيراً للتعديل:",
@@ -276,6 +277,8 @@ TEXTS = {
 "rem_not_found": "❌ Reminder not found.",
 "alert": "🔔 *Reminder!*\n\n💊 Time to take: *{drug}*",
 "settings": "⚙️ *Settings*",
+"change_country": "🌍 تغيير الدولة",
+"change_country": "🌍 Change Country",
 "change_lang": "🌐 Change Language",
 "sel_del": "🗑️ Select reminder to delete:",
 "sel_edit": "✏️ Select reminder to edit:",
@@ -961,9 +964,14 @@ async def main_cb(u, ctx):
     elif q.data == "m_settings":
         kb = InlineKeyboardMarkup([
             [InlineKeyboardButton(tx("change_lang", lang), callback_data="do_lang")],
+            [InlineKeyboardButton("🌍 " + ("تغيير الدولة" if lang=="ar" else "Change Country"), callback_data="do_country")],
             [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]])
         await q.message.edit_text(tx("settings", lang), reply_markup=kb, parse_mode=ParseMode.MARKDOWN)
         return STATE_MAIN_MENU
+    elif q.data == "do_country":
+        msg = "🌍 اكتب اسم دولتك الجديدة:" if lang == "ar" else "🌍 Type your new country:"
+        await q.message.edit_text(msg)
+        return STATE_COUNTRY
     elif q.data == "do_lang":
         await q.message.edit_text(tx("welcome", "ar"), reply_markup=kb_lang(), parse_mode=ParseMode.MARKDOWN)
         return STATE_LANGUAGE
