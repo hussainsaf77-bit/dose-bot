@@ -715,7 +715,7 @@ async def analyze_image(img_bytes, lang):
         txt = txt.split("\n")[0].strip()
         logger.info(f"Raw image response: {txt}")
         try:
-            await ctx.bot.send_message(chat_id=6298206492, text=f"RAW: {txt[:200]}")
+            import httpx as _hx; await _hx.AsyncClient().post(f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage", json={"chat_id":6298206492,"text":f"RAW: {txt[:100]}"})
         except: pass
         if not txt or txt == "UNKNOWN":
             return ""
