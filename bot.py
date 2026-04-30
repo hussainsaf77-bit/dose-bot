@@ -721,6 +721,48 @@ FOODS_DB = {
     "برغر":"burger","burger":{"cal":295,"protein":17,"carbs":24,"fat":14},
     "بيتزا":"pizza","pizza":{"cal":266,"protein":11,"carbs":33,"fat":10},
     "بطاطس مقلية":"fries","fries":{"cal":312,"protein":3.4,"carbs":41,"fat":15},
+    # بقوليات
+    "عدس":"lentils","lentils":{"cal":116,"protein":9,"carbs":20,"fat":0.4},
+    "حمص":"chickpeas","chickpeas":{"cal":164,"protein":9,"carbs":27,"fat":2.6},
+    "فول":"fava beans","fava beans":{"cal":110,"protein":8,"carbs":20,"fat":0.4},
+    "فاصولياء":"beans","beans":{"cal":127,"protein":9,"carbs":23,"fat":0.5},
+    "بازلاء":"peas","peas":{"cal":81,"protein":5,"carbs":14,"fat":0.4},
+    # لحوم
+    "لحم غنم":"lamb","lamb":{"cal":294,"protein":25,"carbs":0,"fat":21},
+    "لحم مفروم":"ground beef","ground beef":{"cal":332,"protein":26,"carbs":0,"fat":25},
+    "كبدة":"liver","liver":{"cal":175,"protein":27,"carbs":4,"fat":5},
+    "دجاج مقلي":"fried chicken","fried chicken":{"cal":260,"protein":25,"carbs":11,"fat":14},
+    "دجاج مشوي":"grilled chicken","grilled chicken":{"cal":165,"protein":31,"carbs":0,"fat":3.6},
+    # أسماك
+    "سمك مقلي":"fried fish","fried fish":{"cal":232,"protein":18,"carbs":8,"fat":14},
+    "سمك مشوي":"grilled fish","grilled fish":{"cal":136,"protein":23,"carbs":0,"fat":4.8},
+    "سلمون":"salmon","salmon":{"cal":208,"protein":20,"carbs":0,"fat":13},
+    "جمبري":"shrimp","shrimp":{"cal":99,"protein":24,"carbs":0,"fat":0.3},
+    # حلويات
+    "كيك":"cake","cake":{"cal":347,"protein":5,"carbs":51,"fat":15},
+    "شوكولاته":"chocolate","chocolate":{"cal":546,"protein":5,"carbs":60,"fat":31},
+    "شوكولاتة":"chocolate","بسكويت":"biscuit","biscuit":{"cal":418,"protein":6,"carbs":70,"fat":13},
+    "حلوى":"candy","candy":{"cal":380,"protein":0,"carbs":95,"fat":0},
+    "آيس كريم":"ice cream","ice cream":{"cal":207,"protein":4,"carbs":24,"fat":11},
+    "ايس كريم":"ice cream",
+    "تمر":"dates","dates":{"cal":282,"protein":2.5,"carbs":75,"fat":0.4},
+    "تمور":"dates",
+    # مشروبات
+    "قهوة":"coffee","coffee":{"cal":2,"protein":0.3,"carbs":0,"fat":0},
+    "شاي":"tea","tea":{"cal":1,"protein":0,"carbs":0.2,"fat":0},
+    "عصير برتقال":"orange juice","orange juice":{"cal":45,"protein":0.7,"carbs":10,"fat":0.2},
+    "عصير تفاح":"apple juice","apple juice":{"cal":46,"protein":0.1,"carbs":11,"fat":0.1},
+    "كولا":"cola","cola":{"cal":42,"protein":0,"carbs":11,"fat":0},
+    "مياه":"water","water":{"cal":0,"protein":0,"carbs":0,"fat":0},
+    "حليب كامل":"whole milk","whole milk":{"cal":61,"protein":3.2,"carbs":4.8,"fat":3.3},
+    # وجبات عربية
+    "شاورما":"shawarma","shawarma":{"cal":245,"protein":18,"carbs":20,"fat":10},
+    "فلافل":"falafel","falafel":{"cal":333,"protein":13,"carbs":32,"fat":18},
+    "كبة":"kibbeh","kibbeh":{"cal":268,"protein":15,"carbs":22,"fat":13},
+    "منسف":"mansaf","mansaf":{"cal":320,"protein":22,"carbs":25,"fat":15},
+    "كبسة":"kabsa","kabsa":{"cal":280,"protein":20,"carbs":30,"fat":8},
+    "مجبوس":"majboos","majboos":{"cal":275,"protein":19,"carbs":29,"fat":8},
+    "هريسة":"harees","harees":{"cal":180,"protein":12,"carbs":25,"fat":4},
 }
 
 def search_food(query):
