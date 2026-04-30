@@ -767,15 +767,16 @@ FOODS_DB = {
 
 def search_food(query):
     q = query.strip().lower()
-    for ar, en in [("خبز","bread"),("أرز","rice"),("معكرونة","pasta"),("شوفان","oats"),
-                   ("دجاج","chicken"),("لحم بقر","beef"),("سمك","fish"),("بيض","egg"),("تونة","tuna"),
-                   ("حليب","milk"),("جبنة","cheese"),("زبادي","yogurt"),
-                   ("طماطم","tomato"),("خيار","cucumber"),("بطاطا","potato"),("جزر","carrot"),
-                   ("تفاح","apple"),("موز","banana"),("برتقال","orange"),
-                   ("زيت زيتون","olive oil"),("لوز","almonds"),("عسل","honey"),
-                   ("برغر","burger"),("بيتزا","pizza"),("بطاطس مقلية","fries")]:
-        if q in ar or q in en or ar in q or en in q:
-            return en, FOODS_DB[en]
+    # نبحث في كل مفاتيح FOODS_DB مباشرة
+    for key, val in FOODS_DB.items():
+        if isinstance(val, dict):
+            if q in key.lower() or key.lower() in q:
+                return key, val
+        elif isinstance(val, str):
+            # هذا alias - نبحث عن القيمة
+            if q in key.lower() or key.lower() in q:
+                if val in FOODS_DB and isinstance(FOODS_DB[val], dict):
+                    return val, FOODS_DB[val]
     return None, None
 
 def calc_bmr(weight, height, age, gender):
