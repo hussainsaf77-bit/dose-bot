@@ -984,11 +984,6 @@ async def pick_lang(u, ctx):
     q = u.callback_query; await q.answer()
     ctx.user_data["lang"] = "ar" if q.data == "lang_ar" else "en"
     lang = get_lang(ctx)
-    # نسأل عن الدولة إذا لم تُحدد بعد
-    if not ctx.user_data.get("timezone"):
-        msg = ("🌍 اكتب اسم دولتك لضبط التوقيت" if lang == "ar" else "🌍 Type your country for timezone")
-        await q.message.edit_text(msg)
-        return STATE_COUNTRY
     await show_main(q.message, lang, edit=True)
     return STATE_MAIN_MENU
 
