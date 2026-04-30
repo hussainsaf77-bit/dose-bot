@@ -137,7 +137,7 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_BMI_WEIGHT, STATE_BMI_HEIGHT,
  STATE_BMI_AGE, STATE_BMI_DRUG,
  STATE_CHILD_CONC, STATE_PREMIUM,
- STATE_COUNTRY) = range(19)
+ STATE_COUNTRY, STATE_REM_DURATION) = range(20)
 
 TEXTS = {
 "ar": {
@@ -722,7 +722,7 @@ async def analyze_image(img_bytes, lang):
         if not txt or txt == "UNKNOWN":
             return ""
         # بحث في القاموس
-        ARABIC_MAP = {"ibuprofen suspension":"ibuprofen","ibuprofen oral suspension":"ibuprofen","ibuprofen syrup":"ibuprofen","ibuprofen 100mg":"ibuprofen","ibuprofen 200mg":"ibuprofen","ibuprofen ds":"ibuprofen","brufen suspension":"ibuprofen","brufen syrup":"ibuprofen","nurofen suspension":"ibuprofen","أيبوبروفين معلق":"ibuprofen","إيبوبروفين معلق":"ibuprofen","أيبوبروفين شراب":"ibuprofen","ايبوبروفين للاطفال":"ibuprofen","ايبوبروفين للأطفال":"ibuprofen","ibuprofen for children":"ibuprofen","children ibuprofen":"ibuprofen","prof syrup":"ibuprofen","prof suspension":"ibuprofen","prof oral":"ibuprofen","prof":"ibuprofen","Prof":"ibuprofen","بروف":"ibuprofen","ibuprofen":"ibuprofen","ibuprofen ds":"ibuprofen","ibuprofen oral":"ibuprofen","nurofen":"ibuprofen","Nurofen":"ibuprofen","نيوروفين":"ibuprofen","نيورفين":"ibuprofen","brufen":"ibuprofen","Brufen":"ibuprofen","advil":"ibuprofen","sabfen":"ibuprofen","سابوفين":"ibuprofen","أيبوبروفين":"ibuprofen","ايبوبروفين":"ibuprofen","إيبوبروفين":"ibuprofen","باراسيتامول":"paracetamol","بنادول":"paracetamol","بانادول":"paracetamol","panadol":"paracetamol","إيبوبروفين":"ibuprofen","نيوروفين":"ibuprofen","نيورفين":"ibuprofen","nurofen":"ibuprofen","نيوروفين للأطفال":"ibuprofen","بروف":"ibuprofen","brufen":"ibuprofen","برووف":"ibuprofen","سابوفين":"ibuprofen","sabfen":"ibuprofen","advil":"ibuprofen","أدفيل":"ibuprofen","ibufen":"ibuprofen","أيبوفين":"ibuprofen","calprofen":"ibuprofen","junifen":"ibuprofen","أيبوبروفين":"ibuprofen","ايبوبروفين":"ibuprofen","إيبوبروفين":"ibuprofen","ibuprofen":"ibuprofen","nurofen":"ibuprofen","brufen":"ibuprofen","أموكسيسيلين":"amoxicillin","amoxil":"amoxicillin","ميترونيدازول":"metronidazole","فلاجيل":"metronidazole","أزيثروميسين":"azithromycin","زيثروماكس":"azithromycin","سيتيريزين":"cetirizine","زيرتيك":"cetirizine","لوراتادين":"loratadine","كلاريتين":"loratadine","هيوسين":"hyoscine_butylbromide","سكوبينال":"hyoscine_butylbromide","buscopan":"hyoscine_butylbromide","سالبيوتامول":"salbutamol","فنتولين":"salbutamol","ميتفورمين":"metformin","جلوكوفاج":"metformin","كلاريثروميسين":"clarithromycin","كلاسيد":"clarithromycin","بريدنيزولون":"prednisolone","أوندانسيترون":"ondansetron","زوفران":"ondansetron","فيفادول":"paracetamol","فيفا دول":"paracetamol","vifadol":"paracetamol","adol":"paracetamol","أدول":"paracetamol","calpol":"paracetamol","كالبول":"paracetamol","tylenol":"paracetamol","تايلينول":"paracetamol","tempra":"paracetamol","تمبرا":"paracetamol","febricol":"paracetamol","فيبريكول":"paracetamol","dymadon":"paracetamol","فارفيكس":"paracetamol","farfex":"paracetamol","فيفا دول":"paracetamol","vifadol":"paracetamol","دومبي":"domperidone","dompy":"domperidone","dompé":"domperidone","سكوبينال":"hyoscine_butylbromide","scobinal":"hyoscine_butylbromide","hyoscine butylbromide":"hyoscine_butylbromide","نيوروفين":"ibuprofen","نيورفين":"ibuprofen","nurofen":"ibuprofen","نيوروفين للأطفال":"ibuprofen","بروف":"ibuprofen","brufen":"ibuprofen","برووف":"ibuprofen","سابوفين":"ibuprofen","sabfen":"ibuprofen","advil":"ibuprofen","أدفيل":"ibuprofen","ibufen":"ibuprofen","أيبوفين":"ibuprofen","calprofen":"ibuprofen","junifen":"ibuprofen","أيبوبروفين":"ibuprofen","ايبوبروفين":"ibuprofen","إيبوبروفين":"ibuprofen","ibuprofen":"ibuprofen","nurofen for children":"ibuprofen","فنتولين":"salbutamol","ventolin syrup":"salbutamol","salbutamol syrup":"salbutamol","أوجمنتين":"amoxicillin_clavulanate","augmentin":"amoxicillin_clavulanate","كلافوموكس":"amoxicillin_clavulanate","زيناتا":"cefuroxime","زينات":"cefuroxime","بروف":"ibuprofen","brufen":"ibuprofen","برووف":"ibuprofen","دومبي":"domperidone","دوم بي":"domperidone","domperidone":"domperidone","دومبيريدون":"domperidone"}
+        ARABIC_MAP = {"medicine label analysis":"unknown","i can see":"unknown","i can read":"unknown","looking at":"unknown","this appears":"unknown","the label":"unknown","ibuprofen suspension":"ibuprofen","ibuprofen oral suspension":"ibuprofen","ibuprofen syrup":"ibuprofen","ibuprofen 100mg":"ibuprofen","ibuprofen 200mg":"ibuprofen","ibuprofen ds":"ibuprofen","brufen suspension":"ibuprofen","brufen syrup":"ibuprofen","nurofen suspension":"ibuprofen","أيبوبروفين معلق":"ibuprofen","إيبوبروفين معلق":"ibuprofen","أيبوبروفين شراب":"ibuprofen","ايبوبروفين للاطفال":"ibuprofen","ايبوبروفين للأطفال":"ibuprofen","ibuprofen for children":"ibuprofen","children ibuprofen":"ibuprofen","prof syrup":"ibuprofen","prof suspension":"ibuprofen","prof oral":"ibuprofen","prof":"ibuprofen","Prof":"ibuprofen","بروف":"ibuprofen","ibuprofen":"ibuprofen","ibuprofen ds":"ibuprofen","ibuprofen oral":"ibuprofen","nurofen":"ibuprofen","Nurofen":"ibuprofen","نيوروفين":"ibuprofen","نيورفين":"ibuprofen","brufen":"ibuprofen","Brufen":"ibuprofen","advil":"ibuprofen","sabfen":"ibuprofen","سابوفين":"ibuprofen","أيبوبروفين":"ibuprofen","ايبوبروفين":"ibuprofen","إيبوبروفين":"ibuprofen","باراسيتامول":"paracetamol","بنادول":"paracetamol","بانادول":"paracetamol","panadol":"paracetamol","إيبوبروفين":"ibuprofen","نيوروفين":"ibuprofen","نيورفين":"ibuprofen","nurofen":"ibuprofen","نيوروفين للأطفال":"ibuprofen","بروف":"ibuprofen","brufen":"ibuprofen","برووف":"ibuprofen","سابوفين":"ibuprofen","sabfen":"ibuprofen","advil":"ibuprofen","أدفيل":"ibuprofen","ibufen":"ibuprofen","أيبوفين":"ibuprofen","calprofen":"ibuprofen","junifen":"ibuprofen","أيبوبروفين":"ibuprofen","ايبوبروفين":"ibuprofen","إيبوبروفين":"ibuprofen","ibuprofen":"ibuprofen","nurofen":"ibuprofen","brufen":"ibuprofen","أموكسيسيلين":"amoxicillin","amoxil":"amoxicillin","ميترونيدازول":"metronidazole","فلاجيل":"metronidazole","أزيثروميسين":"azithromycin","زيثروماكس":"azithromycin","سيتيريزين":"cetirizine","زيرتيك":"cetirizine","لوراتادين":"loratadine","كلاريتين":"loratadine","هيوسين":"hyoscine_butylbromide","سكوبينال":"hyoscine_butylbromide","buscopan":"hyoscine_butylbromide","سالبيوتامول":"salbutamol","فنتولين":"salbutamol","ميتفورمين":"metformin","جلوكوفاج":"metformin","كلاريثروميسين":"clarithromycin","كلاسيد":"clarithromycin","بريدنيزولون":"prednisolone","أوندانسيترون":"ondansetron","زوفران":"ondansetron","فيفادول":"paracetamol","فيفا دول":"paracetamol","vifadol":"paracetamol","adol":"paracetamol","أدول":"paracetamol","calpol":"paracetamol","كالبول":"paracetamol","tylenol":"paracetamol","تايلينول":"paracetamol","tempra":"paracetamol","تمبرا":"paracetamol","febricol":"paracetamol","فيبريكول":"paracetamol","dymadon":"paracetamol","فارفيكس":"paracetamol","farfex":"paracetamol","فيفا دول":"paracetamol","vifadol":"paracetamol","دومبي":"domperidone","dompy":"domperidone","dompé":"domperidone","سكوبينال":"hyoscine_butylbromide","scobinal":"hyoscine_butylbromide","hyoscine butylbromide":"hyoscine_butylbromide","نيوروفين":"ibuprofen","نيورفين":"ibuprofen","nurofen":"ibuprofen","نيوروفين للأطفال":"ibuprofen","بروف":"ibuprofen","brufen":"ibuprofen","برووف":"ibuprofen","سابوفين":"ibuprofen","sabfen":"ibuprofen","advil":"ibuprofen","أدفيل":"ibuprofen","ibufen":"ibuprofen","أيبوفين":"ibuprofen","calprofen":"ibuprofen","junifen":"ibuprofen","أيبوبروفين":"ibuprofen","ايبوبروفين":"ibuprofen","إيبوبروفين":"ibuprofen","ibuprofen":"ibuprofen","nurofen for children":"ibuprofen","فنتولين":"salbutamol","ventolin syrup":"salbutamol","salbutamol syrup":"salbutamol","أوجمنتين":"amoxicillin_clavulanate","augmentin":"amoxicillin_clavulanate","كلافوموكس":"amoxicillin_clavulanate","زيناتا":"cefuroxime","زينات":"cefuroxime","بروف":"ibuprofen","brufen":"ibuprofen","برووف":"ibuprofen","دومبي":"domperidone","دوم بي":"domperidone","domperidone":"domperidone","دومبيريدون":"domperidone"}
         for _k, _v in ARABIC_MAP.items():
             if _k in txt or _k.lower() in txt.lower():
                 txt = _v
@@ -1259,14 +1259,43 @@ async def rem_add_freq(u, ctx):
     except:
         await u.message.reply_text(tx("bad_freq", lang), reply_markup=kb_back(lang))
         return STATE_REM_ADD_FREQ
+    ctx.user_data["nr_freq"] = f
+    # نسأل عن المدة
+    btns = [
+        [InlineKeyboardButton("📅 أسبوع" if lang=="ar" else "📅 Week", callback_data="dur_7")],
+        [InlineKeyboardButton("📅 شهر" if lang=="ar" else "📅 Month", callback_data="dur_30")],
+        [InlineKeyboardButton("📅 3 أشهر" if lang=="ar" else "📅 3 Months", callback_data="dur_90")],
+        [InlineKeyboardButton("📅 6 أشهر" if lang=="ar" else "📅 6 Months", callback_data="dur_180")],
+        [InlineKeyboardButton("📅 سنة" if lang=="ar" else "📅 Year", callback_data="dur_365")],
+        [InlineKeyboardButton("♾️ مستمر" if lang=="ar" else "♾️ Ongoing", callback_data="dur_0")],
+        [InlineKeyboardButton("🔙 رجوع" if lang=="ar" else "🔙 Back", callback_data="back")],
+    ]
+    msg = "📅 كم مدة التذكير؟" if lang=="ar" else "📅 How long?"
+    await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup(btns))
+    return STATE_REM_DURATION
+
+async def rem_add_duration(u, ctx):
+    q = u.callback_query
+    await q.answer()
+    lang = get_lang(ctx)
+    data = q.data
+    if data == "back":
+        return await go_back(u, ctx)
+    days = int(data.replace("dur_", ""))
     drug = ctx.user_data.get("nr_drug", "?")
     time_s = ctx.user_data.get("nr_time", "08:00")
+    f = ctx.user_data.get("nr_freq", 1)
     rems = get_rems(ctx)
-    rems.append({"id": len(rems)+1, "drug": drug, "time": time_s, "freq": f})
+    rems.append({"id": len(rems)+1, "drug": drug, "time": time_s, "freq": f, "days": days})
     save_rems(ctx)
     sched(ctx.application, u.effective_chat.id, drug, time_s, f, lang, ctx.user_data.get("timezone", "Asia/Riyadh"))
-    await u.message.reply_text(tx("rem_saved", lang).format(drug=drug, time=time_s, freq=f),
-        reply_markup=kb_remind(lang))
+    dur_txt = f"{days} يوم" if days > 0 else "مستمر"
+    if lang != "ar":
+        dur_txt = f"{days} days" if days > 0 else "Ongoing"
+    await q.message.edit_text(f"✅ تم حفظ التذكير
+💊 {drug}
+⏰ {time_s}
+📅 {dur_txt}", reply_markup=kb_remind(lang))
     return STATE_REM_MENU
 
 async def rem_edit_sel(u, ctx):
@@ -1373,6 +1402,8 @@ def build_conv():
             CommandHandler("start", start),
         ],
         states={
+            STATE_REM_DURATION: [
+                CallbackQueryHandler(rem_add_duration, pattern="^(dur_|back)")],
             STATE_COUNTRY: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, set_country)],
             STATE_LANGUAGE: [
