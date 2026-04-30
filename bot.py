@@ -194,7 +194,6 @@ TEXTS = {
 "rem_name": "💊 اكتب اسم الدواء:",
 "rem_time": "🕐 أدخل وقت التذكير HH:MM مثال 08:00",
 "rem_freq": "🔁 كم مرة يومياً؟ من 1 إلى 6:",
-"rem_saved": "✅ تم الحفظ!\n💊 {drug}\n🕐 {time}\n🔁 {freq}x/يوم",
 "no_rems": "📭 لا توجد تذكيرات.",
 "rems_title": "📋 *تذكيراتك:*\n\n",
 "rem_deleted": "🗑️ تم الحذف.",
@@ -269,7 +268,6 @@ TEXTS = {
 "rem_name": "💊 Enter drug name:",
 "rem_time": "🕐 Enter reminder time HH:MM e.g. 08:00",
 "rem_freq": "🔁 How many times per day? 1 to 6:",
-"rem_saved": "✅ Saved!\n💊 {drug}\n🕐 {time}\n🔁 {freq}x/day",
 "no_rems": "📭 No reminders yet.",
 "rems_title": "📋 *Your Reminders:*\n\n",
 "rem_deleted": "🗑️ Deleted.",
@@ -1292,10 +1290,7 @@ async def rem_add_duration(u, ctx):
     dur_txt = f"{days} يوم" if days > 0 else "مستمر"
     if lang != "ar":
         dur_txt = f"{days} days" if days > 0 else "Ongoing"
-    await q.message.edit_text(f"✅ تم حفظ التذكير
-💊 {drug}
-⏰ {time_s}
-📅 {dur_txt}", reply_markup=kb_remind(lang))
+    await q.message.edit_text("✅ " + drug + " - " + time_s + " - " + dur_txt, reply_markup=kb_remind(lang))
     return STATE_REM_MENU
 
 async def rem_edit_sel(u, ctx):
