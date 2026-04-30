@@ -707,7 +707,7 @@ async def analyze_image(img_bytes, lang):
                     "messages": [{"role": "user", "content": [
                         {"type": "image", "source": {"type": "base64",
                             "media_type": "image/jpeg", "data": b64}},
-                        {"type": "text", "text": "You are a pharmacist. Look at this medicine packaging and identify: 1) The active ingredient (generic name in English). 2) The concentration. Return ONLY in format: generic_name|concentration. Examples: paracetamol|120mg/5ml, ibuprofen|100mg/5ml, hyoscine_butylbromide|5mg/5ml, metronidazole|200mg/5ml, amoxicillin|250mg/5ml. If you cannot read it clearly return: UNKNOWN|unknown"}
+                        {"type": "text", "text": "Read the medicine label. Find the active ingredient and concentration. Brand names: Panadol/Calpol/Adol/Tylenol/Vifadol/Fevadol=paracetamol, Nurofen/Brufen/Prof/Sabfen=ibuprofen, Scobinal/Buscopan=hyoscine_butylbromide, Anazol/Flagyl=metronidazole, Ventolin=salbutamol, Dompy/Dompé=domperidone, Glucophage=metformin, Claritin=loratadine, Zyrtec=cetirizine, Zithromax=azithromycin, Amoxil=amoxicillin, Augmentin=amoxicillin_clavulanate. Return ONLY: generic_name|concentration. Example: paracetamol|160mg/5ml or ibuprofen|100mg/5ml. If unclear: UNKNOWN|unknown"}
                     ]}]})
         logger.info(f"Image API status: {r.status_code}")
         logger.info(f"Image API status: {r.status_code}")
