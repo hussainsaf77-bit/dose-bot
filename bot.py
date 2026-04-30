@@ -137,7 +137,9 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_BMI_WEIGHT, STATE_BMI_HEIGHT,
  STATE_BMI_AGE, STATE_BMI_DRUG,
  STATE_CHILD_CONC, STATE_PREMIUM,
- STATE_COUNTRY, STATE_REM_DURATION) = range(20)
+ STATE_COUNTRY, STATE_REM_DURATION,
+ STATE_CAL_GENDER, STATE_CAL_AGE, STATE_CAL_WEIGHT, STATE_CAL_HEIGHT, STATE_CAL_ACTIVITY, STATE_CAL_DISEASE,
+ STATE_FOOD_SEARCH) = range(27)
 
 TEXTS = {
 "ar": {
@@ -167,6 +169,7 @@ TEXTS = {
 "payment_success": "🎉 *تم تفعيل اشتراكك المميز!*\n\nصالح حتى: {date}",
 "not_premium": "⭐ هذه الميزة للمشتركين المميزين فقط.\nاضغط لمعرفة المزيد:",
 "btn_bmi": "📊 الوزن المثالي (BMI)",
+"btn_cal": "🔥 حاسبة السعرات",
 "bmi_prompt_weight": "⚖️ أدخل وزن الطفل بالكيلوغرام:",
 "bmi_prompt_height": "📏 أدخل طول الطفل بالسنتيمتر:",
 "bmi_prompt_age": "🎂 أدخل عمر الطفل بالسنوات:",
@@ -241,6 +244,7 @@ TEXTS = {
 "payment_success": "🎉 *Premium activated!*\n\nValid until: {date}",
 "not_premium": "⭐ This feature is for premium subscribers only.\nTap to learn more:",
 "btn_bmi": "📊 Ideal Weight (BMI)",
+"btn_cal": "🔥 Calorie Calculator",
 "bmi_prompt_weight": "⚖️ Enter child weight in kg:",
 "bmi_prompt_height": "📏 Enter child height in cm:",
 "bmi_prompt_age": "🎂 Enter child age in years:",
@@ -682,6 +686,70 @@ def calc_child(drug, w, lang):
     lines += ["", "⚠️ استشر الطبيب أو الصيدلاني." if lang=="ar" else "⚠️ Consult a doctor or pharmacist."]
     return "\n".join(lines)
 
+
+# قاعدة بيانات الأطعمة (سعرات لكل 100 غرام)
+FOODS_DB = {
+    # خبز وحبوب
+    "خبز":"bread","bread":{"cal":265,"protein":9,"carbs":49,"fat":3.2},
+    "أرز":"rice","rice":{"cal":130,"protein":2.7,"carbs":28,"fat":0.3},
+    "معكرونة":"pasta","pasta":{"cal":131,"protein":5,"carbs":25,"fat":1.1},
+    "شوفان":"oats","oats":{"cal":389,"protein":17,"carbs":66,"fat":7},
+    # بروتين
+    "دجاج":"chicken","chicken":{"cal":165,"protein":31,"carbs":0,"fat":3.6},
+    "لحم بقر":"beef","beef":{"cal":250,"protein":26,"carbs":0,"fat":15},
+    "سمك":"fish","fish":{"cal":136,"protein":23,"carbs":0,"fat":4.8},
+    "بيض":"egg","egg":{"cal":155,"protein":13,"carbs":1.1,"fat":11},
+    "تونة":"tuna","tuna":{"cal":144,"protein":30,"carbs":0,"fat":2.5},
+    # ألبان
+    "حليب":"milk","milk":{"cal":61,"protein":3.2,"carbs":4.8,"fat":3.3},
+    "جبنة":"cheese","cheese":{"cal":402,"protein":25,"carbs":1.3,"fat":33},
+    "زبادي":"yogurt","yogurt":{"cal":59,"protein":10,"carbs":3.6,"fat":0.4},
+    # خضروات
+    "طماطم":"tomato","tomato":{"cal":18,"protein":0.9,"carbs":3.9,"fat":0.2},
+    "خيار":"cucumber","cucumber":{"cal":16,"protein":0.7,"carbs":3.6,"fat":0.1},
+    "بطاطا":"potato","potato":{"cal":77,"protein":2,"carbs":17,"fat":0.1},
+    "جزر":"carrot","carrot":{"cal":41,"protein":0.9,"carbs":10,"fat":0.2},
+    # فواكه
+    "تفاح":"apple","apple":{"cal":52,"protein":0.3,"carbs":14,"fat":0.2},
+    "موز":"banana","banana":{"cal":89,"protein":1.1,"carbs":23,"fat":0.3},
+    "برتقال":"orange","orange":{"cal":47,"protein":0.9,"carbs":12,"fat":0.1},
+    # زيوت ومكسرات
+    "زيت زيتون":"olive oil","olive oil":{"cal":884,"protein":0,"carbs":0,"fat":100},
+    "لوز":"almonds","almonds":{"cal":579,"protein":21,"carbs":22,"fat":50},
+    "عسل":"honey","honey":{"cal":304,"protein":0.3,"carbs":82,"fat":0},
+    # وجبات سريعة
+    "برغر":"burger","burger":{"cal":295,"protein":17,"carbs":24,"fat":14},
+    "بيتزا":"pizza","pizza":{"cal":266,"protein":11,"carbs":33,"fat":10},
+    "بطاطس مقلية":"fries","fries":{"cal":312,"protein":3.4,"carbs":41,"fat":15},
+}
+
+def search_food(query):
+    q = query.strip().lower()
+    for ar, en in [("خبز","bread"),("أرز","rice"),("معكرونة","pasta"),("شوفان","oats"),
+                   ("دجاج","chicken"),("لحم بقر","beef"),("سمك","fish"),("بيض","egg"),("تونة","tuna"),
+                   ("حليب","milk"),("جبنة","cheese"),("زبادي","yogurt"),
+                   ("طماطم","tomato"),("خيار","cucumber"),("بطاطا","potato"),("جزر","carrot"),
+                   ("تفاح","apple"),("موز","banana"),("برتقال","orange"),
+                   ("زيت زيتون","olive oil"),("لوز","almonds"),("عسل","honey"),
+                   ("برغر","burger"),("بيتزا","pizza"),("بطاطس مقلية","fries")]:
+        if q in ar or q in en or ar in q or en in q:
+            return en, FOODS_DB[en]
+    return None, None
+
+def calc_bmr(weight, height, age, gender):
+    if gender == "m":
+        return 10*weight + 6.25*height - 5*age + 5
+    else:
+        return 10*weight + 6.25*height - 5*age - 161
+
+ACTIVITY_FACTORS = {
+    "1": 1.2,   # خامل
+    "2": 1.375, # خفيف
+    "3": 1.55,  # متوسط
+    "4": 1.725, # نشيط
+    "5": 1.9,   # رياضي
+}
+
 async def analyze_image(img_bytes, lang):
     logger.info(f"analyze_image called, key_len={len(ANTHROPIC_API_KEY)}, httpx={HTTPX_OK}")
     try:
@@ -774,6 +842,7 @@ def kb_main(lang):
         [InlineKeyboardButton(tx("btn_search", lang), callback_data="m_search")],
         [InlineKeyboardButton(tx("btn_child", lang), callback_data="m_child")],
         [InlineKeyboardButton(tx("btn_bmi", lang), callback_data="m_bmi")],
+        [InlineKeyboardButton(tx("btn_cal", lang), callback_data="m_cal")],
         [InlineKeyboardButton(tx("btn_remind", lang), callback_data="m_remind")],
         [InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],
         [InlineKeyboardButton(tx("btn_settings", lang), callback_data="m_settings")]])
@@ -975,6 +1044,17 @@ async def main_cb(u, ctx):
     elif q.data == "m_remind":
         await q.message.edit_text(tx("rem_menu", lang), reply_markup=kb_remind(lang), parse_mode=ParseMode.MARKDOWN)
         return STATE_REM_MENU
+    elif q.data == "m_cal":
+        lang = get_lang(ctx)
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("👨 ذكر" if lang=="ar" else "👨 Male", callback_data="cal_m"),
+             InlineKeyboardButton("👩 أنثى" if lang=="ar" else "👩 Female", callback_data="cal_f")],
+            [InlineKeyboardButton("🍎 سعرات طعام" if lang=="ar" else "🍎 Food Calories", callback_data="cal_food")],
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]])
+        await q.message.edit_text("🔥 حاسبة السعرات" if lang=="ar" else "🔥 Calorie Calculator", reply_markup=btns, parse_mode=ParseMode.MARKDOWN)
+
+
+        return STATE_CAL_GENDER
     elif q.data == "m_settings":
         kb = InlineKeyboardMarkup([
             [InlineKeyboardButton(tx("change_lang", lang), callback_data="do_lang")],
@@ -1189,6 +1269,161 @@ async def child_conc(u, ctx):
         await u.message.reply_text(result, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
         return STATE_CHILD_WEIGHT
 
+
+async def cal_gender(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    if q.data == "back": return await go_back(u, ctx)
+    if q.data == "cal_food":
+        await q.message.edit_text("🍎 اكتب اسم الطعام والكمية" if lang=="ar" else "🍎 Type food name and grams")
+        return STATE_FOOD_SEARCH
+    ctx.user_data["cal_gender"] = "m" if q.data == "cal_m" else "f"
+    await q.message.edit_text("📅 كم عمرك؟" if lang=="ar" else "📅 How old are you?")
+    return STATE_CAL_AGE
+
+async def cal_age(u, ctx):
+    lang = get_lang(ctx)
+    try:
+        age = int(u.message.text.strip())
+        if not 5 <= age <= 100: raise ValueError
+    except:
+        await u.message.reply_text("❌ أدخل عمراً صحيحاً" if lang=="ar" else "❌ Enter valid age")
+        return STATE_CAL_AGE
+    ctx.user_data["cal_age"] = age
+    await u.message.reply_text("⚖️ كم وزنك بالكيلو؟" if lang=="ar" else "⚖️ Weight in kg?")
+    return STATE_CAL_WEIGHT
+
+async def cal_weight(u, ctx):
+    lang = get_lang(ctx)
+    try:
+        w = float(u.message.text.strip())
+        if not 20 <= w <= 300: raise ValueError
+    except:
+        await u.message.reply_text("❌ أدخل وزناً صحيحاً" if lang=="ar" else "❌ Enter valid weight")
+        return STATE_CAL_WEIGHT
+    ctx.user_data["cal_weight"] = w
+    await u.message.reply_text("📏 كم طولك بالسنتيمتر؟" if lang=="ar" else "📏 Height in cm?")
+    return STATE_CAL_HEIGHT
+
+async def cal_height(u, ctx):
+    lang = get_lang(ctx)
+    try:
+        h = float(u.message.text.strip())
+        if not 100 <= h <= 250: raise ValueError
+    except:
+        await u.message.reply_text("❌ أدخل طولاً صحيحاً" if lang=="ar" else "❌ Enter valid height")
+        return STATE_CAL_HEIGHT
+    ctx.user_data["cal_height"] = h
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🛋️ خامل" if lang=="ar" else "🛋️ Sedentary", callback_data="act_1")],
+        [InlineKeyboardButton("🚶 خفيف" if lang=="ar" else "🚶 Light", callback_data="act_2")],
+        [InlineKeyboardButton("🏃 متوسط" if lang=="ar" else "🏃 Moderate", callback_data="act_3")],
+        [InlineKeyboardButton("💪 نشيط" if lang=="ar" else "💪 Active", callback_data="act_4")],
+        [InlineKeyboardButton("🏋️ رياضي" if lang=="ar" else "🏋️ Athlete", callback_data="act_5")]])
+    await u.message.reply_text("🏃 مستوى النشاط؟" if lang=="ar" else "🏃 Activity level?", reply_markup=btns)
+    return STATE_CAL_ACTIVITY
+
+async def cal_activity(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    act = q.data.replace("act_", "")
+    ctx.user_data["cal_act"] = act
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("✅ لا يوجد" if lang=="ar" else "✅ None", callback_data="dis_none")],
+        [InlineKeyboardButton("🩺 سكري" if lang=="ar" else "🩺 Diabetes", callback_data="dis_diabetes")],
+        [InlineKeyboardButton("❤️ قلب" if lang=="ar" else "❤️ Heart", callback_data="dis_heart")],
+        [InlineKeyboardButton("🫘 كلى" if lang=="ar" else "🫘 Kidney", callback_data="dis_kidney")],
+        [InlineKeyboardButton("⚖️ سمنة" if lang=="ar" else "⚖️ Obesity", callback_data="dis_obesity")]])
+    await q.message.edit_text("🏥 هل لديك مرض مزمن؟" if lang=="ar" else "🏥 Any chronic disease?", reply_markup=btns)
+    return STATE_CAL_DISEASE
+
+async def cal_disease(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    disease = q.data.replace("dis_", "")
+    w = ctx.user_data.get("cal_weight", 70)
+    h = ctx.user_data.get("cal_height", 170)
+    age = ctx.user_data.get("cal_age", 30)
+    gender = ctx.user_data.get("cal_gender", "m")
+    act = ctx.user_data.get("cal_act", "2")
+    bmr = calc_bmr(w, h, age, gender)
+    tdee = bmr * ACTIVITY_FACTORS.get(act, 1.375)
+    # تعديل حسب المرض
+    note = ""
+    if disease == "diabetes":
+        tdee = tdee * 0.9
+        note = "⚠️ تقليل الكربوهيدرات" if lang=="ar" else "⚠️ Reduce carbs"
+    elif disease == "heart":
+        note = "⚠️ تقليل الدهون المشبعة" if lang=="ar" else "⚠️ Reduce saturated fat"
+    elif disease == "kidney":
+        tdee = tdee * 0.85
+        note = "⚠️ تقليل البروتين والبوتاسيوم" if lang=="ar" else "⚠️ Reduce protein & potassium"
+    elif disease == "obesity":
+        tdee = tdee * 0.8
+        note = "⚠️ عجز 500 سعرة للتخسيس" if lang=="ar" else "⚠️ 500 cal deficit for weight loss"
+    protein = w * 1.2
+    carbs = (tdee * 0.5) / 4
+    fat = (tdee * 0.3) / 9
+    if lang == "ar":
+        msg = "🔥 نتيجة حاسبة السعرات\n\n"
+        msg += "⚖️ الوزن: " + str(w) + " كغ | الطول: " + str(h) + " سم\n"
+        msg += "📅 العمر: " + str(age) + "\n"
+        msg += "🔥 الاحتياج اليومي: " + str(int(tdee)) + " سعرة\n"
+        msg += "💪 بروتين: " + str(int(protein)) + " غ\n"
+        msg += "🍞 كربوهيدرات: " + str(int(carbs)) + " غ\n"
+        msg += "🫙 دهون: " + str(int(fat)) + " غ\n"
+        if note: msg += "\n" + note
+    else:
+        msg = "🔥 Calorie Calculator Result\n\n"
+        msg += "Weight: " + str(w) + "kg | Height: " + str(h) + "cm\n"
+        msg += "Age: " + str(age) + "\n"
+        msg += "Daily Needs: " + str(int(tdee)) + " cal\n"
+        msg += "Protein: " + str(int(protein)) + "g\n"
+        msg += "Carbs: " + str(int(carbs)) + "g\n"
+        msg += "Fat: " + str(int(fat)) + "g\n"
+        if note: msg += "\n" + note
+
+
+        if note: msg += note
+    await q.message.edit_text(msg, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+    return STATE_MAIN_MENU
+
+async def food_search(u, ctx):
+    lang = get_lang(ctx)
+    txt = u.message.text.strip()
+    parts = txt.split()
+    grams = 100
+    query = txt
+    for p in parts:
+        try:
+            grams = float(p)
+            query = txt.replace(p, "").strip()
+            break
+        except: pass
+    food_en, food_data = search_food(query)
+    if not food_data:
+        await u.message.reply_text("❌ لم أجد هذا الطعام. جرّب: دجاج، أرز، بيض..." if lang=="ar" else "❌ Food not found. Try: chicken, rice, egg...")
+        return STATE_FOOD_SEARCH
+    factor = grams / 100
+    cal = food_data["cal"] * factor
+    prot = food_data["protein"] * factor
+    carbs = food_data["carbs"] * factor
+    fat = food_data["fat"] * factor
+    if lang == "ar":
+        msg = "🍎 " + str(query) + " - " + str(int(grams)) + " غرام\n\n"
+        msg += "🔥 السعرات: " + str(int(cal)) + "\n"
+        msg += "💪 بروتين: " + str(round(prot,1)) + " غ\n"
+        msg += "🍞 كربوهيدرات: " + str(round(carbs,1)) + " غ\n"
+        msg += "🫙 دهون: " + str(round(fat,1)) + " غ\n"
+    else:
+        msg = "🍎 " + str(query) + " - " + str(int(grams)) + "g\n\n"
+        msg += "Calories: " + str(int(cal)) + "\n"
+        msg += "Protein: " + str(round(prot,1)) + "g\n"
+        msg += "Carbs: " + str(round(carbs,1)) + "g\n"
+        msg += "Fat: " + str(round(fat,1)) + "g\n"
+    await u.message.reply_text(msg, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+    return STATE_FOOD_SEARCH
+
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -1397,6 +1632,21 @@ def build_conv():
             CommandHandler("start", start),
         ],
         states={
+            STATE_CAL_GENDER: [
+                CallbackQueryHandler(cal_gender, pattern="^(cal_|back)")],
+            STATE_CAL_AGE: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, cal_age)],
+            STATE_CAL_WEIGHT: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, cal_weight)],
+            STATE_CAL_HEIGHT: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, cal_height)],
+            STATE_CAL_ACTIVITY: [
+                CallbackQueryHandler(cal_activity, pattern="^act_")],
+            STATE_CAL_DISEASE: [
+                CallbackQueryHandler(cal_disease, pattern="^dis_")],
+            STATE_FOOD_SEARCH: [
+                CallbackQueryHandler(go_back, pattern="^back$"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, food_search)],
             STATE_REM_DURATION: [
                 CallbackQueryHandler(rem_add_duration, pattern="^(dur_|back)")],
             STATE_COUNTRY: [
@@ -1405,7 +1655,7 @@ def build_conv():
                 CallbackQueryHandler(pick_lang, pattern="^lang_")],
             STATE_MAIN_MENU: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
-                CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_)")],
+                CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_)")],
             STATE_BMI_WEIGHT: [
                 CallbackQueryHandler(bmi_cb, pattern="^bmi_"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, bmi_text)],
