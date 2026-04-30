@@ -988,6 +988,7 @@ async def main_cb(u, ctx):
 async def drug_search_image(u, ctx):
     """البحث عن دواء عبر الصورة"""
     lang = get_lang(ctx)
+    logger.info(f"KEY CHECK: len={len(ANTHROPIC_API_KEY)}, val={ANTHROPIC_API_KEY[:10] if ANTHROPIC_API_KEY else NONE}")
     if not ANTHROPIC_API_KEY:
         await u.message.reply_text(tx("no_api", lang), reply_markup=kb_back(lang))
         return STATE_DRUG_SEARCH
