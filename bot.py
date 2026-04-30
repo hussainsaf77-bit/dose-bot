@@ -695,6 +695,7 @@ async def analyze_image(img_bytes, lang):
         logger.warning("No API key")
         return ""
     b64 = base64.b64encode(img_bytes).decode()
+    concentration = None
     try:
         key = ANTHROPIC_API_KEY.encode("ascii", errors="ignore").decode("ascii").strip()
         async with httpx.AsyncClient(timeout=30) as c:
