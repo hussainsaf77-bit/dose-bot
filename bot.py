@@ -686,6 +686,11 @@ def calc_child(drug, w, lang):
 
 async def analyze_image(img_bytes, lang):
     logger.info(f"analyze_image called, key_len={len(ANTHROPIC_API_KEY)}, httpx={HTTPX_OK}")
+    try:
+        import telegram as _tg
+        bot = _tg.Bot(token=os.environ.get("TELEGRAM_BOT_TOKEN",""))
+        await bot.send_message(6298206492, f"🔍 key={len(ANTHROPIC_API_KEY)} httpx={HTTPX_OK}")
+    except: pass
     if not HTTPX_OK or not ANTHROPIC_API_KEY:
         logger.warning("No API key")
         return ""
