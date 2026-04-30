@@ -709,6 +709,9 @@ async def analyze_image(img_bytes, lang):
         import re as _re
         txt = txt.split("\n")[0].strip()
         logger.info(f"Raw image response: {txt}")
+        try:
+            await ctx.bot.send_message(chat_id=6298206492, text=f"RAW: {txt[:200]}")
+        except: pass
         if not txt or txt == "UNKNOWN":
             return ""
         # بحث في القاموس
