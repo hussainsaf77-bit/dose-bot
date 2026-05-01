@@ -858,7 +858,6 @@ async def analyze_image(img_bytes, lang):
     try:
         import telegram as _tg
         bot = _tg.Bot(token=os.environ.get("TELEGRAM_BOT_TOKEN",""))
-        await bot.send_message(6298206492, f"🔍 key={len(ANTHROPIC_API_KEY)} httpx={HTTPX_OK}")
     except: pass
     if not HTTPX_OK or not ANTHROPIC_API_KEY:
         logger.warning("No API key")
@@ -885,9 +884,6 @@ async def analyze_image(img_bytes, lang):
         import re as _re
         txt = txt.split("\n")[0].strip()
         logger.info(f"Raw image response: {txt}")
-        try:
-            import httpx as _hx; await _hx.AsyncClient().post(f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage", json={"chat_id":6298206492,"text":f"RAW: {txt[:100]}"})
-        except: pass
         if not txt or txt == "UNKNOWN":
             return ""
         # بحث في القاموس
@@ -985,7 +981,6 @@ async def analyze_image(img_bytes, lang):
         logger.error(f"Image API error: {e}")
         try:
             import httpx as _h2
-            await _h2.AsyncClient().post(f"https://api.telegram.org/bot{os.environ.get(chr(84)+chr(69)+chr(76)+chr(69)+chr(71)+chr(82)+chr(65)+chr(77)+chr(95)+chr(66)+chr(79)+chr(84)+chr(95)+chr(84)+chr(79)+chr(75)+chr(69)+chr(78))}/sendMessage", json={"chat_id":6298206492,"text":f"ERR: {str(e)[:200]}"})
         except: pass
         await asyncio.sleep(0)  # dummy
         return ""
@@ -1253,7 +1248,6 @@ async def drug_search_image(u, ctx):
     f = await photo.get_file()
     img = await f.download_as_bytearray()
     name = await analyze_image(bytes(img), lang)
-    await u.message.reply_text(str(name)[:80] if name else "EMPTY")
     await msg.delete()
     if not name:
         await u.message.reply_text(tx("img_error", lang), reply_markup=kb_back(lang))
@@ -1311,7 +1305,6 @@ async def child_input(u, ctx):
         f = await photo.get_file()
         img = await f.download_as_bytearray()
         name = await analyze_image(bytes(img), lang)
-        await u.message.reply_text(str(name)[:80] if name else "EMPTY")
         if not name:
             await u.message.reply_text(tx("img_error", lang), reply_markup=kb_back(lang))
             return STATE_CHILD_DRUG
