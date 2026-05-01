@@ -144,9 +144,9 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_BMI_WEIGHT, STATE_BMI_HEIGHT,
  STATE_BMI_AGE, STATE_BMI_DRUG,
  STATE_CHILD_CONC, STATE_PREMIUM,
- STATE_COUNTRY, STATE_REM_DURATION,
+ STATE_COUNTRY, STATE_REM_DURATION, STATE_INFECTION_SITE,
  STATE_CAL_GENDER, STATE_CAL_AGE, STATE_CAL_WEIGHT, STATE_CAL_HEIGHT, STATE_CAL_ACTIVITY, STATE_CAL_DISEASE,
- STATE_FOOD_SEARCH) = range(27)
+ STATE_FOOD_SEARCH, STATE_INFECTION_SITE) = range(28)
 
 TEXTS = {
 "ar": {
@@ -800,6 +800,60 @@ ACTIVITY_FACTORS = {
     "5": 1.9,   # رياضي
 }
 
+
+# جرعات المضادات الحيوية حسب موقع الالتهاب (مغ/كغ/يوم)
+ANTIBIOTIC_DOSES = {
+    "amoxicillin": {
+        "ear": (40, 45, 3, "التهاب الأذن والحلق"),
+        "lung": (45, 90, 3, "التهاب الرئة"),
+        "urinary": (20, 40, 3, "التهاب المسالك البولية"),
+        "skin": (25, 50, 3, "التهاب الجلد"),
+        "general": (20, 40, 3, "عام"),
+    },
+    "amoxicillin_clavulanate": {
+        "ear": (40, 45, 2, "التهاب الأذن والحلق"),
+        "lung": (45, 90, 2, "التهاب الرئة"),
+        "urinary": (25, 45, 2, "التهاب المسالك البولية"),
+        "skin": (25, 45, 2, "التهاب الجلد"),
+        "general": (25, 45, 2, "عام"),
+    },
+    "azithromycin": {
+        "ear": (10, 10, 1, "التهاب الأذن والحلق"),
+        "lung": (10, 10, 1, "التهاب الرئة"),
+        "skin": (10, 10, 1, "التهاب الجلد"),
+        "general": (10, 10, 1, "عام"),
+    },
+    "clarithromycin": {
+        "ear": (7.5, 15, 2, "التهاب الأذن والحلق"),
+        "lung": (7.5, 15, 2, "التهاب الرئة"),
+        "skin": (7.5, 15, 2, "التهاب الجلد"),
+        "general": (7.5, 15, 2, "عام"),
+    },
+    "cephalexin": {
+        "ear": (12.5, 25, 4, "التهاب الأذن والحلق"),
+        "urinary": (12.5, 25, 4, "التهاب المسالك البولية"),
+        "skin": (12.5, 25, 4, "التهاب الجلد"),
+        "general": (12.5, 25, 4, "عام"),
+    },
+}
+
+INFECTION_SITES = {
+    "ar": [
+        ("ear", "👂 أذن / حلق / جيوب"),
+        ("lung", "🫁 رئة / صدر"),
+        ("urinary", "🫘 مسالك بولية"),
+        ("skin", "🩹 جلد / جروح"),
+        ("general", "🔵 عام"),
+    ],
+    "en": [
+        ("ear", "👂 Ear / Throat / Sinus"),
+        ("lung", "🫁 Lung / Chest"),
+        ("urinary", "🫘 Urinary Tract"),
+        ("skin", "🩹 Skin / Wound"),
+        ("general", "🔵 General"),
+    ]
+}
+
 async def analyze_image(img_bytes, lang):
     logger.info(f"analyze_image called, key_len={len(ANTHROPIC_API_KEY)}, httpx={HTTPX_OK}")
     try:
@@ -1311,6 +1365,16 @@ async def child_weight(u, ctx):
         await show_main(u.message, lang)
         return STATE_MAIN_MENU
     ctx.user_data["child_weight"] = w
+    # نتحقق إذا كان مضاد حيوي
+    name_key = d.get("name_en","").lower()
+    if name_key in ANTIBIOTIC_DOSES:
+        sites = INFECTION_SITES.get(lang, INFECTION_SITES["ar"])
+        available = [(k,v) for k,v in sites if k in ANTIBIOTIC_DOSES[name_key]]
+        btns = [[InlineKeyboardButton(v, callback_data=f"site_{k}")] for k,v in available]
+        btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
+        msg = "🦠 مكان الالتهاب؟" if lang=="ar" else "🦠 Infection site?"
+        await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup(btns))
+        return STATE_INFECTION_SITE
     # تراكيز شائعة لكل دواء
     DRUG_CONCS = {
         "paracetamol": ["120mg/5ml", "125mg/5ml", "160mg/5ml", "250mg/5ml"],
@@ -1542,6 +1606,50 @@ async def food_search(u, ctx):
     await u.message.reply_text(msg, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
     return STATE_FOOD_SEARCH
 
+async def infection_site(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    if q.data == "back": return await go_back(u, ctx)
+    site = q.data.replace("site_", "")
+    d = ctx.user_data.get("child_drug")
+    w = ctx.user_data.get("child_weight", 0)
+    name_key = d.get("name_en","").lower()
+    doses = ANTIBIOTIC_DOSES.get(name_key, {}).get(site, ANTIBIOTIC_DOSES.get(name_key, {}).get("general"))
+    if doses:
+        min_mpk, max_mpk, freq, site_name = doses
+        t_min = min_mpk * w / freq
+        t_max = max_mpk * w / freq
+        conc_str = d.get("concentration", "250mg/5ml")
+        import re as _re4
+        _mc = _re4.search(r"([\d.]+)mg/([\d.]+)ml", conc_str)
+        conc = float(_mc.group(1)) / float(_mc.group(2)) * 5 if _mc else 50
+        ml_min = (t_min / conc) * 5
+        ml_max = (t_max / conc) * 5
+        name_ar = d.get("name_ar", d.get("name_en", ""))
+        if lang == "ar":
+            msg = "🍼 جرعة الطفل - " + str(name_ar) + "\n"
+            msg += "⚖️ الوزن: " + str(w) + " كغ\n"
+            msg += "🦠 " + str(site_name) + "\n\n"
+
+            msg += "📊 " + str(min_mpk) + "-" + str(max_mpk) + " مغ/كغ/يوم ÷ " + str(freq) + "\n"
+            msg += "💉 الجرعة: " + str(int(t_min)) + "-" + str(int(t_max)) + " مغ\n"
+            msg += "🥄 بالمل (" + conc_str + "): " + str(round(ml_min,1)) + "-" + str(round(ml_max,1)) + " مل\n\n"
+
+            msg += "🔁 التكرار: " + str(freq) + " مرات يومياً\n"
+            msg += "⚠️ استشر الطبيب أو الصيدلاني."
+        else:
+            msg = "🍼 Child Dose - " + str(name_key) + "\n"
+            msg += "Weight: " + str(w) + "kg | " + str(site_name) + "\n\n"
+
+            msg += str(min_mpk) + "-" + str(max_mpk) + " mg/kg/day\n"
+            msg += "Dose: " + str(int(t_min)) + "-" + str(int(t_max)) + " mg\n"
+            msg += "In ml (" + conc_str + "): " + str(round(ml_min,1)) + "-" + str(round(ml_max,1)) + " ml\n\n"
+
+            msg += "Frequency: " + str(freq) + " times/day\n"
+            msg += "⚠️ Consult doctor or pharmacist."
+        await q.message.edit_text(msg, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+    return STATE_CHILD_WEIGHT
+
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -1765,6 +1873,9 @@ def build_conv():
             STATE_FOOD_SEARCH: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, food_search)],
+            STATE_INFECTION_SITE: [
+                CallbackQueryHandler(go_back, pattern="^back$"),
+                CallbackQueryHandler(infection_site, pattern="^site_")],
             STATE_REM_DURATION: [
                 CallbackQueryHandler(rem_add_duration, pattern="^(dur_|back)")],
             STATE_COUNTRY: [
