@@ -8,10 +8,8 @@ try:
     SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
     SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
     supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_URL and SUPABASE_KEY else None
-    logger.info(f"Supabase: {'✅ متصل' if supabase_client else '❌ غير متصل'}")
 except Exception as e:
     supabase_client = None
-    logger.warning(f"Supabase not available: {e}")
 TIMEZONE = pytz.timezone("Asia/Riyadh")
 
 # قاموس الدول والمناطق الزمنية
