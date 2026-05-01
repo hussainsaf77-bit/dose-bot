@@ -904,12 +904,17 @@ def kb_remind(lang):
 
 REMINDERS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reminders.json")
 
+# نحفظ في ملف JSON محلي
 def load_all_reminders():
     try:
         with open(REMINDERS_FILE, encoding="utf-8") as f:
             return json.load(f)
     except:
-        return {}
+        try:
+            with open("/tmp/reminders_backup.json", encoding="utf-8") as f:
+                return json.load(f)
+        except:
+            return {}
 
 def save_all_reminders(data):
     try:
@@ -917,6 +922,11 @@ def save_all_reminders(data):
             json.dump(data, f, ensure_ascii=False, indent=2)
     except Exception as e:
         logger.error(f"reminders save error: {e}")
+    # نحفظ نسخة احتياطية في /tmp
+    try:
+        with open("/tmp/reminders_backup.json", "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except: pass
 
 def get_rems(ctx):
     uid = str(ctx._user_id if hasattr(ctx, "_user_id") else
