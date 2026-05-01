@@ -3,6 +3,15 @@
 import json, os, re, logging, asyncio, base64
 from datetime import datetime
 import pytz
+try:
+    from supabase import create_client
+    SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
+    SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
+    supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_URL and SUPABASE_KEY else None
+    logger.info(f"Supabase: {'✅ متصل' if supabase_client else '❌ غير متصل'}")
+except Exception as e:
+    supabase_client = None
+    logger.warning(f"Supabase not available: {e}")
 TIMEZONE = pytz.timezone("Asia/Riyadh")
 
 # قاموس الدول والمناطق الزمنية
@@ -906,15 +915,20 @@ REMINDERS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "remin
 
 # نحفظ في ملف JSON محلي
 def load_all_reminders():
+    # نحاول من Supabase أولاً
+    if supabase_client:
+        try:
+            res = supabase_client.table("reminders").select("data").eq("id", "all").execute()
+            if res.data:
+                return json.loads(res.data[0]["data"])
+        except Exception as e:
+            logger.error(f"Supabase load error: {e}")
+    # نقرأ من الملف المحلي
     try:
         with open(REMINDERS_FILE, encoding="utf-8") as f:
             return json.load(f)
     except:
-        try:
-            with open("/tmp/reminders_backup.json", encoding="utf-8") as f:
-                return json.load(f)
-        except:
-            return {}
+        return {}
 
 def save_all_reminders(data):
     try:
@@ -922,11 +936,13 @@ def save_all_reminders(data):
             json.dump(data, f, ensure_ascii=False, indent=2)
     except Exception as e:
         logger.error(f"reminders save error: {e}")
-    # نحفظ نسخة احتياطية في /tmp
-    try:
-        with open("/tmp/reminders_backup.json", "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-    except: pass
+    # نحفظ في Supabase
+    if supabase_client:
+        try:
+            supabase_client.table("reminders").upsert({"id": "all", "data": json.dumps(data, ensure_ascii=False)}).execute()
+            logger.info("✅ Supabase save ok")
+        except Exception as e:
+            logger.error(f"Supabase save error: {e}")
 
 def get_rems(ctx):
     uid = str(ctx._user_id if hasattr(ctx, "_user_id") else
