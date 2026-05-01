@@ -838,7 +838,63 @@ async def analyze_image(img_bytes, lang):
         if not txt or txt == "UNKNOWN":
             return ""
         # بحث في القاموس
-        ARABIC_MAP = {"medicine label analysis":"unknown","i can see":"unknown","i can read":"unknown","looking at":"unknown","this appears":"unknown","the label":"unknown","ibuprofen suspension":"ibuprofen","ibuprofen oral suspension":"ibuprofen","ibuprofen syrup":"ibuprofen","ibuprofen 100mg":"ibuprofen","ibuprofen 200mg":"ibuprofen","ibuprofen ds":"ibuprofen","brufen suspension":"ibuprofen","brufen syrup":"ibuprofen","nurofen suspension":"ibuprofen","أيبوبروفين معلق":"ibuprofen","إيبوبروفين معلق":"ibuprofen","أيبوبروفين شراب":"ibuprofen","ايبوبروفين للاطفال":"ibuprofen","ايبوبروفين للأطفال":"ibuprofen","ibuprofen for children":"ibuprofen","children ibuprofen":"ibuprofen","prof syrup":"ibuprofen","prof suspension":"ibuprofen","prof oral":"ibuprofen","prof":"ibuprofen","Prof":"ibuprofen","بروف":"ibuprofen","ibuprofen":"ibuprofen","ibuprofen ds":"ibuprofen","ibuprofen oral":"ibuprofen","nurofen":"ibuprofen","Nurofen":"ibuprofen","نيوروفين":"ibuprofen","نيورفين":"ibuprofen","brufen":"ibuprofen","Brufen":"ibuprofen","advil":"ibuprofen","sabfen":"ibuprofen","سابوفين":"ibuprofen","أيبوبروفين":"ibuprofen","ايبوبروفين":"ibuprofen","إيبوبروفين":"ibuprofen","باراسيتامول":"paracetamol","بنادول":"paracetamol","بانادول":"paracetamol","panadol":"paracetamol","إيبوبروفين":"ibuprofen","نيوروفين":"ibuprofen","نيورفين":"ibuprofen","nurofen":"ibuprofen","نيوروفين للأطفال":"ibuprofen","بروف":"ibuprofen","brufen":"ibuprofen","برووف":"ibuprofen","سابوفين":"ibuprofen","sabfen":"ibuprofen","advil":"ibuprofen","أدفيل":"ibuprofen","ibufen":"ibuprofen","أيبوفين":"ibuprofen","calprofen":"ibuprofen","junifen":"ibuprofen","أيبوبروفين":"ibuprofen","ايبوبروفين":"ibuprofen","إيبوبروفين":"ibuprofen","ibuprofen":"ibuprofen","nurofen":"ibuprofen","brufen":"ibuprofen","أموكسيسيلين":"amoxicillin","amoxil":"amoxicillin","ميترونيدازول":"metronidazole","فلاجيل":"metronidazole","أزيثروميسين":"azithromycin","زيثروماكس":"azithromycin","سيتيريزين":"cetirizine","زيرتيك":"cetirizine","لوراتادين":"loratadine","كلاريتين":"loratadine","هيوسين":"hyoscine_butylbromide","سكوبينال":"hyoscine_butylbromide","buscopan":"hyoscine_butylbromide","سالبيوتامول":"salbutamol","فنتولين":"salbutamol","ميتفورمين":"metformin","جلوكوفاج":"metformin","كلاريثروميسين":"clarithromycin","كلاسيد":"clarithromycin","بريدنيزولون":"prednisolone","أوندانسيترون":"ondansetron","زوفران":"ondansetron","فيفادول":"paracetamol","فيفا دول":"paracetamol","vifadol":"paracetamol","adol":"paracetamol","أدول":"paracetamol","calpol":"paracetamol","كالبول":"paracetamol","tylenol":"paracetamol","تايلينول":"paracetamol","tempra":"paracetamol","تمبرا":"paracetamol","febricol":"paracetamol","فيبريكول":"paracetamol","dymadon":"paracetamol","فارفيكس":"paracetamol","farfex":"paracetamol","فيفا دول":"paracetamol","vifadol":"paracetamol","دومبي":"domperidone","dompy":"domperidone","dompé":"domperidone","سكوبينال":"hyoscine_butylbromide","scobinal":"hyoscine_butylbromide","hyoscine butylbromide":"hyoscine_butylbromide","نيوروفين":"ibuprofen","نيورفين":"ibuprofen","nurofen":"ibuprofen","نيوروفين للأطفال":"ibuprofen","بروف":"ibuprofen","brufen":"ibuprofen","برووف":"ibuprofen","سابوفين":"ibuprofen","sabfen":"ibuprofen","advil":"ibuprofen","أدفيل":"ibuprofen","ibufen":"ibuprofen","أيبوفين":"ibuprofen","calprofen":"ibuprofen","junifen":"ibuprofen","أيبوبروفين":"ibuprofen","ايبوبروفين":"ibuprofen","إيبوبروفين":"ibuprofen","ibuprofen":"ibuprofen","nurofen for children":"ibuprofen","فنتولين":"salbutamol","ventolin syrup":"salbutamol","salbutamol syrup":"salbutamol","أوجمنتين":"amoxicillin_clavulanate","augmentin":"amoxicillin_clavulanate","كلافوموكس":"amoxicillin_clavulanate","زيناتا":"cefuroxime","زينات":"cefuroxime","بروف":"ibuprofen","brufen":"ibuprofen","برووف":"ibuprofen","دومبي":"domperidone","دوم بي":"domperidone","domperidone":"domperidone","دومبيريدون":"domperidone"}
+        ARABIC_MAP = {
+                # أموكسيسيلين
+                "amoxicillin":"amoxicillin","أموكسيسيلين":"amoxicillin","اموكسيسيلين":"amoxicillin",
+                "amoxil":"amoxicillin","أموكسيل":"amoxicillin","flumox":"amoxicillin","فلوموكس":"amoxicillin",
+                "trimox":"amoxicillin","ospamox":"amoxicillin","أوسباموكس":"amoxicillin",
+                # أوجمنتين
+                "augmentin":"amoxicillin_clavulanate","أوجمنتين":"amoxicillin_clavulanate",
+                "amoxiclav":"amoxicillin_clavulanate","كلافوموكس":"amoxicillin_clavulanate",
+                "clavamox":"amoxicillin_clavulanate","أموكسيكلاف":"amoxicillin_clavulanate",
+                # أزيثروميسين
+                "azithromycin":"azithromycin","أزيثروميسين":"azithromycin","ازيثروميسين":"azithromycin",
+                "zithromax":"azithromycin","زيثروماكس":"azithromycin","azithral":"azithromycin",
+                "أزيثرال":"azithromycin","zmax":"azithromycin","sumamed":"azithromycin",
+                # كلاريثروميسين
+                "clarithromycin":"clarithromycin","كلاريثروميسين":"clarithromycin",
+                "klacid":"clarithromycin","كلاسيد":"clarithromycin","klaricid":"clarithromycin",
+                "biaxin":"clarithromycin","بياكسين":"clarithromycin",
+                # سيفالكسين
+                "cephalexin":"cephalexin","سيفالكسين":"cephalexin","كيفلكس":"cephalexin",
+                "keflex":"cephalexin","cefalexin":"cephalexin","ospexin":"cephalexin",
+                # سيتيريزين
+                "cetirizine":"cetirizine","سيتيريزين":"cetirizine","زيرتيك":"cetirizine",
+                "zyrtec":"cetirizine","citriz":"cetirizine","سيتريكس":"cetirizine",
+                "reactine":"cetirizine","alerid":"cetirizine",
+                # لوراتادين
+                "loratadine":"loratadine","لوراتادين":"loratadine","كلاريتين":"loratadine",
+                "claritin":"loratadine","claritine":"loratadine","loratin":"loratadine",
+                "لوراتا":"loratadine","clarityn":"loratadine",
+                # ديسلوراتادين
+                "desloratadine":"desloratadine","ديسلوراتادين":"desloratadine",
+                "aerius":"desloratadine","إيريوس":"desloratadine","neoclarityn":"desloratadine",
+                # ليفوسيتيريزين
+                "levocetirizine":"levocetirizine","ليفوسيتيريزين":"levocetirizine",
+                "xyzal":"levocetirizine","زيزال":"levocetirizine",
+                # أوندانسيترون
+                "ondansetron":"ondansetron","أوندانسيترون":"ondansetron","زوفران":"ondansetron",
+                "zofran":"ondansetron","onseran":"ondansetron","ونسيران":"ondansetron",
+                # ميتوكلوبراميد
+                "metoclopramide":"metoclopramide","ميتوكلوبراميد":"metoclopramide",
+                "maxolon":"metoclopramide","ماكسولون":"metoclopramide","primperan":"metoclopramide",
+                # بريدنيزولون
+                "prednisolone":"prednisolone","بريدنيزولون":"prednisolone",
+                "solupred":"prednisolone","سولوبريد":"prednisolone","deltacortril":"prednisolone",
+                "ديلتاكورتريل":"prednisolone","prednisolone syrup":"prednisolone",
+                # سالبيوتامول
+                "salbutamol":"salbutamol","سالبيوتامول":"salbutamol",
+                "ventolin":"salbutamol","فنتولين":"salbutamol","albuterol":"salbutamol",
+                "ventolin syrup":"salbutamol","salbutamol syrup":"salbutamol",
+                # فلوكونازول
+                "fluconazole":"fluconazole","فلوكونازول":"fluconazole",
+                "diflucan":"fluconazole","ديفلوكان":"fluconazole","flucoral":"fluconazole",
+                # برومهيكسين
+                "bromhexine":"bromhexine","برومهيكسين":"bromhexine","bisolvon":"bromhexine",
+                "بيسولفون":"bromhexine","bromhexine syrup":"bromhexine",
+                # أمبروكسول
+                "ambroxol":"ambroxol","أمبروكسول":"ambroxol","mucosolvan":"ambroxol",
+                "ميوكوسولفان":"ambroxol","ambroxol syrup":"ambroxol","medicine label analysis":"unknown","i can see":"unknown","i can read":"unknown","looking at":"unknown","this appears":"unknown","the label":"unknown","ibuprofen suspension":"ibuprofen","ibuprofen oral suspension":"ibuprofen","ibuprofen syrup":"ibuprofen","ibuprofen 100mg":"ibuprofen","ibuprofen 200mg":"ibuprofen","ibuprofen ds":"ibuprofen","brufen suspension":"ibuprofen","brufen syrup":"ibuprofen","nurofen suspension":"ibuprofen","أيبوبروفين معلق":"ibuprofen","إيبوبروفين معلق":"ibuprofen","أيبوبروفين شراب":"ibuprofen","ايبوبروفين للاطفال":"ibuprofen","ايبوبروفين للأطفال":"ibuprofen","ibuprofen for children":"ibuprofen","children ibuprofen":"ibuprofen","prof syrup":"ibuprofen","prof suspension":"ibuprofen","prof oral":"ibuprofen","prof":"ibuprofen","Prof":"ibuprofen","بروف":"ibuprofen","ibuprofen":"ibuprofen","ibuprofen ds":"ibuprofen","ibuprofen oral":"ibuprofen","nurofen":"ibuprofen","Nurofen":"ibuprofen","نيوروفين":"ibuprofen","نيورفين":"ibuprofen","brufen":"ibuprofen","Brufen":"ibuprofen","advil":"ibuprofen","sabfen":"ibuprofen","سابوفين":"ibuprofen","أيبوبروفين":"ibuprofen","ايبوبروفين":"ibuprofen","إيبوبروفين":"ibuprofen","باراسيتامول":"paracetamol","بنادول":"paracetamol","بانادول":"paracetamol","panadol":"paracetamol","إيبوبروفين":"ibuprofen","نيوروفين":"ibuprofen","نيورفين":"ibuprofen","nurofen":"ibuprofen","نيوروفين للأطفال":"ibuprofen","بروف":"ibuprofen","brufen":"ibuprofen","برووف":"ibuprofen","سابوفين":"ibuprofen","sabfen":"ibuprofen","advil":"ibuprofen","أدفيل":"ibuprofen","ibufen":"ibuprofen","أيبوفين":"ibuprofen","calprofen":"ibuprofen","junifen":"ibuprofen","أيبوبروفين":"ibuprofen","ايبوبروفين":"ibuprofen","إيبوبروفين":"ibuprofen","ibuprofen":"ibuprofen","nurofen":"ibuprofen","brufen":"ibuprofen","أموكسيسيلين":"amoxicillin","amoxil":"amoxicillin","ميترونيدازول":"metronidazole","فلاجيل":"metronidazole","أزيثروميسين":"azithromycin","زيثروماكس":"azithromycin","سيتيريزين":"cetirizine","زيرتيك":"cetirizine","لوراتادين":"loratadine","كلاريتين":"loratadine","هيوسين":"hyoscine_butylbromide","سكوبينال":"hyoscine_butylbromide","buscopan":"hyoscine_butylbromide","سالبيوتامول":"salbutamol","فنتولين":"salbutamol","ميتفورمين":"metformin","جلوكوفاج":"metformin","كلاريثروميسين":"clarithromycin","كلاسيد":"clarithromycin","بريدنيزولون":"prednisolone","أوندانسيترون":"ondansetron","زوفران":"ondansetron","فيفادول":"paracetamol","فيفا دول":"paracetamol","vifadol":"paracetamol","adol":"paracetamol","أدول":"paracetamol","calpol":"paracetamol","كالبول":"paracetamol","tylenol":"paracetamol","تايلينول":"paracetamol","tempra":"paracetamol","تمبرا":"paracetamol","febricol":"paracetamol","فيبريكول":"paracetamol","dymadon":"paracetamol","فارفيكس":"paracetamol","farfex":"paracetamol","فيفا دول":"paracetamol","vifadol":"paracetamol","دومبي":"domperidone","dompy":"domperidone","dompé":"domperidone","سكوبينال":"hyoscine_butylbromide","scobinal":"hyoscine_butylbromide","hyoscine butylbromide":"hyoscine_butylbromide","نيوروفين":"ibuprofen","نيورفين":"ibuprofen","nurofen":"ibuprofen","نيوروفين للأطفال":"ibuprofen","بروف":"ibuprofen","brufen":"ibuprofen","برووف":"ibuprofen","سابوفين":"ibuprofen","sabfen":"ibuprofen","advil":"ibuprofen","أدفيل":"ibuprofen","ibufen":"ibuprofen","أيبوفين":"ibuprofen","calprofen":"ibuprofen","junifen":"ibuprofen","أيبوبروفين":"ibuprofen","ايبوبروفين":"ibuprofen","إيبوبروفين":"ibuprofen","ibuprofen":"ibuprofen","nurofen for children":"ibuprofen","فنتولين":"salbutamol","ventolin syrup":"salbutamol","salbutamol syrup":"salbutamol","أوجمنتين":"amoxicillin_clavulanate","augmentin":"amoxicillin_clavulanate","كلافوموكس":"amoxicillin_clavulanate","زيناتا":"cefuroxime","زينات":"cefuroxime","بروف":"ibuprofen","brufen":"ibuprofen","برووف":"ibuprofen","دومبي":"domperidone","دوم بي":"domperidone","domperidone":"domperidone","دومبيريدون":"domperidone"}
         for _k, _v in ARABIC_MAP.items():
             if _k in txt or _k.lower() in txt.lower():
                 txt = _v
