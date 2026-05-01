@@ -1647,6 +1647,23 @@ async def infection_site(u, ctx):
 
             msg += "Frequency: " + str(freq) + " times/day\n"
             msg += "⚠️ Consult doctor or pharmacist."
+        # نسأل عن التركيز
+        DRUG_CONCS_LOCAL = {
+            "amoxicillin": ["125mg/5ml", "156mg/5ml", "250mg/5ml", "312mg/5ml"],
+            "amoxicillin_clavulanate": ["156mg/5ml", "228mg/5ml", "312mg/5ml", "457mg/5ml", "600mg/5ml"],
+            "azithromycin": ["100mg/5ml", "200mg/5ml"],
+            "clarithromycin": ["125mg/5ml", "250mg/5ml"],
+            "cephalexin": ["125mg/5ml", "250mg/5ml"],
+        }
+        concs = DRUG_CONCS_LOCAL.get(name_key, [])
+        ctx.user_data["infection_msg"] = msg
+        if concs:
+            btns = [[InlineKeyboardButton(c, callback_data="conc_" + c)] for c in concs]
+            btns.append([InlineKeyboardButton("🔢 تركيز آخر" if lang=="ar" else "🔢 Other", callback_data="conc_custom")])
+            btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
+            cmsg = "💊 اختر التركيز:" if lang=="ar" else "💊 Select concentration:"
+            await q.message.edit_text(cmsg, reply_markup=InlineKeyboardMarkup(btns))
+            return STATE_CHILD_CONC
         await q.message.edit_text(msg, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
     return STATE_CHILD_WEIGHT
 
