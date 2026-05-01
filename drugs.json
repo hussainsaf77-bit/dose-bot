@@ -28228,5 +28228,16 @@
     "interactions_en": "Sugammadex (antidote), Aminoglycosides",
     "renal": "احتياط",
     "renal_dose": "Use with caution - prolonged effect"
+  },
+  {
+    "name_en": "domperidone",
+    "name_ar": "دومبيريدون",
+    "aliases": "دومبي, dompy, motilium",
+    "pediatric_min_mg_per_kg": 0.2,
+    "pediatric_max_mg_per_kg": 0.4,
+    "pediatric_frequency": "قبل الوجبات 3 مرات يومياً",
+    "pediatric_frequency_en": "3 times daily before meals",
+    "concentration": "5mg/5ml",
+    "max_daily_pediatric": 2.4
   }
 ]
