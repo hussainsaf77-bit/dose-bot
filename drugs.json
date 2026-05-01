@@ -11629,9 +11629,9 @@
       "أموكسيسيلين/كلافولانيت"
     ],
     "pediatric_mg_per_kg": "20-45",
-    "pediatric_min_mg_per_kg": 5,
-    "pediatric_max_mg_per_kg": 15,
-    "pediatric_frequency": "كل 12 ساعة",
+    "pediatric_min_mg_per_kg": 25,
+    "pediatric_max_mg_per_kg": 45,
+    "pediatric_frequency": "مرتين يومياً",
     "adult_dose_min": 500,
     "adult_dose_max": 875,
     "adult_frequency": "كل 12 ساعة",
@@ -11688,7 +11688,7 @@
     "drug_class_en": "مضاد حيوي / بنسلين + مثبط بيتا لاكتاماز",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
-    "pediatric_frequency_en": "every 12 hours",
+    "pediatric_frequency_en": "Twice daily",
     "adult_frequency_en": "every 12 hours",
     "contraindications_en": [
       "حساسية البنسلين",

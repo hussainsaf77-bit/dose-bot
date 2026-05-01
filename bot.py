@@ -378,7 +378,7 @@ def search_drugs(q):
         "tylenol":"paracetamol","adol":"paracetamol","كالبول":"paracetamol",
         "nurofen":"ibuprofen","نوروفين":"ibuprofen","advil":"ibuprofen",
         "brufen":"ibuprofen","بروفين":"ibuprofen","motrin":"ibuprofen",
-        "augmentin":"amoxicillin_clavulanate","أوجمنتين":"amoxicillin_clavulanate",
+        "augmentin":"amoxicillin_clavulanate","أوجمنتين":"amoxicillin_clavulanate","كلافوكس":"amoxicillin_clavulanate","clavox":"amoxicillin_clavulanate","كلافاموكس":"amoxicillin_clavulanate","clavamox":"amoxicillin_clavulanate","كو-أموكسيكلاف":"amoxicillin_clavulanate","co-amoxiclav":"amoxicillin_clavulanate","كلافولانيك":"amoxicillin_clavulanate",
         "amoxil":"amoxicillin","أموكسيل":"amoxicillin",
         "zithromax":"azithromycin","زيثروماكس":"azithromycin",
         "glucophage":"metformin","جلوكوفاج":"metformin",
