@@ -107,9 +107,9 @@
       "اموكسيسلين"
     ],
     "pediatric_mg_per_kg": 20,
-    "pediatric_min_mg_per_kg": 15,
-    "pediatric_max_mg_per_kg": 25,
-    "pediatric_frequency": "3 مرات يوميًا",
+    "pediatric_min_mg_per_kg": 6.7,
+    "pediatric_max_mg_per_kg": 13.3,
+    "pediatric_frequency": "3 مرات يومياً",
     "adult_dose_min": 500,
     "adult_dose_max": 875,
     "adult_frequency": "2-3 مرات يوميًا",
@@ -11629,8 +11629,8 @@
       "أموكسيسيلين/كلافولانيت"
     ],
     "pediatric_mg_per_kg": "20-45",
-    "pediatric_min_mg_per_kg": 25,
-    "pediatric_max_mg_per_kg": 45,
+    "pediatric_min_mg_per_kg": 12.5,
+    "pediatric_max_mg_per_kg": 22.5,
     "pediatric_frequency": "مرتين يومياً",
     "adult_dose_min": 500,
     "adult_dose_max": 875,
@@ -21696,10 +21696,10 @@
     "aliases": "amoxicillin clavulanate, co-amoxiclav",
     "drug_class": "Antibiotic",
     "drug_class_en": "Antibiotic",
-    "pediatric_min_mg_per_kg": 25,
-    "pediatric_max_mg_per_kg": 45,
-    "pediatric_frequency": "كل 8-12 ساعة",
-    "pediatric_frequency_en": "Every 8-12 hours",
+    "pediatric_min_mg_per_kg": 12.5,
+    "pediatric_max_mg_per_kg": 22.5,
+    "pediatric_frequency": "مرتين يومياً",
+    "pediatric_frequency_en": "Twice daily",
     "adult_dose_min": 500,
     "adult_dose_max": 875,
     "adult_frequency": "Twice daily",
@@ -21717,7 +21717,8 @@
     "interactions": "Warfarin, Methotrexate",
     "interactions_en": "Warfarin, Methotrexate",
     "renal": "Reduce dose if GFR<30",
-    "renal_dose": "Reduce dose if GFR<30"
+    "renal_dose": "Reduce dose if GFR<30",
+    "concentration": "457mg/5ml"
   },
   {
     "name_en": "zithromax",
