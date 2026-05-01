@@ -838,7 +838,7 @@ async def analyze_image(img_bytes, lang):
         if not txt or txt == "UNKNOWN":
             return ""
         # بحث في القاموس
-        ARABIC_MAP = {"دولوبي":"domperidone","dolopi":"domperidone","dolopy":"domperidone","دومبي":"domperidone","dompy":"domperidone","motilium":"domperidone","موتيليوم":"domperidone","دوميريدون":"domperidone",
+        ARABIC_MAP = {"دولوبي":"domperidone","موتيلين":"domperidone","motilene":"domperidone","موتيليوم":"domperidone","motilium":"domperidone","بروكينين":"domperidone","prokineen":"domperidone","دومبيريدون":"domperidone","domperidone":"domperidone","دوميبيريدون":"domperidone","دوم بي":"domperidone","dolopi":"domperidone","dolopy":"domperidone","دومبي":"domperidone","dompy":"domperidone","motilium":"domperidone","موتيليوم":"domperidone","دوميريدون":"domperidone",
                 # أموكسيسيلين
                 "amoxicillin":"amoxicillin","أموكسيسيلين":"amoxicillin","اموكسيسيلين":"amoxicillin",
                 "amoxil":"amoxicillin","أموكسيل":"amoxicillin","flumox":"amoxicillin","فلوموكس":"amoxicillin",
