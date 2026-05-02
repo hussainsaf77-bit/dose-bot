@@ -25101,7 +25101,7 @@
     "drug_class_en": "2nd Generation Antihistamine",
     "pediatric_min_mg_per_kg": 0,
     "pediatric_max_mg_per_kg": 0,
-    "pediatric_frequency": "6-11 شهر: 1مغ / 1-5 سنة: 1.25مغ / 6-11: 2.5مغ مرة يومياً",
+    "pediatric_frequency": "مرة يومياً",
     "pediatric_frequency_en": "6-11mo: 1mg / 1-5yr: 1.25mg / 6-11yr: 2.5mg once daily",
     "adult_dose_min": 5,
     "adult_dose_max": 5,
@@ -25121,7 +25121,13 @@
     "interactions_en": "Few known",
     "renal": "تعديل الجرعة",
     "renal_dose": "Every other day if GFR<50",
-    "concentration": "0.5mg/ml"
+    "concentration": "0.5mg/ml",
+    "fixed_dose": true,
+    "age_doses": {
+      "1-5": "1.25mg (2.5ml)",
+      "6-11": "2.5mg (5ml)",
+      "12+": "5mg (10ml)"
+    }
   },
   {
     "name_en": "levocetirizine",
@@ -25131,7 +25137,7 @@
     "drug_class_en": "2nd Generation Antihistamine",
     "pediatric_min_mg_per_kg": 0,
     "pediatric_max_mg_per_kg": 0,
-    "pediatric_frequency": "6 أشهر-5 سنة: 1.25مغ / 6-11: 2.5مغ مرة مساءً",
+    "pediatric_frequency": "مرة يومياً",
     "pediatric_frequency_en": "6mo-5yr: 1.25mg / 6-11yr: 2.5mg once in evening",
     "adult_dose_min": 5,
     "adult_dose_max": 5,
@@ -25151,7 +25157,13 @@
     "interactions_en": "Few known",
     "renal": "تعديل الجرعة",
     "renal_dose": "Reduce dose based on GFR",
-    "concentration": "0.5mg/ml"
+    "concentration": "0.5mg/ml",
+    "fixed_dose": true,
+    "age_doses": {
+      "2-5": "1.25mg (2.5ml)",
+      "6-11": "2.5mg (5ml)",
+      "12+": "5mg (10ml)"
+    }
   },
   {
     "name_en": "bilastine",
