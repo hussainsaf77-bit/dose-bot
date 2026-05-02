@@ -884,6 +884,7 @@ async def analyze_image(img_bytes, lang):
         import re as _re
         txt = txt.split("\n")[0].strip()
         logger.info(f"Raw image response: {txt}")
+        await u.message.reply_text("RAW: " + str(txt[:100]))
         if not txt or txt == "UNKNOWN":
             return ""
         # بحث في القاموس
