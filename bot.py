@@ -1102,10 +1102,10 @@ async def send_alert(ctx):
         if attempt > 1: msg += "\n\n🔔 Reminder #" + str(attempt)
         btn_done = "✅ Done"
         btn_later = "⏳ Remind in 15 min"
-    job_id = str(chat_id) + "_" + str(drug)
+    job_id = str(chat_id)
     btns = InlineKeyboardMarkup([
         [InlineKeyboardButton(btn_done, callback_data="rem_done_" + job_id)],
-        [InlineKeyboardButton(btn_later, callback_data="rem_snooze_" + job_id)],
+        [InlineKeyboardButton(btn_later, callback_data="rem_snooze_" + job_id + "_" + str(drug))],
     ])
 
     try:
@@ -1142,10 +1142,10 @@ async def rem_later(update, ctx):
     """المستخدم ضغط لاحقاً - يجدول تذكيراً بعد 15 دقيقة"""
     q = update.callback_query
     await q.answer()
-    job_id = q.data.replace("rem_snooze_", "")
-    parts = job_id.split("_")
+    raw = q.data.replace("rem_snooze_", "")
+    parts = raw.split("_", 1)
     chat_id = int(parts[0]) if parts[0].isdigit() else q.message.chat_id
-    drug = "_".join(parts[1:]) if len(parts) > 1 else "دواء"
+    drug = parts[1] if len(parts) > 1 else "دواء"
     lang = "ar"
     msg = "⏳ سيُذكّرك البوت بعد 15 دقيقة." if lang=="ar" else "⏳ Reminder set for 15 minutes."
     await q.message.edit_text(msg)
