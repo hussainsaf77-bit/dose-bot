@@ -1126,14 +1126,25 @@ async def rem_done(update, ctx):
             job.schedule_removal()
 
 async def rem_later(update, ctx):
-    """المستخدم ضغط لاحقاً"""
+    """المستخدم ضغط لاحقاً - يجدول تذكيراً بعد 15 دقيقة"""
     q = update.callback_query
     await q.answer()
-    parts = q.data.split("_")
-    drug = parts[3] if len(parts) > 3 else "دواء"
-    lang = parts[4] if len(parts) > 4 else "ar"
+    job_id = q.data.replace("rem_snooze_", "")
+    parts = job_id.split("_")
+    chat_id = int(parts[0]) if parts[0].isdigit() else q.message.chat_id
+    drug = "_".join(parts[1:]) if len(parts) > 1 else "دواء"
+    lang = "ar"
     msg = "⏳ سيُذكّرك البوت بعد 15 دقيقة." if lang=="ar" else "⏳ Reminder set for 15 minutes."
     await q.message.edit_text(msg)
+    # نجدول تذكيراً بعد 15 دقيقة
+    from datetime import timedelta
+    next_time = datetime.now(TIMEZONE) + timedelta(minutes=15)
+    ctx.application.job_queue.run_once(
+        send_alert,
+        when=next_time,
+        data={"chat_id": chat_id, "drug": drug, "lang": lang, "attempt": 1},
+        name="snooze_" + str(chat_id) + "_" + str(drug)
+    )
 
 def sched(app, chat_id, drug, time_str, freq, lang, tz_str="Asia/Riyadh"):
     try:
