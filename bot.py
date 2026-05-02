@@ -1042,7 +1042,6 @@ def save_all_reminders(data):
     if supabase_client:
         try:
             supabase_client.table("reminders").upsert({"id": "all", "data": json.dumps(data, ensure_ascii=False)}).execute()
-            logger.info("✅ Supabase save ok - rows: " + str(len(data)))
         except Exception as e:
             logger.error(f"Supabase save error: {e}")
 
