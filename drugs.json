@@ -28252,5 +28252,43 @@
     "pediatric_frequency_en": "3 times daily before meals",
     "concentration": "5mg/5ml",
     "max_daily_pediatric": 2.4
+  },
+  {
+    "name_en": "chlorpheniramine",
+    "name_ar": "كلورفينيرامين",
+    "aliases": "كولداكت, coldact, piriton, بيريتون",
+    "pediatric_min_mg_per_kg": 0.35,
+    "pediatric_max_mg_per_kg": 0.5,
+    "pediatric_frequency": "3-4 مرات يومياً",
+    "concentration": "2mg/5ml",
+    "max_daily_pediatric": 12
+  },
+  {
+    "name_en": "triprolidine_pseudoephedrine",
+    "name_ar": "تريبروليدين + سودوإيفيدرين",
+    "aliases": "أكتيفيد, actifed, triominic",
+    "pediatric_min_mg_per_kg": 0,
+    "pediatric_max_mg_per_kg": 0,
+    "pediatric_frequency": "3 مرات يومياً",
+    "concentration": "1.25mg/30mg/5ml",
+    "age_doses": {
+      "2-5": "2.5ml",
+      "6-12": "5ml",
+      "12+": "10ml"
+    }
+  },
+  {
+    "name_en": "salbutamol_bromhexine",
+    "name_ar": "سالبيوتامول + برومهيكسين",
+    "aliases": "برونكوليتين, broncholisin, ventolin bromhexine",
+    "pediatric_min_mg_per_kg": 0,
+    "pediatric_max_mg_per_kg": 0,
+    "pediatric_frequency": "3 مرات يومياً",
+    "concentration": "2mg/4mg/5ml",
+    "age_doses": {
+      "2-6": "2.5ml",
+      "6-12": "5ml",
+      "12+": "10ml"
+    }
   }
 ]
