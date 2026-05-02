@@ -1142,7 +1142,7 @@ async def rem_later(update, ctx):
     ctx.application.job_queue.run_once(
         send_alert,
         when=next_time,
-        data={"chat_id": chat_id, "drug": drug, "lang": lang, "attempt": 1},
+        data={"chat_id": chat_id, "drug": drug, "lang": lang, "attempt": 1, "is_retry": True},
         name="snooze_" + str(chat_id) + "_" + str(drug)
     )
 
