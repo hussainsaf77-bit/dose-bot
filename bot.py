@@ -1074,14 +1074,66 @@ def fmt_rems(rems, lang):
 
 async def send_alert(ctx):
     d = ctx.job.data
-    msg = tx("alert", d["lang"]).format(drug=d["drug"])
-    await ctx.bot.send_message(d["chat_id"], msg, parse_mode=ParseMode.MARKDOWN)
-    if os.path.exists(REMINDER_SOUND):
-        try:
-            with open(REMINDER_SOUND, "rb") as f:
-                await ctx.bot.send_audio(d["chat_id"], f)
-        except:
-            pass
+    lang = d.get("lang", "ar")
+    drug = d.get("drug", "")
+    chat_id = d.get("chat_id")
+    attempt = d.get("attempt", 1)
+    
+    if lang == "ar":
+        msg = "⏰ تذكير الدواء\n\n💊 حان وقت دواء: " + drug
+        if attempt > 1: msg += "\n\n🔔 تذكير رقم " + str(attempt)
+        btn_done = "✅ تم إعطاء الدواء"
+        btn_later = "⏳ لاحقاً (15 دقيقة)"
+    else:
+        msg = "⏰ Medication Reminder\n\n💊 Time for: " + drug
+        if attempt > 1: msg += "\n\n🔔 Reminder #" + str(attempt)
+        btn_done = "✅ Done"
+        btn_later = "⏳ Remind in 15 min"
+    job_id = str(chat_id) + "_" + str(drug)
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton(btn_done, callback_data="rem_done_" + job_id)],
+        [InlineKeyboardButton(btn_later, callback_data="rem_snooze_" + job_id)],
+    ])
+
+    try:
+        await ctx.bot.send_message(chat_id, msg, reply_markup=btns, parse_mode=ParseMode.MARKDOWN)
+    except Exception as e:
+        logger.error(f"send_alert error: {e}")
+    
+    # إذا لم يُستجب وعدد المحاولات أقل من 3 — نجدول تذكيراً بعد 15 دقيقة
+    if attempt < 3:
+        from datetime import timedelta
+        next_time = datetime.now(TIMEZONE) + timedelta(minutes=15)
+        new_data = dict(d)
+        new_data["attempt"] = attempt + 1
+        ctx.job.application.job_queue.run_once(
+            send_alert,
+            when=next_time,
+            data=new_data,
+            name="alert_" + str(chat_id) + "_" + str(drug) + "_retry" + str(attempt)        )
+
+async def rem_done(update, ctx):
+    """المستخدم ضغط تم"""
+    q = update.callback_query
+    await q.answer()
+    lang = "ar" if "ar" in str(q.data) else "en"
+    msg = "✅ تم! الجرعة التالية ستُذكّرك في وقتها." if lang=="ar" else "✅ Done! Next dose reminder is set."
+    await q.message.edit_text(msg)
+    # نلغي التذكيرات الإضافية
+    job_id = q.data.replace("rem_done_", "")
+    for job in ctx.job_queue.jobs():
+        if "retry" in job.name and job_id.split("_")[0] in job.name:
+            job.schedule_removal()
+
+async def rem_later(update, ctx):
+    """المستخدم ضغط لاحقاً"""
+    q = update.callback_query
+    await q.answer()
+    parts = q.data.split("_")
+    drug = parts[3] if len(parts) > 3 else "دواء"
+    lang = parts[4] if len(parts) > 4 else "ar"
+    msg = "⏳ سيُذكّرك البوت بعد 15 دقيقة." if lang=="ar" else "⏳ Reminder set for 15 minutes."
+    await q.message.edit_text(msg)
 
 def sched(app, chat_id, drug, time_str, freq, lang, tz_str="Asia/Riyadh"):
     try:
@@ -2269,6 +2321,8 @@ def main():
     persistence = PicklePersistence(filepath="bot_data.pkl")
     app = Application.builder().token(BOT_TOKEN).persistence(persistence).build()
     app.add_handler(build_conv())
+    app.add_handler(CallbackQueryHandler(rem_done, pattern="^rem_done_"))
+    app.add_handler(CallbackQueryHandler(rem_later, pattern="^rem_snooze_"))
     app.add_handler(CommandHandler("stats", stats_cmd))
     app.add_handler(PreCheckoutQueryHandler(pre_checkout))
     app.add_handler(MessageHandler(filters.SUCCESSFUL_PAYMENT, successful_payment))
