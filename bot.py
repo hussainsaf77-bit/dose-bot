@@ -1064,10 +1064,16 @@ def get_rems(ctx):
 
 def save_rems(ctx):
     try:
-        uid = str(ctx.effective_user.id) if hasattr(ctx, "effective_user") and ctx.effective_user else "0"
+        if hasattr(ctx, "effective_user") and ctx.effective_user:
+            uid = str(ctx.effective_user.id)
+        elif hasattr(ctx, "_user_id"):
+            uid = str(ctx._user_id)
+        else:
+            uid = ctx.user_data.get("uid", "0")
         all_rems = load_all_reminders()
         all_rems[uid] = ctx.user_data.get("reminders", [])
         save_all_reminders(all_rems)
+        logger.info(f"save_rems: uid={uid}, count={len(all_rems[uid])}")
     except Exception as e:
         logger.error(f"save_rems error: {e}")
 
