@@ -1337,11 +1337,11 @@ async def drug_search_image(u, ctx):
         return STATE_DRUG_SEARCH
     res = search_drugs(name)
     if not res:
-        await u.message.reply_text("📸 " + name + chr(10) + chr(10) + tx("not_found", lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+        await u.message.reply_text("📸 " + name + "\n\n" + tx("not_found", lang), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("✏️ " + ("الدواء خطأ؟ اكتب الاسم" if lang=="ar" else "Wrong drug? Type name"), callback_data="manual_input")], [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]), parse_mode=ParseMode.MARKDOWN)
         return STATE_DRUG_SEARCH
     track(u, "searches")
     if len(res) == 1:
-        await u.message.reply_text("📸 " + name + chr(10) + chr(10) + fmt_drug(res[0], lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+        await u.message.reply_text("📸 " + name + "\n\n" + fmt_drug(res[0], lang), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("✏️ " + ("الدواء خطأ؟ اكتب الاسم" if lang=="ar" else "Wrong drug? Type name"), callback_data="manual_input")], [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]), parse_mode=ParseMode.MARKDOWN)
         return STATE_DRUG_SEARCH
     btns = [[InlineKeyboardButton(
         str(d.get("name_ar" if lang=="ar" else "name_en", "?")),
