@@ -1046,12 +1046,20 @@ def save_all_reminders(data):
             logger.error(f"Supabase save error: {e}")
 
 def get_rems(ctx):
-    uid = str(ctx._user_id if hasattr(ctx, "_user_id") else
-              ctx.effective_user.id if hasattr(ctx, "effective_user") and ctx.effective_user else "0")
+    try:
+        if hasattr(ctx, "effective_user") and ctx.effective_user:
+            uid = str(ctx.effective_user.id)
+        elif hasattr(ctx, "_user_id"):
+            uid = str(ctx._user_id)
+        else:
+            uid = str(ctx.user_data.get("uid", "0"))
+    except:
+        uid = "0"
     all_rems = load_all_reminders()
     if uid not in all_rems:
         all_rems[uid] = ctx.user_data.get("reminders", [])
     ctx.user_data["reminders"] = all_rems[uid]
+    ctx.user_data["uid"] = uid
     return ctx.user_data.setdefault("reminders", [])
 
 def save_rems(ctx):
