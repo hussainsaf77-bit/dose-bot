@@ -887,7 +887,7 @@ async def analyze_image(img_bytes, lang):
         if not txt or txt == "UNKNOWN":
             return ""
         # بحث في القاموس
-        ARABIC_MAP = {"دولوبي":"domperidone","موتيلين":"domperidone","motilene":"domperidone","موتيليوم":"domperidone","motilium":"domperidone","بروكينين":"domperidone","prokineen":"domperidone","دومبيريدون":"domperidone","domperidone":"domperidone","دوميبيريدون":"domperidone","دوم بي":"domperidone","dolopi":"domperidone","dolopy":"domperidone","دومبي":"domperidone","dompy":"domperidone","motilium":"domperidone","موتيليوم":"domperidone","دوميريدون":"domperidone",
+        ARABIC_MAP = {"aerius":"desloratadine","neoclarityn":"desloratadine","إيريوس":"desloratadine","xyzal":"levocetirizine","زيزال":"levocetirizine","ليفوسيتيريزين":"levocetirizine","ديسلوراتادين":"desloratadine","دولوبي":"domperidone","موتيلين":"domperidone","motilene":"domperidone","موتيليوم":"domperidone","motilium":"domperidone","بروكينين":"domperidone","prokineen":"domperidone","دومبيريدون":"domperidone","domperidone":"domperidone","دوميبيريدون":"domperidone","دوم بي":"domperidone","dolopi":"domperidone","dolopy":"domperidone","دومبي":"domperidone","dompy":"domperidone","motilium":"domperidone","موتيليوم":"domperidone","دوميريدون":"domperidone",
                 # أموكسيسيلين
                 "amoxicillin":"amoxicillin","أموكسيسيلين":"amoxicillin","اموكسيسيلين":"amoxicillin",
                 "amoxil":"amoxicillin","أموكسيل":"amoxicillin","flumox":"amoxicillin","فلوموكس":"amoxicillin",
@@ -950,6 +950,13 @@ async def analyze_image(img_bytes, lang):
                 break
                 # بحث ذكي في الكلمات المُرجعة
 
+        # تصحيح خاص للأدوية المتشابهة
+        BRAND_OVERRIDE = {}
+        raw_lower = txt.lower()
+        if "aerius" in raw_lower or "neoclarityn" in raw_lower:
+            txt = "desloratadine|0.5mg/ml"
+        elif "xyzal" in raw_lower:
+            txt = "levocetirizine|0.5mg/ml"
         drug_name = txt.split("|")[0].strip().lower()
         if "|" in txt:
             parts = txt.split("|", 1)
