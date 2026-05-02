@@ -1741,6 +1741,13 @@ async def infection_site(u, ctx):
         await q.message.edit_text(msg, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
     return STATE_CHILD_WEIGHT
 
+async def manual_drug_input(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    msg = "✏️ اكتب اسم الدواء:" if lang=="ar" else "✏️ Type the drug name:"
+    await q.message.edit_text(msg)
+    return STATE_CHILD_DRUG
+
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -1975,7 +1982,7 @@ def build_conv():
                 CallbackQueryHandler(pick_lang, pattern="^lang_")],
             STATE_MAIN_MENU: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
-                CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_)")],
+                CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_)"), CallbackQueryHandler(manual_drug_input, pattern="^manual_input$")],
             STATE_BMI_WEIGHT: [
                 CallbackQueryHandler(bmi_cb, pattern="^bmi_"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, bmi_text)],
