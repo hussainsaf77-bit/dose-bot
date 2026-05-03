@@ -1991,6 +1991,9 @@ def build_conv():
             STATE_LANGUAGE: [
                 CallbackQueryHandler(pick_lang, pattern="^lang_")],
             STATE_MAIN_MENU: [
+                CallbackQueryHandler(rem_done, pattern="^rem_done_"),
+                CallbackQueryHandler(rem_later, pattern="^rem_snooze_"),
+
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_)"), CallbackQueryHandler(manual_drug_input, pattern="^manual_input$")],
             STATE_BMI_WEIGHT: [
