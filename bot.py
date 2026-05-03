@@ -1339,6 +1339,7 @@ async def main_cb(u, ctx):
         if not is_premium(uid):
             await q.message.edit_text(tx("not_premium", lang), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
             return STATE_MAIN_MENU
+        await q.message.edit_text("💉 أدخل قراءة الضغط مثال: 120/80" if lang=="ar" else "💉 Enter BP example: 120/80", reply_markup=kb_back(lang))
         return STATE_BP
     elif q.data == "m_settings":
         kb = InlineKeyboardMarkup([
