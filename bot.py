@@ -1856,25 +1856,35 @@ async def bp_result(u, ctx):
         return STATE_BP
 
     if sys < 90 or dia < 60:
-        status = "⚠️ منخفض" if lang=="ar" else "⚠️ Low BP"
+        status = "⚠️ انخفاض الضغط" if lang=="ar" else "⚠️ Low Blood Pressure"
+        advice = "اشرب ماء واستلقِ، راجع الطبيب إذا استمر." if lang=="ar" else "Drink water, lie down. See doctor if it persists."
         color = "🔵"
     elif sys < 120 and dia < 80:
-        status = "✅ طبيعي ممتاز" if lang=="ar" else "✅ Optimal"
+        status = "✅ ضغط طبيعي ممتاز" if lang=="ar" else "✅ Optimal BP"
+        advice = "ممتاز! حافظ على نمط حياة صحي." if lang=="ar" else "Excellent! Maintain healthy lifestyle."
         color = "🟢"
     elif sys < 130 and dia < 80:
-        status = "✅ طبيعي" if lang=="ar" else "✅ Normal"
+        status = "✅ ضغط طبيعي" if lang=="ar" else "✅ Normal BP"
+        advice = "جيد. استمر على النظام الصحي." if lang=="ar" else "Good. Continue healthy habits."
         color = "🟢"
-    elif sys < 140 or dia < 90:
-        status = "🟡 مرتفع قليلاً" if lang=="ar" else "🟡 Elevated"
+    elif sys < 140 and dia < 90:
+        status = "🟡 ارتفاع خفيف (مرحلة 1)" if lang=="ar" else "🟡 Mild Hypertension (Stage 1)"
+        advice = "قلل الملح والدهون، مارس الرياضة، راقب الضغط يومياً وراجع الطبيب." if lang=="ar" else "Reduce salt and fat, exercise regularly, monitor daily and see doctor."
         color = "🟡"
     elif sys < 160 or dia < 100:
-        status = "🔴 ارتفاع ضغط مرحلة 1" if lang=="ar" else "🔴 Hypertension Stage 1"
+        status = "🔴 ارتفاع متوسط (مرحلة 2)" if lang=="ar" else "🔴 Moderate Hypertension (Stage 2)"
+        advice = "راجع الطبيب فوراً. قد تحتاج دواءً لضبط الضغط." if lang=="ar" else "See doctor soon. Medication may be required."
         color = "🔴"
-    else:
-        status = "🚨 ارتفاع ضغط شديد" if lang=="ar" else "🚨 Hypertension Stage 2"
+    elif sys < 180 or dia < 120:
+        status = "🚨 ارتفاع شديد (مرحلة 3)" if lang=="ar" else "🚨 Severe Hypertension (Stage 3)"
+        advice = "راجع الطبيب اليوم! خطر على القلب والكلى." if lang=="ar" else "See doctor today! Risk of heart and kidney damage."
         color = "🚨"
+    else:
+        status = "🆘 أزمة ضغط خبيثة" if lang=="ar" else "🆘 Hypertensive Crisis"
+        advice = "اذهب للطوارئ فوراً!" if lang=="ar" else "Go to emergency immediately!"
+        color = "🆘"
 
-    msg = color + " الضغط: " + str(sys) + "/" + str(dia) + " mmHg\n" + status
+    msg = color + " الضغط: " + str(sys) + "/" + str(dia) + " mmHg\n" + status + "\n\n💡 " + advice
     await u.message.reply_text(msg, reply_markup=kb_back(lang))
     return STATE_MAIN_MENU
 
