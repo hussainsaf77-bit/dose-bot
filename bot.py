@@ -1394,11 +1394,11 @@ async def child_input(u, ctx):
         res = search_drugs(name)
         if not res:
             await u.message.reply_text(f"📸 *{name}*\n\n" + tx("not_found", lang),
-                reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("✏️ الدواء خطأ؟ اكتب الاسم", callback_data="manual_input")],[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])), parse_mode=ParseMode.MARKDOWN)
             return STATE_CHILD_DRUG
         ctx.user_data["child_drug"] = res[0]
         await u.message.reply_text(f"📸 *{name}*\n\n" + tx("weight_prompt", lang),
-            reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("✏️ الدواء خطأ؟ اكتب الاسم", callback_data="manual_input")],[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])), parse_mode=ParseMode.MARKDOWN)
         return STATE_CHILD_WEIGHT
     res = search_drugs(u.message.text)
     if not res:
