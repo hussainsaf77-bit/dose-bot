@@ -146,7 +146,7 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_CHILD_CONC, STATE_PREMIUM,
  STATE_COUNTRY, STATE_REM_DURATION, STATE_INFECTION_SITE,
  STATE_CAL_GENDER, STATE_CAL_AGE, STATE_CAL_WEIGHT, STATE_CAL_HEIGHT, STATE_CAL_ACTIVITY, STATE_CAL_DISEASE,
- STATE_FOOD_SEARCH, STATE_SUGAR, STATE_BP) = range(30)
+ STATE_FOOD_SEARCH, STATE_SUGAR, STATE_BP, STATE_BP_AGE) = range(31)
 
 TEXTS = {
 "ar": {
@@ -1339,8 +1339,8 @@ async def main_cb(u, ctx):
         if not is_premium(uid):
             await q.message.edit_text(tx("not_premium", lang), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
             return STATE_MAIN_MENU
-        await q.message.edit_text("💉 أدخل قراءة الضغط مثال: 120/80" if lang=="ar" else "💉 Enter BP example: 120/80", reply_markup=kb_back(lang))
-        return STATE_BP
+        await q.message.edit_text("👤 كم عمرك؟" if lang=="ar" else "👤 How old are you?", reply_markup=kb_back(lang))
+        return STATE_BP_AGE
     elif q.data == "m_settings":
         kb = InlineKeyboardMarkup([
             [InlineKeyboardButton(tx("change_lang", lang), callback_data="do_lang")],
@@ -1845,8 +1845,21 @@ async def sugar_result(u, ctx):
     await u.message.reply_text(msg, reply_markup=kb_back(lang))
     return STATE_MAIN_MENU
 
+async def bp_age(u, ctx):
+    lang = get_lang(ctx)
+    try:
+        age = int(u.message.text.strip())
+        if not 1 <= age <= 120: raise ValueError
+    except:
+        await u.message.reply_text("❌ أدخل عمراً صحيحاً" if lang=="ar" else "❌ Enter valid age")
+        return STATE_BP_AGE
+    ctx.user_data["bp_age"] = age
+    await u.message.reply_text("💉 أدخل قراءة الضغط مثال: 120/80" if lang=="ar" else "💉 Enter BP example: 120/80")
+    return STATE_BP
+
 async def bp_result(u, ctx):
     lang = get_lang(ctx)
+    age = ctx.user_data.get("bp_age", 40)
     try:
         parts = u.message.text.strip().replace(" ", "").split("/")
         sys = int(parts[0])
@@ -1854,6 +1867,9 @@ async def bp_result(u, ctx):
     except:
         await u.message.reply_text("❌ صيغة خاطئة. مثال: 120/80" if lang=="ar" else "❌ Wrong format. Example: 120/80")
         return STATE_BP
+    # تعديل حدود الضغط حسب العمر
+    normal_sys = 110 + (age // 10) if age > 40 else 120
+    age_note = " (عمر: " + str(age) + " سنة)" if lang=="ar" else " (Age: " + str(age) + " yr)"
 
     if sys < 90 or dia < 60:
         status = "⚠️ انخفاض الضغط" if lang=="ar" else "⚠️ Low Blood Pressure"
@@ -2118,6 +2134,9 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(sugar_handler, pattern="^sugar_"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, sugar_result)],
+            STATE_BP_AGE: [
+                CallbackQueryHandler(go_back, pattern="^back$"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, bp_age)],
             STATE_BP: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, bp_result)],
