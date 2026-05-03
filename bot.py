@@ -1874,7 +1874,7 @@ async def bp_result(u, ctx):
         status = "🚨 ارتفاع ضغط شديد" if lang=="ar" else "🚨 Hypertension Stage 2"
         color = "🚨"
 
-        msg = color + " الضغط: " + str(sys) + "/" + str(dia) + " mmHg\n" + status
+    msg = color + " الضغط: " + str(sys) + "/" + str(dia) + " mmHg\n" + status
     await u.message.reply_text(msg, reply_markup=kb_back(lang))
     return STATE_MAIN_MENU
 
