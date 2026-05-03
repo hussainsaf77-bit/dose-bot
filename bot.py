@@ -1871,6 +1871,38 @@ async def bp_result(u, ctx):
     normal_sys = 110 + (age // 10) if age > 40 else 120
     age_note = " (عمر: " + str(age) + " سنة)" if lang=="ar" else " (Age: " + str(age) + " yr)"
 
+    # معايير الأطفال حسب العمر
+    if age < 18:
+        if age < 6:
+            norm_sys, norm_dia = 100, 65
+        elif age < 10:
+            norm_sys, norm_dia = 110, 70
+        elif age < 13:
+            norm_sys, norm_dia = 115, 75
+        else:
+            norm_sys, norm_dia = 120, 80
+
+        if sys < norm_sys - 20 or dia < norm_dia - 10:
+            status = "⚠️ انخفاض الضغط" if lang=="ar" else "⚠️ Low BP"
+            advice = "راجع الطبيب." if lang=="ar" else "See doctor."
+            color = "🔵"
+        elif sys <= norm_sys and dia <= norm_dia:
+            status = "✅ طبيعي للعمر" if lang=="ar" else "✅ Normal for age"
+            advice = "ممتاز!" if lang=="ar" else "Excellent!"
+            color = "🟢"
+        elif sys <= norm_sys + 10:
+            status = "🟡 مرتفع قليلاً" if lang=="ar" else "🟡 Slightly High"
+            advice = "راقب الضغط وراجع الطبيب." if lang=="ar" else "Monitor and see doctor."
+            color = "🟡"
+        else:
+            status = "🔴 مرتفع - راجع الطبيب" if lang=="ar" else "🔴 High - See doctor"
+            advice = "راجع الطبيب فوراً." if lang=="ar" else "See doctor immediately."
+            color = "🔴"
+
+        msg = color + " الضغط: " + str(sys) + "/" + str(dia) + " mmHg" + age_note + "\n" + status + "\n\n💡 " + advice
+        await u.message.reply_text(msg, reply_markup=kb_back(lang))
+        return STATE_MAIN_MENU
+
     if sys < 90 or dia < 60:
         status = "⚠️ انخفاض الضغط" if lang=="ar" else "⚠️ Low Blood Pressure"
         advice = "اشرب ماء واستلقِ، راجع الطبيب إذا استمر." if lang=="ar" else "Drink water, lie down. See doctor if it persists."
