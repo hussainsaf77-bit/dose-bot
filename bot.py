@@ -1147,7 +1147,7 @@ async def send_alert(ctx):
 async def rem_done(update, ctx):
     """المستخدم ضغط تم"""
     q = update.callback_query
-    await q.answer()
+    await q.answer("✅ تم تسجيل الجرعة", show_alert=True)
     lang = "ar" if "ar" in str(q.data) else "en"
     msg = "✅ تم! الجرعة التالية ستُذكّرك في وقتها." if lang=="ar" else "✅ Done! Next dose reminder is set."
     await q.message.edit_text(msg)
@@ -1160,7 +1160,7 @@ async def rem_done(update, ctx):
 async def rem_later(update, ctx):
     """المستخدم ضغط لاحقاً - يجدول تذكيراً بعد 15 دقيقة"""
     q = update.callback_query
-    await q.answer()
+    await q.answer("⏳ سيتم تذكيرك بعد 15 دقيقة", show_alert=True)
     raw = q.data.replace("rem_snooze_", "")
     parts = raw.split("_", 1)
     chat_id = int(parts[0]) if parts[0].isdigit() else q.message.chat_id
