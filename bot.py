@@ -2040,10 +2040,13 @@ async def restore_reminders(app):
     all_rems = load_all_reminders()
     count = 0
     for uid, rems in all_rems.items():
+        if uid == "0" or not uid.isdigit():
+            continue
         for r in rems:
             try:
                 lang = "ar"
-                sched(app, int(uid), r["drug"], r["time"], r["freq"], lang)
+                tz = r.get("tz", "Asia/Riyadh")
+                sched(app, int(uid), r["drug"], r["time"], r["freq"], lang, tz)
                 count += 1
             except Exception as e:
                 logger.error(f"restore reminder error: {e}")
