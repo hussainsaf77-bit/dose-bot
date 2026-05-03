@@ -146,7 +146,7 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_CHILD_CONC, STATE_PREMIUM,
  STATE_COUNTRY, STATE_REM_DURATION, STATE_INFECTION_SITE,
  STATE_CAL_GENDER, STATE_CAL_AGE, STATE_CAL_WEIGHT, STATE_CAL_HEIGHT, STATE_CAL_ACTIVITY, STATE_CAL_DISEASE,
- STATE_FOOD_SEARCH) = range(28)
+ STATE_FOOD_SEARCH, STATE_SUGAR, STATE_BP) = range(30)
 
 TEXTS = {
 "ar": {
@@ -177,6 +177,8 @@ TEXTS = {
 "not_premium": "⭐ هذه الميزة للمشتركين المميزين فقط.\nاضغط لمعرفة المزيد:",
 "btn_bmi": "📊 الوزن المثالي (BMI)",
 "btn_cal": "🔥 حاسبة السعرات",
+"btn_sugar": "🩸 ⭐ قراءة السكر",
+"btn_bp": "💉 ⭐ قراءة الضغط",
 "bmi_prompt_weight": "⚖️ أدخل وزن الطفل بالكيلوغرام:",
 "bmi_prompt_height": "📏 أدخل طول الطفل بالسنتيمتر:",
 "bmi_prompt_age": "🎂 أدخل عمر الطفل بالسنوات:",
@@ -252,6 +254,8 @@ TEXTS = {
 "not_premium": "⭐ This feature is for premium subscribers only.\nTap to learn more:",
 "btn_bmi": "📊 Ideal Weight (BMI)",
 "btn_cal": "🔥 Calorie Calculator",
+"btn_sugar": "🩸 ⭐ Blood Sugar",
+"btn_bp": "💉 ⭐ Blood Pressure",
 "bmi_prompt_weight": "⚖️ Enter child weight in kg:",
 "bmi_prompt_height": "📏 Enter child height in cm:",
 "bmi_prompt_age": "🎂 Enter child age in years:",
@@ -1016,6 +1020,8 @@ def kb_main(lang):
         [InlineKeyboardButton(tx("btn_child", lang), callback_data="m_child")],
         [InlineKeyboardButton(tx("btn_bmi", lang), callback_data="m_bmi")],
         [InlineKeyboardButton(tx("btn_cal", lang), callback_data="m_cal")],
+        [InlineKeyboardButton(tx("btn_sugar", lang), callback_data="m_sugar")],
+        [InlineKeyboardButton(tx("btn_bp", lang), callback_data="m_bp")],
         [InlineKeyboardButton(tx("btn_remind", lang), callback_data="m_remind")],
         [InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],
         [InlineKeyboardButton(tx("btn_settings", lang), callback_data="m_settings")]])
@@ -1316,6 +1322,24 @@ async def main_cb(u, ctx):
 
 
         return STATE_CAL_GENDER
+    elif q.data == "m_sugar":
+        uid = u.effective_user.id
+        if not is_premium(uid):
+            await q.message.edit_text(tx("not_premium", lang), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
+            return STATE_MAIN_MENU
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🌅 سكر الصيام" if lang=="ar" else "🌅 Fasting", callback_data="sugar_fasting")],
+            [InlineKeyboardButton("🍽️ بعد الأكل" if lang=="ar" else "🍽️ Post-meal", callback_data="sugar_postmeal")],
+            [InlineKeyboardButton("📊 HbA1c تراكمي" if lang=="ar" else "📊 HbA1c", callback_data="sugar_hba1c")],
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]])
+        await q.message.edit_text("🩸 اختر نوع قراءة السكر:" if lang=="ar" else "🩸 Select sugar reading type:", reply_markup=btns)
+        return STATE_SUGAR
+    elif q.data == "m_bp":
+        uid = u.effective_user.id
+        if not is_premium(uid):
+            await q.message.edit_text(tx("not_premium", lang), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
+            return STATE_MAIN_MENU
+        return STATE_BP
     elif q.data == "m_settings":
         kb = InlineKeyboardMarkup([
             [InlineKeyboardButton(tx("change_lang", lang), callback_data="do_lang")],
@@ -1758,6 +1782,101 @@ async def manual_drug_input(u, ctx):
     await q.message.edit_text(msg)
     return STATE_CHILD_DRUG
 
+
+async def sugar_handler(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    ctx.user_data["sugar_type"] = q.data
+    msgs = {
+        "sugar_fasting": "🌅 أدخل قراءة سكر الصيام (mg/dL):" if lang=="ar" else "🌅 Enter fasting sugar (mg/dL):",
+        "sugar_postmeal": "🍽️ أدخل قراءة السكر بعد الأكل (mg/dL):" if lang=="ar" else "🍽️ Enter post-meal sugar (mg/dL):",
+        "sugar_hba1c": "📊 أدخل قيمة HbA1c (%):" if lang=="ar" else "📊 Enter HbA1c (%):",
+    }
+    await q.message.edit_text(msgs.get(q.data, "أدخل القراءة:"))
+    return STATE_SUGAR
+
+async def sugar_result(u, ctx):
+    lang = get_lang(ctx)
+    sugar_type = ctx.user_data.get("sugar_type", "sugar_fasting")
+    try:
+        val = float(u.message.text.strip())
+    except:
+        await u.message.reply_text("❌ أدخل رقماً صحيحاً" if lang=="ar" else "❌ Enter valid number")
+        return STATE_SUGAR
+
+    if sugar_type == "sugar_fasting":
+        if val < 70:
+            status = "⚠️ منخفض - Hypoglycemia" if lang=="ar" else "⚠️ Low - Hypoglycemia"
+            color = "🔴"
+        elif val <= 100:
+            status = "✅ طبيعي" if lang=="ar" else "✅ Normal"
+            color = "🟢"
+        elif val <= 125:
+            status = "🟡 ما قبل السكري" if lang=="ar" else "🟡 Pre-diabetes"
+            color = "🟡"
+        else:
+            status = "🔴 مرتفع - سكري" if lang=="ar" else "🔴 High - Diabetes"
+            color = "🔴"
+        msg = color + " سكر الصيام: " + str(val) + " mg/dL\n" + status
+
+    elif sugar_type == "sugar_postmeal":
+        if val < 140:
+            status = "✅ طبيعي" if lang=="ar" else "✅ Normal"
+            color = "🟢"
+        elif val <= 199:
+            status = "🟡 ما قبل السكري" if lang=="ar" else "🟡 Pre-diabetes"
+            color = "🟡"
+        else:
+            status = "🔴 مرتفع - سكري" if lang=="ar" else "🔴 High - Diabetes"
+            color = "🔴"
+        msg = color + " سكر ما بعد الأكل: " + str(val) + " mg/dL\n" + status
+
+    else:  # hba1c
+        avg = round((val * 28.7) - 46.7, 1)
+        if val < 5.7:
+            status = "✅ طبيعي" if lang=="ar" else "✅ Normal"
+        elif val < 6.5:
+            status = "🟡 ما قبل السكري" if lang=="ar" else "🟡 Pre-diabetes"
+        else:
+            status = "🔴 سكري" if lang=="ar" else "🔴 Diabetes"
+        msg = "📊 HbA1c: " + str(val) + "%\n" + status + "\n" + ("متوسط السكر: " if lang=="ar" else "Avg Sugar: ") + str(avg) + " mg/dL"
+
+    await u.message.reply_text(msg, reply_markup=kb_back(lang))
+    return STATE_MAIN_MENU
+
+async def bp_result(u, ctx):
+    lang = get_lang(ctx)
+    try:
+        parts = u.message.text.strip().replace(" ", "").split("/")
+        sys = int(parts[0])
+        dia = int(parts[1])
+    except:
+        await u.message.reply_text("❌ صيغة خاطئة. مثال: 120/80" if lang=="ar" else "❌ Wrong format. Example: 120/80")
+        return STATE_BP
+
+    if sys < 90 or dia < 60:
+        status = "⚠️ منخفض" if lang=="ar" else "⚠️ Low BP"
+        color = "🔵"
+    elif sys < 120 and dia < 80:
+        status = "✅ طبيعي ممتاز" if lang=="ar" else "✅ Optimal"
+        color = "🟢"
+    elif sys < 130 and dia < 80:
+        status = "✅ طبيعي" if lang=="ar" else "✅ Normal"
+        color = "🟢"
+    elif sys < 140 or dia < 90:
+        status = "🟡 مرتفع قليلاً" if lang=="ar" else "🟡 Elevated"
+        color = "🟡"
+    elif sys < 160 or dia < 100:
+        status = "🔴 ارتفاع ضغط مرحلة 1" if lang=="ar" else "🔴 Hypertension Stage 1"
+        color = "🔴"
+    else:
+        status = "🚨 ارتفاع ضغط شديد" if lang=="ar" else "🚨 Hypertension Stage 2"
+        color = "🚨"
+
+        msg = color + " الضغط: " + str(sys) + "/" + str(dia) + " mmHg\n" + status
+    await u.message.reply_text(msg, reply_markup=kb_back(lang))
+    return STATE_MAIN_MENU
+
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -1984,6 +2103,13 @@ def build_conv():
             STATE_FOOD_SEARCH: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, food_search)],
+            STATE_SUGAR: [
+                CallbackQueryHandler(go_back, pattern="^back$"),
+                CallbackQueryHandler(sugar_handler, pattern="^sugar_"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, sugar_result)],
+            STATE_BP: [
+                CallbackQueryHandler(go_back, pattern="^back$"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, bp_result)],
             STATE_INFECTION_SITE: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(infection_site, pattern="^site_")],
@@ -1998,7 +2124,7 @@ def build_conv():
                 CallbackQueryHandler(rem_later, pattern="^rem_snooze_"),
 
                 CallbackQueryHandler(go_back, pattern="^back$"),
-                CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_)"), CallbackQueryHandler(manual_drug_input, pattern="^manual_input$")],
+                CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_|sugar_)"), CallbackQueryHandler(manual_drug_input, pattern="^manual_input$")],
             STATE_BMI_WEIGHT: [
                 CallbackQueryHandler(bmi_cb, pattern="^bmi_"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, bmi_text)],
