@@ -2039,6 +2039,8 @@ def build_conv():
                 MessageHandler(filters.TEXT & ~filters.COMMAND, rem_edit_val)],
         },
         fallbacks=[
+            CallbackQueryHandler(rem_done, pattern="^rem_done_"),
+            CallbackQueryHandler(rem_later, pattern="^rem_snooze_"),
             CommandHandler("start", start),
             CommandHandler("stats", stats_cmd),
             MessageHandler(filters.ALL, fallback)],
@@ -2373,9 +2375,9 @@ def main():
     print(f"✅ تم تحميل {len(DRUGS_DB)} دواء")
     persistence = PicklePersistence(filepath="bot_data.pkl")
     app = Application.builder().token(BOT_TOKEN).persistence(persistence).build()
-    app.add_handler(CallbackQueryHandler(rem_done, pattern="^rem_done_"), group=0)
-    app.add_handler(CallbackQueryHandler(rem_later, pattern="^rem_snooze_"), group=0)
-    app.add_handler(build_conv(), group=1)
+    app.add_handler(build_conv())
+    app.add_handler(CallbackQueryHandler(rem_done, pattern="^rem_done_"))
+    app.add_handler(CallbackQueryHandler(rem_later, pattern="^rem_snooze_"))
     app.add_handler(CommandHandler("stats", stats_cmd))
     app.add_handler(PreCheckoutQueryHandler(pre_checkout))
     app.add_handler(MessageHandler(filters.SUCCESSFUL_PAYMENT, successful_payment))
