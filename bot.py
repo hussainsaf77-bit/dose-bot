@@ -2046,7 +2046,7 @@ def build_conv():
             CallbackQueryHandler(rem_later, pattern="^rem_snooze_"),
             CommandHandler("start", start),
             CommandHandler("stats", stats_cmd),
-            MessageHandler(filters.ALL, fallback)],
+            MessageHandler(filters.TEXT & ~filters.COMMAND, fallback)],
         allow_reentry=True,
         per_user=True,
         per_chat=True)
