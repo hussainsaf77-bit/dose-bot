@@ -600,9 +600,21 @@ def calc_child(drug, w, lang):
     max_d = drug.get("max_daily_pediatric", drug.get("max_daily","—"))
     lines = []
     if lang == "ar":
-        lines += [f"🍼 *جرعة الطفل - {n}*", f"⚖️ الوزن: {w} كغ", ""]
+        lines += ["🍼 جرعة الطفل - " + n, "⚖️ الوزن: " + str(w) + " كغ", ""]
     else:
-        lines += [f"🍼 *Child Dose - {n}*", f"⚖️ Weight: {w} kg", ""]
+        lines += ["🍼 Child Dose - " + n, "⚖️ Weight: " + str(w) + " kg", ""]
+
+    # معالجة الأدوية ذات الجرعة الثابتة حسب العمر
+    if drug.get("fixed_dose") and drug.get("age_doses"):
+        age_doses = drug["age_doses"]
+        dose_lines = ["📋 " + ("جرعة الأطفال:" if lang=="ar" else "Pediatric Doses:")]
+        for age_range, dose in age_doses.items():
+            dose_lines.append("  • " + age_range + " سنة: " + dose if lang=="ar" else "  • " + age_range + " yr: " + dose)
+        dose_lines.append("")
+        dose_lines.append("🔁 " + freq)
+        dose_lines.append("⚠️ " + ("استشر الطبيب أو الصيدلاني." if lang=="ar" else "Consult doctor or pharmacist."))
+        return chr(10).join(dose_lines)
+
     try:
         # تركيزات الشراب الشائعة لحساب المل
         CONCENTRATIONS = {
