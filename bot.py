@@ -1920,6 +1920,9 @@ async def rem_edit_val(u, ctx):
     return STATE_REM_MENU
 
 async def fallback(u, ctx):
+    # تجاهل callbacks
+    if u.callback_query:
+        return None
     if not ctx.user_data.get("lang"):
         _tz = ctx.user_data.get("timezone"); ctx.user_data.clear(); ctx.user_data["timezone"] = _tz if _tz else ctx.user_data.get("timezone")
         await u.message.reply_text(tx("welcome", "ar"), reply_markup=kb_lang(), parse_mode=ParseMode.MARKDOWN)
@@ -2046,7 +2049,7 @@ def build_conv():
             CallbackQueryHandler(rem_later, pattern="^rem_snooze_"),
             CommandHandler("start", start),
             CommandHandler("stats", stats_cmd),
-            MessageHandler(filters.TEXT & ~filters.COMMAND, fallback)],
+            MessageHandler(filters.ALL, fallback)],
         allow_reentry=True,
         per_user=True,
         per_chat=True)
