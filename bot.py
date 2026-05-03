@@ -1789,7 +1789,7 @@ async def sugar_handler(u, ctx):
     ctx.user_data["sugar_type"] = q.data
     msgs = {
         "sugar_fasting": "🌅 أدخل قراءة سكر الصيام (mg/dL):" if lang=="ar" else "🌅 Enter fasting sugar (mg/dL):",
-        "sugar_postmeal": "🍽️ أدخل قراءة السكر بعد الأكل (mg/dL):" if lang=="ar" else "🍽️ Enter post-meal sugar (mg/dL):",
+        "sugar_postmeal": "🍽️ أدخل قراءة السكر بعد الأكل بساعتين على الأقل (mg/dL):" if lang=="ar" else "🍽️ Enter post-meal sugar (2hrs after eating) (mg/dL):",
         "sugar_hba1c": "📊 أدخل قيمة HbA1c (%):" if lang=="ar" else "📊 Enter HbA1c (%):",
     }
     await q.message.edit_text(msgs.get(q.data, "أدخل القراءة:"))
