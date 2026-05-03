@@ -1393,12 +1393,10 @@ async def child_input(u, ctx):
             return STATE_CHILD_DRUG
         res = search_drugs(name)
         if not res:
-            await u.message.reply_text(f"📸 *{name}*\n\n" + tx("not_found", lang),
-                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("✏️ الدواء خطأ؟ اكتب الاسم", callback_data="manual_input")],[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])), parse_mode=ParseMode.MARKDOWN)
+            await u.message.reply_text("📸 " + name + "\n\n" + tx("not_found", lang), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("✏️ الدواء خطأ؟ اكتب الاسم", callback_data="manual_input")],[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]), parse_mode=ParseMode.MARKDOWN)
             return STATE_CHILD_DRUG
         ctx.user_data["child_drug"] = res[0]
-        await u.message.reply_text(f"📸 *{name}*\n\n" + tx("weight_prompt", lang),
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("✏️ الدواء خطأ؟ اكتب الاسم", callback_data="manual_input")],[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])), parse_mode=ParseMode.MARKDOWN)
+        await u.message.reply_text("📸 " + name + "\n\n" + tx("weight_prompt", lang), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("✏️ الدواء خطأ؟ اكتب الاسم", callback_data="manual_input")],[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]), parse_mode=ParseMode.MARKDOWN)
         return STATE_CHILD_WEIGHT
     res = search_drugs(u.message.text)
     if not res:
@@ -1997,6 +1995,7 @@ def build_conv():
                 MessageHandler(filters.TEXT & ~filters.COMMAND, drug_search)],
             STATE_CHILD_DRUG: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
+                CallbackQueryHandler(manual_drug_input, pattern="^manual_input$"),
                 CallbackQueryHandler(child_sel, pattern="^cs_"),
                 MessageHandler(filters.PHOTO, child_input),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, child_input)],
