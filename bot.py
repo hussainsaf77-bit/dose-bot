@@ -146,7 +146,9 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_CHILD_CONC, STATE_PREMIUM,
  STATE_COUNTRY, STATE_REM_DURATION, STATE_INFECTION_SITE,
  STATE_CAL_GENDER, STATE_CAL_AGE, STATE_CAL_WEIGHT, STATE_CAL_HEIGHT, STATE_CAL_ACTIVITY, STATE_CAL_DISEASE,
- STATE_FOOD_SEARCH, STATE_SUGAR, STATE_BP, STATE_BP_AGE) = range(31)
+ STATE_FOOD_SEARCH, STATE_SUGAR, STATE_BP, STATE_BP_AGE,
+ STATE_PAT_MENU, STATE_PAT_NAME, STATE_PAT_AGE, STATE_PAT_WEIGHT,
+ STATE_PAT_GENDER, STATE_PAT_DISEASE, STATE_PAT_MEDS, STATE_PAT_ALLERGY) = range(39)
 
 TEXTS = {
 "ar": {
@@ -155,6 +157,7 @@ TEXTS = {
 "btn_search": "🔍 استعلام عن دواء",
 "btn_child": "🍼 جرعات الأطفال",
 "btn_remind": "⏰ التذكير بالأدوية",
+"btn_patient": "👤 ملف المريض",
 "btn_settings": "⚙️ الإعدادات",
 "btn_premium": "⭐ الاشتراك المميز",
 "premium_menu": "⭐ *الاشتراك المميز*\n\nاختر خطتك:",
@@ -232,6 +235,7 @@ TEXTS = {
 "btn_search": "🔍 Drug Search",
 "btn_child": "🍼 Child Doses",
 "btn_remind": "⏰ Reminders",
+"btn_patient": "👤 Patient File",
 "btn_settings": "⚙️ Settings",
 "btn_premium": "⭐ Premium Subscription",
 "premium_menu": "⭐ *Premium Subscription*\n\nChoose your plan:",
@@ -1020,6 +1024,7 @@ def kb_main(lang):
         [InlineKeyboardButton(tx("btn_child", lang), callback_data="m_child")],
         [InlineKeyboardButton(tx("btn_bmi", lang), callback_data="m_bmi")],
         [InlineKeyboardButton(tx("btn_cal", lang), callback_data="m_cal")],
+        [InlineKeyboardButton(tx("btn_patient", lang), callback_data="m_patient")],
         [InlineKeyboardButton(tx("btn_sugar", lang), callback_data="m_sugar")],
         [InlineKeyboardButton(tx("btn_bp", lang), callback_data="m_bp")],
         [InlineKeyboardButton(tx("btn_remind", lang), callback_data="m_remind")],
@@ -1326,6 +1331,10 @@ async def main_cb(u, ctx):
 
 
         return STATE_CAL_GENDER
+    elif q.data == "m_patient":
+        load_patients(ctx)
+        await q.message.edit_text("👤 " + ("ملف المريض" if lang=="ar" else "Patient File"), reply_markup=kb_patient_menu(lang))
+        return STATE_PAT_MENU
     elif q.data == "m_sugar":
         uid = u.effective_user.id
         if not is_premium(uid):
@@ -1942,6 +1951,169 @@ async def bp_result(u, ctx):
     await u.message.reply_text(msg, reply_markup=kb_back(lang))
     return STATE_MAIN_MENU
 
+
+# ═══════════════ ملف المريض ═══════════════
+
+def get_patients(ctx):
+    uid = ctx.user_data.get("uid", "0")
+    return ctx.user_data.setdefault("patients", {})
+
+def save_patients(ctx):
+    uid = ctx.user_data.get("uid", "0")
+    all_rems = load_all_reminders()
+    patients = ctx.user_data.get("patients", {})
+    all_rems[uid + "_patients"] = patients
+    save_all_reminders(all_rems)
+
+def load_patients(ctx):
+    uid = ctx.user_data.get("uid", "0")
+    all_data = load_all_reminders()
+    patients = all_data.get(uid + "_patients", {})
+    ctx.user_data["patients"] = patients
+    return patients
+
+def kb_patient_menu(lang):
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("➕ " + ("إضافة مريض" if lang=="ar" else "Add Patient"), callback_data="pat_add")],
+        [InlineKeyboardButton("📋 " + ("قائمة المرضى" if lang=="ar" else "Patient List"), callback_data="pat_list")],
+        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+    ])
+
+async def patient_menu(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    if q.data == "back": return await go_back(u, ctx)
+    load_patients(ctx)
+    
+    if q.data == "pat_add":
+        await q.message.edit_text("👤 " + ("أدخل اسم المريض:" if lang=="ar" else "Enter patient name:"))
+        return STATE_PAT_NAME
+    
+    if q.data == "pat_list":
+        patients = ctx.user_data.get("patients", {})
+        if not patients:
+            await q.message.edit_text("📭 " + ("لا يوجد مرضى" if lang=="ar" else "No patients"), reply_markup=kb_patient_menu(lang))
+            return STATE_PAT_MENU
+        btns = [[InlineKeyboardButton("👤 " + name, callback_data="pat_view_" + pid)] for pid, name in [(p, patients[p]["name"]) for p in patients]]
+        btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
+        await q.message.edit_text("📋 " + ("المرضى:" if lang=="ar" else "Patients:"), reply_markup=InlineKeyboardMarkup(btns))
+        return STATE_PAT_MENU
+    
+    if q.data.startswith("pat_view_"):
+        pid = q.data.replace("pat_view_", "")
+        patients = ctx.user_data.get("patients", {})
+        p = patients.get(pid, {})
+        if not p:
+            await q.message.edit_text("❌ " + ("لم يوجد" if lang=="ar" else "Not found"), reply_markup=kb_patient_menu(lang))
+            return STATE_PAT_MENU
+        lines = ["👤 *" + p.get("name","") + "*", ""]
+        lines.append(("📅 العمر: " if lang=="ar" else "📅 Age: ") + str(p.get("age","-")))
+        lines.append(("⚖️ الوزن: " if lang=="ar" else "⚖️ Weight: ") + str(p.get("weight","-")) + " kg")
+        lines.append(("👤 الجنس: " if lang=="ar" else "👤 Gender: ") + str(p.get("gender","-")))
+        if p.get("diseases"):
+            lines.append(("🏥 الأمراض: " if lang=="ar" else "🏥 Diseases: ") + p["diseases"])
+        if p.get("meds"):
+            lines.append(("💊 الأدوية: " if lang=="ar" else "💊 Medications: ") + p["meds"])
+        if p.get("allergy"):
+            lines.append(("⚠️ حساسية: " if lang=="ar" else "⚠️ Allergy: ") + p["allergy"])
+        btns = [
+            [InlineKeyboardButton("🗑️ " + ("حذف" if lang=="ar" else "Delete"), callback_data="pat_del_" + pid)],
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_list")]
+        ]
+        await q.message.edit_text("\n".join(lines), reply_markup=InlineKeyboardMarkup(btns), parse_mode=ParseMode.MARKDOWN)
+        return STATE_PAT_MENU
+    
+    if q.data.startswith("pat_del_"):
+        pid = q.data.replace("pat_del_", "")
+        patients = ctx.user_data.get("patients", {})
+        if pid in patients:
+            del patients[pid]
+            save_patients(ctx)
+        await q.message.edit_text("✅ " + ("تم الحذف" if lang=="ar" else "Deleted"), reply_markup=kb_patient_menu(lang))
+        return STATE_PAT_MENU
+    
+    await q.message.edit_text("👤 " + ("ملف المريض" if lang=="ar" else "Patient File"), reply_markup=kb_patient_menu(lang))
+    return STATE_PAT_MENU
+
+async def pat_name(u, ctx):
+    lang = get_lang(ctx)
+    name = u.message.text.strip()
+    if not name:
+        await u.message.reply_text("❌ " + ("أدخل اسماً صحيحاً" if lang=="ar" else "Enter valid name"))
+        return STATE_PAT_NAME
+    ctx.user_data["new_patient"] = {"name": name}
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("👦 " + ("ذكر" if lang=="ar" else "Male"), callback_data="pat_gender_m"),
+         InlineKeyboardButton("👧 " + ("أنثى" if lang=="ar" else "Female"), callback_data="pat_gender_f")]
+    ])
+    await u.message.reply_text("👤 " + ("الجنس؟" if lang=="ar" else "Gender?"), reply_markup=btns)
+    return STATE_PAT_GENDER
+
+async def pat_gender(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    ctx.user_data["new_patient"]["gender"] = "ذكر" if q.data == "pat_gender_m" else "أنثى"
+    await q.message.edit_text("📅 " + ("كم عمره؟" if lang=="ar" else "Age?"))
+    return STATE_PAT_AGE
+
+async def pat_age(u, ctx):
+    lang = get_lang(ctx)
+    try:
+        age = int(u.message.text.strip())
+    except:
+        await u.message.reply_text("❌ " + ("أدخل رقماً" if lang=="ar" else "Enter number"))
+        return STATE_PAT_AGE
+    ctx.user_data["new_patient"]["age"] = age
+    await u.message.reply_text("⚖️ " + ("الوزن بالكيلو؟" if lang=="ar" else "Weight in kg?"))
+    return STATE_PAT_WEIGHT
+
+async def pat_weight(u, ctx):
+    lang = get_lang(ctx)
+    try:
+        w = float(u.message.text.strip())
+    except:
+        await u.message.reply_text("❌ " + ("أدخل رقماً" if lang=="ar" else "Enter number"))
+        return STATE_PAT_WEIGHT
+    ctx.user_data["new_patient"]["weight"] = w
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🩺 " + ("سكري" if lang=="ar" else "Diabetes"), callback_data="pat_dis_سكري"),
+         InlineKeyboardButton("💉 " + ("ضغط" if lang=="ar" else "BP"), callback_data="pat_dis_ضغط")],
+        [InlineKeyboardButton("❤️ " + ("قلب" if lang=="ar" else "Heart"), callback_data="pat_dis_قلب"),
+         InlineKeyboardButton("🫘 " + ("كلى" if lang=="ar" else "Kidney"), callback_data="pat_dis_كلى")],
+        [InlineKeyboardButton("✅ " + ("لا يوجد" if lang=="ar" else "None"), callback_data="pat_dis_none")],
+    ])
+    await u.message.reply_text("🏥 " + ("الأمراض المزمنة؟" if lang=="ar" else "Chronic diseases?"), reply_markup=btns)
+    return STATE_PAT_DISEASE
+
+async def pat_disease(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    dis = q.data.replace("pat_dis_", "")
+    ctx.user_data["new_patient"]["diseases"] = "" if dis == "none" else dis
+    await q.message.edit_text("💊 " + ("الأدوية الثابتة (أو اكتب لا يوجد):" if lang=="ar" else "Regular medications (or type none):"))
+    return STATE_PAT_MEDS
+
+async def pat_meds(u, ctx):
+    lang = get_lang(ctx)
+    meds = u.message.text.strip()
+    ctx.user_data["new_patient"]["meds"] = "" if meds.lower() in ["لا يوجد","none","-"] else meds
+    await u.message.reply_text("⚠️ " + ("حساسية من أدوية؟ (أو اكتب لا):" if lang=="ar" else "Drug allergies? (or type none):"))
+    return STATE_PAT_ALLERGY
+
+async def pat_allergy(u, ctx):
+    lang = get_lang(ctx)
+    allergy = u.message.text.strip()
+    ctx.user_data["new_patient"]["allergy"] = "" if allergy.lower() in ["لا","no","none","-"] else allergy
+    # نحفظ المريض
+    import time
+    pid = str(int(time.time()))
+    patients = ctx.user_data.setdefault("patients", {})
+    patients[pid] = ctx.user_data["new_patient"]
+    save_patients(ctx)
+    name = ctx.user_data["new_patient"]["name"]
+    await u.message.reply_text("✅ " + ("تم حفظ ملف " + name if lang=="ar" else "Patient " + name + " saved!"), reply_markup=kb_patient_menu(lang))
+    return STATE_PAT_MENU
+
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -2190,6 +2362,23 @@ def build_conv():
             STATE_FOOD_SEARCH: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, food_search)],
+            STATE_PAT_MENU: [
+                CallbackQueryHandler(go_back, pattern="^back$"),
+                CallbackQueryHandler(patient_menu, pattern="^pat_")],
+            STATE_PAT_NAME: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, pat_name)],
+            STATE_PAT_GENDER: [
+                CallbackQueryHandler(pat_gender, pattern="^pat_gender_")],
+            STATE_PAT_AGE: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, pat_age)],
+            STATE_PAT_WEIGHT: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, pat_weight)],
+            STATE_PAT_DISEASE: [
+                CallbackQueryHandler(pat_disease, pattern="^pat_dis_")],
+            STATE_PAT_MEDS: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, pat_meds)],
+            STATE_PAT_ALLERGY: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, pat_allergy)],
             STATE_SUGAR: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(sugar_handler, pattern="^sugar_"),
