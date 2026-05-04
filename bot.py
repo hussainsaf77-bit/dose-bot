@@ -1789,6 +1789,7 @@ async def manual_drug_input(u, ctx):
 
 
 async def sugar_handler(u, ctx):
+    track(u, "sugar")
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
     ctx.user_data["sugar_type"] = q.data
@@ -1850,6 +1851,7 @@ async def sugar_result(u, ctx):
     return STATE_MAIN_MENU
 
 async def bp_age(u, ctx):
+    track(u, "bp")
     lang = get_lang(ctx)
     try:
         age = int(u.message.text.strip())
@@ -2114,23 +2116,45 @@ async def fallback(u, ctx):
 
 async def stats_cmd(u, ctx):
     stats = load_stats()
-    users = len(stats.get("users", {}))
+    users_dict = stats.get("users", {})
+    users = len(users_dict)
     searches = stats.get("searches", 0)
     child = stats.get("child_doses", 0)
     rems = stats.get("reminders", 0)
     total = stats.get("total_requests", 0)
     drugs = len(DRUGS_DB)
+    images = stats.get("image_search", 0)
+    bmi = stats.get("bmi", 0)
+    cal = stats.get("calories", 0)
+    sugar = stats.get("sugar", 0)
+    bp = stats.get("bp", 0)
+    premium = stats.get("premium", 0)
+    # أكثر المستخدمين نشاطاً
+    top_users = sorted(users_dict.items(), key=lambda x: x[1], reverse=True)[:3]
     lang = get_lang(ctx)
     if lang == "ar":
         lines = [
-            "📊 *إحصائيات البوت*", "",
-            f"👥 المستخدمون: *{users}*",
-            f"💊 عدد الأدوية: *{drugs}*",
-            f"🔍 عمليات البحث: *{searches}*",
-            f"🍼 جرعات الأطفال: *{child}*",
-            f"⏰ التذكيرات المضافة: *{rems}*",
-            f"📈 إجمالي الطلبات: *{total}*",
+            "📊 *إحصائيات البوت التفصيلية*", "",
+            "👥 *المستخدمون:*",
+            "  • إجمالي المستخدمين: *" + str(users) + "*",
+            "  • المشتركون المميزون: *" + str(premium) + "*", "",
+            "🔧 *استخدام الميزات:*",
+            "  • 🔍 البحث عن دواء: *" + str(searches) + "*",
+            "  • 🍼 جرعات الأطفال: *" + str(child) + "*",
+            "  • 📸 قراءة الصور: *" + str(images) + "*",
+            "  • ⏰ التذكيرات: *" + str(rems) + "*",
+            "  • 📊 BMI: *" + str(bmi) + "*",
+            "  • 🔥 السعرات: *" + str(cal) + "*",
+            "  • 🩸 السكر: *" + str(sugar) + "*",
+            "  • 💉 الضغط: *" + str(bp) + "*", "",
+            "📈 *الإجمالي:*",
+            "  • طلبات: *" + str(total) + "*",
+            "  • أدوية: *" + str(drugs) + "*",
         ]
+        if top_users:
+            lines += ["", "🏆 *أكثر المستخدمين نشاطاً:*"]
+            for i, (uid, count) in enumerate(top_users, 1):
+                lines.append("  " + str(i) + ". ID:" + str(uid) + " — " + str(count) + " طلب")
         msg = "\n".join(lines)
     else:
         lines = [
