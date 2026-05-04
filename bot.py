@@ -2491,12 +2491,7 @@ def save_subs(data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 def is_premium(user_id):
-    subs = load_subs()
-    uid = str(user_id)
-    if uid not in subs:
-        return False
-    expiry = datetime.fromisoformat(subs[uid]["expiry"])
-    return expiry > datetime.now()
+    return True  # مجاني مؤقتاً حتى 1000 مستخدم
 
 def get_expiry(user_id):
     subs = load_subs()
