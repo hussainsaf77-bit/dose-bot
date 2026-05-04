@@ -1080,12 +1080,12 @@ def get_rems(ctx):
             uid = str(ctx.user_data.get("uid", "0"))
     except:
         uid = "0"
-    all_rems = load_all_reminders()
-    if uid not in all_rems:
-        all_rems[uid] = ctx.user_data.get("reminders", [])
-    ctx.user_data["reminders"] = all_rems[uid]
     ctx.user_data["uid"] = uid
-    return ctx.user_data.setdefault("reminders", [])
+    # نقرأ دائماً من Supabase
+    all_rems = load_all_reminders()
+    rems = all_rems.get(uid, [])
+    ctx.user_data["reminders"] = rems
+    return rems
 
 def save_rems(ctx):
     try:
@@ -1107,7 +1107,11 @@ def fmt_rems(rems, lang):
     lines = [tx("rems_title", lang)]
     for r in rems:
         suf = "x/يوم" if lang == "ar" else "x/day"
-        lines.append(f"🔸 [{r['id']}] 💊 {r['drug']} — 🕐 {r['time']} — 🔁 {r['freq']}{suf}")
+        days = r.get("days", 0)
+        dur = ""
+        if days > 0:
+            dur = " — 📅 " + str(days) + (" يوم" if lang=="ar" else " days")
+        lines.append("🔸 " + str(r['id']) + " 💊 " + str(r['drug']) + " — 🕐 " + str(r['time']) + " — 🔁 " + str(r['freq']) + suf + dur)
     return "\n".join(lines)
 
 async def send_alert(ctx):
