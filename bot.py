@@ -2075,30 +2075,116 @@ async def pat_weight(u, ctx):
         await u.message.reply_text("❌ " + ("أدخل رقماً" if lang=="ar" else "Enter number"))
         return STATE_PAT_WEIGHT
     ctx.user_data["new_patient"]["weight"] = w
-    btns = InlineKeyboardMarkup([
-        [InlineKeyboardButton("🩺 " + ("سكري" if lang=="ar" else "Diabetes"), callback_data="pat_dis_سكري"),
-         InlineKeyboardButton("💉 " + ("ضغط" if lang=="ar" else "BP"), callback_data="pat_dis_ضغط")],
-        [InlineKeyboardButton("❤️ " + ("قلب" if lang=="ar" else "Heart"), callback_data="pat_dis_قلب"),
-         InlineKeyboardButton("🫘 " + ("كلى" if lang=="ar" else "Kidney"), callback_data="pat_dis_كلى")],
-        [InlineKeyboardButton("✅ " + ("لا يوجد" if lang=="ar" else "None"), callback_data="pat_dis_none")],
-    ])
-    await u.message.reply_text("🏥 " + ("الأمراض المزمنة؟" if lang=="ar" else "Chronic diseases?"), reply_markup=btns)
+    ctx.user_data["new_patient"]["diseases_list"] = []
+    await show_disease_btns(u.message, ctx, lang)
     return STATE_PAT_DISEASE
+
+def get_disease_kb(selected, lang):
+    diseases = [
+        ("سكري","🩺","Diabetes"), ("ضغط","💉","BP"), ("قلب","❤️","Heart"),
+        ("كلى","🫘","Kidney"), ("ربو","🫁","Asthma"), ("غدة","🦋","Thyroid"),
+        ("كبد","🟡","Liver"), ("سمنة","⚖️","Obesity"),
+    ]
+    btns = []
+    row = []
+    for ar, icon, en in diseases:
+        name = ar if lang=="ar" else en
+        tick = "✅ " if ar in selected else ""
+        row.append(InlineKeyboardButton(tick + icon + name, callback_data="pat_dis_" + ar))
+        if len(row) == 2:
+            btns.append(row)
+            row = []
+    if row: btns.append(row)
+    btns.append([InlineKeyboardButton("✅ " + ("انتهيت" if lang=="ar" else "Done"), callback_data="pat_dis_done")])
+    return InlineKeyboardMarkup(btns)
+
+async def show_disease_btns(msg, ctx, lang):
+    selected = ctx.user_data["new_patient"].get("diseases_list", [])
+    title = "🏥 اختر الأمراض المزمنة (يمكن تعدد الاختيار):" if lang=="ar" else "🏥 Select chronic diseases (multiple):"
+    await msg.reply_text(title, reply_markup=get_disease_kb(selected, lang))
 
 async def pat_disease(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
-    dis = q.data.replace("pat_dis_", "")
-    ctx.user_data["new_patient"]["diseases"] = "" if dis == "none" else dis
-    await q.message.edit_text("💊 " + ("الأدوية الثابتة (أو اكتب لا يوجد):" if lang=="ar" else "Regular medications (or type none):"))
-    return STATE_PAT_MEDS
+    data = q.data.replace("pat_dis_", "")
+    
+    if data == "done":
+        diseases = ctx.user_data["new_patient"].get("diseases_list", [])
+        ctx.user_data["new_patient"]["diseases"] = "، ".join(diseases) if diseases else ""
+        ctx.user_data["new_patient"]["meds_list"] = []
+        await show_meds_btns(q.message, ctx, lang, edit=True)
+        return STATE_PAT_MEDS
+    
+    selected = ctx.user_data["new_patient"].setdefault("diseases_list", [])
+    if data in selected:
+        selected.remove(data)
+    else:
+        selected.append(data)
+    await q.message.edit_reply_markup(reply_markup=get_disease_kb(selected, lang))
+    return STATE_PAT_DISEASE
+
+def get_meds_kb(selected, lang):
+    meds = [
+        ("ميتفورمين","💊","Metformin"), ("أملودبين","💊","Amlodipine"),
+        ("أتورفاستاتين","💊","Atorvastatin"), ("ليزينوبريل","💊","Lisinopril"),
+        ("أسبرين","💊","Aspirin"), ("ميتوبرولول","💊","Metoprolol"),
+        ("أوميبرازول","💊","Omeprazole"), ("ليفوثيروكسين","💊","Levothyroxine"),
+    ]
+    btns = []
+    row = []
+    for ar, icon, en in meds:
+        name = ar if lang=="ar" else en
+        tick = "✅ " if ar in selected else ""
+        row.append(InlineKeyboardButton(tick + name, callback_data="pat_med_" + ar))
+        if len(row) == 2:
+            btns.append(row)
+            row = []
+    if row: btns.append(row)
+    btns.append([InlineKeyboardButton("➕ " + ("أضف دواء آخر" if lang=="ar" else "Add other"), callback_data="pat_med_other")])
+    btns.append([InlineKeyboardButton("✅ " + ("انتهيت" if lang=="ar" else "Done"), callback_data="pat_med_done")])
+    return InlineKeyboardMarkup(btns)
+
+async def show_meds_btns(msg, ctx, lang, edit=False):
+    selected = ctx.user_data["new_patient"].get("meds_list", [])
+    title = "💊 اختر الأدوية الثابتة:" if lang=="ar" else "💊 Select regular medications:"
+    if edit:
+        await msg.edit_text(title, reply_markup=get_meds_kb(selected, lang))
+    else:
+        await msg.reply_text(title, reply_markup=get_meds_kb(selected, lang))
 
 async def pat_meds(u, ctx):
     lang = get_lang(ctx)
-    meds = u.message.text.strip()
-    ctx.user_data["new_patient"]["meds"] = "" if meds.lower() in ["لا يوجد","none","-"] else meds
-    await u.message.reply_text("⚠️ " + ("حساسية من أدوية؟ (أو اكتب لا):" if lang=="ar" else "Drug allergies? (or type none):"))
-    return STATE_PAT_ALLERGY
+    # إذا كان نص (دواء مخصص)
+    if u.message:
+        med = u.message.text.strip()
+        if med and med.lower() not in ["لا","no","none","-"]:
+            ctx.user_data["new_patient"].setdefault("meds_list", []).append(med)
+        await show_meds_btns(u.message, ctx, lang)
+        return STATE_PAT_MEDS
+    return STATE_PAT_MEDS
+
+async def pat_meds_cb(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    data = q.data.replace("pat_med_", "")
+
+    if data == "done":
+        meds = ctx.user_data["new_patient"].get("meds_list", [])
+        ctx.user_data["new_patient"]["meds"] = "، ".join(meds) if meds else ""
+        await q.message.edit_text("⚠️ " + ("حساسية من أدوية؟ (اكتب اسمها أو لا):" if lang=="ar" else "Drug allergies? (type name or none):"))
+        return STATE_PAT_ALLERGY
+
+    if data == "other":
+        await q.message.edit_text("💊 " + ("اكتب اسم الدواء:" if lang=="ar" else "Type medication name:"))
+        return STATE_PAT_MEDS
+
+    selected = ctx.user_data["new_patient"].setdefault("meds_list", [])
+    if data in selected:
+        selected.remove(data)
+    else:
+        selected.append(data)
+    await q.message.edit_reply_markup(reply_markup=get_meds_kb(selected, lang))
+    return STATE_PAT_MEDS
 
 async def pat_allergy(u, ctx):
     lang = get_lang(ctx)
@@ -2376,6 +2462,7 @@ def build_conv():
             STATE_PAT_DISEASE: [
                 CallbackQueryHandler(pat_disease, pattern="^pat_dis_")],
             STATE_PAT_MEDS: [
+                CallbackQueryHandler(pat_meds_cb, pattern="^pat_med_"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, pat_meds)],
             STATE_PAT_ALLERGY: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, pat_allergy)],
