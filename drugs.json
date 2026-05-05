@@ -28278,18 +28278,6 @@
     }
   },
   {
-    "name_en": "diphenhydramine",
-    "name_ar": "ديفينهيدرامين",
-    "aliases": "benadryl, بينادريل, allerdryl, nytol",
-    "pediatric_min_mg_per_kg": 1,
-    "pediatric_max_mg_per_kg": 1.25,
-    "pediatric_frequency": "3-4 مرات يومياً",
-    "pediatric_frequency_en": "3-4 times daily",
-    "concentration": "12.5mg/5ml",
-    "max_daily_pediatric": 5,
-    "warning": "لا يُعطى لمن هم أقل من سنتين"
-  },
-  {
     "name_en": "triprolidine_pseudoephedrine",
     "name_ar": "تريبروليدين + سودوإيفيدرين",
     "aliases": "actifed, أكتيفيد, triominic, sudafed plus",
@@ -28305,5 +28293,21 @@
       "12+": "10 مل"
     },
     "warning": "لا يُعطى لمن هم أقل من سنتين"
+  },
+  {
+    "name_en": "diphenhydramine",
+    "name_ar": "ديفينهيدرامين",
+    "aliases": "exylin, إكسيلين, benadryl, بينادريل, benylin, بينيلين",
+    "pediatric_min_mg_per_kg": 0,
+    "pediatric_max_mg_per_kg": 0,
+    "pediatric_frequency": "4 مرات يومياً",
+    "pediatric_frequency_en": "4 times daily",
+    "concentration": "14mg/5ml",
+    "fixed_dose": true,
+    "age_doses": {
+      "6-12": "5 مل (14mg) × 4 مرات يومياً",
+      "12+": "10 مل (28mg) × 4 مرات يومياً"
+    },
+    "warning": "⚠️ ممنوع تحت سن 6 سنوات"
   }
 ]
