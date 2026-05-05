@@ -28302,5 +28302,22 @@
     "concentration": "12.5mg/5ml",
     "max_daily_pediatric": 5,
     "warning": "لا يُعطى لمن هم أقل من سنتين"
+  },
+  {
+    "name_en": "triprolidine_pseudoephedrine",
+    "name_ar": "تريبروليدين + سودوإيفيدرين",
+    "aliases": "actifed, أكتيفيد, triominic, sudafed plus",
+    "pediatric_min_mg_per_kg": 0,
+    "pediatric_max_mg_per_kg": 0,
+    "pediatric_frequency": "3 مرات يومياً",
+    "pediatric_frequency_en": "3 times daily",
+    "concentration": "1.25mg/30mg/5ml",
+    "fixed_dose": true,
+    "age_doses": {
+      "2-5": "2.5 مل",
+      "6-12": "5 مل",
+      "12+": "10 مل"
+    },
+    "warning": "لا يُعطى لمن هم أقل من سنتين"
   }
 ]
