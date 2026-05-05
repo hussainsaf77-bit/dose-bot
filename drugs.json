@@ -22828,8 +22828,8 @@
     "aliases": "robitussin, روبيتوسين, delsym",
     "drug_class": "مضاد سعال مركزي",
     "drug_class_en": "Antitussive / Central Cough Suppressant",
-    "pediatric_min_mg_per_kg": 0.25,
-    "pediatric_max_mg_per_kg": 0.5,
+    "pediatric_min_mg_per_kg": 0,
+    "pediatric_max_mg_per_kg": 0,
     "pediatric_frequency": "كل 6-8 ساعات (فوق 6 سنوات)",
     "pediatric_frequency_en": "Every 6-8 hours (above 6 years)",
     "adult_dose_min": 15,
@@ -22849,7 +22849,14 @@
     "interactions": "MAOIs, SSRIs",
     "interactions_en": "MAOIs, SSRIs",
     "renal": "آمن",
-    "renal_dose": "Safe"
+    "renal_dose": "Safe",
+    "concentration": "15mg/5ml",
+    "fixed_dose": true,
+    "age_doses": {
+      "6-12": "5 مل (15mg) × 3 مرات يومياً",
+      "12+": "10 مل (30mg) × 3 مرات يومياً"
+    },
+    "warning": "⚠️ ممنوع تحت سن 6 سنوات"
   },
   {
     "name_en": "guaifenesin",
