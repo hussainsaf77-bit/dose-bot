@@ -28331,5 +28331,21 @@
       "12+": "10 مل × 3 مرات يومياً"
     },
     "warning": "⚠️ ممنوع تحت سن 6 سنوات"
+  },
+  {
+    "name_en": "hedera_helix",
+    "name_ar": "خلاصة اللبلاب",
+    "aliases": "prospan, بروسبان, ivy leaf extract, hedelix",
+    "pediatric_min_mg_per_kg": 0,
+    "pediatric_max_mg_per_kg": 0,
+    "pediatric_frequency": "3 مرات يومياً",
+    "concentration": "35mg/5ml",
+    "fixed_dose": true,
+    "age_doses": {
+      "1-5": "2.5 مل × 3 مرات يومياً",
+      "6-12": "5 مل × 3 مرات يومياً",
+      "12+": "7.5 مل × 3 مرات يومياً"
+    },
+    "warning": "⚠️ شراب عشبي طبيعي آمن من عمر سنة"
   }
 ]
