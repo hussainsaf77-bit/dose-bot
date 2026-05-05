@@ -2519,8 +2519,6 @@ def build_conv():
                 MessageHandler(filters.TEXT & ~filters.COMMAND, rem_edit_val)],
         },
         fallbacks=[
-            CallbackQueryHandler(rem_done, pattern="^rem_done_"),
-            CallbackQueryHandler(rem_later, pattern="^rem_snooze_"),
             CommandHandler("start", start),
             CommandHandler("stats", stats_cmd),
             MessageHandler(filters.ALL, fallback)],
