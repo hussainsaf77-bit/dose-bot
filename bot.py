@@ -1200,17 +1200,23 @@ def sched(app, chat_id, drug, time_str, freq, lang, tz_str="Asia/Riyadh"):
             user_tz = pytz.timezone(tz_str)
         except:
             user_tz = TIMEZONE
-        now = datetime.now(user_tz)
-        first_time = now.replace(hour=h, minute=m, second=0, microsecond=0)
-        if first_time <= now:
-            from datetime import timedelta
-            first_time += timedelta(days=1)
-        app.job_queue.run_repeating(
-            send_alert,
-            interval=3600 * (24 // max(freq, 1)),
-            first=first_time,
-            data={"chat_id": chat_id, "drug": drug, "lang": lang},
-            name=f"rem_{chat_id}_{drug}")
+        from datetime import time as dtime, timedelta
+        # نحسب الأوقات حسب التكرار
+        interval_hours = 24 // max(freq, 1)
+        times = []
+        for i in range(freq):
+            total_minutes = (h * 60 + m) + (i * interval_hours * 60)
+            new_h = (total_minutes // 60) % 24
+            new_m = total_minutes % 60
+            times.append(dtime(new_h, new_m, tzinfo=user_tz))
+        # نجدول run_daily لكل وقت
+        for i, t in enumerate(times):
+            app.job_queue.run_daily(
+                send_alert,
+                time=t,
+                data={"chat_id": chat_id, "drug": drug, "lang": lang},
+                name="rem_" + str(chat_id) + "_" + str(drug) + "_" + str(i))
+        logger.info("sched: " + str(drug) + " x" + str(freq) + " times=" + str([str(t) for t in times]))
     except Exception as e:
         logger.error(f"sched error: {e}")
 
