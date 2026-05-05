@@ -28309,5 +28309,20 @@
       "12+": "10 مل (28mg) × 4 مرات يومياً"
     },
     "warning": "⚠️ ممنوع تحت سن 6 سنوات"
+  },
+  {
+    "name_en": "chlorpheniramine_pseudoephedrine",
+    "name_ar": "كلورفينيرامين + سودوإيفيدرين",
+    "aliases": "coldact, كولداكت, triaminic, تريامينيك, codral",
+    "pediatric_min_mg_per_kg": 0,
+    "pediatric_max_mg_per_kg": 0,
+    "pediatric_frequency": "3 مرات يومياً",
+    "concentration": "2mg/30mg/5ml",
+    "fixed_dose": true,
+    "age_doses": {
+      "6-12": "5 مل × 3 مرات يومياً",
+      "12+": "10 مل × 3 مرات يومياً"
+    },
+    "warning": "⚠️ ممنوع تحت سن 6 سنوات"
   }
 ]
