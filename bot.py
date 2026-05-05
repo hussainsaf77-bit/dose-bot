@@ -490,7 +490,7 @@ def search_drugs(q):
                 "diprivan":"propofol","ديبريفان":"propofol",
                 "ketalar":"ketamine","كيتالار":"ketamine",
                 "dormicum":"midazolam","دورميكم":"midazolam",
-                "aspirin":"acetylsalicylic_acid","أسبرين":"acetylsalicylic_acid",
+                "triprolidine_pseudoephedrine":"triprolidine_pseudoephedrine","actifed":"triprolidine_pseudoephedrine","dextromethorphan":"dextromethorphan","guaifenesin":"guaifenesin","chlorpheniramine_pseudoephedrine":"chlorpheniramine_pseudoephedrine","coldact":"chlorpheniramine_pseudoephedrine","diphenhydramine":"diphenhydramine","promethazine":"promethazine","chlorpheniramine":"chlorpheniramine","aspirin":"acetylsalicylic_acid","أسبرين":"acetylsalicylic_acid",
                 "باراسيتامول":"paracetamol","بنادول":"paracetamol","بانادول":"paracetamol",
                 "إيبوبروفين":"ibuprofen","ايبوبروفين":"ibuprofen","نيوروفين":"ibuprofen","نيورفين":"ibuprofen",
                 "أموكسيسيلين":"amoxicillin","اموكسيسيلين":"amoxicillin",
