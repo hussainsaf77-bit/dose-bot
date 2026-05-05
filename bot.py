@@ -2275,39 +2275,16 @@ async def rem_add_freq(u, ctx):
         await u.message.reply_text(tx("bad_freq", lang), reply_markup=kb_back(lang))
         return STATE_REM_ADD_FREQ
     ctx.user_data["nr_freq"] = f
-    # نسأل عن المدة
-    btns = [
-        [InlineKeyboardButton("📅 أسبوع" if lang=="ar" else "📅 Week", callback_data="dur_7")],
-        [InlineKeyboardButton("📅 شهر" if lang=="ar" else "📅 Month", callback_data="dur_30")],
-        [InlineKeyboardButton("📅 3 أشهر" if lang=="ar" else "📅 3 Months", callback_data="dur_90")],
-        [InlineKeyboardButton("📅 6 أشهر" if lang=="ar" else "📅 6 Months", callback_data="dur_180")],
-        [InlineKeyboardButton("📅 سنة" if lang=="ar" else "📅 Year", callback_data="dur_365")],
-        [InlineKeyboardButton("♾️ مستمر" if lang=="ar" else "♾️ Ongoing", callback_data="dur_0")],
-        [InlineKeyboardButton("🔙 رجوع" if lang=="ar" else "🔙 Back", callback_data="back")],
-    ]
-    msg = "📅 كم مدة التذكير؟" if lang=="ar" else "📅 How long?"
-    await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup(btns))
-    return STATE_REM_DURATION
-
-async def rem_add_duration(u, ctx):
-    q = u.callback_query
-    await q.answer()
-    lang = get_lang(ctx)
-    data = q.data
-    if data == "back":
-        return await go_back(u, ctx)
-    days = int(data.replace("dur_", ""))
+    # نحفظ مباشرة
     drug = ctx.user_data.get("nr_drug", "?")
     time_s = ctx.user_data.get("nr_time", "08:00")
     f = ctx.user_data.get("nr_freq", 1)
     rems = get_rems(ctx)
-    rems.append({"id": len(rems)+1, "drug": drug, "time": time_s, "freq": f, "days": days})
+    rems.append({"id": len(rems)+1, "drug": drug, "time": time_s, "freq": f})
     save_rems(ctx)
     sched(ctx.application, u.effective_chat.id, drug, time_s, f, lang, ctx.user_data.get("timezone", "Asia/Riyadh"))
-    dur_txt = f"{days} يوم" if days > 0 else "مستمر"
-    if lang != "ar":
-        dur_txt = f"{days} days" if days > 0 else "Ongoing"
-    await q.message.edit_text("✅ " + drug + " - " + time_s + " - " + dur_txt, reply_markup=kb_remind(lang))
+    msg = "✅ " + drug + " - " + time_s + " - " + str(f) + ("x/يوم" if lang=="ar" else "x/day")
+    await u.message.reply_text(msg, reply_markup=kb_remind(lang))
     return STATE_REM_MENU
 
 async def rem_edit_sel(u, ctx):
@@ -2485,8 +2462,7 @@ def build_conv():
             STATE_INFECTION_SITE: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(infection_site, pattern="^site_")],
-            STATE_REM_DURATION: [
-                CallbackQueryHandler(rem_add_duration, pattern="^(dur_|back)")],
+
             STATE_COUNTRY: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, set_country)],
             STATE_LANGUAGE: [
