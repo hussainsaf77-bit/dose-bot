@@ -1387,6 +1387,7 @@ async def drug_search_image(u, ctx):
     f = await photo.get_file()
     img = await f.download_as_bytearray()
     name = await analyze_image(bytes(img), lang)
+    await u.message.reply_text("RAW: " + str(name)[:60])
     await msg.delete()
     if not name:
         await u.message.reply_text(tx("img_error", lang), reply_markup=kb_back(lang))
@@ -1444,6 +1445,7 @@ async def child_input(u, ctx):
         f = await photo.get_file()
         img = await f.download_as_bytearray()
         name = await analyze_image(bytes(img), lang)
+        await u.message.reply_text("RAW: " + str(name)[:60])
         if not name:
             await u.message.reply_text(tx("img_error", lang), reply_markup=kb_back(lang))
             return STATE_CHILD_DRUG
