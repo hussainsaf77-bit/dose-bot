@@ -23739,8 +23739,8 @@
     "aliases": "ferrous sulfate, كبريتات الحديد, maltofer",
     "drug_class": "مكمل الحديد",
     "drug_class_en": "Iron Supplement",
-    "pediatric_min_mg_per_kg": 3,
-    "pediatric_max_mg_per_kg": 6,
+    "pediatric_min_mg_per_kg": 0,
+    "pediatric_max_mg_per_kg": 0,
     "pediatric_frequency": "مرة إلى مرتين يومياً",
     "pediatric_frequency_en": "Once to twice daily",
     "adult_dose_min": 200,
@@ -23761,7 +23761,15 @@
     "interactions_en": "Antacids, Tetracyclines, Fluoroquinolones",
     "renal": "احتياط",
     "renal_dose": "Use with caution",
-    "concentration": "25mg/5ml"
+    "concentration": "25mg/5ml",
+    "fixed_dose": true,
+    "age_doses": {
+      "0-6 أشهر": "1 مل × مرة يومياً",
+      "6-12 شهر": "2.5 مل × مرة يومياً",
+      "1-5 سنوات": "5 مل × مرة يومياً",
+      "5-12 سنة": "5-10 مل × مرة يومياً"
+    },
+    "warning": "⚠️ يُعطى على معدة فارغة — يلوّن البراز داكناً"
   },
   {
     "name_en": "zinc_syrup",
@@ -23791,7 +23799,14 @@
     "interactions_en": "Antibiotics, Iron supplements",
     "renal": "احتياط",
     "renal_dose": "Use with caution",
-    "concentration": "10mg/5ml"
+    "concentration": "10mg/5ml",
+    "fixed_dose": true,
+    "age_doses": {
+      "0-6 أشهر": "1 مل (2mg) × مرة يومياً",
+      "6-12 شهر": "2.5 مل (5mg) × مرة يومياً",
+      "1-5 سنوات": "5 مل (10mg) × مرة يومياً",
+      "5-12 سنة": "10 مل (20mg) × مرة يومياً"
+    }
   },
   {
     "name_en": "folic_acid",
@@ -28363,5 +28378,21 @@
       "5-12 سنة": "2-4 قطرة يومياً حسب الطبيب"
     },
     "warning": "✅ ضروري لنمو العظام — آمن من الولادة"
+  },
+  {
+    "name_en": "multivitamin",
+    "name_ar": "فيتامينات متعددة",
+    "aliases": "pediacare, بيدياكير, kidivit, كيديفيت, poly-vi-sol, vitamax kids",
+    "pediatric_frequency": "مرة يومياً",
+    "concentration": "5ml",
+    "fixed_dose": true,
+    "pediatric_min_mg_per_kg": 0,
+    "pediatric_max_mg_per_kg": 0,
+    "age_doses": {
+      "0-12 شهر": "1 مل يومياً",
+      "1-3 سنوات": "2.5 مل يومياً",
+      "3-12 سنة": "5 مل يومياً"
+    },
+    "warning": "✅ آمن — يُعطى بعد الأكل"
   }
 ]
