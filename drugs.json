@@ -28347,5 +28347,21 @@
       "12+": "7.5 مل × 3 مرات يومياً"
     },
     "warning": "⚠️ شراب عشبي طبيعي آمن من عمر سنة"
+  },
+  {
+    "name_en": "vitamin_d_drops",
+    "name_ar": "فيتامين د قطرات",
+    "aliases": "vitamin d3 drops, devit, دي فيت, فيتامين د قطرات, cholecalciferol drops, vidaylin d",
+    "pediatric_min_mg_per_kg": 0,
+    "pediatric_max_mg_per_kg": 0,
+    "pediatric_frequency": "مرة يومياً",
+    "concentration": "400IU/drop",
+    "fixed_dose": true,
+    "age_doses": {
+      "0-12 شهر": "1 قطرة (400 IU) يومياً",
+      "1-5 سنوات": "2 قطرة (800 IU) يومياً",
+      "5-12 سنة": "2-4 قطرة يومياً حسب الطبيب"
+    },
+    "warning": "✅ ضروري لنمو العظام — آمن من الولادة"
   }
 ]
