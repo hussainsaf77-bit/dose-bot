@@ -2331,36 +2331,75 @@ async def interaction_input(u, ctx):
     lang = get_lang(ctx)
     step = ctx.user_data.get("interaction_step", 1)
     text = u.message.text.strip()
-    
+
     if step == 1:
         ctx.user_data["drug1"] = text
         ctx.user_data["interaction_step"] = 2
         await u.message.reply_text("💊 " + ("الآن اكتب اسم الدواء الثاني:" if lang=="ar" else "Now enter second drug name:"))
         return STATE_INTERACTION
-    
+
     elif step == 2:
         drug1 = ctx.user_data.get("drug1", "")
         drug2 = text
+
+        # نتحقق أولاً من القاعدة المحلية
         result = check_interaction(drug1, drug2)
-        
+
         if result:
             severity, effect, advice = result
-            if lang == "ar":
-                msg = severity + " *تفاعل دوائي*\n\n"
-                msg += "💊 " + drug1 + " + " + drug2 + "\n\n"
-                msg += "⚡ التأثير: " + effect + "\n\n"
-                msg += "💡 النصيحة: " + advice
-            else:
-                msg = severity + " *Drug Interaction*\n\n"
-                msg += "💊 " + drug1 + " + " + drug2 + "\n\n"
-                msg += "⚡ Effect: " + effect + "\n\n"
-                msg += "💡 Advice: " + advice
+            msg = severity + " *تفاعل دوائي*
+
+💊 " + drug1 + " + " + drug2 + "
+
+⚡ التأثير: " + effect + "
+
+💡 النصيحة: " + advice if lang=="ar" else severity + " *Drug Interaction*
+
+💊 " + drug1 + " + " + drug2 + "
+
+⚡ Effect: " + effect + "
+
+💡 Advice: " + advice
         else:
-            if lang == "ar":
-                msg = "✅ *لا يوجد تفاعل معروف*\n\n💊 " + drug1 + " + " + drug2 + "\n\n⚠️ هذا لا يعني الأمان التام — استشر الطبيب دائماً"
-            else:
-                msg = "✅ *No known interaction*\n\n💊 " + drug1 + " + " + drug2 + "\n\n⚠️ This doesn\'t guarantee safety — always consult your doctor"
-        
+            # نستخدم Claude API للبحث
+            thinking_msg = await u.message.reply_text("🔍 " + ("جارٍ البحث عن التفاعلات..." if lang=="ar" else "Searching for interactions..."))
+            try:
+                prompt = f"""أنت صيدلاني خبير. اكتشف التفاعل الدوائي بين: {drug1} و {drug2}
+
+أجب بالتنسيق التالي فقط:
+درجة الخطورة: [🔴 خطير / 🟠 متوسط / 🟡 خفيف / ✅ آمن]
+التأثير: [وصف مختصر]
+النصيحة: [نصيحة عملية]
+
+إذا لم يوجد تفاعل معروف اكتب: ✅ لا يوجد تفاعل دوائي معروف بين هذين الدوائين
+
+أجب {"بالعربية" if lang=="ar" else "in English"} فقط."""
+
+                async with httpx.AsyncClient(timeout=30) as c:
+                    r = await c.post("https://api.anthropic.com/v1/messages",
+                        headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                        json={"model": "claude-haiku-4-5-20251001", "max_tokens": 300,
+                            "messages": [{"role": "user", "content": prompt}]})
+                    ai_result = r.json().get("content", [{}])[0].get("text", "").strip()
+                    msg = "⚠️ *التفاعل الدوائي*
+
+💊 " + drug1 + " + " + drug2 + "
+
+" + ai_result if lang=="ar" else "⚠️ *Drug Interaction*
+
+💊 " + drug1 + " + " + drug2 + "
+
+" + ai_result
+            except:
+                msg = "✅ لا يوجد تفاعل معروف
+
+💊 " + drug1 + " + " + drug2 + "
+
+⚠️ استشر الطبيب دائماً" if lang=="ar" else "✅ No known interaction
+
+💊 " + drug1 + " + " + drug2
+            await thinking_msg.delete()
+
         btns = InlineKeyboardMarkup([
             [InlineKeyboardButton("🔄 " + ("بحث جديد" if lang=="ar" else "New Search"), callback_data="m_interaction")],
             [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
