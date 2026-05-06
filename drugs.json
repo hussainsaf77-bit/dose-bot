@@ -28355,7 +28355,7 @@
     "pediatric_min_mg_per_kg": 0,
     "pediatric_max_mg_per_kg": 0,
     "pediatric_frequency": "مرة يومياً",
-    "concentration": "400IU/drop",
+    "concentration": "400IU/قطرة",
     "fixed_dose": true,
     "age_doses": {
       "0-12 شهر": "1 قطرة (400 IU) يومياً",

@@ -1526,6 +1526,9 @@ async def child_weight(u, ctx):
         "cephalexin": ["125mg/5ml", "250mg/5ml"],
         "salbutamol": ["2mg/5ml"],
         "domperidone": ["5mg/5ml"],
+    "vitamin_d_drops": ["400IU/قطرة", "1000IU/قطرة"],
+    "zinc_syrup": ["10mg/5ml", "20mg/5ml"],
+    "iron_syrup": ["25mg/ml", "15mg/ml"],
         "ondansetron": ["4mg/5ml"],
         "fluconazole": ["50mg/5ml", "100mg/5ml"],
     }
