@@ -2347,19 +2347,8 @@ async def interaction_input(u, ctx):
 
         if result:
             severity, effect, advice = result
-            msg = severity + " *تفاعل دوائي*
+            msg = severity + " تفاعل دوائي\n\n💊 " + drug1 + " + " + drug2 + "\n\n⚡ التأثير: " + effect + "\n\n💡 النصيحة: " + advice if lang=="ar" else severity + " Drug Interaction\n\n💊 " + drug1 + " + " + drug2 + "\n\n⚡ Effect: " + effect + "\n\n💡 Advice: " + advice
 
-💊 " + drug1 + " + " + drug2 + "
-
-⚡ التأثير: " + effect + "
-
-💡 النصيحة: " + advice if lang=="ar" else severity + " *Drug Interaction*
-
-💊 " + drug1 + " + " + drug2 + "
-
-⚡ Effect: " + effect + "
-
-💡 Advice: " + advice
         else:
             # نستخدم Claude API للبحث
             thinking_msg = await u.message.reply_text("🔍 " + ("جارٍ البحث عن التفاعلات..." if lang=="ar" else "Searching for interactions..."))
@@ -2381,23 +2370,9 @@ async def interaction_input(u, ctx):
                         json={"model": "claude-haiku-4-5-20251001", "max_tokens": 300,
                             "messages": [{"role": "user", "content": prompt}]})
                     ai_result = r.json().get("content", [{}])[0].get("text", "").strip()
-                    msg = "⚠️ *التفاعل الدوائي*
-
-💊 " + drug1 + " + " + drug2 + "
-
-" + ai_result if lang=="ar" else "⚠️ *Drug Interaction*
-
-💊 " + drug1 + " + " + drug2 + "
-
-" + ai_result
-            except:
-                msg = "✅ لا يوجد تفاعل معروف
-
-💊 " + drug1 + " + " + drug2 + "
-
-⚠️ استشر الطبيب دائماً" if lang=="ar" else "✅ No known interaction
-
-💊 " + drug1 + " + " + drug2
+                    msg = "⚠️ التفاعل الدوائي\n\n💊 " + drug1 + " + " + drug2 + "\n\n" + ai_result if lang=="ar" else "⚠️ Drug Interaction\n\n💊 " + drug1 + " + " + drug2 + "\n\n" + ai_result
+            except Exception as e:
+                msg = "✅ لا يوجد تفاعل معروف\n\n💊 " + drug1 + " + " + drug2 if lang=="ar" else "✅ No known interaction\n\n💊 " + drug1 + " + " + drug2
             await thinking_msg.delete()
 
         btns = InlineKeyboardMarkup([
