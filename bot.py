@@ -148,7 +148,8 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_CAL_GENDER, STATE_CAL_AGE, STATE_CAL_WEIGHT, STATE_CAL_HEIGHT, STATE_CAL_ACTIVITY, STATE_CAL_DISEASE,
  STATE_FOOD_SEARCH, STATE_SUGAR, STATE_BP, STATE_BP_AGE,
  STATE_PAT_MENU, STATE_PAT_NAME, STATE_PAT_AGE, STATE_PAT_WEIGHT,
- STATE_PAT_GENDER, STATE_PAT_DISEASE, STATE_PAT_MEDS, STATE_PAT_ALLERGY) = range(39)
+ STATE_PAT_GENDER, STATE_PAT_DISEASE, STATE_PAT_MEDS, STATE_PAT_ALLERGY,
+ STATE_INTERACTION) = range(40)
 
 TEXTS = {
 "ar": {
@@ -158,6 +159,7 @@ TEXTS = {
 "btn_child": "🍼 جرعات الأطفال",
 "btn_remind": "⏰ التذكير بالأدوية",
 "btn_patient": "👤 ملف المريض",
+"btn_interaction": "⚠️ التفاعلات الدوائية",
 "btn_settings": "⚙️ الإعدادات",
 "btn_premium": "⭐ الاشتراك المميز",
 "premium_menu": "⭐ *الاشتراك المميز*\n\nاختر خطتك:",
@@ -236,6 +238,7 @@ TEXTS = {
 "btn_child": "🍼 Child Doses",
 "btn_remind": "⏰ Reminders",
 "btn_patient": "👤 Patient File",
+"btn_interaction": "⚠️ Drug Interactions",
 "btn_settings": "⚙️ Settings",
 "btn_premium": "⭐ Premium Subscription",
 "premium_menu": "⭐ *Premium Subscription*\n\nChoose your plan:",
@@ -1025,6 +1028,7 @@ def kb_main(lang):
         [InlineKeyboardButton(tx("btn_bmi", lang), callback_data="m_bmi")],
         [InlineKeyboardButton(tx("btn_cal", lang), callback_data="m_cal")],
         [InlineKeyboardButton(tx("btn_patient", lang), callback_data="m_patient")],
+        [InlineKeyboardButton(tx("btn_interaction", lang), callback_data="m_interaction")],
         [InlineKeyboardButton(tx("btn_sugar", lang), callback_data="m_sugar")],
         [InlineKeyboardButton(tx("btn_bp", lang), callback_data="m_bp")],
         [InlineKeyboardButton(tx("btn_remind", lang), callback_data="m_remind")],
@@ -1337,6 +1341,8 @@ async def main_cb(u, ctx):
 
 
         return STATE_CAL_GENDER
+    elif q.data == "m_interaction":
+        return await interaction_start(u, ctx)
     elif q.data == "m_patient":
         load_patients(ctx)
         await q.message.edit_text("👤 " + ("ملف المريض" if lang=="ar" else "Patient File"), reply_markup=kb_patient_menu(lang))
@@ -2206,6 +2212,163 @@ async def pat_allergy(u, ctx):
     await u.message.reply_text("✅ " + ("تم حفظ ملف " + name if lang=="ar" else "Patient " + name + " saved!"), reply_markup=kb_patient_menu(lang))
     return STATE_PAT_MENU
 
+
+# ═══════════════ التفاعلات الدوائية ═══════════════
+DRUG_INTERACTIONS = {
+    # مضادات التخثر
+    ("warfarin","aspirin"): ("🔴 خطير", "زيادة خطر النزيف الشديد", "تجنب الجمع — استشر الطبيب فوراً"),
+    ("warfarin","ibuprofen"): ("🔴 خطير", "زيادة خطر النزيف", "تجنب — استخدم باراسيتامول بديلاً"),
+    ("warfarin","metronidazole"): ("🔴 خطير", "يرفع مستوى الوارفارين بشكل كبير", "راقب INR بشكل مكثف"),
+    ("warfarin","clarithromycin"): ("🔴 خطير", "يزيد تأثير الوارفارين", "راقب INR"),
+    ("warfarin","fluconazole"): ("🔴 خطير", "يرفع مستوى الوارفارين", "قلل الجرعة وراقب INR"),
+    # القلب
+    ("digoxin","amiodarone"): ("🔴 خطير", "يرفع مستوى الديجوكسين للضعف", "قلل جرعة الديجوكسين 50%"),
+    ("digoxin","clarithromycin"): ("🔴 خطير", "يرفع مستوى الديجوكسين", "راقب مستوى الديجوكسين"),
+    ("metoprolol","verapamil"): ("🔴 خطير", "خطر بطء القلب الشديد والانهيار", "تجنب الجمع"),
+    ("amiodarone","simvastatin"): ("🔴 خطير", "خطر تلف العضلات الشديد", "لا تتجاوز 20mg سيمفاستاتين"),
+    # الصرف
+    ("carbamazepine","warfarin"): ("🔴 خطير", "يقلل تأثير الوارفارين", "راقب INR وعدّل الجرعة"),
+    ("valproate","aspirin"): ("🟠 متوسط", "يرفع مستوى الفالبروات", "راقب الأعراض"),
+    ("phenytoin","fluconazole"): ("🔴 خطير", "يرفع مستوى الفينيتوين لمستويات سامة", "راقب مستوى الدم"),
+    # المضادات الحيوية
+    ("metronidazole","alcohol"): ("🔴 خطير", "تفاعل ديسولفيرام — غثيان وقيء شديد", "تجنب الكحول تماماً أثناء العلاج وبعده بيومين"),
+    ("ciprofloxacin","antacids"): ("🟠 متوسط", "يقلل امتصاص السيبروفلوكساسين", "خذ السيبرو قبل المضاد بساعتين"),
+    ("azithromycin","amiodarone"): ("🔴 خطير", "إطالة فترة QT وخطر اضطراب النظم", "تجنب الجمع"),
+    ("clarithromycin","simvastatin"): ("🔴 خطير", "خطر تلف العضلات الشديد", "أوقف السيمفاستاتين أثناء العلاج"),
+    ("rifampicin","warfarin"): ("🔴 خطير", "يقلل تأثير الوارفارين بشكل كبير", "رفع جرعة الوارفارين ومراقبة INR"),
+    ("rifampicin","oral_contraceptives"): ("🔴 خطير", "يقلل فاعلية حبوب منع الحمل", "استخدم وسيلة منع حمل إضافية"),
+    # مسكنات الألم
+    ("ibuprofen","aspirin"): ("🟠 متوسط", "يقلل تأثير الأسبرين الوقائي للقلب", "خذ الأسبرين قبل الإيبوبروفين بساعتين"),
+    ("ibuprofen","lisinopril"): ("🟠 متوسط", "يقلل فاعلية خافضات الضغط", "راقب ضغط الدم"),
+    ("ibuprofen","methotrexate"): ("🔴 خطير", "يرفع سمية الميثوتريكسات", "تجنب الجمع"),
+    ("tramadol","ssri"): ("🔴 خطير", "خطر متلازمة السيروتونين", "تجنب الجمع"),
+    ("tramadol","mao_inhibitors"): ("🔴 خطير", "تفاعل خطير جداً", "تجنب تماماً"),
+    # أدوية السكري
+    ("metformin","alcohol"): ("🟠 متوسط", "خطر حماض اللاكتات", "تجنب الكحول الزائد"),
+    ("glibenclamide","fluconazole"): ("🔴 خطير", "هبوط سكر حاد", "راقب السكر بشكل مكثف"),
+    ("insulin","alcohol"): ("🟠 متوسط", "يزيد خطر هبوط السكر", "راقب مستوى السكر"),
+    # ضغط الدم
+    ("lisinopril","potassium"): ("🟠 متوسط", "ارتفاع البوتاسيوم في الدم", "راقب مستوى البوتاسيوم"),
+    ("amlodipine","simvastatin"): ("🟠 متوسط", "يرفع مستوى السيمفاستاتين", "لا تتجاوز 20mg سيمفاستاتين"),
+    ("verapamil","simvastatin"): ("🔴 خطير", "خطر تلف العضلات", "تجنب أو قلل جرعة السيمفاستاتين"),
+    # مضادات الاكتئاب
+    ("fluoxetine","tramadol"): ("🔴 خطير", "متلازمة السيروتونين", "تجنب الجمع"),
+    ("sertraline","warfarin"): ("🟠 متوسط", "يزيد خطر النزيف", "راقب INR"),
+    ("mao_inhibitors","tyramine"): ("🔴 خطير", "أزمة ارتفاع ضغط", "تجنب الأطعمة الغنية بالتيرامين"),
+    # أدوية أخرى
+    ("sildenafil","nitrates"): ("🔴 خطير جداً", "انهيار ضغط الدم الحاد", "ممنوع منعاً باتاً"),
+    ("simvastatin","grapefruit"): ("🟠 متوسط", "يرفع مستوى السيمفاستاتين", "تجنب عصير الجريب فروت"),
+    ("levothyroxine","calcium"): ("🟠 متوسط", "يقلل امتصاص الليفوثيروكسين", "خذ الليفوثيروكسين قبل الكالسيوم بأربع ساعات"),
+    ("methotrexate","folic_acid"): ("🟢 مفيد", "يقلل آثار الميثوتريكسات الجانبية", "خذ حمض الفوليك في أيام مختلفة"),
+    ("omeprazole","clopidogrel"): ("🟠 متوسط", "يقلل فاعلية الكلوبيدوجريل", "استخدم بانتوبرازول بديلاً"),
+    ("ssri","nsaids"): ("🟠 متوسط", "يزيد خطر النزيف الهضمي", "استخدم واقي المعدة"),
+    ("lithium","ibuprofen"): ("🔴 خطير", "يرفع مستوى الليثيوم لمستويات سامة", "استخدم باراسيتامول بديلاً"),
+    ("theophylline","ciprofloxacin"): ("🔴 خطير", "يرفع مستوى الثيوفيلين", "قلل جرعة الثيوفيلين وراقبه"),
+    ("tacrolimus","clarithromycin"): ("🔴 خطير", "يرفع مستوى التاكروليموس", "راقب المستوى وعدّل الجرعة"),
+}
+
+def normalize_drug_name(name):
+    name = name.strip().lower()
+    aliases = {
+        "وارفارين":"warfarin","warfarin":"warfarin",
+        "أسبرين":"aspirin","aspirin":"aspirin","asprin":"aspirin",
+        "إيبوبروفين":"ibuprofen","ibuprofen":"ibuprofen","بروفين":"ibuprofen","نيوروفين":"ibuprofen",
+        "باراسيتامول":"paracetamol","paracetamol":"paracetamol","بنادول":"paracetamol",
+        "ميترونيدازول":"metronidazole","metronidazole":"metronidazole","فلاجيل":"metronidazole",
+        "أموكسيسيلين":"amoxicillin","amoxicillin":"amoxicillin",
+        "أزيثروميسين":"azithromycin","azithromycin":"azithromycin","زيثروماكس":"azithromycin",
+        "كلاريثروميسين":"clarithromycin","clarithromycin":"clarithromycin","كلاسيد":"clarithromycin",
+        "سيبروفلوكساسين":"ciprofloxacin","ciprofloxacin":"ciprofloxacin","سيبرو":"ciprofloxacin",
+        "ميتفورمين":"metformin","metformin":"metformin","جلوكوفاج":"metformin",
+        "أملودبين":"amlodipine","amlodipine":"amlodipine","نورفاسك":"amlodipine",
+        "ليزينوبريل":"lisinopril","lisinopril":"lisinopril",
+        "سيمفاستاتين":"simvastatin","simvastatin":"simvastatin","زوكور":"simvastatin",
+        "أتورفاستاتين":"atorvastatin","atorvastatin":"atorvastatin","ليبيتور":"atorvastatin",
+        "ديجوكسين":"digoxin","digoxin":"digoxin",
+        "أميودارون":"amiodarone","amiodarone":"amiodarone",
+        "فلوكونازول":"fluconazole","fluconazole":"fluconazole","ديفلوكان":"fluconazole",
+        "فينيتوين":"phenytoin","phenytoin":"phenytoin",
+        "كاربامازيبين":"carbamazepine","carbamazepine":"carbamazepine","تيجريتول":"carbamazepine",
+        "فالبروات":"valproate","valproate":"valproate","ديباكين":"valproate",
+        "ترامادول":"tramadol","tramadol":"tramadol","ترامال":"tramadol",
+        "فلوكستين":"fluoxetine","fluoxetine":"fluoxetine","بروزاك":"fluoxetine",
+        "سيرترالين":"sertraline","sertraline":"sertraline","زولوفت":"sertraline",
+        "سيلدينافيل":"sildenafil","sildenafil":"sildenafil","فياغرا":"sildenafil",
+        "نيترات":"nitrates","nitrates":"nitrates","نيتروجلسرين":"nitrates",
+        "كلوبيدوجريل":"clopidogrel","clopidogrel":"clopidogrel","بلافيكس":"clopidogrel",
+        "أوميبرازول":"omeprazole","omeprazole":"omeprazole","لوسك":"omeprazole",
+        "ليفوثيروكسين":"levothyroxine","levothyroxine":"levothyroxine","إلتروكسين":"levothyroxine",
+        "ميثوتريكسات":"methotrexate","methotrexate":"methotrexate",
+        "ريفامبيسين":"rifampicin","rifampicin":"rifampicin",
+        "ليثيوم":"lithium","lithium":"lithium",
+        "ثيوفيلين":"theophylline","theophylline":"theophylline",
+        "إنسولين":"insulin","insulin":"insulin",
+        "فيراباميل":"verapamil","verapamil":"verapamil",
+        "ميتوبرولول":"metoprolol","metoprolol":"metoprolol",
+        "ريفامبسين":"rifampicin",
+        "بوتاسيوم":"potassium","potassium":"potassium",
+        "كالسيوم":"calcium","calcium":"calcium",
+        "كحول":"alcohol","alcohol":"alcohol",
+        "جريب فروت":"grapefruit","grapefruit":"grapefruit",
+    }
+    return aliases.get(name, name)
+
+def check_interaction(drug1, drug2):
+    d1 = normalize_drug_name(drug1)
+    d2 = normalize_drug_name(drug2)
+    result = DRUG_INTERACTIONS.get((d1, d2)) or DRUG_INTERACTIONS.get((d2, d1))
+    return result
+
+async def interaction_start(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    msg = "⚠️ *التفاعلات الدوائية*\n\nاكتب اسم الدواء الأول:" if lang=="ar" else "⚠️ *Drug Interactions*\n\nEnter first drug name:"
+    await q.message.edit_text(msg, parse_mode=ParseMode.MARKDOWN)
+    ctx.user_data["interaction_step"] = 1
+    return STATE_INTERACTION
+
+async def interaction_input(u, ctx):
+    lang = get_lang(ctx)
+    step = ctx.user_data.get("interaction_step", 1)
+    text = u.message.text.strip()
+    
+    if step == 1:
+        ctx.user_data["drug1"] = text
+        ctx.user_data["interaction_step"] = 2
+        await u.message.reply_text("💊 " + ("الآن اكتب اسم الدواء الثاني:" if lang=="ar" else "Now enter second drug name:"))
+        return STATE_INTERACTION
+    
+    elif step == 2:
+        drug1 = ctx.user_data.get("drug1", "")
+        drug2 = text
+        result = check_interaction(drug1, drug2)
+        
+        if result:
+            severity, effect, advice = result
+            if lang == "ar":
+                msg = severity + " *تفاعل دوائي*\n\n"
+                msg += "💊 " + drug1 + " + " + drug2 + "\n\n"
+                msg += "⚡ التأثير: " + effect + "\n\n"
+                msg += "💡 النصيحة: " + advice
+            else:
+                msg = severity + " *Drug Interaction*\n\n"
+                msg += "💊 " + drug1 + " + " + drug2 + "\n\n"
+                msg += "⚡ Effect: " + effect + "\n\n"
+                msg += "💡 Advice: " + advice
+        else:
+            if lang == "ar":
+                msg = "✅ *لا يوجد تفاعل معروف*\n\n💊 " + drug1 + " + " + drug2 + "\n\n⚠️ هذا لا يعني الأمان التام — استشر الطبيب دائماً"
+            else:
+                msg = "✅ *No known interaction*\n\n💊 " + drug1 + " + " + drug2 + "\n\n⚠️ This doesn\'t guarantee safety — always consult your doctor"
+        
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🔄 " + ("بحث جديد" if lang=="ar" else "New Search"), callback_data="m_interaction")],
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+        ])
+        await u.message.reply_text(msg, reply_markup=btns, parse_mode=ParseMode.MARKDOWN)
+        ctx.user_data["interaction_step"] = 1
+        return STATE_MAIN_MENU
+
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -2431,6 +2594,10 @@ def build_conv():
             STATE_FOOD_SEARCH: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, food_search)],
+            STATE_INTERACTION: [
+                CallbackQueryHandler(go_back, pattern="^back$"),
+                CallbackQueryHandler(interaction_start, pattern="^m_interaction$"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, interaction_input)],
             STATE_PAT_MENU: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(patient_menu, pattern="^pat_")],
