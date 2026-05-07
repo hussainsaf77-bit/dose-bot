@@ -22864,8 +22864,8 @@
     "aliases": "mucinex, موسينيكس, robitussin",
     "drug_class": "طارد بلغم / مقشع",
     "drug_class_en": "Expectorant / Mucolytic",
-    "pediatric_min_mg_per_kg": 12,
-    "pediatric_max_mg_per_kg": 12,
+    "pediatric_min_mg_per_kg": 0,
+    "pediatric_max_mg_per_kg": 0,
     "pediatric_frequency": "كل 4 ساعات مع كثير من الماء",
     "pediatric_frequency_en": "Every 4 hours with plenty of water",
     "adult_dose_min": 200,
@@ -22885,7 +22885,13 @@
     "interactions": "قليلة",
     "interactions_en": "Few known",
     "renal": "آمن",
-    "renal_dose": "Safe"
+    "renal_dose": "Safe",
+    "fixed_dose": true,
+    "age_doses": {
+      "6-12 سنة": "5 مل (100mg) × 4 مرات يومياً",
+      "12+ سنة": "10 مل (200mg) × 4 مرات يومياً"
+    },
+    "warning": "⚠️ ممنوع تحت سن 6 سنوات"
   },
   {
     "name_en": "bromhexine",
@@ -28279,11 +28285,17 @@
     "name_en": "chlorpheniramine",
     "name_ar": "كلورفينيرامين",
     "aliases": "كولداكت, coldact, piriton, بيريتون",
-    "pediatric_min_mg_per_kg": 0.35,
-    "pediatric_max_mg_per_kg": 0.5,
+    "pediatric_min_mg_per_kg": 0,
+    "pediatric_max_mg_per_kg": 0,
     "pediatric_frequency": "3-4 مرات يومياً",
     "concentration": "2mg/5ml",
-    "max_daily_pediatric": 12
+    "max_daily_pediatric": 12,
+    "warning": "⚠️ ممنوع تحت سن 6 سنوات",
+    "fixed_dose": true,
+    "age_doses": {
+      "6-12 سنة": "5 مل (2mg) × 3-4 مرات يومياً",
+      "12+ سنة": "10 مل (4mg) × 3-4 مرات يومياً"
+    }
   },
   {
     "name_en": "salbutamol_bromhexine",
@@ -28393,5 +28405,20 @@
       "3-12 سنة": "5 مل يومياً"
     },
     "warning": "✅ آمن — يُعطى بعد الأكل"
+  },
+  {
+    "name_en": "phenylephrine",
+    "name_ar": "فينيلفرين",
+    "aliases": "sudafed pe, nasofed, ناسوفيد, phenylephrine syrup",
+    "pediatric_min_mg_per_kg": 0,
+    "pediatric_max_mg_per_kg": 0,
+    "pediatric_frequency": "3-4 مرات يومياً",
+    "concentration": "2.5mg/5ml",
+    "fixed_dose": true,
+    "age_doses": {
+      "6-12 سنة": "5 مل × 3-4 مرات يومياً",
+      "12+ سنة": "10 مل × 3-4 مرات يومياً"
+    },
+    "warning": "⚠️ ممنوع تحت سن 6 سنوات"
   }
 ]
