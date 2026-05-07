@@ -1395,7 +1395,13 @@ async def drug_search_image(u, ctx):
     name = await analyze_image(bytes(img), lang)
     await msg.delete()
     if not name:
-        await u.message.reply_text(tx("img_error", lang), reply_markup=kb_back(lang))
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("✏️ " + ("أدخل الاسم يدوياً" if lang=="ar" else "Type name manually"), callback_data="manual_input")],
+            [InlineKeyboardButton("📸 " + ("أرسل صورة أخرى" if lang=="ar" else "Send another photo"), callback_data="retry_photo")],
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+        ])
+        msg = "❌ لم أتعرف على الدواء\n\n💡 جرّب صورة أوضح أو أدخل الاسم يدوياً" if lang=="ar" else "❌ Could not identify drug\n\n💡 Try a clearer photo or type the name"
+        await u.message.reply_text(msg, reply_markup=btns)
         return STATE_DRUG_SEARCH
     res = search_drugs(name)
     if not res:
@@ -1451,7 +1457,13 @@ async def child_input(u, ctx):
         img = await f.download_as_bytearray()
         name = await analyze_image(bytes(img), lang)
         if not name:
-            await u.message.reply_text(tx("img_error", lang), reply_markup=kb_back(lang))
+            btns = InlineKeyboardMarkup([
+                [InlineKeyboardButton("✏️ " + ("أدخل الاسم يدوياً" if lang=="ar" else "Type name manually"), callback_data="manual_input")],
+                [InlineKeyboardButton("📸 " + ("أرسل صورة أخرى" if lang=="ar" else "Send another photo"), callback_data="retry_photo")],
+                [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+            ])
+            msg = "❌ لم أتعرف على الدواء\n\n💡 جرّب صورة أوضح أو أدخل الاسم يدوياً" if lang=="ar" else "❌ Could not identify drug\n\n💡 Try a clearer photo or type the name"
+            await u.message.reply_text(msg, reply_markup=btns)
             return STATE_CHILD_DRUG
         res = search_drugs(name)
         if not res:
@@ -1803,6 +1815,13 @@ async def infection_site(u, ctx):
             return STATE_CHILD_CONC
         await q.message.edit_text(msg, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
     return STATE_CHILD_WEIGHT
+
+async def retry_photo(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    msg = "📸 أرسل صورة العبوة:" if lang=="ar" else "📸 Send the medicine photo:"
+    await q.message.edit_text(msg)
+    return STATE_CHILD_DRUG
 
 async def manual_drug_input(u, ctx):
     q = u.callback_query; await q.answer()
