@@ -983,7 +983,7 @@ async def analyze_image(img_bytes, lang):
             # تحويل خاص لفيتامين د
         if "vitamin_d" in txt.lower() or "cholecalciferol" in txt.lower():
             txt = "vitamin_d_drops|400IU/drop"
-drug_name = txt.split("|")[0].strip().lower()
+        drug_name = txt.split("|")[0].strip().lower()
         if "|" in txt:
             parts = txt.split("|", 1)
             drug_name = parts[0].strip()
