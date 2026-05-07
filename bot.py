@@ -980,7 +980,10 @@ async def analyze_image(img_bytes, lang):
             txt = "desloratadine|0.5mg/ml"
         elif "xyzal" in raw_lower:
             txt = "levocetirizine|0.5mg/ml"
-        drug_name = txt.split("|")[0].strip().lower()
+            # تحويل خاص لفيتامين د
+        if "vitamin_d" in txt.lower() or "cholecalciferol" in txt.lower():
+            txt = "vitamin_d_drops|400IU/drop"
+drug_name = txt.split("|")[0].strip().lower()
         if "|" in txt:
             parts = txt.split("|", 1)
             drug_name = parts[0].strip()
@@ -1538,7 +1541,7 @@ async def child_weight(u, ctx):
         "cephalexin": ["125mg/5ml", "250mg/5ml"],
         "salbutamol": ["2mg/5ml"],
         "domperidone": ["5mg/5ml"],
-    "vitamin_d_drops": ["100 وحدة/قطرة", "400 وحدة/قطرة", "1000 وحدة/قطرة"],
+    "vitamin_d_drops": ["100IU/drop", "400IU/drop", "1000IU/drop"],
     "zinc_syrup": ["10mg/5ml", "20mg/5ml"],
     "iron_syrup": ["25mg/ml", "15mg/ml"],
         "ondansetron": ["4mg/5ml"],
