@@ -493,7 +493,7 @@ def search_drugs(q):
                 "diprivan":"propofol","ديبريفان":"propofol",
                 "ketalar":"ketamine","كيتالار":"ketamine",
                 "dormicum":"midazolam","دورميكم":"midazolam",
-                "triprolidine_pseudoephedrine":"triprolidine_pseudoephedrine","actifed":"triprolidine_pseudoephedrine","dextromethorphan":"dextromethorphan","guaifenesin":"guaifenesin","chlorpheniramine_pseudoephedrine":"chlorpheniramine_pseudoephedrine","coldact":"chlorpheniramine_pseudoephedrine","diphenhydramine":"diphenhydramine","promethazine":"promethazine","chlorpheniramine":"chlorpheniramine","aspirin":"acetylsalicylic_acid","أسبرين":"acetylsalicylic_acid",
+                "triprolidine_pseudoephedrine":"triprolidine_pseudoephedrine","actifed":"triprolidine_pseudoephedrine","أكتيفيد":"triprolidine_pseudoephedrine","اكتيفيد":"triprolidine_pseudoephedrine","actifed":"triprolidine_pseudoephedrine","dextromethorphan":"dextromethorphan","guaifenesin":"guaifenesin","chlorpheniramine_pseudoephedrine":"chlorpheniramine_pseudoephedrine","coldact":"chlorpheniramine_pseudoephedrine","diphenhydramine":"diphenhydramine","promethazine":"promethazine","chlorpheniramine":"chlorpheniramine","aspirin":"acetylsalicylic_acid","أسبرين":"acetylsalicylic_acid",
                 "باراسيتامول":"paracetamol","بنادول":"paracetamol","بانادول":"paracetamol",
                 "إيبوبروفين":"ibuprofen","ايبوبروفين":"ibuprofen","نيوروفين":"ibuprofen","نيورفين":"ibuprofen",
                 "أموكسيسيلين":"amoxicillin","اموكسيسيلين":"amoxicillin",
@@ -951,7 +951,7 @@ async def analyze_image(img_bytes, lang):
                 "metoclopramide":"metoclopramide","ميتوكلوبراميد":"metoclopramide",
                 "maxolon":"metoclopramide","ماكسولون":"metoclopramide","primperan":"metoclopramide",
                 # بريدنيزولون
-                "prednisolone":"prednisolone","بريدنيزولون":"prednisolone",
+                "prednisolone":"prednisolone","بريدنيزولون":"prednisolone","بريدنزلون":"prednisolone","prednisolone":"prednisolone","سولوبريد":"prednisolone","solupred":"prednisolone","prednisone":"prednisolone","بريدنيزولون":"prednisolone",
                 "solupred":"prednisolone","سولوبريد":"prednisolone","deltacortril":"prednisolone",
                 "ديلتاكورتريل":"prednisolone","prednisolone syrup":"prednisolone",
                 # سالبيوتامول
@@ -1538,7 +1538,7 @@ async def child_weight(u, ctx):
         "cephalexin": ["125mg/5ml", "250mg/5ml"],
         "salbutamol": ["2mg/5ml"],
         "domperidone": ["5mg/5ml"],
-    "vitamin_d_drops": ["100IU/قطرة", "400IU/قطرة", "1000IU/قطرة"],
+    "vitamin_d_drops": ["100 وحدة/قطرة", "400 وحدة/قطرة", "1000 وحدة/قطرة"],
     "zinc_syrup": ["10mg/5ml", "20mg/5ml"],
     "iron_syrup": ["25mg/ml", "15mg/ml"],
         "ondansetron": ["4mg/5ml"],
