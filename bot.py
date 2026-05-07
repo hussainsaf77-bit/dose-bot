@@ -615,6 +615,32 @@ def calc_child(drug, w, lang):
     else:
         lines += ["🍼 Child Dose - " + n, "⚖️ Weight: " + str(w) + " kg", ""]
 
+    # معالجة فيتامين د بالقطرات
+    if drug.get("name_en") == "vitamin_d_drops":
+        try:
+            conc_str = str(drug.get("concentration","400IU/drop"))
+            conc_iu = int(conc_str.replace("IU/drop","").replace("IU/قطرة","").strip())
+        except:
+            conc_iu = 400
+        d0 = round(400 / conc_iu, 1)
+        d1 = round(600 / conc_iu, 1)
+        d2 = round(800 / conc_iu, 1)
+        if lang == "ar":
+            lines2 = ["💊 فيتامين د — " + str(conc_iu) + " IU/قطرة", ""]
+            lines2.append("📋 الجرعة اليومية بالقطرات:")
+            lines2.append("  • 0-12 شهر: " + str(d0) + " قطرة (400 IU)")
+            lines2.append("  • 1-5 سنوات: " + str(d1) + " قطرة (600 IU)")
+            lines2.append("  • 5-12 سنة: " + str(d2) + " قطرة (800 IU)")
+        else:
+            lines2 = ["💊 Vitamin D — " + str(conc_iu) + " IU/drop", ""]
+            lines2.append("📋 Daily dose in drops:")
+            lines2.append("  • 0-12 months: " + str(d0) + " drops (400 IU)")
+            lines2.append("  • 1-5 years: " + str(d1) + " drops (600 IU)")
+            lines2.append("  • 5-12 years: " + str(d2) + " drops (800 IU)")
+        lines2.append("")
+        lines2.append("⚠️ " + ("استشر الطبيب أو الصيدلاني." if lang=="ar" else "Consult doctor or pharmacist."))
+        return "\n".join(lines2)
+
     # معالجة الأدوية ذات الجرعة الثابتة حسب العمر
     if drug.get("fixed_dose") and drug.get("age_doses"):
         age_doses = drug["age_doses"]
