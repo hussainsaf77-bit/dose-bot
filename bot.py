@@ -1430,7 +1430,7 @@ async def drug_search_image(u, ctx):
             [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
         ])
         msg = "❌ لم أتعرف على الدواء\n\n💡 جرّب صورة أوضح أو أدخل الاسم يدوياً" if lang=="ar" else "❌ Could not identify drug\n\n💡 Try a clearer photo or type the name"
-        await u.message.reply_text(msg, reply_markup=btns)
+        await u.message.reply_text(msg, reply_markup=kb_image_result(lang))
         return STATE_DRUG_SEARCH
     res = search_drugs(name)
     if not res:
@@ -1493,7 +1493,7 @@ async def child_input(u, ctx):
                 [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
             ])
             msg = "❌ لم أتعرف على الدواء\n\n💡 جرّب صورة أوضح أو أدخل الاسم يدوياً" if lang=="ar" else "❌ Could not identify drug\n\n💡 Try a clearer photo or type the name"
-            await u.message.reply_text(msg, reply_markup=btns)
+            await u.message.reply_text(msg, reply_markup=kb_image_result(lang))
             return STATE_CHILD_DRUG
         res = search_drugs(name)
         if not res:
@@ -1851,8 +1851,9 @@ async def infection_site(u, ctx):
 
 def kb_image_result(lang, drug_name=""):
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("✏️ " + ("الدواء خطأ — اكتب الاسم" if lang=="ar" else "Wrong drug — Type name"), callback_data="manual_input")],
+        [InlineKeyboardButton("✏️ " + ("الدواء خطأ — أدخل الاسم" if lang=="ar" else "Wrong drug — Type name"), callback_data="manual_input")],
         [InlineKeyboardButton("📸 " + ("جرّب صورة أخرى" if lang=="ar" else "Try another photo"), callback_data="retry_photo")],
+        [InlineKeyboardButton("🔙 " + ("القائمة الرئيسية" if lang=="ar" else "Main Menu"), callback_data="back")],
     ])
 
 async def img_ok(u, ctx):
