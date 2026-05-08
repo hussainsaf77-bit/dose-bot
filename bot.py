@@ -2742,6 +2742,9 @@ def build_conv():
                 MessageHandler(filters.PHOTO, child_input),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, child_input)],
             STATE_CHILD_WEIGHT: [
+                CallbackQueryHandler(manual_drug_input, pattern="^manual_input$"),
+                CallbackQueryHandler(retry_photo, pattern="^retry_photo$"),
+                CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, child_weight)],
             STATE_CHILD_CONC: [
