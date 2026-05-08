@@ -1874,6 +1874,7 @@ async def manual_drug_input(u, ctx):
     msg = "✏️ اكتب اسم الدواء:" if lang=="ar" else "✏️ Type the drug name:"
     await q.message.edit_text(msg)
     return STATE_CHILD_DRUG
+    return STATE_CHILD_DRUG
 
 
 async def sugar_handler(u, ctx):
