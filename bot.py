@@ -1486,9 +1486,11 @@ async def drug_search(u, ctx):
                 await u.message.reply_text(tx("not_found", lang), reply_markup=kb_back(lang))
             else:
                 await u.message.reply_text(ai_result, reply_markup=kb_back(lang))
-        except:
-            await thinking.delete()
-            await u.message.reply_text(tx("not_found", lang), reply_markup=kb_back(lang))
+        except Exception as e:
+            logger.error(f"Drug search API error: {e}")
+            try: await thinking.delete()
+            except: pass
+            await u.message.reply_text("⚠️ " + ("خطأ في الاتصال، حاول مرة أخرى" if lang=="ar" else "Connection error, try again"), reply_markup=kb_back(lang))
         return STATE_DRUG_SEARCH
     if len(res) == 1:
         await u.message.reply_text(fmt_drug(res[0], lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN_V2 if False else ParseMode.MARKDOWN)
