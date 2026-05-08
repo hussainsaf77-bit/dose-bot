@@ -1451,9 +1451,38 @@ async def drug_search_image(u, ctx):
 async def drug_search(u, ctx):
     lang = get_lang(ctx)
     track(u, "searches")
-    res = search_drugs(u.message.text)
+    query = u.message.text.strip()
+    res = search_drugs(query)
     if not res:
-        await u.message.reply_text(tx("not_found", lang), reply_markup=kb_back(lang))
+        # نستخدم Claude API
+        thinking = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
+        try:
+            prompt = f"""أنت صيدلاني خبير. أعطني معلومات عن دواء: {query}
+
+أجب بالتنسيق التالي:
+💊 الاسم العلمي: 
+🏷️ الاسم التجاري: 
+📋 الاستخدام: 
+💉 الجرعة المعتادة للبالغين: 
+⚠️ تحذيرات: 
+❌ موانع الاستخدام: 
+
+أجب {"بالعربية" if lang=="ar" else "in English"} فقط. إذا لم تعرف الدواء اكتب: غير معروف"""
+
+            async with httpx.AsyncClient(timeout=30) as c:
+                r = await c.post("https://api.anthropic.com/v1/messages",
+                    headers={{"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"}},
+                    json={{"model": "claude-haiku-4-5-20251001", "max_tokens": 500,
+                        "messages": [{{"role": "user", "content": prompt}}]}})
+                ai_result = r.json().get("content", [{{}}])[0].get("text", "").strip()
+            await thinking.delete()
+            if "غير معروف" in ai_result or "unknown" in ai_result.lower():
+                await u.message.reply_text(tx("not_found", lang), reply_markup=kb_back(lang))
+            else:
+                await u.message.reply_text(ai_result, reply_markup=kb_back(lang))
+        except:
+            await thinking.delete()
+            await u.message.reply_text(tx("not_found", lang), reply_markup=kb_back(lang))
         return STATE_DRUG_SEARCH
     if len(res) == 1:
         await u.message.reply_text(fmt_drug(res[0], lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN_V2 if False else ParseMode.MARKDOWN)
