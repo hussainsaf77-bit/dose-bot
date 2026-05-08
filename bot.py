@@ -1501,7 +1501,8 @@ async def child_input(u, ctx):
             return STATE_CHILD_DRUG
         ctx.user_data["child_drug"] = res[0]
         ctx.user_data["img_drug"] = name
-        await u.message.reply_text("📸 " + name + "\n\n" + tx("weight_prompt", lang), reply_markup=kb_image_result(lang, name), parse_mode=ParseMode.MARKDOWN)
+        msg2 = "📸 *" + name + "*\n\n" + tx("weight_prompt", lang)
+        await u.message.reply_text(msg2, reply_markup=kb_image_result(lang, name), parse_mode=ParseMode.MARKDOWN)
         return STATE_CHILD_WEIGHT
     res = search_drugs(u.message.text)
     if not res:
@@ -1850,7 +1851,6 @@ async def infection_site(u, ctx):
 
 def kb_image_result(lang, drug_name=""):
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("✅ " + ("الدواء صحيح — أدخل الوزن" if lang=="ar" else "Correct — Enter weight"), callback_data="img_ok")],
         [InlineKeyboardButton("✏️ " + ("الدواء خطأ — اكتب الاسم" if lang=="ar" else "Wrong drug — Type name"), callback_data="manual_input")],
         [InlineKeyboardButton("📸 " + ("جرّب صورة أخرى" if lang=="ar" else "Try another photo"), callback_data="retry_photo")],
     ])
