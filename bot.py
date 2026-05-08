@@ -1477,10 +1477,10 @@ async def drug_search(u, ctx):
 
             async with httpx.AsyncClient(timeout=30) as c:
                 r = await c.post("https://api.anthropic.com/v1/messages",
-                    headers={{"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"}},
-                    json={{"model": "claude-haiku-4-5-20251001", "max_tokens": 500,
-                        "messages": [{{"role": "user", "content": prompt}}]}})
-                ai_result = r.json().get("content", [{{}}])[0].get("text", "").strip()
+                    headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                    json={"model": "claude-haiku-4-5-20251001", "max_tokens": 800,
+                        "messages": [{"role": "user", "content": prompt}]})
+                ai_result = r.json().get("content", [{}])[0].get("text", "").strip()
             await thinking.delete()
             if "غير معروف" in ai_result or "unknown" in ai_result.lower():
                 await u.message.reply_text(tx("not_found", lang), reply_markup=kb_back(lang))
