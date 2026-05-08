@@ -28421,5 +28421,21 @@
       "12+ سنة": "10 مل × 3-4 مرات يومياً"
     },
     "warning": "⚠️ ممنوع تحت سن 6 سنوات"
+  },
+  {
+    "name_en": "bronchikam",
+    "name_ar": "برونشيكام",
+    "aliases": "bronchicum, thyme primula, زعتر ربيع, thyme syrup",
+    "pediatric_min_mg_per_kg": 0,
+    "pediatric_max_mg_per_kg": 0,
+    "pediatric_frequency": "3 مرات يومياً",
+    "concentration": "شراب عشبي",
+    "fixed_dose": true,
+    "age_doses": {
+      "1-5 سنوات": "2.5 مل × 3 مرات يومياً",
+      "6-12 سنة": "5 مل × 3 مرات يومياً",
+      "12+ سنة": "10 مل × 3 مرات يومياً"
+    },
+    "warning": "✅ شراب عشبي طبيعي — آمن من عمر سنة"
   }
 ]
