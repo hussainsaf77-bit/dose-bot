@@ -28481,5 +28481,37 @@
       "12+ سنة": "10 مل × 3 مرات يومياً"
     },
     "warning": "✅ شراب عشبي طبيعي — آمن من عمر سنة"
+  },
+  {
+    "name_en": "paracetamol_suppository",
+    "name_ar": "باراسيتامول تحاميل",
+    "aliases": "panadol suppository, فيفادول تحاميل, paracetamol supp, تحميلة باراسيتامول",
+    "pediatric_min_mg_per_kg": 15,
+    "pediatric_max_mg_per_kg": 20,
+    "pediatric_frequency": "كل 6-8 ساعات",
+    "concentration": "125mg",
+    "fixed_dose": true,
+    "age_doses": {
+      "3-12 شهر": "تحميلة 125mg كل 6-8 ساعات",
+      "1-5 سنوات": "تحميلة 250mg كل 6-8 ساعات",
+      "6-12 سنة": "تحميلة 500mg كل 6-8 ساعات"
+    },
+    "warning": "⚠️ لا تتجاوز 4 جرعات يومياً"
+  },
+  {
+    "name_en": "diclofenac_suppository",
+    "name_ar": "ديكلوفيناك تحاميل",
+    "aliases": "rovfenac, روفيناك, voltaren suppository, فولتارين تحاميل, diclofenac supp",
+    "pediatric_min_mg_per_kg": 1,
+    "pediatric_max_mg_per_kg": 2,
+    "pediatric_frequency": "مرتين يومياً",
+    "concentration": "12.5mg",
+    "fixed_dose": true,
+    "age_doses": {
+      "1-4 سنوات": "تحميلة 12.5mg مرتين يومياً",
+      "4-8 سنوات": "تحميلة 25mg مرتين يومياً",
+      "8-12 سنة": "تحميلة 50mg مرتين يومياً"
+    },
+    "warning": "⚠️ ممنوع تحت سنة — لا تستخدم أكثر من 3 أيام بدون وصفة"
   }
 ]
