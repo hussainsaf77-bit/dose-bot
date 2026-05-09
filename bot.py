@@ -2549,6 +2549,58 @@ async def drug_form_selected(u, ctx):
     await q.message.edit_text(msg)
     return STATE_CHILD_DRUG
 
+
+async def calc_special_form(drug_name, weight, drug_form, lang):
+    """يستخدم Claude API لحساب جرعة الحقن والكريم والقطرات والتحاميل"""
+    form_names = {
+        "injection": "حقنة IV/IM" if lang=="ar" else "IV/IM Injection",
+        "cream": "كريم/مرهم موضعي" if lang=="ar" else "Topical Cream/Ointment",
+        "drops": "قطرة عين/أنف/أذن" if lang=="ar" else "Eye/Nose/Ear Drops",
+        "suppository": "تحميلة شرجية" if lang=="ar" else "Rectal Suppository",
+    }
+    form_name = form_names.get(drug_form, drug_form)
+    
+    if lang == "ar":
+        prompt = f"""أنت صيدلاني خبير. احسب جرعة {form_name} لـ {drug_name} لطفل وزنه {weight} كغ.
+
+أجب بهذا التنسيق فقط:
+💊 الدواء: {drug_name}
+📋 النوع: {form_name}
+⚖️ الوزن: {weight} كغ
+💉 الجرعة: 
+🔁 التكرار: 
+⏱️ مدة العلاج: 
+⚠️ تحذير مهم: 
+
+لا تذكر جرعة الشراب. إذا لم تعرف الدواء اكتب: غير معروف"""
+    else:
+        prompt = f"""You are an expert pharmacist. Calculate {form_name} dose for {drug_name} for a child weighing {weight} kg.
+
+Reply in this format only:
+💊 Drug: {drug_name}
+📋 Form: {form_name}
+⚖️ Weight: {weight} kg
+💉 Dose: 
+🔁 Frequency: 
+⏱️ Duration: 
+⚠️ Important warning: 
+
+Do not mention syrup dose. If unknown write: unknown"""
+
+    try:
+        async with httpx.AsyncClient(timeout=30) as c:
+            r = await c.post("https://api.anthropic.com/v1/messages",
+                headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                json={"model": "claude-haiku-4-5-20251001", "max_tokens": 400,
+                    "messages": [{"role": "user", "content": prompt}]})
+            result = r.json().get("content", [{}])[0].get("text", "").strip()
+            if "غير معروف" in result or "unknown" in result.lower():
+                return None
+            return result
+    except Exception as e:
+        logger.error(f"Special form API error: {e}")
+        return None
+
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
