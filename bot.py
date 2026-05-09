@@ -2536,7 +2536,9 @@ async def drug_form_selected(u, ctx):
     }
     
     if form == "injection":
-        msg = "💉 " + ("اكتب اسم الدواء:\n⚠️ الجرعة ستكون تقريبية — راجع الطبيب دائماً للحقن" if lang=="ar" else "Enter drug name:\n⚠️ Dose is approximate — always consult doctor for injections")
+        msg = "💉 " + ("الحقن تستلزم وصفة طبية ومتابعة طبيب متخصص.\n\nلا يمكن إعطاء جرعات الحقن عبر البوت لأسباب سلامة المريض.\n\n🏥 يرجى مراجعة الطبيب أو الصيدلاني." if lang=="ar" else "Injections require a prescription and medical supervision.\n\nFor patient safety, injection doses cannot be provided via the bot.\n\n🏥 Please consult your doctor or pharmacist.")
+        await q.message.edit_text(msg, reply_markup=kb_back(lang))
+        return STATE_MAIN_MENU
     elif form == "cream":
         msg = "🧴 " + ("اكتب اسم الكريم أو أرسل صورة العبوة:" if lang=="ar" else "Enter cream name or send photo:")
     elif form == "drops":
