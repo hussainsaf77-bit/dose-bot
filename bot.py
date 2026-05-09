@@ -1545,7 +1545,32 @@ async def child_input(u, ctx):
             return STATE_CHILD_DRUG
         res = search_drugs(name)
         if not res:
-            await u.message.reply_text("📸 " + name + "\n\n" + ("❌ لم يُعثر على الدواء" if lang=="ar" else "❌ Drug not found"), reply_markup=kb_image_result(lang, name), parse_mode=ParseMode.MARKDOWN)
+            # نستخدم Claude API مباشرة
+            thinking2 = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
+            try:
+                drug_form = ctx.user_data.get("drug_form", "syrup")
+                form_ar = {"syrup":"شراب","cream":"كريم","drops":"قطرة","suppository":"تحميلة"}.get(drug_form,"شراب")
+                form_en = {"syrup":"syrup","cream":"cream","drops":"drops","suppository":"suppository"}.get(drug_form,"syrup")
+                if lang == "ar":
+                    p = f"أنت صيدلاني. الدواء: {name} ({form_ar}). أعطني جرعة الأطفال بهذا الشكل فقط:\n💊 الدواء: {name}\n📋 النوع: {form_ar}\n💉 الجرعة حسب العمر:\n• 0-2 سنة: ...\n• 2-6 سنة: ...\n• 6-12 سنة: ...\n🔁 التكرار:\n⚠️ تحذير:"
+                else:
+                    p = f"You are a pharmacist. Drug: {name} ({form_en}). Give pediatric dose only:\n💊 Drug: {name}\n📋 Form: {form_en}\n💉 Dose by age:\n• 0-2 years: ...\n• 2-6 years: ...\n• 6-12 years: ...\n🔁 Frequency:\n⚠️ Warning:"
+                async with httpx.AsyncClient(timeout=30) as hc:
+                    r2 = await hc.post("https://api.anthropic.com/v1/messages",
+                        headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                        json={"model": "claude-haiku-4-5-20251001", "max_tokens": 300,
+                            "messages": [{"role": "user", "content": p}]})
+                    ai_dose = r2.json().get("content", [{}])[0].get("text", "").strip()
+                await thinking2.delete()
+                if ai_dose:
+                    await u.message.reply_text("📸 " + name + "\n\n" + ai_dose, reply_markup=kb_image_result(lang))
+                else:
+                    await u.message.reply_text("📸 " + name + "\n\n" + ("❌ لم يُعثر على الدواء" if lang=="ar" else "❌ Not found"), reply_markup=kb_image_result(lang))
+            except Exception as e:
+                logger.error(f"Image drug API: {e}")
+                try: await thinking2.delete()
+                except: pass
+                await u.message.reply_text("📸 " + name + "\n\n" + ("❌ لم يُعثر على الدواء" if lang=="ar" else "❌ Not found"), reply_markup=kb_image_result(lang))
             return STATE_CHILD_DRUG
         ctx.user_data["child_drug"] = res[0]
         ctx.user_data["img_drug"] = name
