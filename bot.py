@@ -149,7 +149,7 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_FOOD_SEARCH, STATE_SUGAR, STATE_BP, STATE_BP_AGE,
  STATE_PAT_MENU, STATE_PAT_NAME, STATE_PAT_AGE, STATE_PAT_WEIGHT,
  STATE_PAT_GENDER, STATE_PAT_DISEASE, STATE_PAT_MEDS, STATE_PAT_ALLERGY,
- STATE_INTERACTION) = range(40)
+ STATE_INTERACTION, STATE_DRUG_FORM) = range(41)
 
 TEXTS = {
 "ar": {
@@ -1338,6 +1338,8 @@ async def main_cb(u, ctx):
         await q.message.edit_text(tx("search_prompt", lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
         return STATE_DRUG_SEARCH
     elif q.data == "m_child":
+        return await ask_drug_form(u, ctx)
+    elif q.data == "m_child_skip":
         await q.message.edit_text(tx("child_prompt", lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
         return STATE_CHILD_DRUG
     elif q.data == "m_premium":
@@ -2496,6 +2498,57 @@ async def interaction_input(u, ctx):
         ctx.user_data["interaction_step"] = 1
         return STATE_MAIN_MENU
 
+
+async def ask_drug_form(u, ctx):
+    lang = get_lang(ctx)
+    if hasattr(u, "callback_query") and u.callback_query:
+        q = u.callback_query; await q.answer()
+        edit = q.message.edit_text
+    else:
+        edit = u.message.reply_text
+    
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🥄 " + ("شراب" if lang=="ar" else "Syrup"), callback_data="form_syrup"),
+         InlineKeyboardButton("💉 " + ("حقنة" if lang=="ar" else "Injection"), callback_data="form_injection")],
+        [InlineKeyboardButton("🧴 " + ("كريم/مرهم" if lang=="ar" else "Cream/Ointment"), callback_data="form_cream"),
+         InlineKeyboardButton("💧 " + ("قطرة" if lang=="ar" else "Drops"), callback_data="form_drops")],
+        [InlineKeyboardButton("🕯️ " + ("تحميلة" if lang=="ar" else "Suppository"), callback_data="form_suppository"),
+         InlineKeyboardButton("💊 " + ("أخرى" if lang=="ar" else "Other"), callback_data="form_other")],
+        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+    ])
+    msg = "💊 اختر نوع الدواء:" if lang=="ar" else "💊 Select drug form:"
+    await edit(msg, reply_markup=btns)
+    return STATE_DRUG_FORM
+
+async def drug_form_selected(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    form = q.data.replace("form_", "")
+    ctx.user_data["drug_form"] = form
+    
+    form_names = {
+        "syrup": "شراب" if lang=="ar" else "Syrup",
+        "injection": "حقنة" if lang=="ar" else "Injection",
+        "cream": "كريم/مرهم" if lang=="ar" else "Cream/Ointment",
+        "drops": "قطرة" if lang=="ar" else "Drops",
+        "suppository": "تحميلة" if lang=="ar" else "Suppository",
+        "other": "أخرى" if lang=="ar" else "Other",
+    }
+    
+    if form == "injection":
+        msg = "💉 " + ("اكتب اسم الدواء:\n⚠️ الجرعة ستكون تقريبية — راجع الطبيب دائماً للحقن" if lang=="ar" else "Enter drug name:\n⚠️ Dose is approximate — always consult doctor for injections")
+    elif form == "cream":
+        msg = "🧴 " + ("اكتب اسم الكريم أو أرسل صورة العبوة:" if lang=="ar" else "Enter cream name or send photo:")
+    elif form == "drops":
+        msg = "💧 " + ("اكتب اسم القطرة أو أرسل صورة العبوة:" if lang=="ar" else "Enter drops name or send photo:")
+    elif form == "suppository":
+        msg = "🕯️ " + ("اكتب اسم التحميلة أو أرسل صورة العبوة:" if lang=="ar" else "Enter suppository name or send photo:")
+    else:
+        msg = "💊 " + ("اكتب اسم الدواء أو أرسل صورة العبوة 📸" if lang=="ar" else "Enter drug name or send photo 📸")
+    
+    await q.message.edit_text(msg)
+    return STATE_CHILD_DRUG
+
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -2779,6 +2832,9 @@ def build_conv():
                 CallbackQueryHandler(drug_sel, pattern="^ds_"),
                 MessageHandler(filters.PHOTO, drug_search_image),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, drug_search)],
+            STATE_DRUG_FORM: [
+                CallbackQueryHandler(go_back, pattern="^back$"),
+                CallbackQueryHandler(drug_form_selected, pattern="^form_")],
             STATE_CHILD_DRUG: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(manual_drug_input, pattern="^manual_input$"),
