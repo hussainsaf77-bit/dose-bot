@@ -1737,7 +1737,7 @@ async def child_weight(u, ctx):
     change_btns = [[InlineKeyboardButton(c, callback_data="conc_" + c)] for c in concs[:4]]
     change_btns.append([InlineKeyboardButton("🔙 " + ("رجوع" if lang=="ar" else "Back"), callback_data="back")])
     
-    note = "
+    note = "\n\n🔄 " + ("تغيير التركيز:" if lang=="ar" else "Change concentration:")
 
 🔄 " + ("تغيير التركيز:" if lang=="ar" else "Change concentration:")
     await u.message.reply_text(result + note, reply_markup=InlineKeyboardMarkup(change_btns), parse_mode=ParseMode.MARKDOWN)
