@@ -1386,7 +1386,8 @@ async def main_cb(u, ctx):
         await q.message.edit_text(tx("search_prompt", lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
         return STATE_DRUG_SEARCH
     elif q.data == "m_child":
-        return await ask_drug_form(u, ctx)
+        await q.message.edit_text(tx("child_prompt", lang), reply_markup=kb_back(lang))
+        return STATE_CHILD_DRUG
     elif q.data == "m_child_skip":
         await q.message.edit_text(tx("child_prompt", lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
         return STATE_CHILD_DRUG
