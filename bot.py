@@ -1297,6 +1297,25 @@ async def auto_welcome(u, ctx):
 
 async def start(u, ctx):
     _tz = ctx.user_data.get("timezone"); ctx.user_data.clear(); ctx.user_data["timezone"] = _tz if _tz else ctx.user_data.get("timezone")
+    
+    # التحقق من التسجيل
+    uid = str(u.effective_user.id)
+    stats = load_stats()
+    users = stats.get("users", {})
+    user_data_s = users.get(uid, {})
+    is_registered = isinstance(user_data_s, dict) and user_data_s.get("registered", False)
+    
+    if not is_registered:
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("👨‍⚕️ طبيب", callback_data="reg_doctor"),
+             InlineKeyboardButton("💊 صيدلاني", callback_data="reg_pharmacist")],
+            [InlineKeyboardButton("👩 أم/أب", callback_data="reg_parent"),
+             InlineKeyboardButton("🎓 طالب طب", callback_data="reg_student")],
+            [InlineKeyboardButton("👤 مستخدم عام", callback_data="reg_general")],
+        ])
+        await u.message.reply_text("👋 مرحباً! اختر نوع مستخدمك للبدء:", reply_markup=btns)
+        return STATE_MAIN_MENU
+    
     await u.message.reply_text(tx("welcome", "ar"), reply_markup=kb_lang(), parse_mode=ParseMode.MARKDOWN)
     return STATE_LANGUAGE
 
