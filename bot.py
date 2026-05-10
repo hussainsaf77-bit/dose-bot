@@ -1297,22 +1297,6 @@ async def auto_welcome(u, ctx):
 
 async def start(u, ctx):
     _tz = ctx.user_data.get("timezone"); ctx.user_data.clear(); ctx.user_data["timezone"] = _tz if _tz else ctx.user_data.get("timezone")
-    
-    # التحقق من التسجيل
-    uid = str(u.effective_user.id)
-    stats = load_stats()
-    users = stats.get("users", {})
-    user_data_s = users.get(uid, {})
-    is_registered = isinstance(user_data_s, dict) and user_data_s.get("registered", False)
-    
-    if not is_registered:
-        btns = InlineKeyboardMarkup([
-            [InlineKeyboardButton("👨‍⚕️ طبيب / صيدلاني", callback_data="reg_doctor")],
-            [InlineKeyboardButton("👤 غير ذلك", callback_data="reg_general")],
-        ])
-        await u.message.reply_text("👋 مرحباً! اختر نوع مستخدمك للبدء:", reply_markup=btns)
-        return STATE_MAIN_MENU
-    
     await u.message.reply_text(tx("welcome", "ar"), reply_markup=kb_lang(), parse_mode=ParseMode.MARKDOWN)
     return STATE_LANGUAGE
 
@@ -1352,6 +1336,22 @@ async def pick_lang(u, ctx):
     q = u.callback_query; await q.answer()
     ctx.user_data["lang"] = "ar" if q.data == "lang_ar" else "en"
     lang = get_lang(ctx)
+    
+    # نتحقق من التسجيل
+    uid = str(u.effective_user.id)
+    stats = load_stats()
+    user_info = stats.get("users", {}).get(uid, {})
+    is_registered = isinstance(user_info, dict) and user_info.get("registered", False)
+    
+    if not is_registered:
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("👨‍⚕️ " + ("طبيب / صيدلاني" if lang=="ar" else "Doctor / Pharmacist"), callback_data="reg_doctor")],
+            [InlineKeyboardButton("👤 " + ("غير ذلك" if lang=="ar" else "Other"), callback_data="reg_general")],
+        ])
+        msg = "👋 " + ("خطوة أخيرة! اختر نوع مستخدمك:" if lang=="ar" else "One last step! Select your user type:")
+        await q.message.edit_text(msg, reply_markup=btns)
+        return STATE_MAIN_MENU
+    
     await show_main(q.message, lang, edit=True)
     return STATE_MAIN_MENU
 
