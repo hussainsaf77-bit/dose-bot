@@ -1307,11 +1307,8 @@ async def start(u, ctx):
     
     if not is_registered:
         btns = InlineKeyboardMarkup([
-            [InlineKeyboardButton("👨‍⚕️ طبيب", callback_data="reg_doctor"),
-             InlineKeyboardButton("💊 صيدلاني", callback_data="reg_pharmacist")],
-            [InlineKeyboardButton("👩 أم/أب", callback_data="reg_parent"),
-             InlineKeyboardButton("🎓 طالب طب", callback_data="reg_student")],
-            [InlineKeyboardButton("👤 مستخدم عام", callback_data="reg_general")],
+            [InlineKeyboardButton("👨‍⚕️ طبيب / صيدلاني", callback_data="reg_doctor")],
+            [InlineKeyboardButton("👤 غير ذلك", callback_data="reg_general")],
         ])
         await u.message.reply_text("👋 مرحباً! اختر نوع مستخدمك للبدء:", reply_markup=btns)
         return STATE_MAIN_MENU
