@@ -1502,15 +1502,7 @@ async def drug_search(u, ctx):
     lang = get_lang(ctx)
     track(u, "searches")
     query = u.message.text.strip()
-    # نضيف نوع الدواء للبحث
-    drug_form = ctx.user_data.get("drug_form", "syrup")
-    if drug_form == "suppository" and "suppository" not in query.lower() and "تحميل" not in query:
-        query_search = query + " suppository"
-    else:
-        query_search = query
-    res = search_drugs(query_search)
-    if not res:
-        res = search_drugs(query)
+    res = search_drugs(query)
     if not res:
         # نستخدم Claude API
         thinking = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
