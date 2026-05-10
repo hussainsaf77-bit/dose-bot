@@ -1319,6 +1319,38 @@ async def start(u, ctx):
     await u.message.reply_text(tx("welcome", "ar"), reply_markup=kb_lang(), parse_mode=ParseMode.MARKDOWN)
     return STATE_LANGUAGE
 
+async def reg_name_country(u, ctx):
+    """يحفظ الاسم والدولة بعد التسجيل"""
+    lang = "ar"
+    text = u.message.text.strip()
+    uid = str(u.effective_user.id)
+    
+    # نفصل الاسم والدولة
+    parts = text.replace("—","–").replace("-","–").split("–")
+    name = parts[0].strip() if parts else text
+    country = parts[1].strip() if len(parts) > 1 else ""
+    
+    # نكتشف المنطقة الزمنية
+    if country:
+        tz = detect_country_tz(country)
+        if tz:
+            ctx.user_data["timezone"] = tz
+    
+    # نحفظ في الإحصائيات
+    stats = load_stats()
+    if "users" not in stats: stats["users"] = {}
+    stats["users"][uid] = {
+        "count": 1,
+        "registered": True,
+        "role": ctx.user_data.get("reg_role", "عام"),
+        "name": name,
+        "country": country
+    }
+    save_stats(stats)
+    
+    await u.message.reply_text("✅ مرحباً " + name + "! 🎉\n\nاختر لغتك:", reply_markup=kb_lang())
+    return STATE_LANGUAGE
+
 async def pick_lang(u, ctx):
     q = u.callback_query; await q.answer()
     ctx.user_data["lang"] = "ar" if q.data == "lang_ar" else "en"
@@ -2708,14 +2740,10 @@ async def reg_handler(u, ctx):
         stats["users"][uid]["role"] = role
     save_stats(stats)
     
-    welcome = "✅ تم التسجيل! مرحباً " + (user.first_name or "") + " 👋" if lang=="ar" else "✅ Registered! Welcome " + (user.first_name or "") + " 👋"
-    await q.message.edit_text(welcome)
-    
-    # ننتقل للقائمة الرئيسية
-    lang = get_lang(ctx)
-    kb = kb_main(lang)
-    await q.message.reply_text(tx("main_menu", lang), reply_markup=kb)
-    return STATE_MAIN_MENU
+    ctx.user_data["reg_role"] = role
+    ctx.user_data["lang"] = "ar"
+    await q.message.edit_text("✅ ممتاز!\n\n📝 اكتب اسمك ودولتك في رسالة واحدة\nمثال: أحمد — السعودية")
+    return STATE_LANGUAGE
 
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
@@ -2981,7 +3009,8 @@ def build_conv():
             STATE_COUNTRY: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, set_country)],
             STATE_LANGUAGE: [
-                CallbackQueryHandler(pick_lang, pattern="^lang_")],
+                CallbackQueryHandler(pick_lang, pattern="^lang_"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, reg_name_country)],
             STATE_MAIN_MENU: [
                 CallbackQueryHandler(rem_done, pattern="^rem_done_"),
                 CallbackQueryHandler(rem_later, pattern="^rem_snooze_"),
