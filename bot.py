@@ -2627,6 +2627,7 @@ async def ask_drug_form(u, ctx):
     return STATE_DRUG_FORM
 
 async def drug_form_selected(u, ctx):
+    print("DRUG_FORM_SELECTED CALLED!", flush=True)
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
     form = q.data.replace("form_", "")
