@@ -1651,6 +1651,7 @@ async def child_sel(u, ctx):
     return STATE_CHILD_WEIGHT
 
 async def child_weight(u, ctx):
+    print("CHILD_WEIGHT CALLED!", flush=True)
     lang = get_lang(ctx)
     track(u, "child_doses")
     try:
