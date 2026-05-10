@@ -1609,7 +1609,6 @@ async def child_input(u, ctx):
         ctx.user_data["img_drug"] = name
         msg2 = "📸 *" + name + "*\n\n" + tx("weight_prompt", lang)
         await u.message.reply_text(msg2, reply_markup=kb_image_result(lang, name), parse_mode=ParseMode.MARKDOWN)
-        print("RETURNING STATE_CHILD_WEIGHT from child_input text", flush=True)
         return STATE_CHILD_WEIGHT
     res = search_drugs(u.message.text)
     if not res:
@@ -1637,7 +1636,6 @@ async def child_sel(u, ctx):
     return STATE_CHILD_WEIGHT
 
 async def child_weight(u, ctx):
-    print("CHILD_WEIGHT CALLED!", flush=True)
     lang = get_lang(ctx)
     track(u, "child_doses")
     try:
@@ -1652,7 +1650,6 @@ async def child_weight(u, ctx):
         await u.message.reply_text("❌ " + ("لم يُحدد الدواء، ابدأ من جديد" if lang=="ar" else "Drug not set, start over"), reply_markup=kb_back(lang))
         return STATE_CHILD_DRUG
     ctx.user_data["child_weight"] = w
-    await u.message.reply_text("🔄 " + str(w))
     # نتحقق إذا كان مضاد حيوي
     name_key = d.get("name_en","").lower()
     logger.info(f"child_weight step2: name_key={name_key}, drug_form={ctx.user_data.get('drug_form')}")
@@ -2612,7 +2609,6 @@ async def ask_drug_form(u, ctx):
     return STATE_DRUG_FORM
 
 async def drug_form_selected(u, ctx):
-    print("DRUG_FORM_SELECTED CALLED!", flush=True)
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
     form = q.data.replace("form_", "")
