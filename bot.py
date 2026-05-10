@@ -1728,17 +1728,8 @@ async def child_weight(u, ctx):
     d_copy = dict(d)
     d_copy["concentration"] = default_conc.split("callback")[0] if "callback" in default_conc else default_conc
     
-    # نأخذ التركيز الافتراضي من الزر الأول
-    first_conc = concs[0] if concs else d.get("concentration","125mg/5ml")
-    d_copy["concentration"] = first_conc
-    result = calc_child(d_copy, w, lang)
-    
-    # نضيف أزرار التراكيز في الأسفل
-    change_btns = [[InlineKeyboardButton(c, callback_data="conc_" + c)] for c in concs[:4]]
-    change_btns.append([InlineKeyboardButton("🔙 " + ("رجوع" if lang=="ar" else "Back"), callback_data="back")])
-    
-    note = "\n\n🔄 " + ("تغيير التركيز:" if lang=="ar" else "Change concentration:")
-    await u.message.reply_text(result + note, reply_markup=InlineKeyboardMarkup(change_btns), parse_mode=ParseMode.MARKDOWN)
+    msg = "💊 اختر تركيز الشراب:" if lang == "ar" else "💊 Select concentration:"
+    await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup(btns))
     return STATE_CHILD_CONC
 
 
