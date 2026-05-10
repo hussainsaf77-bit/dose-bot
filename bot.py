@@ -1386,8 +1386,7 @@ async def main_cb(u, ctx):
         await q.message.edit_text(tx("search_prompt", lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
         return STATE_DRUG_SEARCH
     elif q.data == "m_child":
-        await q.message.edit_text(tx("child_prompt", lang), reply_markup=kb_back(lang))
-        return STATE_CHILD_DRUG
+        return await ask_drug_form(u, ctx)
     elif q.data == "m_child_skip":
         await q.message.edit_text(tx("child_prompt", lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
         return STATE_CHILD_DRUG
@@ -1503,7 +1502,15 @@ async def drug_search(u, ctx):
     lang = get_lang(ctx)
     track(u, "searches")
     query = u.message.text.strip()
-    res = search_drugs(query)
+    # نضيف نوع الدواء للبحث
+    drug_form = ctx.user_data.get("drug_form", "syrup")
+    if drug_form == "suppository" and "suppository" not in query.lower() and "تحميل" not in query:
+        query_search = query + " suppository"
+    else:
+        query_search = query
+    res = search_drugs(query_search)
+    if not res:
+        res = search_drugs(query)
     if not res:
         # نستخدم Claude API
         thinking = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
@@ -1658,7 +1665,6 @@ async def child_weight(u, ctx):
         await u.message.reply_text("❌ " + ("لم يُحدد الدواء، ابدأ من جديد" if lang=="ar" else "Drug not set, start over"), reply_markup=kb_back(lang))
         return STATE_CHILD_DRUG
     ctx.user_data["child_weight"] = w
-    await u.message.reply_text("⚙️ وزن: " + str(w) + " كغ — جارٍ الحساب...")
     # نتحقق إذا كان مضاد حيوي
     name_key = d.get("name_en","").lower()
     logger.info(f"child_weight step2: name_key={name_key}, drug_form={ctx.user_data.get('drug_form')}")
@@ -1732,12 +1738,7 @@ async def child_weight(u, ctx):
     change_btns.append([InlineKeyboardButton("🔙 " + ("رجوع" if lang=="ar" else "Back"), callback_data="back")])
     
     note = "\n\n🔄 " + ("تغيير التركيز:" if lang=="ar" else "Change concentration:")
-
-    try:
-        await u.message.reply_text(result + note, reply_markup=InlineKeyboardMarkup(change_btns))
-    except Exception as e:
-        logger.error(f"child_weight final error: {e}")
-        await u.message.reply_text(result, reply_markup=InlineKeyboardMarkup(change_btns))
+    await u.message.reply_text(result + note, reply_markup=InlineKeyboardMarkup(change_btns), parse_mode=ParseMode.MARKDOWN)
     return STATE_CHILD_CONC
 
 
