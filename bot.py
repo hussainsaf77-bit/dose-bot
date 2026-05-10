@@ -1667,6 +1667,7 @@ async def child_weight(u, ctx):
     ctx.user_data["child_weight"] = w
     # نتحقق إذا كان مضاد حيوي
     name_key = d.get("name_en","").lower()
+    logger.info(f"child_weight step2: name_key={name_key}, drug_form={ctx.user_data.get('drug_form')}")
     if name_key in ANTIBIOTIC_DOSES:
         sites = INFECTION_SITES.get(lang, INFECTION_SITES["ar"])
         available = [(k,v) for k,v in sites if k in ANTIBIOTIC_DOSES[name_key]]
@@ -1722,6 +1723,7 @@ async def child_weight(u, ctx):
             btns.append([InlineKeyboardButton(c, callback_data="conc_" + c)])
     btns.append([InlineKeyboardButton("🔢 تركيز آخر", callback_data="conc_custom")])
     btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
+    logger.info(f"child_weight step3: showing concs, btns={len(btns)}")
     msg = "💊 اختر تركيز الشراب:" if lang == "ar" else "💊 Select concentration:"
     try:
         await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup(btns))
