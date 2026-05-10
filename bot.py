@@ -2693,7 +2693,9 @@ async def reg_handler(u, ctx):
     await q.message.edit_text(welcome)
     
     # ننتقل للقائمة الرئيسية
-    await show_main_menu(u, ctx)
+    lang = get_lang(ctx)
+    kb = kb_main(lang)
+    await q.message.reply_text(tx("main_menu", lang), reply_markup=kb)
     return STATE_MAIN_MENU
 
 async def rem_menu(u, ctx):
