@@ -3013,6 +3013,7 @@ def build_conv():
                 CallbackQueryHandler(rem_later, pattern="^rem_snooze_"),
 
                 CallbackQueryHandler(go_back, pattern="^back$"),
+                CallbackQueryHandler(reg_handler, pattern="^reg_"),
                 CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_|sugar_)"), CallbackQueryHandler(manual_drug_input, pattern="^manual_input$")],
             STATE_BMI_WEIGHT: [
                 CallbackQueryHandler(bmi_cb, pattern="^bmi_"),
