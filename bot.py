@@ -2637,6 +2637,65 @@ Do not mention syrup dose. If unknown write: unknown"""
         logger.error(f"Special form API error: {e}")
         return None
 
+
+async def check_registration(u, ctx):
+    """يتحقق إذا المستخدم مسجل"""
+    uid = str(u.effective_user.id)
+    stats = load_stats()
+    users = stats.get("users", {})
+    return uid in users and users[uid].get("registered", False)
+
+async def show_registration(u, ctx, lang):
+    """يعرض شاشة التسجيل السريع"""
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("👨‍⚕️ " + ("طبيب" if lang=="ar" else "Doctor"), callback_data="reg_doctor"),
+         InlineKeyboardButton("💊 " + ("صيدلاني" if lang=="ar" else "Pharmacist"), callback_data="reg_pharmacist")],
+        [InlineKeyboardButton("👩 " + ("أم/أب" if lang=="ar" else "Parent"), callback_data="reg_parent"),
+         InlineKeyboardButton("🎓 " + ("طالب طب" if lang=="ar" else "Med Student"), callback_data="reg_student")],
+        [InlineKeyboardButton("👤 " + ("مستخدم عام" if lang=="ar" else "General User"), callback_data="reg_general")],
+    ])
+    msg = "👋 " + ("مرحباً! اختر نوع مستخدمك للبدء:" if lang=="ar" else "Welcome! Select your user type to start:")
+    if hasattr(u, "message") and u.message:
+        await u.message.reply_text(msg, reply_markup=btns)
+    else:
+        await u.callback_query.message.edit_text(msg, reply_markup=btns)
+
+async def reg_handler(u, ctx):
+    """يحفظ التسجيل ويكمل للقائمة الرئيسية"""
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    user = u.effective_user
+    uid = str(user.id)
+    
+    role_map = {
+        "reg_doctor": "طبيب" if lang=="ar" else "Doctor",
+        "reg_pharmacist": "صيدلاني" if lang=="ar" else "Pharmacist", 
+        "reg_parent": "أم/أب" if lang=="ar" else "Parent",
+        "reg_student": "طالب طب" if lang=="ar" else "Med Student",
+        "reg_general": "مستخدم عام" if lang=="ar" else "General User",
+    }
+    role = role_map.get(q.data, "عام")
+    
+    # نحفظ في الإحصائيات
+    stats = load_stats()
+    if "users" not in stats:
+        stats["users"] = {}
+    if uid not in stats["users"]:
+        stats["users"][uid] = 0
+    if isinstance(stats["users"][uid], int):
+        stats["users"][uid] = {"count": stats["users"][uid], "registered": True, "role": role, "name": user.first_name or ""}
+    else:
+        stats["users"][uid]["registered"] = True
+        stats["users"][uid]["role"] = role
+    save_stats(stats)
+    
+    welcome = "✅ تم التسجيل! مرحباً " + (user.first_name or "") + " 👋" if lang=="ar" else "✅ Registered! Welcome " + (user.first_name or "") + " 👋"
+    await q.message.edit_text(welcome)
+    
+    # ننتقل للقائمة الرئيسية
+    await show_main_menu(u, ctx)
+    return STATE_MAIN_MENU
+
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
