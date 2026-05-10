@@ -1665,6 +1665,7 @@ async def child_weight(u, ctx):
         await u.message.reply_text("❌ " + ("لم يُحدد الدواء، ابدأ من جديد" if lang=="ar" else "Drug not set, start over"), reply_markup=kb_back(lang))
         return STATE_CHILD_DRUG
     ctx.user_data["child_weight"] = w
+    await u.message.reply_text("🔄 " + str(w))
     # نتحقق إذا كان مضاد حيوي
     name_key = d.get("name_en","").lower()
     logger.info(f"child_weight step2: name_key={name_key}, drug_form={ctx.user_data.get('drug_form')}")
