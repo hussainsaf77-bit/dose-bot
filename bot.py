@@ -1723,7 +1723,11 @@ async def child_weight(u, ctx):
     btns.append([InlineKeyboardButton("🔢 تركيز آخر", callback_data="conc_custom")])
     btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
     msg = "💊 اختر تركيز الشراب:" if lang == "ar" else "💊 Select concentration:"
-    await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup(btns))
+    try:
+        await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup(btns))
+    except Exception as e:
+        logger.error(f"child_weight reply error: {e}")
+        await u.message.reply_text(msg)
     return STATE_CHILD_CONC
 
 
