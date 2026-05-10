@@ -1739,7 +1739,6 @@ async def child_weight(u, ctx):
     
     note = "\n\n🔄 " + ("تغيير التركيز:" if lang=="ar" else "Change concentration:")
 
-🔄 " + ("تغيير التركيز:" if lang=="ar" else "Change concentration:")
     await u.message.reply_text(result + note, reply_markup=InlineKeyboardMarkup(change_btns), parse_mode=ParseMode.MARKDOWN)
     return STATE_CHILD_CONC
 
