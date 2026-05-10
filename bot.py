@@ -1624,6 +1624,7 @@ async def child_input(u, ctx):
         ctx.user_data["img_drug"] = name
         msg2 = "📸 *" + name + "*\n\n" + tx("weight_prompt", lang)
         await u.message.reply_text(msg2, reply_markup=kb_image_result(lang, name), parse_mode=ParseMode.MARKDOWN)
+        print("RETURNING STATE_CHILD_WEIGHT from child_input text", flush=True)
         return STATE_CHILD_WEIGHT
     res = search_drugs(u.message.text)
     if not res:
