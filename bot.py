@@ -1661,6 +1661,35 @@ async def child_weight(u, ctx):
         msg = "🦠 مكان الالتهاب؟" if lang=="ar" else "🦠 Infection site?"
         await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup(btns))
         return STATE_INFECTION_SITE
+    # التحاميل - Claude API مباشرة
+    if drug_form == "suppository":
+        thinking_s = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
+        try:
+            drug_name_ar = d.get("name_ar", name)
+            p_s = f"""أنت صيدلاني. جرعة تحميلة {drug_name_ar} للأطفال:
+أجب بهذا الشكل فقط:
+🕯️ {drug_name_ar} تحميلة
+• أقل من سنة: ...
+• 1-5 سنوات: ...
+• 6-12 سنة: ...
+🔁 التكرار:
+⚠️ تحذير:
+أجب {"بالعربية" if lang=="ar" else "in English"}"""
+            async with httpx.AsyncClient(timeout=30) as hc:
+                r_s = await hc.post("https://api.anthropic.com/v1/messages",
+                    headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                    json={"model": "claude-haiku-4-5-20251001", "max_tokens": 300,
+                        "messages": [{"role": "user", "content": p_s}]})
+                ai_s = r_s.json().get("content", [{}])[0].get("text","").strip()
+            await thinking_s.delete()
+            if ai_s:
+                await u.message.reply_text(ai_s, reply_markup=kb_back(lang))
+                return STATE_MAIN_MENU
+        except Exception as e:
+            logger.error(f"Supp: {e}")
+            try: await thinking_s.delete()
+            except: pass
+
     # تراكيز شائعة لكل دواء
     DRUG_CONCS = {
         "paracetamol": ["120mg/5ml", "125mg/5ml", "160mg/5ml", "250mg/5ml"],
