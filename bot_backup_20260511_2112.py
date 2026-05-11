@@ -1779,18 +1779,11 @@ async def child_conc(u, ctx):
             conc_str = data.replace("conc_", "")
             d = ctx.user_data.get("child_drug")
             w = ctx.user_data.get("child_weight", 0)
-            drug_name = d.get("name_ar" if lang=="ar" else "name_en", "")
-            drug_form = ctx.user_data.get("drug_form", "syrup")
-            thinking = await q.message.edit_text("🔍 " + ("جارٍ الحساب..." if lang=="ar" else "Calculating..."))
-            try:
-                result = await calc_child_ai(drug_name, w, drug_form, lang, conc_str)
-                await q.message.edit_text(result, reply_markup=kb_back(lang))
-            except Exception as e:
-                logger.error(f"calc_child_ai error: {e}")
-                d_copy = dict(d)
-                d_copy["concentration"] = conc_str
-                result = calc_child(d_copy, w, lang)
-                await q.message.edit_text(result, reply_markup=kb_back(lang))
+            # نضع التركيز مؤقتاً في الدواء
+            d_copy = dict(d)
+            d_copy["concentration"] = conc_str
+            result = calc_child(d_copy, w, lang)
+            await q.message.edit_text(result, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
             return STATE_CHILD_WEIGHT
     else:
         # إدخال نصي للتركيز
@@ -2676,48 +2669,6 @@ async def drug_form_selected(u, ctx):
     await q.message.edit_text(msg)
     return STATE_CHILD_DRUG
 
-
-
-async def calc_child_ai(drug_name, weight, drug_form, lang, concentration=None):
-    """يستخدم Claude API لحساب جرعة الأطفال لكل الأشكال"""
-    form_ar = {"syrup":"شراب","cream":"كريم موضعي","drops":"قطرة","suppository":"تحميلة","other":"دواء"}.get(drug_form,"شراب")
-    form_en = {"syrup":"oral syrup","cream":"topical cream","drops":"drops","suppository":"suppository","other":"medication"}.get(drug_form,"syrup")
-    
-    if lang == "ar":
-        conc_text = f"التركيز: {concentration}" if concentration else ""
-        prompt = f"""أنت صيدلاني خبير. احسب جرعة {form_ar} {drug_name} لطفل وزنه {weight} كغ.
-{conc_text}
-
-أجب بهذا التنسيق فقط:
-{'🥄' if drug_form=='syrup' else '🕯️' if drug_form=='suppository' else '💧' if drug_form=='drops' else '🧴'} {drug_name} — {form_ar}
-⚖️ الوزن: {weight} كغ
-💉 الجرعة: [احسب بدقة]
-{'🥄 بالمل: [احسب]' if drug_form=='syrup' else ''}
-🔁 التكرار: 
-⚠️ تحذير:
-
-لا تكتب أي شيء آخر."""
-    else:
-        conc_text = f"Concentration: {concentration}" if concentration else ""
-        prompt = f"""You are an expert pharmacist. Calculate {form_en} dose of {drug_name} for a child weighing {weight} kg.
-{conc_text}
-
-Reply in this format only:
-{'🥄' if drug_form=='syrup' else '🕯️' if drug_form=='suppository' else '💧' if drug_form=='drops' else '🧴'} {drug_name} — {form_en}
-⚖️ Weight: {weight} kg
-💉 Dose: [calculate accurately]
-{'🥄 In ml: [calculate]' if drug_form=='syrup' else ''}
-🔁 Frequency:
-⚠️ Warning:
-
-Write nothing else."""
-
-    async with httpx.AsyncClient(timeout=30) as hc:
-        r = await hc.post("https://api.anthropic.com/v1/messages",
-            headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
-            json={"model": "claude-haiku-4-5-20251001", "max_tokens": 400,
-                "messages": [{"role": "user", "content": prompt}]})
-        return r.json().get("content", [{}])[0].get("text","").strip()
 
 async def calc_special_form(drug_name, weight, drug_form, lang):
     """يستخدم Claude API لحساب جرعة الحقن والكريم والقطرات والتحاميل"""
