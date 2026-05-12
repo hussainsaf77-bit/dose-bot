@@ -1337,6 +1337,56 @@ async def pick_lang(u, ctx):
     ctx.user_data["lang"] = "ar" if q.data == "lang_ar" else "en"
     lang = get_lang(ctx)
     
+    # نتحقق إذا مسجل
+    uid = str(u.effective_user.id)
+    stats = load_stats()
+    user_info = stats.get("users", {}).get(uid, {})
+    is_registered = isinstance(user_info, dict) and user_info.get("registered", False)
+    
+    if not is_registered:
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("👨‍⚕️ " + ("طبيب / صيدلاني" if lang=="ar" else "Doctor / Pharmacist"), callback_data="reg_doctor")],
+            [InlineKeyboardButton("👩 " + ("أم / أب" if lang=="ar" else "Parent"), callback_data="reg_parent")],
+            [InlineKeyboardButton("🎓 " + ("طالب طب" if lang=="ar" else "Med Student"), callback_data="reg_student")],
+            [InlineKeyboardButton("👤 " + ("مستخدم عام" if lang=="ar" else "General User"), callback_data="reg_general")],
+        ])
+        msg = "👋 " + ("خطوة أخيرة! ما نوع مستخدمك؟" if lang=="ar" else "One last step! What's your user type?")
+        await q.message.edit_text(msg, reply_markup=btns)
+        return STATE_MAIN_MENU
+    
+    await show_main(q.message, lang, edit=True)
+    return STATE_MAIN_MENU
+
+async def reg_handler(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    uid = str(u.effective_user.id)
+    user = u.effective_user
+    
+    role_map = {
+        "reg_doctor": {"ar":"طبيب/صيدلاني","en":"Doctor/Pharmacist"},
+        "reg_parent": {"ar":"أم/أب","en":"Parent"},
+        "reg_student": {"ar":"طالب طب","en":"Med Student"},
+        "reg_general": {"ar":"مستخدم عام","en":"General User"},
+    }
+    role = role_map.get(q.data, {"ar":"عام","en":"General"})[lang]
+    
+    # نحفظ في stats
+    stats = load_stats()
+    if "users" not in stats: stats["users"] = {}
+    old_count = stats["users"].get(uid, 0)
+    if isinstance(old_count, int):
+        old_count = {"count": old_count}
+    stats["users"][uid] = {
+        "count": old_count.get("count", 1),
+        "registered": True,
+        "role": role,
+        "name": user.first_name or "",
+        "lang": lang,
+        "date": str(__import__("datetime").date.today())
+    }
+    save_stats(stats)
+    
     await show_main(q.message, lang, edit=True)
     return STATE_MAIN_MENU
 
@@ -1661,6 +1711,38 @@ async def child_weight(u, ctx):
         msg = "🦠 مكان الالتهاب؟" if lang=="ar" else "🦠 Infection site?"
         await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup(btns))
         return STATE_INFECTION_SITE
+    # التحاميل - Claude API مباشرة
+    name = d.get("name_ar","") if lang=="ar" else d.get("name_en","")
+    if not name: name = d.get("name_en","") or d.get("name_ar","")
+    drug_form = ctx.user_data.get("drug_form", "syrup")
+    if drug_form == "suppository":
+        thinking_s = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
+        try:
+            drug_name_ar = d.get("name_ar", name)
+            p_s = f"""أنت صيدلاني. جرعة تحميلة {drug_name_ar} للأطفال:
+أجب بهذا الشكل فقط:
+🕯️ {drug_name_ar} تحميلة
+• أقل من سنة: ...
+• 1-5 سنوات: ...
+• 6-12 سنة: ...
+🔁 التكرار:
+⚠️ تحذير:
+أجب {"بالعربية" if lang=="ar" else "in English"}"""
+            async with httpx.AsyncClient(timeout=30) as hc:
+                r_s = await hc.post("https://api.anthropic.com/v1/messages",
+                    headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                    json={"model": "claude-haiku-4-5-20251001", "max_tokens": 300,
+                        "messages": [{"role": "user", "content": p_s}]})
+                ai_s = r_s.json().get("content", [{}])[0].get("text","").strip()
+            await thinking_s.delete()
+            if ai_s:
+                await u.message.reply_text(ai_s, reply_markup=kb_back(lang))
+                return STATE_MAIN_MENU
+        except Exception as e:
+            logger.error(f"Supp: {e}")
+            try: await thinking_s.delete()
+            except: pass
+
     # تراكيز شائعة لكل دواء
     DRUG_CONCS = {
         "paracetamol": ["120mg/5ml", "125mg/5ml", "160mg/5ml", "250mg/5ml"],
@@ -1749,11 +1831,18 @@ async def child_conc(u, ctx):
             conc_str = data.replace("conc_", "")
             d = ctx.user_data.get("child_drug")
             w = ctx.user_data.get("child_weight", 0)
-            # نضع التركيز مؤقتاً في الدواء
-            d_copy = dict(d)
-            d_copy["concentration"] = conc_str
-            result = calc_child(d_copy, w, lang)
-            await q.message.edit_text(result, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+            drug_name = d.get("name_ar" if lang=="ar" else "name_en", "")
+            drug_form = ctx.user_data.get("drug_form", "syrup")
+            thinking = await q.message.edit_text("🔍 " + ("جارٍ الحساب..." if lang=="ar" else "Calculating..."))
+            try:
+                result = await calc_child_ai(drug_name, w, drug_form, lang, conc_str)
+                await q.message.edit_text(result, reply_markup=kb_back(lang))
+            except Exception as e:
+                logger.error(f"calc_child_ai error: {e}")
+                d_copy = dict(d)
+                d_copy["concentration"] = conc_str
+                result = calc_child(d_copy, w, lang)
+                await q.message.edit_text(result, reply_markup=kb_back(lang))
             return STATE_CHILD_WEIGHT
     else:
         # إدخال نصي للتركيز
@@ -2640,6 +2729,48 @@ async def drug_form_selected(u, ctx):
     return STATE_CHILD_DRUG
 
 
+
+async def calc_child_ai(drug_name, weight, drug_form, lang, concentration=None):
+    """يستخدم Claude API لحساب جرعة الأطفال لكل الأشكال"""
+    form_ar = {"syrup":"شراب","cream":"كريم موضعي","drops":"قطرة","suppository":"تحميلة","other":"دواء"}.get(drug_form,"شراب")
+    form_en = {"syrup":"oral syrup","cream":"topical cream","drops":"drops","suppository":"suppository","other":"medication"}.get(drug_form,"syrup")
+    
+    if lang == "ar":
+        conc_text = f"التركيز: {concentration}" if concentration else ""
+        prompt = f"""أنت صيدلاني خبير. احسب جرعة {form_ar} {drug_name} لطفل وزنه {weight} كغ.
+{conc_text}
+
+أجب بهذا التنسيق فقط:
+{'🥄' if drug_form=='syrup' else '🕯️' if drug_form=='suppository' else '💧' if drug_form=='drops' else '🧴'} {drug_name} — {form_ar}
+⚖️ الوزن: {weight} كغ
+💉 الجرعة: [احسب بدقة]
+{'🥄 بالمل: [احسب]' if drug_form=='syrup' else ''}
+🔁 التكرار: 
+⚠️ تحذير:
+
+لا تكتب أي شيء آخر."""
+    else:
+        conc_text = f"Concentration: {concentration}" if concentration else ""
+        prompt = f"""You are an expert pharmacist. Calculate {form_en} dose of {drug_name} for a child weighing {weight} kg.
+{conc_text}
+
+Reply in this format only:
+{'🥄' if drug_form=='syrup' else '🕯️' if drug_form=='suppository' else '💧' if drug_form=='drops' else '🧴'} {drug_name} — {form_en}
+⚖️ Weight: {weight} kg
+💉 Dose: [calculate accurately]
+{'🥄 In ml: [calculate]' if drug_form=='syrup' else ''}
+🔁 Frequency:
+⚠️ Warning:
+
+Write nothing else."""
+
+    async with httpx.AsyncClient(timeout=30) as hc:
+        r = await hc.post("https://api.anthropic.com/v1/messages",
+            headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+            json={"model": "claude-haiku-4-5-20251001", "max_tokens": 400,
+                "messages": [{"role": "user", "content": prompt}]})
+        return r.json().get("content", [{}])[0].get("text","").strip()
+
 async def calc_special_form(drug_name, weight, drug_form, lang):
     """يستخدم Claude API لحساب جرعة الحقن والكريم والقطرات والتحاميل"""
     form_names = {
@@ -2713,40 +2844,6 @@ async def show_registration(u, ctx, lang):
         await u.message.reply_text(msg, reply_markup=btns)
     else:
         await u.callback_query.message.edit_text(msg, reply_markup=btns)
-
-async def reg_handler(u, ctx):
-    """يحفظ التسجيل ويكمل للقائمة الرئيسية"""
-    q = u.callback_query; await q.answer()
-    lang = get_lang(ctx)
-    user = u.effective_user
-    uid = str(user.id)
-    
-    role_map = {
-        "reg_doctor": "طبيب" if lang=="ar" else "Doctor",
-        "reg_pharmacist": "صيدلاني" if lang=="ar" else "Pharmacist", 
-        "reg_parent": "أم/أب" if lang=="ar" else "Parent",
-        "reg_student": "طالب طب" if lang=="ar" else "Med Student",
-        "reg_general": "مستخدم عام" if lang=="ar" else "General User",
-    }
-    role = role_map.get(q.data, "عام")
-    
-    # نحفظ في الإحصائيات
-    stats = load_stats()
-    if "users" not in stats:
-        stats["users"] = {}
-    if uid not in stats["users"]:
-        stats["users"][uid] = 0
-    if isinstance(stats["users"][uid], int):
-        stats["users"][uid] = {"count": stats["users"][uid], "registered": True, "role": role, "name": user.first_name or ""}
-    else:
-        stats["users"][uid]["registered"] = True
-        stats["users"][uid]["role"] = role
-    save_stats(stats)
-    
-    ctx.user_data["reg_role"] = role
-    ctx.user_data["lang"] = "ar"
-    await q.message.edit_text("✅ ممتاز!\n\n📝 اكتب اسمك ودولتك في رسالة واحدة\nمثال: أحمد — السعودية")
-    return STATE_LANGUAGE
 
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
@@ -3017,6 +3114,7 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(reg_handler, pattern="^reg_"),
                 CallbackQueryHandler(drug_form_selected, pattern="^form_"),
+                CallbackQueryHandler(reg_handler, pattern="^reg_"),
                 CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_|sugar_)"), CallbackQueryHandler(manual_drug_input, pattern="^manual_input$")],
             STATE_BMI_WEIGHT: [
                 CallbackQueryHandler(bmi_cb, pattern="^bmi_"),
