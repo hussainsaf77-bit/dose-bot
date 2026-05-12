@@ -1714,7 +1714,8 @@ async def child_weight(u, ctx):
         await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup(btns))
         return STATE_INFECTION_SITE
     # التحاميل - Claude API مباشرة
-    name = d.get("name_ar" if lang=="ar" else "name_en", d.get("name_en",""))
+    name = d.get("name_ar","") if lang=="ar" else d.get("name_en","")
+    if not name: name = d.get("name_en","") or d.get("name_ar","")
     drug_form = ctx.user_data.get("drug_form", "syrup")
     if drug_form == "suppository":
         thinking_s = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
