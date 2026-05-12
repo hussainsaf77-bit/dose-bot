@@ -1387,9 +1387,7 @@ async def reg_handler(u, ctx):
     }
     save_stats(stats)
     
-    welcome = "✅ " + ("مرحباً " if lang=="ar" else "Welcome ") + (user.first_name or "") + "! 🎉"
-    await q.message.edit_text(welcome)
-    await show_main(q.message, lang)
+    await show_main(q.message, lang, edit=True)
     return STATE_MAIN_MENU
 
 async def set_country(u, ctx):
