@@ -149,7 +149,7 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_FOOD_SEARCH, STATE_SUGAR, STATE_BP, STATE_BP_AGE,
  STATE_PAT_MENU, STATE_PAT_NAME, STATE_PAT_AGE, STATE_PAT_WEIGHT,
  STATE_PAT_GENDER, STATE_PAT_DISEASE, STATE_PAT_MEDS, STATE_PAT_ALLERGY,
- STATE_INTERACTION, STATE_DRUG_FORM, STATE_PAT_NOTE) = range(42)
+ STATE_INTERACTION, STATE_DRUG_FORM) = range(41)
 
 TEXTS = {
 "ar": {
@@ -2232,7 +2232,6 @@ async def patient_menu(u, ctx):
         if p.get("allergy"):
             lines.append(("⚠️ حساسية: " if lang=="ar" else "⚠️ Allergy: ") + p["allergy"])
         btns = [
-            [InlineKeyboardButton("📝 " + ("إضافة ملاحظة" if lang=="ar" else "Add Note"), callback_data="pat_note_" + pid)],
             [InlineKeyboardButton("🗑️ " + ("حذف" if lang=="ar" else "Delete"), callback_data="pat_del_" + pid)],
             [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_list")]
         ]
@@ -2749,108 +2748,6 @@ async def reg_handler(u, ctx):
     await q.message.edit_text("✅ ممتاز!\n\n📝 اكتب اسمك ودولتك في رسالة واحدة\nمثال: أحمد — السعودية")
     return STATE_LANGUAGE
 
-
-async def pat_note_start(u, ctx):
-    q = u.callback_query; await q.answer()
-    lang = get_lang(ctx)
-    pid = q.data.replace("pat_note_", "")
-    ctx.user_data["note_pid"] = pid
-    await q.message.edit_text(
-        "📝 " + ("اكتب ملاحظتك أو أرسل صورة/ملف:" if lang=="ar" else "Write your note or send a photo/file:"),
-        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
-    return STATE_PAT_NOTE
-
-async def pat_note_save(u, ctx):
-    lang = get_lang(ctx)
-    pid = ctx.user_data.get("note_pid", "")
-    if not pid:
-        return STATE_PAT_MENU
-    
-    load_patients(ctx)
-    patients = ctx.user_data.get("patients", {})
-    p = patients.get(pid, {})
-    if not p:
-        return STATE_PAT_MENU
-    
-    notes = p.setdefault("notes", [])
-    from datetime import datetime
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
-    
-    if u.message.photo:
-        # حفظ صورة
-        photo = u.message.photo[-1]
-        file_id = photo.file_id
-        caption = u.message.caption or ""
-        notes.append({"type": "photo", "file_id": file_id, "caption": caption, "date": timestamp})
-        msg = "✅ " + ("تم حفظ الصورة" if lang=="ar" else "Photo saved")
-    elif u.message.document:
-        # حفظ ملف
-        doc = u.message.document
-        file_id = doc.file_id
-        file_name = doc.file_name or "ملف"
-        notes.append({"type": "file", "file_id": file_id, "name": file_name, "date": timestamp})
-        msg = "✅ " + ("تم حفظ الملف: " + file_name if lang=="ar" else "File saved: " + file_name)
-    elif u.message.text:
-        # حفظ نص
-        notes.append({"type": "text", "content": u.message.text, "date": timestamp})
-        msg = "✅ " + ("تم حفظ الملاحظة" if lang=="ar" else "Note saved")
-    else:
-        msg = "❌ " + ("نوع غير مدعوم" if lang=="ar" else "Unsupported type")
-    
-    save_patients(ctx)
-    
-    # نعرض ملف المريض
-    lines = ["👤 *" + p.get("name","") + "*", ""]
-    if p.get("notes"):
-        lines.append("📝 " + ("الملاحظات:" if lang=="ar" else "Notes:"))
-        for n in p["notes"][-3:]:
-            if n["type"] == "text":
-                lines.append("  • " + n["date"] + ": " + n["content"][:50])
-            elif n["type"] == "photo":
-                lines.append("  • " + n["date"] + ": 📸 " + ("صورة" if lang=="ar" else "Photo"))
-            elif n["type"] == "file":
-                lines.append("  • " + n["date"] + ": 📄 " + n.get("name",""))
-    
-    btns = InlineKeyboardMarkup([
-        [InlineKeyboardButton("📝 " + ("إضافة ملاحظة أخرى" if lang=="ar" else "Add Another"), callback_data="pat_note_" + pid)],
-        [InlineKeyboardButton("📋 " + ("عرض كل الملاحظات" if lang=="ar" else "View All Notes"), callback_data="pat_viewnotes_" + pid)],
-        [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_list")]
-    ])
-    
-    await u.message.reply_text(msg + "\n\n" + "\n".join(lines), reply_markup=btns, parse_mode="Markdown")
-    return STATE_PAT_MENU
-
-async def pat_view_notes(u, ctx):
-    q = u.callback_query; await q.answer()
-    lang = get_lang(ctx)
-    pid = q.data.replace("pat_viewnotes_", "")
-    load_patients(ctx)
-    patients = ctx.user_data.get("patients", {})
-    p = patients.get(pid, {})
-    notes = p.get("notes", [])
-    
-    if not notes:
-        await q.message.edit_text("📭 " + ("لا توجد ملاحظات" if lang=="ar" else "No notes"), 
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
-        return STATE_PAT_MENU
-    
-    # نرسل كل ملاحظة
-    for n in notes:
-        if n["type"] == "text":
-            await u.effective_chat.send_message("📝 " + n["date"] + ":\n" + n["content"])
-        elif n["type"] == "photo":
-            try:
-                await u.effective_chat.send_photo(n["file_id"], caption="📸 " + n["date"] + ("\n" + n["caption"] if n.get("caption") else ""))
-            except: pass
-        elif n["type"] == "file":
-            try:
-                await u.effective_chat.send_document(n["file_id"], caption="📄 " + n["date"] + ": " + n.get("name",""))
-            except: pass
-    
-    await u.effective_chat.send_message("✅ " + ("انتهت الملاحظات" if lang=="ar" else "End of notes"),
-        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
-    return STATE_PAT_MENU
-
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -3076,15 +2973,8 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(interaction_start, pattern="^m_interaction$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, interaction_input)],
-            STATE_PAT_NOTE: [
-                CallbackQueryHandler(go_back, pattern="^back$"),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, pat_note_save),
-                MessageHandler(filters.PHOTO, pat_note_save),
-                MessageHandler(filters.Document.ALL, pat_note_save)],
             STATE_PAT_MENU: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
-                CallbackQueryHandler(pat_note_start, pattern="^pat_note_"),
-                CallbackQueryHandler(pat_view_notes, pattern="^pat_viewnotes_"),
                 CallbackQueryHandler(patient_menu, pattern="^pat_")],
             STATE_PAT_NAME: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, pat_name)],
