@@ -2670,30 +2670,32 @@ async def calc_special_form(drug_name, weight, drug_form, lang):
     
     if lang == "ar":
         prompt = f"""أنت صيدلاني خبير. احسب جرعة {form_name} لـ {drug_name} لطفل وزنه {weight} كغ.
+احسب الجرعة بدقة: الجرعة = مغ/كغ × {weight} كغ
 
 أجب بهذا التنسيق فقط:
 💊 الدواء: {drug_name}
 📋 النوع: {form_name}
 ⚖️ الوزن: {weight} كغ
-💉 الجرعة: 
+💉 الجرعة المحسوبة: [احسب بدقة حسب الوزن]
 🔁 التكرار: 
 ⏱️ مدة العلاج: 
 ⚠️ تحذير مهم: 
 
-لا تذكر جرعة الشراب. إذا لم تعرف الدواء اكتب: غير معروف"""
+مهم: احسب الجرعة حسب وزن {weight} كغ فقط. لا تذكر جرعة الشراب."""
     else:
         prompt = f"""You are an expert pharmacist. Calculate {form_name} dose for {drug_name} for a child weighing {weight} kg.
+Calculate accurately: dose = mg/kg × {weight} kg
 
 Reply in this format only:
 💊 Drug: {drug_name}
 📋 Form: {form_name}
 ⚖️ Weight: {weight} kg
-💉 Dose: 
+💉 Calculated dose: [calculate accurately based on weight]
 🔁 Frequency: 
 ⏱️ Duration: 
 ⚠️ Important warning: 
 
-Do not mention syrup dose. If unknown write: unknown"""
+Important: Calculate dose for {weight} kg only. Do not mention syrup dose."""
 
     try:
         async with httpx.AsyncClient(timeout=30) as c:
