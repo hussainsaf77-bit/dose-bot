@@ -2969,7 +2969,19 @@ async def rem_add_freq(u, ctx):
     save_rems(ctx)
     sched(ctx.application, u.effective_chat.id, drug, time_s, f, lang, ctx.user_data.get("timezone", "Asia/Riyadh"))
     msg = "✅ " + drug + " - " + time_s + " - " + str(f) + ("x/يوم" if lang=="ar" else "x/day")
-    await u.message.reply_text(msg, reply_markup=kb_remind(lang))
+    
+    # إذا جاء من ملف مريض نضيف زر العودة للملف
+    pid = ctx.user_data.get("rem_patient_pid")
+    if pid:
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("👤 " + ("العودة لملف المريض" if lang=="ar" else "Back to Patient"), callback_data="pat_view_" + pid)],
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+        ])
+        ctx.user_data.pop("rem_patient_pid", None)
+    else:
+        btns = kb_remind(lang)
+    
+    await u.message.reply_text(msg, reply_markup=btns)
     return STATE_REM_MENU
 
 async def rem_edit_sel(u, ctx):
