@@ -2846,40 +2846,6 @@ async def show_registration(u, ctx, lang):
     else:
         await u.callback_query.message.edit_text(msg, reply_markup=btns)
 
-async def reg_handler(u, ctx):
-    """يحفظ التسجيل ويكمل للقائمة الرئيسية"""
-    q = u.callback_query; await q.answer()
-    lang = get_lang(ctx)
-    user = u.effective_user
-    uid = str(user.id)
-    
-    role_map = {
-        "reg_doctor": "طبيب" if lang=="ar" else "Doctor",
-        "reg_pharmacist": "صيدلاني" if lang=="ar" else "Pharmacist", 
-        "reg_parent": "أم/أب" if lang=="ar" else "Parent",
-        "reg_student": "طالب طب" if lang=="ar" else "Med Student",
-        "reg_general": "مستخدم عام" if lang=="ar" else "General User",
-    }
-    role = role_map.get(q.data, "عام")
-    
-    # نحفظ في الإحصائيات
-    stats = load_stats()
-    if "users" not in stats:
-        stats["users"] = {}
-    if uid not in stats["users"]:
-        stats["users"][uid] = 0
-    if isinstance(stats["users"][uid], int):
-        stats["users"][uid] = {"count": stats["users"][uid], "registered": True, "role": role, "name": user.first_name or ""}
-    else:
-        stats["users"][uid]["registered"] = True
-        stats["users"][uid]["role"] = role
-    save_stats(stats)
-    
-    ctx.user_data["reg_role"] = role
-    ctx.user_data["lang"] = "ar"
-    await q.message.edit_text("✅ ممتاز!\n\n📝 اكتب اسمك ودولتك في رسالة واحدة\nمثال: أحمد — السعودية")
-    return STATE_LANGUAGE
-
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
