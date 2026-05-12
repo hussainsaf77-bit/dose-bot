@@ -2254,8 +2254,9 @@ async def patient_menu(u, ctx):
             meds_list = [m.strip() for m in p["meds"].replace("،",",").split(",") if m.strip()]
             pat_name = p.get("name","")
             for med in meds_list[:3]:
-                safe_med = med.replace("|","").replace("__","")[:20]
-                meds_btns.append([InlineKeyboardButton("⏰ " + med[:15], callback_data="pr__" + pid + "__" + safe_med)])
+                safe_med = med.replace("|","").replace("__","")[:10]
+                cb = ("pr__" + pid + "__" + safe_med)[:64]
+                meds_btns.append([InlineKeyboardButton("⏰ " + med[:15], callback_data=cb)])
         
         btns = meds_btns + [
             [InlineKeyboardButton("📝 " + ("إضافة ملاحظة" if lang=="ar" else "Add Note"), callback_data="pat_note_" + pid)],
@@ -3133,7 +3134,8 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(pat_note_start, pattern="^pat_note_"),
                 CallbackQueryHandler(pat_view_notes, pattern="^pat_viewnotes_"),
-                CallbackQueryHandler(patient_menu, pattern="^pat_")],
+                CallbackQueryHandler(patient_menu, pattern="^pat_"),
+                CallbackQueryHandler(patient_menu, pattern="^pr__")],
             STATE_PAT_NAME: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, pat_name)],
             STATE_PAT_GENDER: [
