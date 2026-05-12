@@ -1337,7 +1337,59 @@ async def pick_lang(u, ctx):
     ctx.user_data["lang"] = "ar" if q.data == "lang_ar" else "en"
     lang = get_lang(ctx)
     
+    # نتحقق إذا مسجل
+    uid = str(u.effective_user.id)
+    stats = load_stats()
+    user_info = stats.get("users", {}).get(uid, {})
+    is_registered = isinstance(user_info, dict) and user_info.get("registered", False)
+    
+    if not is_registered:
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("👨‍⚕️ " + ("طبيب / صيدلاني" if lang=="ar" else "Doctor / Pharmacist"), callback_data="reg_doctor")],
+            [InlineKeyboardButton("👩 " + ("أم / أب" if lang=="ar" else "Parent"), callback_data="reg_parent")],
+            [InlineKeyboardButton("🎓 " + ("طالب طب" if lang=="ar" else "Med Student"), callback_data="reg_student")],
+            [InlineKeyboardButton("👤 " + ("مستخدم عام" if lang=="ar" else "General User"), callback_data="reg_general")],
+        ])
+        msg = "👋 " + ("خطوة أخيرة! ما نوع مستخدمك؟" if lang=="ar" else "One last step! What's your user type?")
+        await q.message.edit_text(msg, reply_markup=btns)
+        return STATE_MAIN_MENU
+    
     await show_main(q.message, lang, edit=True)
+    return STATE_MAIN_MENU
+
+async def reg_handler(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    uid = str(u.effective_user.id)
+    user = u.effective_user
+    
+    role_map = {
+        "reg_doctor": {"ar":"طبيب/صيدلاني","en":"Doctor/Pharmacist"},
+        "reg_parent": {"ar":"أم/أب","en":"Parent"},
+        "reg_student": {"ar":"طالب طب","en":"Med Student"},
+        "reg_general": {"ar":"مستخدم عام","en":"General User"},
+    }
+    role = role_map.get(q.data, {"ar":"عام","en":"General"})[lang]
+    
+    # نحفظ في stats
+    stats = load_stats()
+    if "users" not in stats: stats["users"] = {}
+    old_count = stats["users"].get(uid, 0)
+    if isinstance(old_count, int):
+        old_count = {"count": old_count}
+    stats["users"][uid] = {
+        "count": old_count.get("count", 1),
+        "registered": True,
+        "role": role,
+        "name": user.first_name or "",
+        "lang": lang,
+        "date": str(__import__("datetime").date.today())
+    }
+    save_stats(stats)
+    
+    welcome = "✅ " + ("مرحباً " if lang=="ar" else "Welcome ") + (user.first_name or "") + "! 🎉"
+    await q.message.edit_text(welcome)
+    await show_main(q.message, lang)
     return STATE_MAIN_MENU
 
 async def set_country(u, ctx):
@@ -3097,6 +3149,7 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(reg_handler, pattern="^reg_"),
                 CallbackQueryHandler(drug_form_selected, pattern="^form_"),
+                CallbackQueryHandler(reg_handler, pattern="^reg_"),
                 CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_|sugar_)"), CallbackQueryHandler(manual_drug_input, pattern="^manual_input$")],
             STATE_BMI_WEIGHT: [
                 CallbackQueryHandler(bmi_cb, pattern="^bmi_"),
