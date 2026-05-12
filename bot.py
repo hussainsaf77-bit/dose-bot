@@ -2670,7 +2670,7 @@ async def calc_special_form(drug_name, weight, drug_form, lang):
     
     if lang == "ar":
         prompt = f"""أنت صيدلاني خبير. احسب جرعة {form_name} لـ {drug_name} لطفل وزنه {weight} كغ.
-احسب الجرعة بدقة: الجرعة = مغ/كغ × {weight} كغ
+احسب الجرعة بدقة حسب المراجع الطبية المعتمدة (BNF، Pediatric Dosing). استخدم الجرعة العلاجية الوسطى الموثقة.
 
 أجب بهذا التنسيق فقط:
 💊 الدواء: {drug_name}
@@ -2684,7 +2684,7 @@ async def calc_special_form(drug_name, weight, drug_form, lang):
 مهم: احسب الجرعة حسب وزن {weight} كغ فقط. لا تذكر جرعة الشراب."""
     else:
         prompt = f"""You are an expert pharmacist. Calculate {form_name} dose for {drug_name} for a child weighing {weight} kg.
-Calculate accurately: dose = mg/kg × {weight} kg
+Calculate accurately based on standard medical references (BNF, Pediatric Dosing). Use the standard therapeutic dose.
 
 Reply in this format only:
 💊 Drug: {drug_name}
