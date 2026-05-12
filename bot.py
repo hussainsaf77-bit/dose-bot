@@ -1149,7 +1149,8 @@ def fmt_rems(rems, lang):
         dur = ""
         if days > 0:
             dur = " — 📅 " + str(days) + (" يوم" if lang=="ar" else " days")
-        lines.append("🔸 " + str(r['id']) + " 💊 " + str(r['drug']) + " — 🕐 " + str(r['time']) + " — 🔁 " + str(r['freq']) + suf + dur)
+        pat_tag = " 👤 " + r["patient"] if r.get("patient") else ""
+        lines.append("🔸 " + str(r['id']) + " 💊 " + str(r['drug']) + pat_tag + " — 🕐 " + str(r['time']) + " — 🔁 " + str(r['freq']) + suf + dur)
     return "\n".join(lines)
 
 async def send_alert(ctx):
@@ -2248,13 +2249,32 @@ async def patient_menu(u, ctx):
             lines.append(("💊 الأدوية: " if lang=="ar" else "💊 Medications: ") + p["meds"])
         if p.get("allergy"):
             lines.append(("⚠️ حساسية: " if lang=="ar" else "⚠️ Allergy: ") + p["allergy"])
-        btns = [
+        meds_btns = []
+        if p.get("meds"):
+            meds_list = [m.strip() for m in p["meds"].replace("،",",").split(",") if m.strip()]
+            pat_name = p.get("name","")
+            for med in meds_list[:3]:
+                safe_med = med.replace("|","").replace("__","")[:20]
+                meds_btns.append([InlineKeyboardButton("⏰ " + med[:15], callback_data="pr__" + pid + "__" + safe_med)])
+        
+        btns = meds_btns + [
             [InlineKeyboardButton("📝 " + ("إضافة ملاحظة" if lang=="ar" else "Add Note"), callback_data="pat_note_" + pid)],
             [InlineKeyboardButton("🗑️ " + ("حذف" if lang=="ar" else "Delete"), callback_data="pat_del_" + pid)],
             [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_list")]
         ]
         await q.message.edit_text("\n".join(lines), reply_markup=InlineKeyboardMarkup(btns), parse_mode=ParseMode.MARKDOWN)
         return STATE_PAT_MENU
+    
+    if q.data.startswith("pr__"):
+        parts = q.data.split("__")
+        if len(parts) >= 3:
+            pid2 = parts[1]
+            med2 = parts[2]
+            pat_name2 = patients.get(pid2,{}).get("name","")
+            ctx.user_data["nr_drug"] = med2
+            ctx.user_data["nr_patient"] = pat_name2
+            await q.message.edit_text("🕐 " + ("أدخل وقت التذكير مثال 08:00:" if lang=="ar" else "Enter time e.g. 08:00:"))
+            return STATE_REM_ADD_TIME
     
     if q.data.startswith("pat_del_"):
         pid = q.data.replace("pat_del_", "")
@@ -2949,7 +2969,11 @@ async def rem_add_freq(u, ctx):
     time_s = ctx.user_data.get("nr_time", "08:00")
     f = ctx.user_data.get("nr_freq", 1)
     rems = get_rems(ctx)
-    rems.append({"id": len(rems)+1, "drug": drug, "time": time_s, "freq": f})
+    pat_name_rem = ctx.user_data.pop("nr_patient", "")
+    rem_entry = {"id": len(rems)+1, "drug": drug, "time": time_s, "freq": f}
+    if pat_name_rem:
+        rem_entry["patient"] = pat_name_rem
+    rems.append(rem_entry)
     save_rems(ctx)
     sched(ctx.application, u.effective_chat.id, drug, time_s, f, lang, ctx.user_data.get("timezone", "Asia/Riyadh"))
     msg = "✅ " + drug + " - " + time_s + " - " + str(f) + ("x/يوم" if lang=="ar" else "x/day")
