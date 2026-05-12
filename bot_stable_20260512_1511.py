@@ -2248,29 +2248,13 @@ async def patient_menu(u, ctx):
             lines.append(("💊 الأدوية: " if lang=="ar" else "💊 Medications: ") + p["meds"])
         if p.get("allergy"):
             lines.append(("⚠️ حساسية: " if lang=="ar" else "⚠️ Allergy: ") + p["allergy"])
-        # نضيف أزرار أدوية المريض للتذكير
-        meds_btns = []
-        if p.get("meds"):
-            meds_list = [m.strip() for m in p["meds"].replace("،",",").split(",") if m.strip()]
-            for med in meds_list[:3]:
-                meds_btns.append([InlineKeyboardButton("⏰ " + ("تذكير: " if lang=="ar" else "Remind: ") + med, callback_data="pat_rem_" + pid + "_" + med)])
-        
-        btns = meds_btns + [
+        btns = [
             [InlineKeyboardButton("📝 " + ("إضافة ملاحظة" if lang=="ar" else "Add Note"), callback_data="pat_note_" + pid)],
             [InlineKeyboardButton("🗑️ " + ("حذف" if lang=="ar" else "Delete"), callback_data="pat_del_" + pid)],
             [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_list")]
         ]
         await q.message.edit_text("\n".join(lines), reply_markup=InlineKeyboardMarkup(btns), parse_mode=ParseMode.MARKDOWN)
         return STATE_PAT_MENU
-    
-    if q.data.startswith("pat_rem_"):
-        parts = q.data.replace("pat_rem_","").split("_",1)
-        pid = parts[0]
-        med = parts[1] if len(parts)>1 else ""
-        ctx.user_data["nr_drug"] = med
-        ctx.user_data["rem_patient_pid"] = pid
-        await q.message.edit_text("🕐 " + ("أدخل وقت التذكير (مثال: 08:00):" if lang=="ar" else "Enter reminder time (e.g. 08:00):"))
-        return STATE_REM_ADD_TIME
     
     if q.data.startswith("pat_del_"):
         pid = q.data.replace("pat_del_", "")
