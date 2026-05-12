@@ -1661,6 +1661,23 @@ async def child_weight(u, ctx):
         msg = "🦠 مكان الالتهاب؟" if lang=="ar" else "🦠 Infection site?"
         await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup(btns))
         return STATE_INFECTION_SITE
+    # التحاميل والكريمات والقطرات - Claude API
+    drug_form = ctx.user_data.get("drug_form", "syrup")
+    if drug_form in ["suppository", "cream", "drops"]:
+        drug_name = d.get("name_ar","") if lang=="ar" else d.get("name_en","")
+        if not drug_name: drug_name = d.get("name_en","") or d.get("name_ar","")
+        thinking_f = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
+        try:
+            result_f = await calc_special_form(drug_name, w, drug_form, lang)
+            await thinking_f.delete()
+            if result_f:
+                await u.message.reply_text(result_f, reply_markup=kb_back(lang))
+                return STATE_MAIN_MENU
+        except Exception as e:
+            logger.error(f"Special form error: {e}")
+            try: await thinking_f.delete()
+            except: pass
+
     # تراكيز شائعة لكل دواء
     DRUG_CONCS = {
         "paracetamol": ["120mg/5ml", "125mg/5ml", "160mg/5ml", "250mg/5ml"],
