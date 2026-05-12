@@ -2217,6 +2217,7 @@ async def patient_menu(u, ctx):
     lang = get_lang(ctx)
     if q.data == "back": return await go_back(u, ctx)
     load_patients(ctx)
+    patients = ctx.user_data.get("patients", {})
     
     if q.data == "pat_add":
         await q.message.edit_text("👤 " + ("أدخل اسم المريض:" if lang=="ar" else "Enter patient name:"))
