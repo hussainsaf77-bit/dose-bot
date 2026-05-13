@@ -559,6 +559,24 @@ def clean_val(v):
     s = str(v).strip().strip("'").strip('"')
     return s if s and s != "nan" else "—"
 
+
+AR_TO_EN = {
+    "مرة يوميًا":"once daily", "مرتين يوميًا":"twice daily",
+    "3 مرات يوميًا":"3 times daily", "4 مرات يوميًا":"4 times daily",
+    "يمنع إذا GFR < 30":"Avoid if GFR < 30",
+    "لا حاجة لتعديل الجرعة":"No dose adjustment needed",
+    "لا تعديل":"No adjustment", "لا تعديل الجرعة":"No dose adjustment",
+    "مسموح":"Allowed", "ممنوع":"Contraindicated", "بحذر":"Use with caution",
+    "مسموح بحذر":"Allowed with caution",
+    "تعديل الجرعة":"Dose adjustment needed",
+    "2 مرات يوميًا":"twice daily", "1 مرة يوميًا":"once daily",
+    "غير محدد":"Not specified",
+}
+
+def ar_to_en(text):
+    if not text or text == "—": return text
+    return AR_TO_EN.get(str(text).strip(), str(text))
+
 def fmt_drug(drug, lang):
     def g(*keys, fb="—"):
         for k in keys:
@@ -603,15 +621,15 @@ def fmt_drug(drug, lang):
             f"🔬 *Drug Class:* {g('drug_class_en','drug_class')}\n"
             f"🏷️ *Aliases:* {g('aliases','drug_class_en','drug_class')}\n"
             f"👶 *Child Dose:* {dose_child()}\n"
-            f"🔁 *Child Frequency:* {g('pediatric_frequency_en') if g('pediatric_frequency_en') != '—' else g('pediatric_frequency')}\n"
+            f"🔁 *Child Frequency:* {ar_to_en(g('pediatric_frequency_en') if g('pediatric_frequency_en') != '—' else g('pediatric_frequency'))}\n"
             f"🧑 *Adult Dose:* {dose_adult()}\n"
-            f"🔁 *Adult Frequency:* {g('adult_frequency_en') if g('adult_frequency_en') != '—' else g('adult_frequency')}\n"
+            f"🔁 *Adult Frequency:* {ar_to_en(g('adult_frequency_en') if g('adult_frequency_en') != '—' else g('adult_frequency'))}\n"
             f"⚠️ *Max Daily:* {g('max_daily')}\n\n"
             f"🚫 *Contraindications:* {g('contraindications_en','contraindications')}\n"
             f"⚡ *Side Effects:* {g('side_effects_en','side_effects')}\n"
             f"💊 *Interactions:* {g('interactions_en','interactions')}\n\n"
-            f"🤰 *Pregnancy:* {g('pregnancy_en') if g('pregnancy_en') != '—' else g('pregnancy')}\n"
-            f"🍼 *Lactation:* {g('lactation_en') if g('lactation_en') != '—' else g('lactation')}\n"
+            f"🤰 *Pregnancy:* {ar_to_en(g('pregnancy_en') if g('pregnancy_en') != '—' else g('pregnancy'))}\n"
+            f"🍼 *Lactation:* {ar_to_en(g('lactation_en') if g('lactation_en') != '—' else g('lactation'))}\n"
             f"🫘 *Renal:* {g('renal','renal_dose')}\n\n"
             f"🔗 [More Information]({drug_link})")
 
