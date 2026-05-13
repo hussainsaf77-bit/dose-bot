@@ -1744,7 +1744,7 @@ async def child_weight(u, ctx):
     "nitazoxanide": ["100mg/5ml", "200mg/5ml"],
     "cinnarizine": ["25mg/5ml"],
     "phenobarbital": ["10mg/5ml", "15mg/5ml"],
-    "levetiracetam": ["100mg/ml"],
+    "levetiracetam": ["100mg/ml", "100mg/5ml"],
     "lactulose": ["3.35g/5ml"],
     "spironolactone": ["5mg/5ml", "25mg/5ml"],
     "clarithromycin": ["125mg/5ml", "250mg/5ml"],
