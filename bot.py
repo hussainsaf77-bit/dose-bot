@@ -1522,63 +1522,56 @@ async def drug_search(u, ctx):
     lang = get_lang(ctx)
     track(u, "searches")
     query = u.message.text.strip()
-    # نضيف نوع الدواء للبحث
-    drug_form = ctx.user_data.get("drug_form", "syrup")
-    if drug_form == "suppository" and "suppository" not in query.lower() and "تحميل" not in query:
-        query_search = query + " suppository"
-    else:
-        query_search = query
-    res = search_drugs(query_search)
-    if not res:
-        res = search_drugs(query)
-    if not res:
-        # نستخدم Claude API
-        thinking = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
-        try:
-            prompt = f"""أنت صيدلاني خبير. أعطني معلومات شاملة عن: {query}
-
-أجب بهذا التنسيق بالضبط:
-💊 *الاسم العلمي:* 
-🏷️ *الأسماء التجارية:* 
-📋 *الاستخدامات:* 
-💉 *الجرعة للبالغين:* 
-👶 *جرعة الأطفال:* 
-⏰ *طريقة الاستخدام:* 
-⚠️ *الآثار الجانبية:* 
-🔴 *موانع الاستخدام:* 
-🤰 *الحمل والرضاعة:* 
-🫘 *الكلى والكبد:* 
-💊 *التفاعلات الدوائية المهمة:* 
-❗ *تحذيرات خاصة:* 
-
-أجب {"بالعربية" if lang=="ar" else "in English"} فقط بدون مقدمة. إذا لم تعرف الدواء اكتب فقط: غير معروف"""
-
-            async with httpx.AsyncClient(timeout=30) as c:
-                r = await c.post("https://api.anthropic.com/v1/messages",
-                    headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
-                    json={"model": "claude-haiku-4-5-20251001", "max_tokens": 800,
-                        "messages": [{"role": "user", "content": prompt}]})
-                ai_result = r.json().get("content", [{}])[0].get("text", "").strip()
-            await thinking.delete()
-            if "غير معروف" in ai_result or "unknown" in ai_result.lower():
-                await u.message.reply_text(tx("not_found", lang), reply_markup=kb_back(lang))
-            else:
-                await u.message.reply_text(ai_result, reply_markup=kb_back(lang))
-        except Exception as e:
-            logger.error(f"Drug search API error: {e}")
-            try: await thinking.delete()
-            except: pass
-            await u.message.reply_text("⚠️ " + ("خطأ في الاتصال، حاول مرة أخرى" if lang=="ar" else "Connection error, try again"), reply_markup=kb_back(lang))
-        return STATE_DRUG_SEARCH
-    if len(res) == 1:
-        await u.message.reply_text(fmt_drug(res[0], lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN_V2 if False else ParseMode.MARKDOWN)
-        return STATE_DRUG_SEARCH
-    ctx.user_data["results"] = res
-    btns = [[InlineKeyboardButton(
-        str(d.get("name_ar" if lang=="ar" else "name_en", d.get("name_en", "?"))),
-        callback_data=f"ds_{i}")] for i, d in enumerate(res)]
-    btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
-    await u.message.reply_text(tx("multi_results", lang), reply_markup=InlineKeyboardMarkup(btns))
+    
+    # Claude API مباشرة
+    thinking = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
+    try:
+        if lang == "ar":
+            prompt = f"""أنت صيدلاني خبير. أعطني معلومات شاملة عن دواء: {query}
+أجب بالعربية فقط:
+💊 الاسم العلمي:
+🏷️ الأسماء التجارية:
+📋 الاستخدامات:
+💉 الجرعة للبالغين:
+👶 جرعة الأطفال:
+⚠️ الآثار الجانبية:
+🔴 موانع الاستخدام:
+🤰 الحمل والرضاعة:
+🫘 الكلى والكبد:
+💊 التفاعلات الدوائية:
+❗ تحذيرات خاصة:
+إذا لم تعرف اكتب: غير معروف"""
+        else:
+            prompt = f"""You are an expert pharmacist. Give info about: {query}
+Reply in English ONLY:
+💊 Generic Name:
+🏷️ Brand Names:
+📋 Indications:
+💉 Adult Dose:
+👶 Pediatric Dose:
+⚠️ Side Effects:
+🔴 Contraindications:
+🤰 Pregnancy & Lactation:
+🫘 Renal & Hepatic:
+💊 Drug Interactions:
+❗ Special Warnings:
+If unknown write: unknown"""
+        async with httpx.AsyncClient(timeout=30) as c:
+            r = await c.post("https://api.anthropic.com/v1/messages",
+                headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                json={"model": "claude-haiku-4-5-20251001", "max_tokens": 800,
+                    "messages": [{"role": "user", "content": prompt}]})
+            result = r.json().get("content", [{}])[0].get("text", "").strip()
+        await thinking.delete()
+        if "غير معروف" not in result and "unknown" not in result.lower():
+            await u.message.reply_text(result, reply_markup=kb_back(lang))
+            return STATE_DRUG_SEARCH
+    except Exception as e:
+        logger.error(f"drug_search: {e}")
+        try: await thinking.delete()
+        except: pass
+    
+    await u.message.reply_text(tx("not_found", lang), reply_markup=kb_back(lang))
     return STATE_DRUG_SEARCH
 
 async def drug_sel(u, ctx):
