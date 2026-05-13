@@ -1693,7 +1693,7 @@ async def child_weight(u, ctx):
     drug_form = ctx.user_data.get("drug_form", "syrup")
     drug_name_check = d.get("name_ar","") or d.get("name_en","")
     
-    if drug_form == "syrup":
+    if drug_form == "syrup" and not d.get("concentration") and not d.get("fixed_dose") and not d.get("pediatric_min_mg_per_kg"):
         try:
             async with httpx.AsyncClient(timeout=15) as hc:
                 r_check = await hc.post("https://api.anthropic.com/v1/messages",
