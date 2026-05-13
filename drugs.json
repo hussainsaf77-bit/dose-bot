@@ -21132,7 +21132,7 @@
       "luminal"
     ],
     "pediatric_mg_per_kg": "3-6",
-    "pediatric_frequency": "مرة يومياً",
+    "pediatric_frequency": "مرة واحدة يومياً قبل النوم",
     "adult_dose_min": 60,
     "adult_dose_max": 180,
     "adult_frequency": "مرة يومياً",
@@ -21158,7 +21158,7 @@
     "side_effects": [],
     "reference": "",
     "adult_frequency_en": "once daily",
-    "pediatric_frequency_en": "once daily",
+    "pediatric_frequency_en": "once daily at bedtime",
     "contraindications_en": [
       "Hypersensitivity",
       "Liver failure",
@@ -21172,7 +21172,12 @@
     "side_effects_en": [],
     "lactation_en": "Allowed with caution",
     "pregnancy_en": "ممنوع (يزيد خطر التشوهات)",
-    "name_en": "phenobarbital"
+    "name_en": "phenobarbital",
+    "fixed_dose": false,
+    "pediatric_min_mg_per_kg": 3,
+    "pediatric_max_mg_per_kg": 5,
+    "concentration": "15mg/5ml",
+    "warning": "⚠️ دواء مضاد للصرع — لا يوقف فجأة — يسبب نعاساً"
   },
   {
     "name_ar": "كلوبازام",
