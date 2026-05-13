@@ -680,7 +680,7 @@ def calc_child(drug, w, lang):
         age_doses = drug["age_doses"]
         dose_lines = ["📋 " + ("جرعة الأطفال:" if lang=="ar" else "Pediatric Doses:")]
         for age_range, dose in age_doses.items():
-            dose_lines.append("  • " + age_range + " سنة: " + dose if lang=="ar" else "  • " + age_range + " yr: " + dose)
+            dose_lines.append("  • " + age_range + ": " + dose if lang=="ar" else "  • " + age_range + ": " + dose)
         dose_lines.append("")
         dose_lines.append("🔁 " + freq)
         dose_lines.append("⚠️ " + ("استشر الطبيب أو الصيدلاني." if lang=="ar" else "Consult doctor or pharmacist."))
