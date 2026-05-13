@@ -1689,23 +1689,8 @@ async def child_weight(u, ctx):
         msg = "🦠 مكان الالتهاب؟" if lang=="ar" else "🦠 Infection site?"
         await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup(btns))
         return STATE_INFECTION_SITE
-    # التحقق من صحة شكل الدواء عبر Claude API
+    # التحاميل والكريمات والقطرات - Claude API
     drug_form = ctx.user_data.get("drug_form", "syrup")
-    drug_name_check = d.get("name_ar","") or d.get("name_en","")
-    
-    if drug_form == "syrup":
-        try:
-            async with httpx.AsyncClient(timeout=15) as hc:
-                r_check = await hc.post("https://api.anthropic.com/v1/messages",
-                    headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
-                    json={"model": "claude-haiku-4-5-20251001", "max_tokens": 50,
-                        "messages": [{"role": "user", "content": f"Is {drug_name_check} available as oral syrup/liquid for children? Answer ONLY: YES or NO"}]})
-                check_result = r_check.json().get("content", [{}])[0].get("text","").strip().upper()
-                if "NO" in check_result:
-                    msg = "⚠️ " + (f"{drug_name_check} غير متوفر كشراب للأطفال.\nيرجى اختيار الشكل الصحيح للدواء." if lang=="ar" else f"{drug_name_check} is not available as syrup for children.\nPlease select the correct drug form.")
-                    await u.message.reply_text(msg, reply_markup=kb_back(lang))
-                    return STATE_MAIN_MENU
-        except: pass
     if drug_form in ["suppository", "cream", "drops"]:
         drug_name = d.get("name_ar","") if lang=="ar" else d.get("name_en","")
         if not drug_name: drug_name = d.get("name_en","") or d.get("name_ar","")
