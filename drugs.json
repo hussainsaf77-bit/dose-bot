@@ -21443,7 +21443,17 @@
     "side_effects_en": [],
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
-    "name_en": "nystatin"
+    "name_en": "nystatin",
+    "fixed_dose": true,
+    "pediatric_min_mg_per_kg": 0,
+    "pediatric_max_mg_per_kg": 0,
+    "concentration": "100000IU/ml",
+    "age_doses": {
+      "0-12 شهر": "1 مل (100,000 IU) × 4 مرات يومياً — يُوضع في الفم",
+      "1-5 سنوات": "2.5 مل (250,000 IU) × 4 مرات يومياً",
+      "5-12 سنة": "5 مل (500,000 IU) × 4 مرات يومياً"
+    },
+    "warning": "⚠️ يُحتفظ به في الفم قدر الإمكان قبل البلع"
   },
   {
     "name_ar": "إيفرمكتين",
@@ -24921,7 +24931,14 @@
     "interactions_en": "None known",
     "renal": "آمن",
     "renal_dose": "Safe",
-    "concentration": "100000units/ml"
+    "concentration": "100000IU/ml",
+    "fixed_dose": true,
+    "age_doses": {
+      "0-12 شهر": "1 مل (100,000 IU) × 4 مرات يومياً — يُوضع في الفم",
+      "1-5 سنوات": "2.5 مل (250,000 IU) × 4 مرات يومياً",
+      "5-12 سنة": "5 مل (500,000 IU) × 4 مرات يومياً"
+    },
+    "warning": "⚠️ يُحتفظ به في الفم قدر الإمكان قبل البلع"
   },
   {
     "name_en": "montelukast_chewable",
