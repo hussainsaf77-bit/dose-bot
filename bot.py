@@ -3281,6 +3281,83 @@ def build_conv():
         per_user=True,
         per_chat=True)
 
+
+async def fix_doses_cmd(u, ctx):
+    """أمر للأدمن لإصلاح الجرعات من Claude API"""
+    if str(u.effective_user.id) != "6298206492":
+        return
+    
+    import json
+    with open("drugs.json", encoding="utf-8") as f:
+        drugs = json.load(f)
+    
+    await u.message.reply_text("🔍 جارٍ فحص الجرعات...")
+    fixed = 0
+    
+    for d in drugs:
+        name_en = d.get("name_en","")
+        name_ar = d.get("name_ar","")
+        
+        # نتخطى الأدوية ذات الجرعات الثابتة الصحيحة
+        if d.get("fixed_dose") and d.get("age_doses"):
+            continue
+        
+        # نتخطى الأدوية التي لديها جرعات صحيحة
+        mn = d.get("pediatric_min_mg_per_kg", 0)
+        mx = d.get("pediatric_max_mg_per_kg", 0)
+        if mn and mx and float(str(mn)) < 100 and float(str(mx)) < 100:
+            continue
+        
+        # نطلب الجرعة الصحيحة من Claude
+        try:
+            async with httpx.AsyncClient(timeout=20) as hc:
+                prompt = f"""What is the correct pediatric oral syrup dose for {name_en}?
+Reply ONLY in this format:
+min_mg_per_kg: [number]
+max_mg_per_kg: [number]
+concentration: [e.g. 125mg/5ml]
+frequency: [e.g. 3 times daily]
+If not available as syrup write: NOT_SYRUP"""
+                
+                r = await hc.post("https://api.anthropic.com/v1/messages",
+                    headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                    json={"model": "claude-haiku-4-5-20251001", "max_tokens": 100,
+                        "messages": [{"role": "user", "content": prompt}]})
+                result = r.json().get("content", [{}])[0].get("text","").strip()
+                
+                if "NOT_SYRUP" in result:
+                    d["not_syrup"] = True
+                    continue
+                
+                lines = result.split("\n")
+                for line in lines:
+                    if "min_mg_per_kg:" in line:
+                        val = line.split(":")[1].strip()
+                        try: d["pediatric_min_mg_per_kg"] = float(val)
+                        except: pass
+                    if "max_mg_per_kg:" in line:
+                        val = line.split(":")[1].strip()
+                        try: d["pediatric_max_mg_per_kg"] = float(val)
+                        except: pass
+                    if "concentration:" in line:
+                        val = line.split(":")[1].strip()
+                        if val and val != "N/A":
+                            d["concentration"] = val
+                    if "frequency:" in line:
+                        val = line.split(":")[1].strip()
+                        if val:
+                            d["pediatric_frequency_en"] = val
+                
+                fixed += 1
+                
+        except Exception as e:
+            logger.error(f"fix_doses: {name_en}: {e}")
+    
+    with open("drugs.json", "w", encoding="utf-8") as f:
+        json.dump(drugs, f, ensure_ascii=False, indent=2)
+    
+    await u.message.reply_text(f"✅ تم إصلاح {fixed} دواء!")
+
 async def restore_reminders(app):
     """إعادة جدولة التذكيرات عند بدء التشغيل"""
     all_rems = load_all_reminders()
@@ -3607,6 +3684,7 @@ def main():
     app.add_handler(CallbackQueryHandler(rem_done, pattern="^rem_done_"))
     app.add_handler(CallbackQueryHandler(rem_later, pattern="^rem_snooze_"))
     app.add_handler(CommandHandler("stats", stats_cmd))
+    app.add_handler(CommandHandler("fixdose", fix_doses_cmd))
     app.add_handler(PreCheckoutQueryHandler(pre_checkout))
     app.add_handler(MessageHandler(filters.SUCCESSFUL_PAYMENT, successful_payment))
     # استعادة التذكيرات
