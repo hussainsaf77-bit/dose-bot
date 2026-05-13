@@ -28535,5 +28535,16 @@
       "8-12 سنة": "تحميلة 50mg مرتين يومياً"
     },
     "warning": "⚠️ ممنوع تحت سنة — لا تستخدم أكثر من 3 أيام بدون وصفة"
+  },
+  {
+    "name_en": "spironolactone_syrup",
+    "name_ar": "سبيرونولاكتون شراب",
+    "aliases": "aldactone syrup, ألداكتون شراب, spironolactone oral",
+    "pediatric_min_mg_per_kg": 1,
+    "pediatric_max_mg_per_kg": 3,
+    "pediatric_frequency": "مرة أو مرتين يومياً",
+    "pediatric_frequency_en": "once or twice daily",
+    "concentration": "5mg/5ml",
+    "warning": "⚠️ راقب مستوى البوتاسيوم — تجنب مع مكملات البوتاسيوم"
   }
 ]
