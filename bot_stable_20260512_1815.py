@@ -353,34 +353,18 @@ def search_by_syrup_name(q):
 STATS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "stats.json")
 
 def load_stats():
-    # نقرأ من Supabase أولاً
-    if supabase_client:
-        try:
-            res = supabase_client.table("stats").select("data").eq("id", "all").execute()
-            if res.data:
-                return json.loads(res.data[0]["data"])
-        except Exception as e:
-            logger.error(f"load_stats supabase: {e}")
-    # fallback للملف المحلي
     try:
         with open(STATS_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
     except:
-        return {"users": {}, "searches": 0, "child_doses": 0, "reminders": 0, "total_requests": 0, "image_search": 0, "bmi": 0, "calories": 0, "sugar": 0, "bp": 0}
+        return {"users": {}, "searches": 0, "child_doses": 0, "reminders": 0, "total_requests": 0}
 
 def save_stats(stats):
-    # نحفظ في Supabase
-    if supabase_client:
-        try:
-            supabase_client.table("stats").upsert({"id": "all", "data": json.dumps(stats, ensure_ascii=False)}).execute()
-        except Exception as e:
-            logger.error(f"save_stats supabase: {e}")
-    # نحفظ محلياً أيضاً
     try:
         with open(STATS_FILE, "w", encoding="utf-8") as f:
             json.dump(stats, f, ensure_ascii=False, indent=2)
     except Exception as e:
-        logger.error(f"save_stats local: {e}")
+        logger.error(f"stats error: {e}")
 
 def track(ctx, action="search"):
     stats = load_stats()
