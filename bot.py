@@ -3283,8 +3283,15 @@ async def pat_save_reading(u, ctx):
     if log_type == "sugar":
         try:
             val = float(text)
-            sugar_type = ctx.user_data.get("sugar_log_type","fasting")
-            readings.append({"date": date, "sugar": val, "type": sugar_type})
+            sugar_type = ctx.user_data.get("sugar_type","random")
+            type_names = {
+                "fasting":"صيام","sugar_fasting":"صيام",
+                "postmeal":"بعد الأكل","sugar_postmeal":"بعد الأكل",
+                "random":"عشوائي",
+                "hba1c":"تراكمي HbA1c","sugar_hba1c":"تراكمي HbA1c"
+            }
+            stype_clean = sugar_type.replace("sugar_","")
+            readings.append({"date": date, "sugar": val, "stype": stype_clean, "stype_ar": type_names.get(sugar_type,"")})
             
             # تصنيف القراءة
             if sugar_type == "fasting":
