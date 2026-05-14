@@ -2310,7 +2310,6 @@ async def patient_menu(u, ctx):
         
         btns = meds_btns + [
             [InlineKeyboardButton("📊 " + ("سجل السكر/الضغط" if lang=="ar" else "Sugar/BP Log"), callback_data="pat_log_" + pid)],
-            [InlineKeyboardButton("🖨️ " + ("تصدير PDF" if lang=="ar" else "Export PDF"), callback_data="pat_pdf_" + pid)],
             [InlineKeyboardButton("📝 " + ("إضافة ملاحظة" if lang=="ar" else "Add Note"), callback_data="pat_note_" + pid)],
             [InlineKeyboardButton("📊 " + ("سجل السكر والضغط" if lang=="ar" else "Sugar & BP Log"), callback_data="pat_log_" + pid)],
             [InlineKeyboardButton("➕ " + ("إضافة مريض آخر" if lang=="ar" else "Add Another Patient"), callback_data="pat_add")],
@@ -2330,56 +2329,6 @@ async def patient_menu(u, ctx):
             ctx.user_data["nr_patient"] = pat_name2
             await q.message.edit_text("🕐 " + ("أدخل وقت التذكير مثال 08:00:" if lang=="ar" else "Enter time e.g. 08:00:"))
             return STATE_REM_ADD_TIME
-    
-    if q.data.startswith("pat_pdf_"):
-        pid = q.data.replace("pat_pdf_","")
-        p = patients.get(pid,{})
-        await q.answer("🔄 " + ("جارٍ إنشاء PDF..." if lang=="ar" else "Creating PDF..."), show_alert=True)
-        
-        # نبني محتوى التقرير
-        from datetime import datetime
-        lines = []
-        lines.append("=" * 40)
-        lines.append("ملف المريض الطبي" if lang=="ar" else "Patient Medical File")
-        lines.append("=" * 40)
-        lines.append("")
-        lines.append(("الاسم: " if lang=="ar" else "Name: ") + p.get("name",""))
-        lines.append(("العمر: " if lang=="ar" else "Age: ") + str(p.get("age","")))
-        lines.append(("الوزن: " if lang=="ar" else "Weight: ") + str(p.get("weight","")) + " kg")
-        lines.append(("الجنس: " if lang=="ar" else "Gender: ") + str(p.get("gender","")))
-        if p.get("diseases"):
-            lines.append(("الأمراض: " if lang=="ar" else "Diseases: ") + p["diseases"])
-        if p.get("meds"):
-            lines.append(("الأدوية: " if lang=="ar" else "Medications: ") + p["meds"])
-        if p.get("allergy"):
-            lines.append(("الحساسية: " if lang=="ar" else "Allergies: ") + p["allergy"])
-        
-        # القراءات
-        readings = p.get("readings",[])
-        if readings:
-            lines.append("")
-            lines.append("=" * 40)
-            lines.append("سجل القراءات:" if lang=="ar" else "Readings Log:")
-            for r in readings:
-                if r.get("sugar"): lines.append("🩸 " + r["date"] + ": " + str(r["sugar"]) + " mg/dL")
-                if r.get("bp"): lines.append("💉 " + r["date"] + ": " + r["bp"])
-        
-        # الملاحظات
-        notes = p.get("notes",[])
-        if notes:
-            lines.append("")
-            lines.append("=" * 40)
-            lines.append("الملاحظات:" if lang=="ar" else "Notes:")
-            for n in notes:
-                if n.get("type") == "text":
-                    lines.append("📝 " + n["date"] + ": " + n["content"])
-        
-        lines.append("")
-        lines.append("تاريخ التصدير: " + datetime.now().strftime("%Y-%m-%d %H:%M"))
-        
-        report = "\n".join(lines)
-        await u.effective_chat.send_message("```\n" + report + "\n```", parse_mode="Markdown")
-        return STATE_PAT_MENU
     
     if q.data.startswith("pat_log_"):
         pid = q.data.replace("pat_log_","")
