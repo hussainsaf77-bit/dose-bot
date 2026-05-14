@@ -2309,7 +2309,6 @@ async def patient_menu(u, ctx):
                 meds_btns.append([InlineKeyboardButton("⏰ " + med[:15], callback_data=cb)])
         
         btns = meds_btns + [
-            [InlineKeyboardButton("📊 " + ("سجل السكر/الضغط" if lang=="ar" else "Sugar/BP Log"), callback_data="pat_log_" + pid)],
             [InlineKeyboardButton("📝 " + ("إضافة ملاحظة" if lang=="ar" else "Add Note"), callback_data="pat_note_" + pid)],
             [InlineKeyboardButton("📊 " + ("سجل السكر والضغط" if lang=="ar" else "Sugar & BP Log"), callback_data="pat_log_" + pid)],
             [InlineKeyboardButton("➕ " + ("إضافة مريض آخر" if lang=="ar" else "Add Another Patient"), callback_data="pat_add")],
@@ -2329,39 +2328,6 @@ async def patient_menu(u, ctx):
             ctx.user_data["nr_patient"] = pat_name2
             await q.message.edit_text("🕐 " + ("أدخل وقت التذكير مثال 08:00:" if lang=="ar" else "Enter time e.g. 08:00:"))
             return STATE_REM_ADD_TIME
-    
-    if q.data.startswith("pat_log_"):
-        pid = q.data.replace("pat_log_","")
-        p = patients.get(pid,{})
-        readings = p.get("readings",[])
-        lines = ["📊 *" + ("سجل " if lang=="ar" else "Log: ") + p.get("name","") + "*",""]
-        if readings:
-            for r in readings[-5:]:
-                if r.get("sugar"): lines.append("🩸 " + r["date"] + ": " + str(r["sugar"]) + " mg/dL")
-                if r.get("bp"): lines.append("💉 " + r["date"] + ": " + str(r["bp"]))
-        else:
-            lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings"))
-        btns = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🩸 " + ("أضف سكر" if lang=="ar" else "Add Sugar"), callback_data="pat_addsugar_" + pid),
-             InlineKeyboardButton("💉 " + ("أضف ضغط" if lang=="ar" else "Add BP"), callback_data="pat_addbp_" + pid)],
-            [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]
-        ])
-        await q.message.edit_text("\n".join(lines), reply_markup=btns, parse_mode="Markdown")
-        return STATE_PAT_MENU
-    
-    if q.data.startswith("pat_addsugar_"):
-        pid = q.data.replace("pat_addsugar_","")
-        ctx.user_data["log_pid"] = pid
-        ctx.user_data["log_type"] = "sugar"
-        await q.message.edit_text("🩸 " + ("أدخل قراءة السكر (mg/dL):" if lang=="ar" else "Enter sugar (mg/dL):"))
-        return STATE_PAT_ALLERGY
-    
-    if q.data.startswith("pat_addbp_"):
-        pid = q.data.replace("pat_addbp_","")
-        ctx.user_data["log_pid"] = pid
-        ctx.user_data["log_type"] = "bp"
-        await q.message.edit_text("💉 " + ("أدخل قراءة الضغط (مثال: 120/80):" if lang=="ar" else "Enter BP (e.g. 120/80):"))
-        return STATE_PAT_ALLERGY
     
     if q.data.startswith("pat_del_"):
         pid = q.data.replace("pat_del_", "")
@@ -2528,45 +2494,7 @@ async def pat_meds_cb(u, ctx):
 
 async def pat_allergy(u, ctx):
     lang = get_lang(ctx)
-    text = u.message.text.strip()
-    
-    # إذا كنا في وضع تسجيل القراءات
-    log_type = ctx.user_data.get("log_type","")
-    if log_type in ["sugar","bp"]:
-        pid = ctx.user_data.get("log_pid","")
-        load_patients(ctx)
-        patients = ctx.user_data.get("patients",{})
-        p = patients.get(pid,{})
-        if p:
-            from datetime import datetime
-            date = datetime.now().strftime("%Y-%m-%d %H:%M")
-            readings = p.setdefault("readings",[])
-            if log_type == "sugar":
-                try:
-                    val = float(text)
-                    readings.append({"date":date,"sugar":val})
-                    if val < 70: status = "⚠️ منخفض"
-                    elif val <= 100: status = "✅ طبيعي"
-                    elif val <= 125: status = "🟡 ما قبل السكري"
-                    else: status = "🔴 مرتفع"
-                    msg = "✅ تم الحفظ\n🩸 " + str(val) + " mg/dL " + status
-                except:
-                    await u.message.reply_text("❌ أدخل رقماً")
-                    return STATE_PAT_ALLERGY
-            else:
-                try:
-                    parts = text.replace(" ","").split("/")
-                    readings.append({"date":date,"bp":text,"sys":int(parts[0]),"dia":int(parts[1])})
-                    msg = "✅ تم الحفظ\n💉 " + text
-                except:
-                    await u.message.reply_text("❌ صيغة خاطئة مثال: 120/80")
-                    return STATE_PAT_ALLERGY
-            save_patients(ctx)
-            ctx.user_data.pop("log_type","")
-            await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📊 " + ("عرض السجل" if lang=="ar" else "View Log"), callback_data="pat_log_" + pid)]]))
-            return STATE_PAT_MENU
-    
-    allergy = text
+    allergy = u.message.text.strip()
     ctx.user_data["new_patient"]["allergy"] = "" if allergy.lower() in ["لا","no","none","-"] else allergy
     # نحفظ المريض
     import time
