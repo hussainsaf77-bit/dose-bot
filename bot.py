@@ -2387,9 +2387,27 @@ async def patient_menu(u, ctx):
         readings = p.get("readings",[])
         lines = ["📊 *" + ("سجل " if lang=="ar" else "Log: ") + p.get("name","") + "*",""]
         if readings:
-            for r in readings[-5:]:
-                if r.get("sugar"): lines.append("🩸 " + r["date"] + ": " + str(r["sugar"]) + " mg/dL")
-                if r.get("bp"): lines.append("💉 " + r["date"] + ": " + str(r["bp"]))
+            sugar_readings = [r for r in readings if r.get("sugar")]
+            bp_readings = [r for r in readings if r.get("bp")]
+            if bp_readings:
+                lines.append("💉 " + ("آخر قراءات الضغط:" if lang=="ar" else "Latest BP:"))
+                for r in bp_readings[-3:]:
+                    sys_val = r.get("sys",0)
+                    if sys_val < 120: status = "✅"
+                    elif sys_val < 130: status = "🟡"
+                    elif sys_val < 140: status = "🟠"
+                    else: status = "🔴"
+                    lines.append("  " + status + " " + r["date"] + ": " + str(r["bp"]))
+            if sugar_readings:
+                lines.append("")
+                lines.append("🩸 " + ("آخر قراءات السكر:" if lang=="ar" else "Latest Sugar:"))
+                for r in sugar_readings[-3:]:
+                    val = r["sugar"]
+                    if val < 70: status = "⚠️"
+                    elif val <= 100: status = "✅"
+                    elif val <= 125: status = "🟡"
+                    else: status = "🔴"
+                    lines.append("  " + status + " " + r["date"] + ": " + str(val) + " mg/dL")
         else:
             lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings"))
         btns = InlineKeyboardMarkup([
