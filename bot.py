@@ -2482,6 +2482,7 @@ async def patient_menu(u, ctx):
         return STATE_PAT_MENU
     
     if q.data.startswith("sugtype_"):
+        print(f"SUGTYPE: {q.data}", flush=True)
         parts = q.data.split("_")
         stype = parts[1]
         pid = parts[2]
