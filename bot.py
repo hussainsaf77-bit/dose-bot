@@ -2497,9 +2497,13 @@ async def patient_menu(u, ctx):
         type_names = {"fasting":"صيام","postmeal":"بعد الأكل","random":"عشوائي","hba1c":"تراكمي"}
         type_name = type_names.get(stype, stype)
         if stype == "hba1c":
-            msg = "📊 " + ("أدخل قيمة HbA1c (%):" if lang=="ar" else "Enter HbA1c value (%):")
+            msg = "📊__hba1c__ " + ("أدخل قيمة HbA1c (%):" if lang=="ar" else "Enter HbA1c value (%):")
+        elif stype == "fasting":
+            msg = "🩸__fasting__ " + ("أدخل سكر الصيام (mg/dL):" if lang=="ar" else "Enter fasting sugar (mg/dL):")
+        elif stype == "postmeal":
+            msg = "🍽️__postmeal__ " + ("أدخل سكر بعد الأكل (mg/dL):" if lang=="ar" else "Enter post-meal sugar (mg/dL):")
         else:
-            msg = "🩸 " + ("أدخل قراءة السكر " + type_name + " (mg/dL):" if lang=="ar" else f"Enter {stype} sugar (mg/dL):")
+            msg = "🎲__random__ " + ("أدخل قراءة السكر (mg/dL):" if lang=="ar" else "Enter sugar (mg/dL):")
         await q.message.edit_text(msg)
         return STATE_PAT_ALLERGY
     
@@ -3302,8 +3306,15 @@ async def pat_save_reading(u, ctx):
                 "random":"عشوائي",
                 "hba1c":"تراكمي HbA1c","sugar_hba1c":"تراكمي HbA1c"
             }
+            # نقرأ النوع من user_data أو من رسالة السؤال
+            if sugar_type == "random":
+                try:
+                    prev_text = u.message.reply_to_message.text if u.message.reply_to_message else ""
+                    if "__hba1c__" in prev_text: sugar_type = "hba1c"
+                    elif "__fasting__" in prev_text: sugar_type = "fasting"
+                    elif "__postmeal__" in prev_text: sugar_type = "postmeal"
+                except: pass
             stype_clean = sugar_type.replace("sugar_","")
-            logger.warning(f"⭐ SAVE SUGAR: type={sugar_type}, clean={stype_clean}, val={val}")
             readings.append({"date": date, "sugar": val, "stype": stype_clean, "stype_ar": type_names.get(sugar_type,"")})
             
             # تصنيف القراءة
