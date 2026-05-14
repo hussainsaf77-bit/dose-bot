@@ -2407,8 +2407,15 @@ async def patient_menu(u, ctx):
                     elif val <= 100: status = "✅"
                     elif val <= 125: status = "🟡"
                     else: status = "🔴"
-                    stype_label = " (" + r.get("stype_ar","") + ")" if r.get("stype_ar") else ""
-                    lines.append("  " + status + " " + r["date"] + ": " + str(val) + " mg/dL" + stype_label)
+                    if r.get("stype") == "hba1c":
+                        if val < 5.7: status = "✅"
+                        elif val <= 6.4: status = "🟡"
+                        else: status = "🔴"
+                        stype_label = " (HbA1c%)"
+                        lines.append("  " + status + " " + r["date"] + ": " + str(val) + "%" + stype_label)
+                    else:
+                        stype_label = " (" + r.get("stype_ar","") + ")" if r.get("stype_ar") else ""
+                        lines.append("  " + status + " " + r["date"] + ": " + str(val) + " mg/dL" + stype_label)
         else:
             lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings"))
         btns = InlineKeyboardMarkup([
@@ -2468,7 +2475,8 @@ async def patient_menu(u, ctx):
         btns = InlineKeyboardMarkup([
             [InlineKeyboardButton("🌅 " + ("صيام" if lang=="ar" else "Fasting"), callback_data="sugtype_fasting_" + pid),
              InlineKeyboardButton("🍽️ " + ("بعد الأكل" if lang=="ar" else "Post-meal"), callback_data="sugtype_postmeal_" + pid)],
-            [InlineKeyboardButton("🎲 " + ("عشوائي" if lang=="ar" else "Random"), callback_data="sugtype_random_" + pid)],
+            [InlineKeyboardButton("🎲 " + ("عشوائي" if lang=="ar" else "Random"), callback_data="sugtype_random_" + pid),
+             InlineKeyboardButton("📊 " + ("تراكمي HbA1c" if lang=="ar" else "HbA1c"), callback_data="sugtype_hba1c_" + pid)],
         ])
         await q.message.edit_text("🩸 " + ("نوع قراءة السكر؟" if lang=="ar" else "Sugar reading type?"), reply_markup=btns)
         return STATE_PAT_MENU
@@ -2480,9 +2488,13 @@ async def patient_menu(u, ctx):
         ctx.user_data["log_pid"] = pid
         ctx.user_data["log_type"] = "sugar"
         ctx.user_data["sugar_type"] = stype
-        type_names = {"fasting":"صيام","postmeal":"بعد الأكل","random":"عشوائي"}
+        type_names = {"fasting":"صيام","postmeal":"بعد الأكل","random":"عشوائي","hba1c":"تراكمي"}
         type_name = type_names.get(stype, stype)
-        await q.message.edit_text("🩸 " + ("أدخل قراءة السكر " + type_name + " (mg/dL):" if lang=="ar" else f"Enter {stype} sugar (mg/dL):"))
+        if stype == "hba1c":
+            msg = "📊 " + ("أدخل قيمة HbA1c (%):" if lang=="ar" else "Enter HbA1c value (%):")
+        else:
+            msg = "🩸 " + ("أدخل قراءة السكر " + type_name + " (mg/dL):" if lang=="ar" else f"Enter {stype} sugar (mg/dL):")
+        await q.message.edit_text(msg)
         return STATE_PAT_ALLERGY
     
     if q.data.startswith("pat_addbp_"):
@@ -2674,7 +2686,7 @@ async def pat_allergy(u, ctx):
                 try:
                     val = float(text)
                     stype = ctx.user_data.pop("sugar_type","random")
-                    type_names = {"fasting":"صيام","postmeal":"بعد الأكل","random":"عشوائي"}
+                    type_names = {"fasting":"صيام","postmeal":"بعد الأكل","random":"عشوائي","hba1c":"تراكمي HbA1c"}
                     readings.append({"date":date,"sugar":val,"stype":stype,"stype_ar":type_names.get(stype,stype)})
                     if val < 70: status = "⚠️ منخفض"
                     elif val <= 100: status = "✅ طبيعي"
