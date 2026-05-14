@@ -3318,7 +3318,7 @@ async def pat_save_reading(u, ctx):
             readings.append({"date": date, "sugar": val, "stype": stype_clean, "stype_ar": type_names.get(sugar_type,"")})
             
             # تصنيف القراءة
-            if stype_clean == "hba1c":
+            if stype_clean == "hba1c" or val < 20:
                 if val < 5.7: status = "✅ طبيعي"
                 elif val <= 6.4: status = "🟡 ما قبل السكري"
                 elif val <= 7.0: status = "🟠 مضبوط"
