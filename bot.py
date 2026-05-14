@@ -2407,7 +2407,8 @@ async def patient_menu(u, ctx):
                     elif val <= 100: status = "✅"
                     elif val <= 125: status = "🟡"
                     else: status = "🔴"
-                    lines.append("  " + status + " " + r["date"] + ": " + str(val) + " mg/dL")
+                    stype_label = " (" + r.get("stype_ar","") + ")" if r.get("stype_ar") else ""
+                    lines.append("  " + status + " " + r["date"] + ": " + str(val) + " mg/dL" + stype_label)
         else:
             lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings"))
         btns = InlineKeyboardMarkup([
@@ -2464,7 +2465,24 @@ async def patient_menu(u, ctx):
         pid = q.data.replace("pat_addsugar_","")
         ctx.user_data["log_pid"] = pid
         ctx.user_data["log_type"] = "sugar"
-        await q.message.edit_text("🩸 " + ("أدخل قراءة السكر (mg/dL):" if lang=="ar" else "Enter sugar (mg/dL):"))
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🌅 " + ("صيام" if lang=="ar" else "Fasting"), callback_data="sugtype_fasting_" + pid),
+             InlineKeyboardButton("🍽️ " + ("بعد الأكل" if lang=="ar" else "Post-meal"), callback_data="sugtype_postmeal_" + pid)],
+            [InlineKeyboardButton("🎲 " + ("عشوائي" if lang=="ar" else "Random"), callback_data="sugtype_random_" + pid)],
+        ])
+        await q.message.edit_text("🩸 " + ("نوع قراءة السكر؟" if lang=="ar" else "Sugar reading type?"), reply_markup=btns)
+        return STATE_PAT_MENU
+    
+    if q.data.startswith("sugtype_"):
+        parts = q.data.split("_")
+        stype = parts[1]
+        pid = parts[2]
+        ctx.user_data["log_pid"] = pid
+        ctx.user_data["log_type"] = "sugar"
+        ctx.user_data["sugar_type"] = stype
+        type_names = {"fasting":"صيام","postmeal":"بعد الأكل","random":"عشوائي"}
+        type_name = type_names.get(stype, stype)
+        await q.message.edit_text("🩸 " + ("أدخل قراءة السكر " + type_name + " (mg/dL):" if lang=="ar" else f"Enter {stype} sugar (mg/dL):"))
         return STATE_PAT_ALLERGY
     
     if q.data.startswith("pat_addbp_"):
@@ -2655,7 +2673,9 @@ async def pat_allergy(u, ctx):
             if log_type == "sugar":
                 try:
                     val = float(text)
-                    readings.append({"date":date,"sugar":val})
+                    stype = ctx.user_data.pop("sugar_type","random")
+                    type_names = {"fasting":"صيام","postmeal":"بعد الأكل","random":"عشوائي"}
+                    readings.append({"date":date,"sugar":val,"stype":stype,"stype_ar":type_names.get(stype,stype)})
                     if val < 70: status = "⚠️ منخفض"
                     elif val <= 100: status = "✅ طبيعي"
                     elif val <= 125: status = "🟡 ما قبل السكري"
