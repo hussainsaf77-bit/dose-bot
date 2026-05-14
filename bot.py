@@ -3271,9 +3271,9 @@ async def pat_log_menu(u, ctx):
         lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings yet"))
     
     btns = InlineKeyboardMarkup([
-        [InlineKeyboardButton("🩸 " + ("أضف قراءة سكر" if lang=="ar" else "Add Sugar"), callback_data="pat_addsugar_" + pid),
-         InlineKeyboardButton("💉 " + ("أضف قراءة ضغط" if lang=="ar" else "Add BP"), callback_data="pat_addbp_" + pid)],
-        [InlineKeyboardButton("📈 " + ("عرض الكل" if lang=="ar" else "View All"), callback_data="pat_viewlog_" + pid)],
+        [InlineKeyboardButton("✏️ " + ("أضف قراءة" if lang=="ar" else "Add Reading"), callback_data="pat_addreading_" + pid)],
+        [InlineKeyboardButton("📈 " + ("سجل السكر" if lang=="ar" else "Sugar Log"), callback_data="pat_viewsugar_" + pid),
+         InlineKeyboardButton("📉 " + ("سجل الضغط" if lang=="ar" else "BP Log"), callback_data="pat_viewbp_" + pid)],
         [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]
     ])
     
