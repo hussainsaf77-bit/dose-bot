@@ -2498,14 +2498,18 @@ async def patient_menu(u, ctx):
         logger.warning(f"✅ sugtype saved: {stype}")
         type_names = {"fasting":"صيام","postmeal":"بعد الأكل","random":"عشوائي","hba1c":"تراكمي"}
         type_name = type_names.get(stype, stype)
+        type_emoji = {"hba1c":"📊","fasting":"🌅","postmeal":"🍽️","random":"🎲"}.get(stype,"🩸")
+        type_unit = "%" if stype == "hba1c" else "mg/dL"
+        # نحفظ النوع في اسم المفتاح الثابت
+        ctx.user_data[f"stype_{pid}"] = stype
         if stype == "hba1c":
-            msg = "📊__hba1c__ " + ("أدخل قيمة HbA1c (%):" if lang=="ar" else "Enter HbA1c value (%):")
+            msg = f"📊 أدخل قيمة HbA1c (%):"
         elif stype == "fasting":
-            msg = "🩸__fasting__ " + ("أدخل سكر الصيام (mg/dL):" if lang=="ar" else "Enter fasting sugar (mg/dL):")
+            msg = f"🌅 أدخل سكر الصيام (mg/dL):"
         elif stype == "postmeal":
-            msg = "🍽️__postmeal__ " + ("أدخل سكر بعد الأكل (mg/dL):" if lang=="ar" else "Enter post-meal sugar (mg/dL):")
+            msg = f"🍽️ أدخل سكر بعد الأكل (mg/dL):"
         else:
-            msg = "🎲__random__ " + ("أدخل قراءة السكر (mg/dL):" if lang=="ar" else "Enter sugar (mg/dL):")
+            msg = f"🎲 أدخل قراءة السكر (mg/dL):"
         await q.message.edit_text(msg)
         return STATE_PAT_ALLERGY
     
@@ -3301,8 +3305,8 @@ async def pat_save_reading(u, ctx):
     if log_type == "sugar":
         try:
             val = float(text)
-            sugar_type = ctx.user_data.get("sugar_type_confirmed", ctx.user_data.get("sugar_type","random"))
-            logger.warning(f"📊 Reading sugar_type: {sugar_type}")
+            pid_key = ctx.user_data.get("log_pid","")
+            sugar_type = ctx.user_data.get(f"stype_{pid_key}", ctx.user_data.get("sugar_type","random"))
             type_names = {
                 "fasting":"صيام","sugar_fasting":"صيام",
                 "postmeal":"بعد الأكل","sugar_postmeal":"بعد الأكل",
