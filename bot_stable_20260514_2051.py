@@ -2425,7 +2425,8 @@ async def patient_menu(u, ctx):
         else:
             lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings"))
         btns = InlineKeyboardMarkup([
-            [InlineKeyboardButton("✏️ " + ("أضف قراءة" if lang=="ar" else "Add Reading"), callback_data="pat_addreading_" + pid)],
+            [InlineKeyboardButton("🩸 " + ("أضف سكر" if lang=="ar" else "Add Sugar"), callback_data="pat_addsugar_" + pid),
+             InlineKeyboardButton("💉 " + ("أضف ضغط" if lang=="ar" else "Add BP"), callback_data="pat_addbp_" + pid)],
             [InlineKeyboardButton("📈 " + ("سجل السكر" if lang=="ar" else "Sugar Log"), callback_data="pat_viewsugar_" + pid),
              InlineKeyboardButton("📉 " + ("سجل الضغط" if lang=="ar" else "BP Log"), callback_data="pat_viewbp_" + pid)],
             [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]
@@ -2472,25 +2473,6 @@ async def patient_menu(u, ctx):
             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]),
             parse_mode="Markdown")
         return STATE_PAT_MENU
-
-    if q.data.startswith("pat_addreading_"):
-        pid = q.data.replace("pat_addreading_","")
-        ctx.user_data["log_pid"] = pid
-        ctx.user_data["log_type"] = "reading"
-        msg = ("📝 أدخل القراءة بأحد هذه الأشكال:\n\n"
-               "🌅 صيام 95\n"
-               "🍽️ بعد_اكل 140\n"
-               "📊 hba1c 7.5\n"
-               "💉 ضغط 130/80\n"
-               "🎲 عشوائي 110") if lang=="ar" else (
-               "📝 Enter reading in one of these formats:\n\n"
-               "🌅 fasting 95\n"
-               "🍽️ postmeal 140\n"
-               "📊 hba1c 7.5\n"
-               "💉 bp 130/80\n"
-               "🎲 random 110")
-        await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]))
-        return STATE_PAT_ALLERGY
 
     if q.data.startswith("pat_addsugar_"):
         pid = q.data.replace("pat_addsugar_","")
@@ -2707,49 +2689,6 @@ async def pat_allergy(u, ctx):
     
     # إذا كنا في وضع تسجيل القراءات
     log_type = ctx.user_data.get("log_type","")
-    if log_type == "reading":
-        pid = ctx.user_data.get("log_pid","")
-        load_patients(ctx)
-        patients = ctx.user_data.get("patients",{})
-        p = patients.get(pid,{})
-        if p:
-            from datetime import datetime
-            date = datetime.now().strftime("%Y-%m-%d %H:%M")
-            readings = p.setdefault("readings",[])
-            txt_lower = text.lower().strip()
-            
-            # نحدد النوع والقيمة
-            if txt_lower.startswith("صيام") or txt_lower.startswith("fasting"):
-                val = txt_lower.replace("صيام","").replace("fasting","").strip()
-                readings.append({"date":date,"sugar":float(val),"stype":"fasting","stype_ar":"صيام"})
-                msg = "✅ سكر صيام: " + val + " mg/dL"
-            elif txt_lower.startswith("بعد_اكل") or txt_lower.startswith("postmeal"):
-                val = txt_lower.replace("بعد_اكل","").replace("postmeal","").strip()
-                readings.append({"date":date,"sugar":float(val),"stype":"postmeal","stype_ar":"بعد الأكل"})
-                msg = "✅ سكر بعد الأكل: " + val + " mg/dL"
-            elif txt_lower.startswith("hba1c"):
-                val = txt_lower.replace("hba1c","").strip()
-                readings.append({"date":date,"sugar":float(val),"stype":"hba1c","stype_ar":"تراكمي HbA1c","unit":"%"})
-                msg = "✅ HbA1c: " + val + "%"
-            elif txt_lower.startswith("ضغط") or txt_lower.startswith("bp"):
-                val = txt_lower.replace("ضغط","").replace("bp","").strip()
-                parts = val.split("/")
-                readings.append({"date":date,"bp":val,"sys":int(parts[0]),"dia":int(parts[1])})
-                msg = "✅ ضغط: " + val
-            else:
-                try:
-                    val = float(txt_lower)
-                    readings.append({"date":date,"sugar":val,"stype":"random","stype_ar":"عشوائي"})
-                    msg = "✅ قراءة عشوائية: " + str(val) + " mg/dL"
-                except:
-                    await u.message.reply_text("❌ صيغة خاطئة — جرّب: صيام 95")
-                    return STATE_PAT_ALLERGY
-            
-            save_patients(ctx)
-            ctx.user_data.pop("log_type","")
-            await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📊 " + ("عرض السجل" if lang=="ar" else "View Log"), callback_data="pat_log_" + pid)]]))
-            return STATE_PAT_MENU
-    
     if log_type in ["sugar","bp"]:
         pid = ctx.user_data.get("log_pid","")
         load_patients(ctx)
@@ -3323,25 +3262,6 @@ async def pat_add_reading(u, ctx):
             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]),
             parse_mode="Markdown")
         return STATE_PAT_MENU
-
-    if q.data.startswith("pat_addreading_"):
-        pid = q.data.replace("pat_addreading_","")
-        ctx.user_data["log_pid"] = pid
-        ctx.user_data["log_type"] = "reading"
-        msg = ("📝 أدخل القراءة بأحد هذه الأشكال:\n\n"
-               "🌅 صيام 95\n"
-               "🍽️ بعد_اكل 140\n"
-               "📊 hba1c 7.5\n"
-               "💉 ضغط 130/80\n"
-               "🎲 عشوائي 110") if lang=="ar" else (
-               "📝 Enter reading in one of these formats:\n\n"
-               "🌅 fasting 95\n"
-               "🍽️ postmeal 140\n"
-               "📊 hba1c 7.5\n"
-               "💉 bp 130/80\n"
-               "🎲 random 110")
-        await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]))
-        return STATE_PAT_ALLERGY
 
     if q.data.startswith("pat_addsugar_"):
         pid = q.data.replace("pat_addsugar_","")
