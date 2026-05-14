@@ -2494,6 +2494,8 @@ async def patient_menu(u, ctx):
         ctx.user_data["log_pid"] = pid
         ctx.user_data["log_type"] = "sugar"
         ctx.user_data["sugar_type"] = stype
+        ctx.user_data["sugar_type_confirmed"] = stype
+        logger.warning(f"✅ sugtype saved: {stype}")
         type_names = {"fasting":"صيام","postmeal":"بعد الأكل","random":"عشوائي","hba1c":"تراكمي"}
         type_name = type_names.get(stype, stype)
         if stype == "hba1c":
@@ -3299,7 +3301,8 @@ async def pat_save_reading(u, ctx):
     if log_type == "sugar":
         try:
             val = float(text)
-            sugar_type = ctx.user_data.get("sugar_type","random")
+            sugar_type = ctx.user_data.get("sugar_type_confirmed", ctx.user_data.get("sugar_type","random"))
+            logger.warning(f"📊 Reading sugar_type: {sugar_type}")
             type_names = {
                 "fasting":"صيام","sugar_fasting":"صيام",
                 "postmeal":"بعد الأكل","sugar_postmeal":"بعد الأكل",
