@@ -3709,8 +3709,9 @@ def build_conv():
             STATE_PAT_LOG: [
                 CallbackQueryHandler(pat_add_reading, pattern="^(pat_addsugar_|pat_addbp_|logsugar_)"),
                 CallbackQueryHandler(pat_view_log, pattern="^pat_viewlog_"),
+                CallbackQueryHandler(patient_menu, pattern="^pat_log_"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, pat_save_reading)],
+                MessageHandler(filters.TEXT & ~filters.COMMAND, pat_allergy)],
             STATE_PAT_NOTE: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, pat_note_save),
