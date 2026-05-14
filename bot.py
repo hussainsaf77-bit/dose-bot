@@ -2482,7 +2482,6 @@ async def patient_menu(u, ctx):
         return STATE_PAT_MENU
     
     if q.data.startswith("sugtype_"):
-        logger.warning(f"⭐ SUGTYPE CALLED: {q.data}")
         parts = q.data.split("_")
         stype = parts[1]
         pid = parts[2]
@@ -2689,10 +2688,16 @@ async def pat_allergy(u, ctx):
                     stype = ctx.user_data.pop("sugar_type","random")
                     type_names = {"fasting":"صيام","postmeal":"بعد الأكل","random":"عشوائي","hba1c":"تراكمي HbA1c"}
                     readings.append({"date":date,"sugar":val,"stype":stype,"stype_ar":type_names.get(stype,stype)})
-                    if val < 70: status = "⚠️ منخفض"
-                    elif val <= 100: status = "✅ طبيعي"
-                    elif val <= 125: status = "🟡 ما قبل السكري"
-                    else: status = "🔴 مرتفع"
+                    if stype_clean == "hba1c":
+                        if val < 5.7: status = "✅ طبيعي"
+                        elif val <= 6.4: status = "🟡 ما قبل السكري"
+                        elif val <= 7.0: status = "🟠 مضبوط"
+                        else: status = "🔴 مرتفع"
+                    else:
+                        if val < 70: status = "⚠️ منخفض"
+                        elif val <= 100: status = "✅ طبيعي"
+                        elif val <= 125: status = "🟡 ما قبل السكري"
+                        else: status = "🔴 مرتفع"
                     msg = "✅ تم الحفظ\n🩸 " + str(val) + " mg/dL " + status
                 except:
                     await u.message.reply_text("❌ أدخل رقماً")
