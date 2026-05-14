@@ -3303,6 +3303,7 @@ async def pat_save_reading(u, ctx):
                 "hba1c":"تراكمي HbA1c","sugar_hba1c":"تراكمي HbA1c"
             }
             stype_clean = sugar_type.replace("sugar_","")
+            logger.warning(f"⭐ SAVE SUGAR: type={sugar_type}, clean={stype_clean}, val={val}")
             readings.append({"date": date, "sugar": val, "stype": stype_clean, "stype_ar": type_names.get(sugar_type,"")})
             
             # تصنيف القراءة
