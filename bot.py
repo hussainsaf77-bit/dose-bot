@@ -2407,15 +2407,21 @@ async def patient_menu(u, ctx):
                     elif val <= 100: status = "✅"
                     elif val <= 125: status = "🟡"
                     else: status = "🔴"
-                    if r.get("stype") == "hba1c":
+                    stype = r.get("stype","")
+                    stype_ar = r.get("stype_ar","")
+                    if stype == "hba1c":
                         if val < 5.7: status = "✅"
                         elif val <= 6.4: status = "🟡"
+                        elif val <= 7.0: status = "🟠"
                         else: status = "🔴"
-                        stype_label = " (HbA1c%)"
-                        lines.append("  " + status + " " + r["date"] + ": " + str(val) + "%" + stype_label)
+                        lines.append("  " + status + " " + r["date"] + ": " + str(val) + "% (HbA1c تراكمي)")
                     else:
-                        stype_label = " (" + r.get("stype_ar","") + ")" if r.get("stype_ar") else ""
-                        lines.append("  " + status + " " + r["date"] + ": " + str(val) + " mg/dL" + stype_label)
+                        if val < 70: status = "⚠️"
+                        elif val <= 100: status = "✅"
+                        elif val <= 125: status = "🟡"
+                        else: status = "🔴"
+                        label = " (" + stype_ar + ")" if stype_ar else ""
+                        lines.append("  " + status + " " + r["date"] + ": " + str(val) + " mg/dL" + label)
         else:
             lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings"))
         btns = InlineKeyboardMarkup([
