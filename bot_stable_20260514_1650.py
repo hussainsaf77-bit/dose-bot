@@ -2395,53 +2395,11 @@ async def patient_menu(u, ctx):
         btns = InlineKeyboardMarkup([
             [InlineKeyboardButton("🩸 " + ("أضف سكر" if lang=="ar" else "Add Sugar"), callback_data="pat_addsugar_" + pid),
              InlineKeyboardButton("💉 " + ("أضف ضغط" if lang=="ar" else "Add BP"), callback_data="pat_addbp_" + pid)],
-            [InlineKeyboardButton("📈 " + ("سجل السكر" if lang=="ar" else "Sugar Log"), callback_data="pat_viewsugar_" + pid),
-             InlineKeyboardButton("📉 " + ("سجل الضغط" if lang=="ar" else "BP Log"), callback_data="pat_viewbp_" + pid)],
             [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]
         ])
         await q.message.edit_text("\n".join(lines), reply_markup=btns, parse_mode="Markdown")
         return STATE_PAT_MENU
     
-    if q.data.startswith("pat_viewsugar_"):
-        pid = q.data.replace("pat_viewsugar_","")
-        p = patients.get(pid,{})
-        readings = [r for r in p.get("readings",[]) if r.get("sugar")]
-        lines = ["🩸 *" + ("سجل السكر - " if lang=="ar" else "Sugar Log - ") + p.get("name","") + "*",""]
-        if readings:
-            for r in readings[-15:]:
-                val = r["sugar"]
-                if val < 70: status = "⚠️"
-                elif val <= 100: status = "✅"
-                elif val <= 125: status = "🟡"
-                else: status = "🔴"
-                lines.append(status + " " + r["date"] + ": " + str(val) + " mg/dL")
-        else:
-            lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings"))
-        await q.message.edit_text("\n".join(lines),
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]),
-            parse_mode="Markdown")
-        return STATE_PAT_MENU
-
-    if q.data.startswith("pat_viewbp_"):
-        pid = q.data.replace("pat_viewbp_","")
-        p = patients.get(pid,{})
-        readings = [r for r in p.get("readings",[]) if r.get("bp")]
-        lines = ["💉 *" + ("سجل الضغط - " if lang=="ar" else "BP Log - ") + p.get("name","") + "*",""]
-        if readings:
-            for r in readings[-15:]:
-                sys_val = r.get("sys",0)
-                if sys_val < 120: status = "✅"
-                elif sys_val < 130: status = "🟡"
-                elif sys_val < 140: status = "🟠"
-                else: status = "🔴"
-                lines.append(status + " " + r["date"] + ": " + str(r["bp"]))
-        else:
-            lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings"))
-        await q.message.edit_text("\n".join(lines),
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]),
-            parse_mode="Markdown")
-        return STATE_PAT_MENU
-
     if q.data.startswith("pat_addsugar_"):
         pid = q.data.replace("pat_addsugar_","")
         ctx.user_data["log_pid"] = pid
@@ -3151,46 +3109,6 @@ async def pat_add_reading(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
     
-    if q.data.startswith("pat_viewsugar_"):
-        pid = q.data.replace("pat_viewsugar_","")
-        p = patients.get(pid,{})
-        readings = [r for r in p.get("readings",[]) if r.get("sugar")]
-        lines = ["🩸 *" + ("سجل السكر - " if lang=="ar" else "Sugar Log - ") + p.get("name","") + "*",""]
-        if readings:
-            for r in readings[-15:]:
-                val = r["sugar"]
-                if val < 70: status = "⚠️"
-                elif val <= 100: status = "✅"
-                elif val <= 125: status = "🟡"
-                else: status = "🔴"
-                lines.append(status + " " + r["date"] + ": " + str(val) + " mg/dL")
-        else:
-            lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings"))
-        await q.message.edit_text("\n".join(lines),
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]),
-            parse_mode="Markdown")
-        return STATE_PAT_MENU
-
-    if q.data.startswith("pat_viewbp_"):
-        pid = q.data.replace("pat_viewbp_","")
-        p = patients.get(pid,{})
-        readings = [r for r in p.get("readings",[]) if r.get("bp")]
-        lines = ["💉 *" + ("سجل الضغط - " if lang=="ar" else "BP Log - ") + p.get("name","") + "*",""]
-        if readings:
-            for r in readings[-15:]:
-                sys_val = r.get("sys",0)
-                if sys_val < 120: status = "✅"
-                elif sys_val < 130: status = "🟡"
-                elif sys_val < 140: status = "🟠"
-                else: status = "🔴"
-                lines.append(status + " " + r["date"] + ": " + str(r["bp"]))
-        else:
-            lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings"))
-        await q.message.edit_text("\n".join(lines),
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]),
-            parse_mode="Markdown")
-        return STATE_PAT_MENU
-
     if q.data.startswith("pat_addsugar_"):
         pid = q.data.replace("pat_addsugar_","")
         ctx.user_data["log_pid"] = pid
