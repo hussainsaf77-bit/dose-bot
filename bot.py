@@ -149,7 +149,7 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_FOOD_SEARCH, STATE_SUGAR, STATE_BP, STATE_BP_AGE,
  STATE_PAT_MENU, STATE_PAT_NAME, STATE_PAT_AGE, STATE_PAT_WEIGHT,
  STATE_PAT_GENDER, STATE_PAT_DISEASE, STATE_PAT_MEDS, STATE_PAT_ALLERGY,
- STATE_INTERACTION, STATE_DRUG_FORM, STATE_PAT_NOTE) = range(42)
+ STATE_INTERACTION, STATE_DRUG_FORM, STATE_PAT_NOTE, STATE_PAT_LOG) = range(43)
 
 TEXTS = {
 "ar": {
@@ -2310,6 +2310,7 @@ async def patient_menu(u, ctx):
         
         btns = meds_btns + [
             [InlineKeyboardButton("📝 " + ("إضافة ملاحظة" if lang=="ar" else "Add Note"), callback_data="pat_note_" + pid)],
+            [InlineKeyboardButton("📊 " + ("سجل السكر والضغط" if lang=="ar" else "Sugar & BP Log"), callback_data="pat_log_" + pid)],
             [InlineKeyboardButton("➕ " + ("إضافة مريض آخر" if lang=="ar" else "Add Another Patient"), callback_data="pat_add")],
             [InlineKeyboardButton("🗑️ " + ("حذف" if lang=="ar" else "Delete"), callback_data="pat_del_" + pid)],
             [InlineKeyboardButton("🔙 " + ("القائمة الرئيسية" if lang=="ar" else "Main Menu"), callback_data="back")]
@@ -2947,6 +2948,157 @@ async def pat_view_notes(u, ctx):
         reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
     return STATE_PAT_MENU
 
+
+async def pat_log_menu(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    pid = q.data.replace("pat_log_","")
+    ctx.user_data["log_pid"] = pid
+    load_patients(ctx)
+    patients = ctx.user_data.get("patients",{})
+    p = patients.get(pid,{})
+    
+    # نعرض آخر القراءات
+    logs = p.get("readings", [])
+    lines = ["📊 *" + ("سجل " if lang=="ar" else "Log: ") + p.get("name","") + "*", ""]
+    
+    if logs:
+        for r in logs[-5:]:
+            date = r.get("date","")
+            if r.get("sugar"):
+                lines.append("🩸 " + date + ": سكر " + str(r["sugar"]) + " mg/dL")
+            if r.get("bp"):
+                lines.append("💉 " + date + ": ضغط " + str(r["bp"]))
+    else:
+        lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings yet"))
+    
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🩸 " + ("أضف قراءة سكر" if lang=="ar" else "Add Sugar"), callback_data="pat_addsugar_" + pid),
+         InlineKeyboardButton("💉 " + ("أضف قراءة ضغط" if lang=="ar" else "Add BP"), callback_data="pat_addbp_" + pid)],
+        [InlineKeyboardButton("📈 " + ("عرض الكل" if lang=="ar" else "View All"), callback_data="pat_viewlog_" + pid)],
+        [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]
+    ])
+    
+    await q.message.edit_text("\n".join(lines), reply_markup=btns, parse_mode="Markdown")
+    return STATE_PAT_MENU
+
+async def pat_add_reading(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    
+    if q.data.startswith("pat_addsugar_"):
+        pid = q.data.replace("pat_addsugar_","")
+        ctx.user_data["log_pid"] = pid
+        ctx.user_data["log_type"] = "sugar"
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🌅 " + ("صيام" if lang=="ar" else "Fasting"), callback_data="logsugar_fasting"),
+             InlineKeyboardButton("🍽️ " + ("بعد الأكل" if lang=="ar" else "Post-meal"), callback_data="logsugar_postmeal")],
+            [InlineKeyboardButton("📊 HbA1c", callback_data="logsugar_hba1c")],
+        ])
+        await q.message.edit_text("🩸 " + ("نوع قراءة السكر؟" if lang=="ar" else "Sugar reading type?"), reply_markup=btns)
+        return STATE_PAT_LOG
+    
+    elif q.data.startswith("pat_addbp_"):
+        pid = q.data.replace("pat_addbp_","")
+        ctx.user_data["log_pid"] = pid
+        ctx.user_data["log_type"] = "bp"
+        await q.message.edit_text("💉 " + ("أدخل قراءة الضغط (مثال: 120/80):" if lang=="ar" else "Enter BP (e.g. 120/80):"))
+        return STATE_PAT_LOG
+    
+    elif q.data.startswith("logsugar_"):
+        ctx.user_data["sugar_log_type"] = q.data.replace("logsugar_","")
+        await q.message.edit_text("🩸 " + ("أدخل قراءة السكر (mg/dL):" if lang=="ar" else "Enter sugar value (mg/dL):"))
+        return STATE_PAT_LOG
+
+async def pat_save_reading(u, ctx):
+    lang = get_lang(ctx)
+    pid = ctx.user_data.get("log_pid","")
+    log_type = ctx.user_data.get("log_type","")
+    text = u.message.text.strip()
+    
+    load_patients(ctx)
+    patients = ctx.user_data.get("patients",{})
+    p = patients.get(pid,{})
+    if not p: return STATE_PAT_MENU
+    
+    from datetime import datetime
+    date = datetime.now().strftime("%Y-%m-%d %H:%M")
+    readings = p.setdefault("readings",[])
+    
+    if log_type == "sugar":
+        try:
+            val = float(text)
+            sugar_type = ctx.user_data.get("sugar_log_type","fasting")
+            readings.append({"date": date, "sugar": val, "type": sugar_type})
+            
+            # تصنيف القراءة
+            if sugar_type == "fasting":
+                if val < 70: status = "⚠️ منخفض"
+                elif val <= 100: status = "✅ طبيعي"
+                elif val <= 125: status = "🟡 ما قبل السكري"
+                else: status = "🔴 مرتفع"
+            else:
+                if val < 140: status = "✅ طبيعي"
+                elif val <= 199: status = "🟡 ما قبل السكري"
+                else: status = "🔴 مرتفع"
+            
+            msg = "✅ " + ("تم حفظ قراءة السكر\n🩸 " if lang=="ar" else "Sugar reading saved\n🩸 ") + str(val) + " mg/dL " + status
+        except:
+            await u.message.reply_text("❌ " + ("أدخل رقماً صحيحاً" if lang=="ar" else "Enter valid number"))
+            return STATE_PAT_LOG
+    
+    elif log_type == "bp":
+        try:
+            parts = text.replace(" ","").split("/")
+            sys_val = int(parts[0])
+            dia_val = int(parts[1])
+            readings.append({"date": date, "bp": text, "sys": sys_val, "dia": dia_val})
+            
+            if sys_val < 120 and dia_val < 80: status = "✅ طبيعي"
+            elif sys_val < 130: status = "🟡 مرتفع قليلاً"
+            elif sys_val < 140: status = "🟠 مرحلة 1"
+            else: status = "🔴 مرتفع"
+            
+            msg = "✅ " + ("تم حفظ قراءة الضغط\n💉 " if lang=="ar" else "BP saved\n💉 ") + text + " " + status
+        except:
+            await u.message.reply_text("❌ " + ("صيغة خاطئة، مثال: 120/80" if lang=="ar" else "Wrong format, e.g. 120/80"))
+            return STATE_PAT_LOG
+    
+    save_patients(ctx)
+    
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("📊 " + ("سجل القراءات" if lang=="ar" else "View Log"), callback_data="pat_log_" + pid)],
+        [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]
+    ])
+    await u.message.reply_text(msg, reply_markup=btns)
+    return STATE_PAT_MENU
+
+async def pat_view_log(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    pid = q.data.replace("pat_viewlog_","")
+    load_patients(ctx)
+    patients = ctx.user_data.get("patients",{})
+    p = patients.get(pid,{})
+    readings = p.get("readings",[])
+    
+    if not readings:
+        await q.message.edit_text("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings"),
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]))
+        return STATE_PAT_MENU
+    
+    lines = ["📊 *" + ("كل القراءات - " if lang=="ar" else "All Readings - ") + p.get("name","") + "*", ""]
+    for r in readings[-20:]:
+        if r.get("sugar"):
+            lines.append("🩸 " + r["date"] + ": " + str(r["sugar"]) + " mg/dL")
+        if r.get("bp"):
+            lines.append("💉 " + r["date"] + ": " + str(r["bp"]))
+    
+    await q.message.edit_text("\n".join(lines),
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]),
+        parse_mode="Markdown")
+    return STATE_PAT_MENU
+
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -3176,6 +3328,11 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(interaction_start, pattern="^m_interaction$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, interaction_input)],
+            STATE_PAT_LOG: [
+                CallbackQueryHandler(pat_add_reading, pattern="^(pat_addsugar_|pat_addbp_|logsugar_)"),
+                CallbackQueryHandler(pat_view_log, pattern="^pat_viewlog_"),
+                CallbackQueryHandler(go_back, pattern="^back$"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, pat_save_reading)],
             STATE_PAT_NOTE: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, pat_note_save),
@@ -3183,6 +3340,8 @@ def build_conv():
                 MessageHandler(filters.Document.ALL, pat_note_save)],
             STATE_PAT_MENU: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
+                CallbackQueryHandler(pat_log_menu, pattern="^pat_log_"),
+                CallbackQueryHandler(pat_add_reading, pattern="^(pat_addsugar_|pat_addbp_)"),
                 CallbackQueryHandler(pat_note_start, pattern="^pat_note_"),
                 CallbackQueryHandler(pat_view_notes, pattern="^pat_viewnotes_"),
                 CallbackQueryHandler(patient_menu, pattern="^pat_"),
