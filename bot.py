@@ -3657,6 +3657,40 @@ async def pat_view_log(u, ctx):
         parse_mode="Markdown")
     return STATE_PAT_MENU
 
+
+async def sugtype_handler_fn(u, ctx):
+    """معالج مستقل لاختيار نوع القراءة"""
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    parts = q.data.split("_")
+    stype = parts[1]
+    pid = parts[2]
+    
+    # نحفظ في كل المفاتيح الممكنة
+    ctx.user_data["log_pid"] = pid
+    ctx.user_data["current_stype"] = stype
+    ctx.user_data["sugar_type"] = stype
+    ctx.user_data[f"stype_{pid}"] = stype
+    
+    if stype == "bp":
+        ctx.user_data["log_type"] = "bp"
+        msg = "💉 " + ("أدخل الضغط مثال 120/80:" if lang=="ar" else "Enter BP e.g. 120/80:")
+    elif stype == "fasting":
+        ctx.user_data["log_type"] = "sugar"
+        msg = "🌅 " + ("أدخل سكر الصيام (mg/dL):" if lang=="ar" else "Enter fasting sugar (mg/dL):")
+    elif stype == "postmeal":
+        ctx.user_data["log_type"] = "sugar"
+        msg = "🍽️ " + ("أدخل سكر بعد الأكل (mg/dL):" if lang=="ar" else "Enter post-meal sugar (mg/dL):")
+    elif stype == "hba1c":
+        ctx.user_data["log_type"] = "sugar"
+        msg = "📊 " + ("أدخل قيمة HbA1c (%):" if lang=="ar" else "Enter HbA1c (%):")
+    else:
+        ctx.user_data["log_type"] = "sugar"
+        msg = "🎲 " + ("أدخل قراءة السكر (mg/dL):" if lang=="ar" else "Enter sugar (mg/dL):")
+    
+    await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_addreading_" + pid)]]))
+    return STATE_PAT_LOG
+
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -3887,7 +3921,7 @@ def build_conv():
                 CallbackQueryHandler(interaction_start, pattern="^m_interaction$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, interaction_input)],
             STATE_PAT_LOG: [
-                CallbackQueryHandler(patient_menu, pattern="^sugtype_"),
+                CallbackQueryHandler(sugtype_handler_fn, pattern="^sugtype_"),
                 CallbackQueryHandler(pat_add_reading, pattern="^(pat_addsugar_|pat_addbp_|logsugar_)"),
                 CallbackQueryHandler(pat_view_log, pattern="^pat_viewlog_"),
                 CallbackQueryHandler(patient_menu, pattern="^pat_log_"),
