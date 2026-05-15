@@ -3886,7 +3886,7 @@ def build_conv():
                 CallbackQueryHandler(pat_view_log, pattern="^pat_viewlog_"),
                 CallbackQueryHandler(patient_menu, pattern="^pat_log_"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, pat_allergy)],
+                MessageHandler(filters.TEXT & ~filters.COMMAND, pat_save_reading)],
             STATE_PAT_NOTE: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, pat_note_save),
