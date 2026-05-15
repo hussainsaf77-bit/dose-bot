@@ -3428,9 +3428,12 @@ async def pat_log_menu(u, ctx):
         lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings yet"))
     
     btns = InlineKeyboardMarkup([
-        [InlineKeyboardButton("✏️ " + ("أضف قراءة" if lang=="ar" else "Add Reading"), callback_data="pat_addreading_" + pid)],
-        [InlineKeyboardButton("📈 " + ("سجل السكر" if lang=="ar" else "Sugar Log"), callback_data="pat_viewsugar_" + pid),
-         InlineKeyboardButton("📉 " + ("سجل الضغط" if lang=="ar" else "BP Log"), callback_data="pat_viewbp_" + pid)],
+        [InlineKeyboardButton("➕ " + ("أضف قراءة" if lang=="ar" else "Add Reading"), callback_data="pat_addreading_" + pid)],
+        [InlineKeyboardButton("💉 " + ("سجل الضغط" if lang=="ar" else "BP Log"), callback_data="pat_viewbp_" + pid)],
+        [InlineKeyboardButton("🌅 " + ("سكر صيام" if lang=="ar" else "Fasting"), callback_data="pat_viewfasting_" + pid)],
+        [InlineKeyboardButton("🍽️ " + ("سكر بعد الأكل" if lang=="ar" else "Post-meal"), callback_data="pat_viewpostmeal_" + pid)],
+        [InlineKeyboardButton("📊 " + ("سكر تراكمي HbA1c" if lang=="ar" else "HbA1c"), callback_data="pat_viewhba1c_" + pid)],
+        [InlineKeyboardButton("🎲 " + ("سكر عشوائي" if lang=="ar" else "Random"), callback_data="pat_viewrandom_" + pid)],
         [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]
     ])
     
