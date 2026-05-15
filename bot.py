@@ -2574,14 +2574,14 @@ async def patient_menu(u, ctx):
         else:
             msg = f"🎲 أدخل قراءة السكر (mg/dL):"
         await q.message.edit_text(msg)
-        return STATE_PAT_ALLERGY
+        return STATE_PAT_LOG
     
     if q.data.startswith("pat_addbp_"):
         pid = q.data.replace("pat_addbp_","")
         ctx.user_data["log_pid"] = pid
         ctx.user_data["log_type"] = "bp"
         await q.message.edit_text("💉 " + ("أدخل قراءة الضغط (مثال: 120/80):" if lang=="ar" else "Enter BP (e.g. 120/80):"))
-        return STATE_PAT_ALLERGY
+        return STATE_PAT_LOG
     
     if q.data.startswith("pat_edit_"):
         pid = q.data.replace("pat_edit_","")
