@@ -2548,8 +2548,12 @@ async def patient_menu(u, ctx):
         parts = q.data.split("_")
         stype = parts[1]
         pid = parts[2]
+        # نحفظ كل شيء بمفاتيح متعددة لضمان الحفظ
         ctx.user_data["log_pid"] = pid
+        ctx.user_data["current_stype"] = stype
+        ctx.user_data["current_pid"] = pid
         ctx.user_data[f"stype_{pid}"] = stype
+        ctx.user_data["sugar_type"] = stype
         
         if stype == "bp":
             ctx.user_data["log_type"] = "bp"
@@ -2558,7 +2562,6 @@ async def patient_menu(u, ctx):
             return STATE_PAT_LOG
         else:
             ctx.user_data["log_type"] = "sugar"
-            ctx.user_data["sugar_type"] = stype
         type_names = {"fasting":"صيام","postmeal":"بعد الأكل","random":"عشوائي","hba1c":"تراكمي"}
         type_name = type_names.get(stype, stype)
         type_emoji = {"hba1c":"📊","fasting":"🌅","postmeal":"🍽️","random":"🎲"}.get(stype,"🩸")
@@ -3568,9 +3571,10 @@ async def pat_save_reading(u, ctx):
         try:
             val = float(text)
             # نقرأ النوع من كل المصادر الممكنة
-            sugar_type = (ctx.user_data.get(f"stype_{pid}") or
+            sugar_type = (ctx.user_data.get("current_stype") or
+                         ctx.user_data.get(f"stype_{pid}") or
                          ctx.user_data.get("sugar_type") or "random")
-            logger.warning(f"💾 SAVE: pid={pid}, stype_{pid}={ctx.user_data.get(f'stype_{pid}')}, sugar_type={ctx.user_data.get('sugar_type')}, final={sugar_type}")
+
             type_names = {
                 "fasting":"صيام","postmeal":"بعد الأكل",
                 "random":"عشوائي","hba1c":"تراكمي HbA1c"
