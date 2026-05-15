@@ -3529,24 +3529,6 @@ async def pat_add_reading(u, ctx):
             parse_mode="Markdown")
         return STATE_PAT_MENU
 
-    if q.data.startswith("pat_addreading_"):
-        pid = q.data.replace("pat_addreading_","")
-        ctx.user_data["log_pid"] = pid
-        ctx.user_data["log_type"] = "reading"
-        msg = ("📝 أدخل القراءة بأحد هذه الأشكال:\n\n"
-               "🌅 صيام 95\n"
-               "🍽️ بعد_اكل 140\n"
-               "📊 hba1c 7.5\n"
-               "💉 ضغط 130/80\n"
-               "🎲 عشوائي 110") if lang=="ar" else (
-               "📝 Enter reading in one of these formats:\n\n"
-               "🌅 fasting 95\n"
-               "🍽️ postmeal 140\n"
-               "📊 hba1c 7.5\n"
-               "💉 bp 130/80\n"
-               "🎲 random 110")
-        await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]))
-        return STATE_PAT_ALLERGY
 
     if q.data.startswith("pat_addsugar_"):
         pid = q.data.replace("pat_addsugar_","")
