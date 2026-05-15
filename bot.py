@@ -149,7 +149,8 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_FOOD_SEARCH, STATE_SUGAR, STATE_BP, STATE_BP_AGE,
  STATE_PAT_MENU, STATE_PAT_NAME, STATE_PAT_AGE, STATE_PAT_WEIGHT,
  STATE_PAT_GENDER, STATE_PAT_DISEASE, STATE_PAT_MEDS, STATE_PAT_ALLERGY,
- STATE_INTERACTION, STATE_DRUG_FORM, STATE_PAT_NOTE, STATE_PAT_LOG) = range(43)
+ STATE_INTERACTION, STATE_DRUG_FORM, STATE_PAT_NOTE, STATE_PAT_LOG,
+ STATE_LOG_FASTING, STATE_LOG_POSTMEAL, STATE_LOG_HBA1C, STATE_LOG_RANDOM, STATE_LOG_BP) = range(48)
 
 TEXTS = {
 "ar": {
@@ -3678,21 +3679,86 @@ async def sugtype_handler_fn(u, ctx):
     if stype == "bp":
         ctx.user_data["log_type"] = "bp"
         msg = "💉 " + ("أدخل الضغط مثال 120/80:" if lang=="ar" else "Enter BP e.g. 120/80:")
+        await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]]))
+        return STATE_LOG_BP
     elif stype == "fasting":
         ctx.user_data["log_type"] = "sugar"
         msg = "🌅 " + ("أدخل سكر الصيام (mg/dL):" if lang=="ar" else "Enter fasting sugar (mg/dL):")
+        await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]]))
+        return STATE_LOG_FASTING
     elif stype == "postmeal":
         ctx.user_data["log_type"] = "sugar"
         msg = "🍽️ " + ("أدخل سكر بعد الأكل (mg/dL):" if lang=="ar" else "Enter post-meal sugar (mg/dL):")
+        await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]]))
+        return STATE_LOG_POSTMEAL
     elif stype == "hba1c":
         ctx.user_data["log_type"] = "sugar"
         msg = "📊 " + ("أدخل قيمة HbA1c (%):" if lang=="ar" else "Enter HbA1c (%):")
+        await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]]))
+        return STATE_LOG_HBA1C
     else:
         ctx.user_data["log_type"] = "sugar"
         msg = "🎲 " + ("أدخل قراءة السكر (mg/dL):" if lang=="ar" else "Enter sugar (mg/dL):")
-    
-    await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_addreading_" + pid)]]))
-    return STATE_PAT_LOG
+        await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]]))
+        return STATE_LOG_RANDOM
+
+
+async def save_fasting(u, ctx):
+    return await _save_sugar(u, ctx, "fasting", "صيام")
+
+async def save_postmeal(u, ctx):
+    return await _save_sugar(u, ctx, "postmeal", "بعد الأكل")
+
+async def save_hba1c(u, ctx):
+    return await _save_sugar(u, ctx, "hba1c", "تراكمي HbA1c")
+
+async def save_random(u, ctx):
+    return await _save_sugar(u, ctx, "random", "عشوائي")
+
+async def save_bp_reading(u, ctx):
+    lang = get_lang(ctx)
+    pid = ctx.user_data.get("log_pid","")
+    text = u.message.text.strip()
+    load_patients(ctx)
+    patients = ctx.user_data.get("patients",{})
+    p = patients.get(pid,{})
+    if not p: return STATE_PAT_MENU
+    from datetime import datetime
+    date = datetime.now().strftime("%Y-%m-%d %H:%M")
+    try:
+        parts = text.replace(" ","").split("/")
+        p.setdefault("readings",[]).append({"date":date,"bp":text,"sys":int(parts[0]),"dia":int(parts[1])})
+        save_patients(ctx)
+        await u.message.reply_text("✅ 💉 " + ("ضغط: " if lang=="ar" else "BP: ") + text,
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙", callback_data="pat_view_" + pid)]]))
+    except:
+        await u.message.reply_text("❌ " + ("صيغة خاطئة مثال: 120/80" if lang=="ar" else "Wrong format e.g. 120/80"))
+        return STATE_LOG_BP
+    return STATE_PAT_MENU
+
+async def _save_sugar(u, ctx, stype, stype_ar):
+    lang = get_lang(ctx)
+    pid = ctx.user_data.get("log_pid","")
+    text = u.message.text.strip()
+    load_patients(ctx)
+    patients = ctx.user_data.get("patients",{})
+    p = patients.get(pid,{})
+    if not p: return STATE_PAT_MENU
+    from datetime import datetime
+    date = datetime.now().strftime("%Y-%m-%d %H:%M")
+    try:
+        val = float(text.replace(",","."))
+        unit = "%" if stype == "hba1c" else "mg/dL"
+        icons = {"fasting":"🌅","postmeal":"🍽️","hba1c":"📊","random":"🎲"}
+        icon = icons.get(stype,"🩸")
+        p.setdefault("readings",[]).append({"date":date,"sugar":val,"stype":stype,"stype_ar":stype_ar,"unit":unit})
+        save_patients(ctx)
+        await u.message.reply_text(f"✅ {icon} {stype_ar}: {val} {unit}",
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙", callback_data="pat_view_" + pid)]]))
+    except:
+        await u.message.reply_text("❌ " + ("أدخل رقماً صحيحاً" if lang=="ar" else "Enter valid number"))
+        return STATE_PAT_LOG
+    return STATE_PAT_MENU
 
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
@@ -3923,6 +3989,11 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(interaction_start, pattern="^m_interaction$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, interaction_input)],
+            STATE_LOG_FASTING: [MessageHandler(filters.TEXT & ~filters.COMMAND, save_fasting), CallbackQueryHandler(go_back, pattern="^back$")],
+            STATE_LOG_POSTMEAL: [MessageHandler(filters.TEXT & ~filters.COMMAND, save_postmeal), CallbackQueryHandler(go_back, pattern="^back$")],
+            STATE_LOG_HBA1C: [MessageHandler(filters.TEXT & ~filters.COMMAND, save_hba1c), CallbackQueryHandler(go_back, pattern="^back$")],
+            STATE_LOG_RANDOM: [MessageHandler(filters.TEXT & ~filters.COMMAND, save_random), CallbackQueryHandler(go_back, pattern="^back$")],
+            STATE_LOG_BP: [MessageHandler(filters.TEXT & ~filters.COMMAND, save_bp_reading), CallbackQueryHandler(go_back, pattern="^back$")],
             STATE_PAT_LOG: [
                 CallbackQueryHandler(sugtype_handler_fn, pattern="^sugtype_"),
                 CallbackQueryHandler(pat_add_reading, pattern="^(pat_addsugar_|pat_addbp_|logsugar_)"),
