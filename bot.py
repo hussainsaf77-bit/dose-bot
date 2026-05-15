@@ -2543,6 +2543,8 @@ async def patient_menu(u, ctx):
         pid = q.data.replace("pat_edit_","")
         p = patients.get(pid,{})
         btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("👤 " + ("الاسم: " if lang=="ar" else "Name: ") + str(p.get("name","")), callback_data="patedit_name_" + pid)],
+            [InlineKeyboardButton("📅 " + ("العمر: " if lang=="ar" else "Age: ") + str(p.get("age","")), callback_data="patedit_age_" + pid)],
             [InlineKeyboardButton("⚖️ " + ("الوزن: " if lang=="ar" else "Weight: ") + str(p.get("weight","")), callback_data="patedit_weight_" + pid)],
             [InlineKeyboardButton("💊 " + ("الأدوية" if lang=="ar" else "Medications"), callback_data="patedit_meds_" + pid)],
             [InlineKeyboardButton("🏥 " + ("الأمراض" if lang=="ar" else "Diseases"), callback_data="patedit_diseases_" + pid)],
@@ -2559,6 +2561,8 @@ async def patient_menu(u, ctx):
         ctx.user_data["edit_pid"] = pid
         ctx.user_data["edit_field"] = field
         field_names = {
+            "name": "الاسم" if lang=="ar" else "Name",
+            "age": "العمر" if lang=="ar" else "Age",
             "weight": "الوزن (كغ)" if lang=="ar" else "Weight (kg)",
             "meds": "الأدوية" if lang=="ar" else "Medications",
             "diseases": "الأمراض" if lang=="ar" else "Diseases",
