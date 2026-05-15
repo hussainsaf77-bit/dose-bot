@@ -2434,49 +2434,6 @@ async def patient_menu(u, ctx):
         await q.message.edit_text("\n".join(lines), reply_markup=btns, parse_mode="Markdown")
         return STATE_PAT_MENU
     
-    if q.data.startswith("pat_viewfasting_") or q.data.startswith("pat_viewpostmeal_") or q.data.startswith("pat_viewhba1c_") or q.data.startswith("pat_viewrandom_"):
-        for prefix in ["pat_viewfasting_","pat_viewpostmeal_","pat_viewhba1c_","pat_viewrandom_"]:
-            if q.data.startswith(prefix):
-                pid = q.data.replace(prefix,"")
-                stype = prefix.replace("pat_view","").replace("_","")
-                break
-        p = patients.get(pid,{})
-        readings = p.get("readings",[])
-        
-        stype_map = {"fasting":"🌅 سكر الصيام","postmeal":"🍽️ سكر بعد الأكل","hba1c":"📊 HbA1c التراكمي","random":"🎲 عشوائي"}
-        unit_map = {"hba1c":"%","fasting":"mg/dL","postmeal":"mg/dL","random":"mg/dL"}
-        
-        filtered = [r for r in readings if r.get("sugar") and r.get("stype","random") == stype]
-        lines = [stype_map.get(stype,"📊") + " *" + p.get("name","") + "*",""]
-        
-        if filtered:
-            for i, r in enumerate(filtered[-10:]):
-                unit = unit_map.get(stype,"mg/dL")
-                lines.append(f"  {i+1}. {r['date'][:16]}: {r['sugar']} {unit}")
-        else:
-            lines.append("📭 لا توجد قراءات")
-        
-        # أزرار حذف
-        del_btns = []
-        for i, r in enumerate(filtered[-5:]):
-            del_btns.append([InlineKeyboardButton(f"🗑️ {r['date'][:10]}: {r['sugar']}", callback_data=f"pat_delreading_{pid}_{r['date']}")])
-        del_btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)])
-        
-        await q.message.edit_text("\n".join(lines), reply_markup=InlineKeyboardMarkup(del_btns), parse_mode="Markdown")
-        return STATE_PAT_MENU
-
-    if q.data.startswith("pat_delreading_"):
-        parts = q.data.replace("pat_delreading_","").split("_",1)
-        pid = parts[0]
-        date_key = parts[1] if len(parts)>1 else ""
-        p = patients.get(pid,{})
-        before = len(p.get("readings",[]))
-        p["readings"] = [r for r in p.get("readings",[]) if r.get("date","") != date_key]
-        after = len(p.get("readings",[]))
-        save_patients(ctx)
-        await q.answer("✅ " + (f"تم حذف {before-after} قراءة" if lang=="ar" else f"Deleted {before-after} reading"))
-        return STATE_PAT_MENU
-
     if q.data.startswith("pat_viewsugar_"):
         pid = q.data.replace("pat_viewsugar_","")
         p = patients.get(pid,{})
@@ -3440,49 +3397,6 @@ async def pat_add_reading(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
     
-    if q.data.startswith("pat_viewfasting_") or q.data.startswith("pat_viewpostmeal_") or q.data.startswith("pat_viewhba1c_") or q.data.startswith("pat_viewrandom_"):
-        for prefix in ["pat_viewfasting_","pat_viewpostmeal_","pat_viewhba1c_","pat_viewrandom_"]:
-            if q.data.startswith(prefix):
-                pid = q.data.replace(prefix,"")
-                stype = prefix.replace("pat_view","").replace("_","")
-                break
-        p = patients.get(pid,{})
-        readings = p.get("readings",[])
-        
-        stype_map = {"fasting":"🌅 سكر الصيام","postmeal":"🍽️ سكر بعد الأكل","hba1c":"📊 HbA1c التراكمي","random":"🎲 عشوائي"}
-        unit_map = {"hba1c":"%","fasting":"mg/dL","postmeal":"mg/dL","random":"mg/dL"}
-        
-        filtered = [r for r in readings if r.get("sugar") and r.get("stype","random") == stype]
-        lines = [stype_map.get(stype,"📊") + " *" + p.get("name","") + "*",""]
-        
-        if filtered:
-            for i, r in enumerate(filtered[-10:]):
-                unit = unit_map.get(stype,"mg/dL")
-                lines.append(f"  {i+1}. {r['date'][:16]}: {r['sugar']} {unit}")
-        else:
-            lines.append("📭 لا توجد قراءات")
-        
-        # أزرار حذف
-        del_btns = []
-        for i, r in enumerate(filtered[-5:]):
-            del_btns.append([InlineKeyboardButton(f"🗑️ {r['date'][:10]}: {r['sugar']}", callback_data=f"pat_delreading_{pid}_{r['date']}")])
-        del_btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)])
-        
-        await q.message.edit_text("\n".join(lines), reply_markup=InlineKeyboardMarkup(del_btns), parse_mode="Markdown")
-        return STATE_PAT_MENU
-
-    if q.data.startswith("pat_delreading_"):
-        parts = q.data.replace("pat_delreading_","").split("_",1)
-        pid = parts[0]
-        date_key = parts[1] if len(parts)>1 else ""
-        p = patients.get(pid,{})
-        before = len(p.get("readings",[]))
-        p["readings"] = [r for r in p.get("readings",[]) if r.get("date","") != date_key]
-        after = len(p.get("readings",[]))
-        save_patients(ctx)
-        await q.answer("✅ " + (f"تم حذف {before-after} قراءة" if lang=="ar" else f"Deleted {before-after} reading"))
-        return STATE_PAT_MENU
-
     if q.data.startswith("pat_viewsugar_"):
         pid = q.data.replace("pat_viewsugar_","")
         p = patients.get(pid,{})
