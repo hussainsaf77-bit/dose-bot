@@ -3566,7 +3566,15 @@ async def pat_save_reading(u, ctx):
     
     if log_type == "sugar":
         try:
-            val = float(text)
+            val = float(text.replace(",","."))
+            # نقرأ النوع من Supabase
+            if supabase_client:
+                try:
+                    uid_s = str(u.effective_user.id)
+                    res_s = supabase_client.table("user_state").select("stype").eq("uid", uid_s).execute()
+                    if res_s.data:
+                        ctx.user_data["sugar_type"] = res_s.data[0].get("stype","random")
+                except: pass
             # نقرأ النوع من كل المصادر الممكنة
             sugar_type = (ctx.user_data.get(f"stype_{pid}") or 
                          ctx.user_data.get("sugar_type") or 
