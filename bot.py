@@ -3554,6 +3554,18 @@ async def pat_save_reading(u, ctx):
     pid = ctx.user_data.get("log_pid","")
     log_type = ctx.user_data.get("log_type","")
     text = u.message.text.strip()
+    # نقرأ النوع من النص مباشرة
+    txt = text.strip()
+    stype_detected = "random"
+    val_text = txt
+    for kw, st in [("صيام ","fasting"),("صايم ","fasting"),("بعداكل ","postmeal"),
+                   ("بعد اكل ","postmeal"),("تراكمي ","hba1c"),("hba1c ","hba1c"),
+                   ("ضغط ","bp"),("عشوائي ","random")]:
+        if txt.lower().startswith(kw.lower()):
+            stype_detected = st
+            val_text = txt[len(kw):].strip()
+            break
+    
     
     load_patients(ctx)
     patients = ctx.user_data.get("patients",{})
