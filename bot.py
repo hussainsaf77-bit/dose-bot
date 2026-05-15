@@ -3887,6 +3887,7 @@ def build_conv():
                 CallbackQueryHandler(interaction_start, pattern="^m_interaction$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, interaction_input)],
             STATE_PAT_LOG: [
+                CallbackQueryHandler(patient_menu, pattern="^sugtype_"),
                 CallbackQueryHandler(pat_add_reading, pattern="^(pat_addsugar_|pat_addbp_|logsugar_)"),
                 CallbackQueryHandler(pat_view_log, pattern="^pat_viewlog_"),
                 CallbackQueryHandler(patient_menu, pattern="^pat_log_"),
