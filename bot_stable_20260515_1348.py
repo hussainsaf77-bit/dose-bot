@@ -2538,35 +2538,6 @@ async def patient_menu(u, ctx):
         await q.message.edit_text("💉 " + ("أدخل قراءة الضغط (مثال: 120/80):" if lang=="ar" else "Enter BP (e.g. 120/80):"))
         return STATE_PAT_ALLERGY
     
-    if q.data.startswith("pat_edit_"):
-        pid = q.data.replace("pat_edit_","")
-        p = patients.get(pid,{})
-        btns = InlineKeyboardMarkup([
-            [InlineKeyboardButton("⚖️ " + ("الوزن: " if lang=="ar" else "Weight: ") + str(p.get("weight","")), callback_data="patedit_weight_" + pid)],
-            [InlineKeyboardButton("💊 " + ("الأدوية" if lang=="ar" else "Medications"), callback_data="patedit_meds_" + pid)],
-            [InlineKeyboardButton("🏥 " + ("الأمراض" if lang=="ar" else "Diseases"), callback_data="patedit_diseases_" + pid)],
-            [InlineKeyboardButton("⚠️ " + ("الحساسية" if lang=="ar" else "Allergies"), callback_data="patedit_allergy_" + pid)],
-            [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]
-        ])
-        await q.message.edit_text("✏️ " + ("اختر ما تريد تعديله:" if lang=="ar" else "Select what to edit:"), reply_markup=btns)
-        return STATE_PAT_MENU
-
-    if q.data.startswith("patedit_"):
-        parts = q.data.split("_")
-        field = parts[1]
-        pid = parts[2]
-        ctx.user_data["edit_pid"] = pid
-        ctx.user_data["edit_field"] = field
-        field_names = {
-            "weight": "الوزن (كغ)" if lang=="ar" else "Weight (kg)",
-            "meds": "الأدوية" if lang=="ar" else "Medications",
-            "diseases": "الأمراض" if lang=="ar" else "Diseases",
-            "allergy": "الحساسية" if lang=="ar" else "Allergies"
-        }
-        await q.message.edit_text("✏️ " + ("أدخل " if lang=="ar" else "Enter ") + field_names.get(field,"") + ":",
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_edit_" + pid)]]))
-        return STATE_PAT_NOTE
-
     if q.data.startswith("pat_del_"):
         pid = q.data.replace("pat_del_", "")
         patients = ctx.user_data.get("patients", {})
@@ -3186,28 +3157,6 @@ async def pat_note_start(u, ctx):
 
 async def pat_note_save(u, ctx):
     lang = get_lang(ctx)
-    
-    # تعديل بيانات المريض
-    edit_pid = ctx.user_data.get("edit_pid","")
-    edit_field = ctx.user_data.get("edit_field","")
-    if edit_pid and edit_field:
-        load_patients(ctx)
-        patients = ctx.user_data.get("patients",{})
-        p = patients.get(edit_pid,{})
-        if p:
-            val = u.message.text.strip()
-            if edit_field == "weight":
-                try: p["weight"] = float(val)
-                except: pass
-            else:
-                p[edit_field] = val
-            save_patients(ctx)
-            ctx.user_data.pop("edit_pid","")
-            ctx.user_data.pop("edit_field","")
-            await u.message.reply_text("✅ " + ("تم التعديل!" if lang=="ar" else "Updated!"),
-                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("👤 " + ("عرض الملف" if lang=="ar" else "View File"), callback_data="pat_view_" + edit_pid)]]))
-            return STATE_PAT_MENU
-    
     pid = ctx.user_data.get("note_pid", "")
     if not pid:
         return STATE_PAT_MENU
