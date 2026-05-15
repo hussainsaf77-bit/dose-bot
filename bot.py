@@ -3652,6 +3652,38 @@ async def pat_view_log(u, ctx):
         parse_mode="Markdown")
     return STATE_PAT_MENU
 
+
+async def sugtype_handler_fn(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    parts = q.data.split("_")
+    stype = parts[1]
+    pid = parts[2]
+    uid = str(u.effective_user.id)
+    
+    # نحفظ في Supabase
+    if supabase_client:
+        try:
+            supabase_client.table("user_state").upsert({
+                "uid": uid, "stype": stype, "pid": pid
+            }).execute()
+        except: pass
+    
+    ctx.user_data["log_pid"] = pid
+    ctx.user_data["log_type"] = "bp" if stype == "bp" else "sugar"
+    ctx.user_data["current_stype"] = stype
+    
+    msgs = {
+        "bp": "💉 أدخل الضغط مثال 120/80:",
+        "fasting": "🌅 أدخل سكر الصيام (mg/dL):",
+        "postmeal": "🍽️ أدخل سكر بعد الأكل (mg/dL):",
+        "hba1c": "📊 أدخل قيمة HbA1c (%):",
+        "random": "🎲 أدخل قراءة السكر (mg/dL):"
+    }
+    await q.message.edit_text(msgs.get(stype, "أدخل القراءة:"),
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]]))
+    return STATE_PAT_LOG
+
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -3895,7 +3927,7 @@ def build_conv():
             STATE_PAT_MENU: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(pat_log_menu, pattern="^pat_log_"),
-                CallbackQueryHandler(patient_menu, pattern="^sugtype_"),
+                CallbackQueryHandler(sugtype_handler_fn, pattern="^sugtype_"),
                 CallbackQueryHandler(patient_menu, pattern="^pat_edit_"),
                 CallbackQueryHandler(patient_menu, pattern="^patedit_"),
                 CallbackQueryHandler(patient_menu, pattern="^patdel_"),
