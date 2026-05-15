@@ -149,8 +149,7 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_FOOD_SEARCH, STATE_SUGAR, STATE_BP, STATE_BP_AGE,
  STATE_PAT_MENU, STATE_PAT_NAME, STATE_PAT_AGE, STATE_PAT_WEIGHT,
  STATE_PAT_GENDER, STATE_PAT_DISEASE, STATE_PAT_MEDS, STATE_PAT_ALLERGY,
- STATE_INTERACTION, STATE_DRUG_FORM, STATE_PAT_NOTE, STATE_PAT_LOG,
- STATE_LOG_FASTING, STATE_LOG_POSTMEAL, STATE_LOG_HBA1C, STATE_LOG_RANDOM, STATE_LOG_BP) = range(48)
+ STATE_INTERACTION, STATE_DRUG_FORM, STATE_PAT_NOTE, STATE_PAT_LOG) = range(43)
 
 TEXTS = {
 "ar": {
@@ -2313,12 +2312,7 @@ async def patient_menu(u, ctx):
             [InlineKeyboardButton("📊 " + ("سجل السكر/الضغط" if lang=="ar" else "Sugar/BP Log"), callback_data="pat_log_" + pid)],
             [InlineKeyboardButton("🖨️ " + ("تصدير PDF" if lang=="ar" else "Export PDF"), callback_data="pat_pdf_" + pid)],
             [InlineKeyboardButton("📝 " + ("إضافة ملاحظة" if lang=="ar" else "Add Note"), callback_data="pat_note_" + pid)],
-            [InlineKeyboardButton("💉 " + ("أضف ضغط" if lang=="ar" else "Add BP"), callback_data="sugtype_bp_" + pid),
-             InlineKeyboardButton("🌅 " + ("سكر صيام" if lang=="ar" else "Fasting"), callback_data="sugtype_fasting_" + pid)],
-            [InlineKeyboardButton("🍽️ " + ("بعد الأكل" if lang=="ar" else "Post-meal"), callback_data="sugtype_postmeal_" + pid),
-             InlineKeyboardButton("📊 " + ("HbA1c" if lang=="ar" else "HbA1c"), callback_data="sugtype_hba1c_" + pid)],
-            [InlineKeyboardButton("🎲 " + ("عشوائي" if lang=="ar" else "Random"), callback_data="sugtype_random_" + pid)],
-            [InlineKeyboardButton("📊 " + ("عرض السجل" if lang=="ar" else "View Log"), callback_data="pat_log_" + pid)],
+            [InlineKeyboardButton("📊 " + ("سجل السكر والضغط" if lang=="ar" else "Sugar & BP Log"), callback_data="pat_log_" + pid)],
             [InlineKeyboardButton("✏️ " + ("تعديل البيانات" if lang=="ar" else "Edit Data"), callback_data="pat_edit_" + pid)],
             [InlineKeyboardButton("➕ " + ("إضافة مريض آخر" if lang=="ar" else "Add Another Patient"), callback_data="pat_add")],
             [InlineKeyboardButton("🗑️ " + ("حذف" if lang=="ar" else "Delete"), callback_data="pat_del_" + pid)],
@@ -2554,12 +2548,8 @@ async def patient_menu(u, ctx):
         parts = q.data.split("_")
         stype = parts[1]
         pid = parts[2]
-        # نحفظ كل شيء بمفاتيح متعددة لضمان الحفظ
         ctx.user_data["log_pid"] = pid
-        ctx.user_data["current_stype"] = stype
-        ctx.user_data["current_pid"] = pid
         ctx.user_data[f"stype_{pid}"] = stype
-        ctx.user_data["sugar_type"] = stype
         
         if stype == "bp":
             ctx.user_data["log_type"] = "bp"
@@ -2568,6 +2558,7 @@ async def patient_menu(u, ctx):
             return STATE_PAT_LOG
         else:
             ctx.user_data["log_type"] = "sugar"
+            ctx.user_data["sugar_type"] = stype
         type_names = {"fasting":"صيام","postmeal":"بعد الأكل","random":"عشوائي","hba1c":"تراكمي"}
         type_name = type_names.get(stype, stype)
         type_emoji = {"hba1c":"📊","fasting":"🌅","postmeal":"🍽️","random":"🎲"}.get(stype,"🩸")
@@ -3577,10 +3568,10 @@ async def pat_save_reading(u, ctx):
         try:
             val = float(text)
             # نقرأ النوع من كل المصادر الممكنة
-            sugar_type = (ctx.user_data.get("current_stype") or
-                         ctx.user_data.get(f"stype_{pid}") or
-                         ctx.user_data.get("sugar_type") or "random")
-
+            sugar_type = (ctx.user_data.get(f"stype_{pid}") or 
+                         ctx.user_data.get("sugar_type") or 
+                         ctx.user_data.get("sugar_type_confirmed") or 
+                         "random")
             type_names = {
                 "fasting":"صيام","postmeal":"بعد الأكل",
                 "random":"عشوائي","hba1c":"تراكمي HbA1c"
@@ -3659,105 +3650,6 @@ async def pat_view_log(u, ctx):
     await q.message.edit_text("\n".join(lines),
         reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]),
         parse_mode="Markdown")
-    return STATE_PAT_MENU
-
-
-async def sugtype_handler_fn(u, ctx):
-    """معالج مستقل لاختيار نوع القراءة"""
-    q = u.callback_query; await q.answer()
-    lang = get_lang(ctx)
-    parts = q.data.split("_")
-    stype = parts[1]
-    pid = parts[2]
-    
-    # نحفظ في كل المفاتيح الممكنة
-    ctx.user_data["log_pid"] = pid
-    ctx.user_data["current_stype"] = stype
-    ctx.user_data["sugar_type"] = stype
-    ctx.user_data[f"stype_{pid}"] = stype
-    
-    if stype == "bp":
-        ctx.user_data["log_type"] = "bp"
-        msg = "💉 " + ("أدخل الضغط مثال 120/80:" if lang=="ar" else "Enter BP e.g. 120/80:")
-        await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]]))
-        return STATE_LOG_BP
-    elif stype == "fasting":
-        ctx.user_data["log_type"] = "sugar"
-        msg = "🌅 " + ("أدخل سكر الصيام (mg/dL):" if lang=="ar" else "Enter fasting sugar (mg/dL):")
-        await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]]))
-        return STATE_LOG_FASTING
-    elif stype == "postmeal":
-        ctx.user_data["log_type"] = "sugar"
-        msg = "🍽️ " + ("أدخل سكر بعد الأكل (mg/dL):" if lang=="ar" else "Enter post-meal sugar (mg/dL):")
-        await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]]))
-        return STATE_LOG_POSTMEAL
-    elif stype == "hba1c":
-        ctx.user_data["log_type"] = "sugar"
-        msg = "📊 " + ("أدخل قيمة HbA1c (%):" if lang=="ar" else "Enter HbA1c (%):")
-        await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]]))
-        return STATE_LOG_HBA1C
-    else:
-        ctx.user_data["log_type"] = "sugar"
-        msg = "🎲 " + ("أدخل قراءة السكر (mg/dL):" if lang=="ar" else "Enter sugar (mg/dL):")
-        await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]]))
-        return STATE_LOG_RANDOM
-
-
-async def save_fasting(u, ctx):
-    return await _save_sugar(u, ctx, "fasting", "صيام")
-
-async def save_postmeal(u, ctx):
-    return await _save_sugar(u, ctx, "postmeal", "بعد الأكل")
-
-async def save_hba1c(u, ctx):
-    return await _save_sugar(u, ctx, "hba1c", "تراكمي HbA1c")
-
-async def save_random(u, ctx):
-    return await _save_sugar(u, ctx, "random", "عشوائي")
-
-async def save_bp_reading(u, ctx):
-    lang = get_lang(ctx)
-    pid = ctx.user_data.get("log_pid","")
-    text = u.message.text.strip()
-    load_patients(ctx)
-    patients = ctx.user_data.get("patients",{})
-    p = patients.get(pid,{})
-    if not p: return STATE_PAT_MENU
-    from datetime import datetime
-    date = datetime.now().strftime("%Y-%m-%d %H:%M")
-    try:
-        parts = text.replace(" ","").split("/")
-        p.setdefault("readings",[]).append({"date":date,"bp":text,"sys":int(parts[0]),"dia":int(parts[1])})
-        save_patients(ctx)
-        await u.message.reply_text("✅ 💉 " + ("ضغط: " if lang=="ar" else "BP: ") + text,
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙", callback_data="pat_view_" + pid)]]))
-    except:
-        await u.message.reply_text("❌ " + ("صيغة خاطئة مثال: 120/80" if lang=="ar" else "Wrong format e.g. 120/80"))
-        return STATE_LOG_BP
-    return STATE_PAT_MENU
-
-async def _save_sugar(u, ctx, stype, stype_ar):
-    lang = get_lang(ctx)
-    pid = ctx.user_data.get("log_pid","")
-    text = u.message.text.strip()
-    load_patients(ctx)
-    patients = ctx.user_data.get("patients",{})
-    p = patients.get(pid,{})
-    if not p: return STATE_PAT_MENU
-    from datetime import datetime
-    date = datetime.now().strftime("%Y-%m-%d %H:%M")
-    try:
-        val = float(text.replace(",","."))
-        unit = "%" if stype == "hba1c" else "mg/dL"
-        icons = {"fasting":"🌅","postmeal":"🍽️","hba1c":"📊","random":"🎲"}
-        icon = icons.get(stype,"🩸")
-        p.setdefault("readings",[]).append({"date":date,"sugar":val,"stype":stype,"stype_ar":stype_ar,"unit":unit})
-        save_patients(ctx)
-        await u.message.reply_text(f"✅ {icon} {stype_ar}: {val} {unit}",
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙", callback_data="pat_view_" + pid)]]))
-    except:
-        await u.message.reply_text("❌ " + ("أدخل رقماً صحيحاً" if lang=="ar" else "Enter valid number"))
-        return STATE_PAT_LOG
     return STATE_PAT_MENU
 
 async def rem_menu(u, ctx):
@@ -3989,13 +3881,7 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(interaction_start, pattern="^m_interaction$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, interaction_input)],
-            STATE_LOG_FASTING: [MessageHandler(filters.TEXT & ~filters.COMMAND, save_fasting), CallbackQueryHandler(go_back, pattern="^back$")],
-            STATE_LOG_POSTMEAL: [MessageHandler(filters.TEXT & ~filters.COMMAND, save_postmeal), CallbackQueryHandler(go_back, pattern="^back$")],
-            STATE_LOG_HBA1C: [MessageHandler(filters.TEXT & ~filters.COMMAND, save_hba1c), CallbackQueryHandler(go_back, pattern="^back$")],
-            STATE_LOG_RANDOM: [MessageHandler(filters.TEXT & ~filters.COMMAND, save_random), CallbackQueryHandler(go_back, pattern="^back$")],
-            STATE_LOG_BP: [MessageHandler(filters.TEXT & ~filters.COMMAND, save_bp_reading), CallbackQueryHandler(go_back, pattern="^back$")],
             STATE_PAT_LOG: [
-                CallbackQueryHandler(sugtype_handler_fn, pattern="^sugtype_"),
                 CallbackQueryHandler(pat_add_reading, pattern="^(pat_addsugar_|pat_addbp_|logsugar_)"),
                 CallbackQueryHandler(pat_view_log, pattern="^pat_viewlog_"),
                 CallbackQueryHandler(patient_menu, pattern="^pat_log_"),
