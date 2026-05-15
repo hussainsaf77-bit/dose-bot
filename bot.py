@@ -2566,13 +2566,13 @@ async def patient_menu(u, ctx):
         # نحفظ النوع في اسم المفتاح الثابت
         ctx.user_data[f"stype_{pid}"] = stype
         if stype == "hba1c":
-            msg = f"📊 أدخل قيمة HbA1c (%):"
+            msg = "📊 اكتب مثال: تراكمي 7.5"
         elif stype == "fasting":
-            msg = f"🌅 أدخل سكر الصيام (mg/dL):"
+            msg = "🌅 اكتب مثال: صيام 95"
         elif stype == "postmeal":
-            msg = f"🍽️ أدخل سكر بعد الأكل (mg/dL):"
+            msg = "🍽️ اكتب مثال: بعداكل 140"
         else:
-            msg = f"🎲 أدخل قراءة السكر (mg/dL):"
+            msg = "🎲 اكتب مثال: عشوائي 110"
         await q.message.edit_text(msg)
         return STATE_PAT_LOG
     
@@ -2580,7 +2580,7 @@ async def patient_menu(u, ctx):
         pid = q.data.replace("pat_addbp_","")
         ctx.user_data["log_pid"] = pid
         ctx.user_data["log_type"] = "bp"
-        await q.message.edit_text("💉 " + ("أدخل قراءة الضغط (مثال: 120/80):" if lang=="ar" else "Enter BP (e.g. 120/80):"))
+        await q.message.edit_text("💉 اكتب مثال: ضغط 120/80")
         return STATE_PAT_LOG
     
     if q.data.startswith("pat_edit_"):
@@ -3541,7 +3541,7 @@ async def pat_add_reading(u, ctx):
         pid = q.data.replace("pat_addbp_","")
         ctx.user_data["log_pid"] = pid
         ctx.user_data["log_type"] = "bp"
-        await q.message.edit_text("💉 " + ("أدخل قراءة الضغط (مثال: 120/80):" if lang=="ar" else "Enter BP (e.g. 120/80):"))
+        await q.message.edit_text("💉 اكتب مثال: ضغط 120/80")
         return STATE_PAT_LOG
     
     elif q.data.startswith("logsugar_"):
