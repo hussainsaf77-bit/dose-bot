@@ -2554,10 +2554,16 @@ async def patient_menu(u, ctx):
         stype = parts[1]
         pid = parts[2]
         ctx.user_data["log_pid"] = pid
-        ctx.user_data["log_type"] = "sugar"
-        ctx.user_data["sugar_type"] = stype
-        ctx.user_data["sugar_type_confirmed"] = stype
-        logger.warning(f"✅ sugtype saved: {stype}")
+        ctx.user_data[f"stype_{pid}"] = stype
+        
+        if stype == "bp":
+            ctx.user_data["log_type"] = "bp"
+            await q.message.edit_text("💉 " + ("أدخل قراءة الضغط (مثال: 120/80):" if lang=="ar" else "Enter BP (e.g. 120/80):"),
+                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_addreading_" + pid)]]))
+            return STATE_PAT_LOG
+        else:
+            ctx.user_data["log_type"] = "sugar"
+            ctx.user_data["sugar_type"] = stype
         type_names = {"fasting":"صيام","postmeal":"بعد الأكل","random":"عشوائي","hba1c":"تراكمي"}
         type_name = type_names.get(stype, stype)
         type_emoji = {"hba1c":"📊","fasting":"🌅","postmeal":"🍽️","random":"🎲"}.get(stype,"🩸")
