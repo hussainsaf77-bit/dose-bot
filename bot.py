@@ -2313,6 +2313,7 @@ async def patient_menu(u, ctx):
             [InlineKeyboardButton("🖨️ " + ("تصدير PDF" if lang=="ar" else "Export PDF"), callback_data="pat_pdf_" + pid)],
             [InlineKeyboardButton("📝 " + ("إضافة ملاحظة" if lang=="ar" else "Add Note"), callback_data="pat_note_" + pid)],
             [InlineKeyboardButton("📊 " + ("سجل السكر والضغط" if lang=="ar" else "Sugar & BP Log"), callback_data="pat_log_" + pid)],
+            [InlineKeyboardButton("✏️ " + ("تعديل البيانات" if lang=="ar" else "Edit Data"), callback_data="pat_edit_" + pid)],
             [InlineKeyboardButton("➕ " + ("إضافة مريض آخر" if lang=="ar" else "Add Another Patient"), callback_data="pat_add")],
             [InlineKeyboardButton("🗑️ " + ("حذف" if lang=="ar" else "Delete"), callback_data="pat_del_" + pid)],
             [InlineKeyboardButton("🔙 " + ("القائمة الرئيسية" if lang=="ar" else "Main Menu"), callback_data="back")]
