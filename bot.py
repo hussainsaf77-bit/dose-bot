@@ -3564,17 +3564,48 @@ async def pat_save_reading(u, ctx):
     date = datetime.now().strftime("%Y-%m-%d %H:%M")
     readings = p.setdefault("readings",[])
     
-    if log_type == "sugar":
+    # نقرأ النوع من النص مباشرة
+    text_lower = text.strip().lower()
+    detected_stype = "random"
+    detected_val = text_lower
+    
+    type_keywords = {
+        "صيام": "fasting", "صايم": "fasting", "fasting": "fasting", "f ": "fasting",
+        "بعداكل": "postmeal", "بعد اكل": "postmeal", "postmeal": "postmeal", "p ": "postmeal",
+        "تراكمي": "hba1c", "hba1c": "hba1c", "h ": "hba1c",
+        "ضغط": "bp", "bp": "bp", "b ": "bp",
+        "عشوائي": "random", "random": "random", "r ": "random"
+    }
+    
+    for keyword, stype_val in type_keywords.items():
+        if text_lower.startswith(keyword):
+            detected_stype = stype_val
+            detected_val = text_lower.replace(keyword,"").strip().strip(":")
+            break
+    
+    if detected_stype == "bp" or (log_type == "bp" and "/"  in text):
+        # معالجة الضغط
         try:
-            val = float(text.replace(",","."))
-            # نقرأ النوع من Supabase
-            if supabase_client:
-                try:
-                    uid_s = str(u.effective_user.id)
-                    res_s = supabase_client.table("user_state").select("stype").eq("uid", uid_s).execute()
-                    if res_s.data:
-                        ctx.user_data["sugar_type"] = res_s.data[0].get("stype","random")
-                except: pass
+            bp_text = detected_val if detected_val else text
+            parts_bp = bp_text.replace(" ","").split("/")
+            from datetime import datetime
+            date = datetime.now().strftime("%Y-%m-%d %H:%M")
+            load_patients(ctx)
+            patients = ctx.user_data.get("patients",{})
+            p2 = patients.get(pid,{})
+            if p2:
+                p2.setdefault("readings",[]).append({"date":date,"bp":bp_text,"sys":int(parts_bp[0]),"dia":int(parts_bp[1])})
+                save_patients(ctx)
+                await u.message.reply_text("✅ 💉 ضغط: " + bp_text,
+                    reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙", callback_data="pat_view_" + pid)]]))
+        except:
+            await u.message.reply_text("❌ صيغة خاطئة مثال: ضغط 120/80")
+            return STATE_PAT_LOG
+        return STATE_PAT_MENU
+
+    if log_type == "sugar" or detected_stype != "random":
+        try:
+            val = float(detected_val.replace(",",".") if detected_val else text.replace(",","."))
             # نقرأ النوع من كل المصادر الممكنة
             sugar_type = (ctx.user_data.get(f"stype_{pid}") or 
                          ctx.user_data.get("sugar_type") or 
