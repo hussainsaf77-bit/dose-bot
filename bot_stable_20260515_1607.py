@@ -3567,15 +3567,22 @@ async def pat_save_reading(u, ctx):
     if log_type == "sugar":
         try:
             val = float(text)
-            # نقرأ النوع من كل المصادر الممكنة
-            sugar_type = (ctx.user_data.get(f"stype_{pid}") or 
-                         ctx.user_data.get("sugar_type") or 
-                         ctx.user_data.get("sugar_type_confirmed") or 
-                         "random")
+            pid_key = ctx.user_data.get("log_pid","")
+            sugar_type = ctx.user_data.get(f"stype_{pid_key}", ctx.user_data.get("sugar_type","random"))
             type_names = {
-                "fasting":"صيام","postmeal":"بعد الأكل",
-                "random":"عشوائي","hba1c":"تراكمي HbA1c"
+                "fasting":"صيام","sugar_fasting":"صيام",
+                "postmeal":"بعد الأكل","sugar_postmeal":"بعد الأكل",
+                "random":"عشوائي",
+                "hba1c":"تراكمي HbA1c","sugar_hba1c":"تراكمي HbA1c"
             }
+            # نقرأ النوع من user_data أو من رسالة السؤال
+            if sugar_type == "random":
+                try:
+                    prev_text = u.message.reply_to_message.text if u.message.reply_to_message else ""
+                    if "__hba1c__" in prev_text: sugar_type = "hba1c"
+                    elif "__fasting__" in prev_text: sugar_type = "fasting"
+                    elif "__postmeal__" in prev_text: sugar_type = "postmeal"
+                except: pass
             stype_clean = sugar_type.replace("sugar_","")
             readings.append({"date": date, "sugar": val, "stype": stype_clean, "stype_ar": type_names.get(sugar_type,"")})
             
