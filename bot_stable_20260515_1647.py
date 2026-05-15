@@ -3568,9 +3568,10 @@ async def pat_save_reading(u, ctx):
         try:
             val = float(text)
             # نقرأ النوع من كل المصادر الممكنة
-            sugar_type = (ctx.user_data.get(f"stype_{pid}") or
-                         ctx.user_data.get("sugar_type") or "random")
-            logger.warning(f"💾 SAVE: pid={pid}, stype_{pid}={ctx.user_data.get(f'stype_{pid}')}, sugar_type={ctx.user_data.get('sugar_type')}, final={sugar_type}")
+            sugar_type = (ctx.user_data.get(f"stype_{pid}") or 
+                         ctx.user_data.get("sugar_type") or 
+                         ctx.user_data.get("sugar_type_confirmed") or 
+                         "random")
             type_names = {
                 "fasting":"صيام","postmeal":"بعد الأكل",
                 "random":"عشوائي","hba1c":"تراكمي HbA1c"
