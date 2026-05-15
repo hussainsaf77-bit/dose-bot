@@ -2361,9 +2361,28 @@ async def patient_menu(u, ctx):
             lines.append("")
             lines.append("=" * 40)
             lines.append("سجل القراءات:" if lang=="ar" else "Readings Log:")
-            for r in readings:
-                if r.get("sugar"): lines.append("🩸 " + r["date"] + ": " + str(r["sugar"]) + " mg/dL")
-                if r.get("bp"): lines.append("💉 " + r["date"] + ": " + r["bp"])
+            
+            bp_r = [r for r in readings if r.get("bp")]
+            fasting_r = [r for r in readings if r.get("sugar") and r.get("stype") == "fasting"]
+            postmeal_r = [r for r in readings if r.get("sugar") and r.get("stype") == "postmeal"]
+            hba1c_r = [r for r in readings if r.get("sugar") and r.get("stype") == "hba1c"]
+            random_r = [r for r in readings if r.get("sugar") and r.get("stype","random") not in ["fasting","postmeal","hba1c"]]
+            
+            if bp_r:
+                lines.append("💉 قراءات الضغط:")
+                for r in bp_r: lines.append("  " + r["date"] + ": " + str(r["bp"]))
+            if fasting_r:
+                lines.append("🌅 سكر الصيام:")
+                for r in fasting_r: lines.append("  " + r["date"] + ": " + str(r["sugar"]) + " mg/dL")
+            if postmeal_r:
+                lines.append("🍽️ سكر بعد الأكل:")
+                for r in postmeal_r: lines.append("  " + r["date"] + ": " + str(r["sugar"]) + " mg/dL")
+            if hba1c_r:
+                lines.append("📊 HbA1c التراكمي:")
+                for r in hba1c_r: lines.append("  " + r["date"] + ": " + str(r["sugar"]) + "%")
+            if random_r:
+                lines.append("🎲 قراءات عشوائية:")
+                for r in random_r: lines.append("  " + r["date"] + ": " + str(r["sugar"]) + " mg/dL")
         
         # الملاحظات
         notes = p.get("notes",[])
