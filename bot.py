@@ -3777,6 +3777,8 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(pat_log_menu, pattern="^pat_log_"),
                 CallbackQueryHandler(patient_menu, pattern="^sugtype_"),
+                CallbackQueryHandler(patient_menu, pattern="^pat_edit_"),
+                CallbackQueryHandler(patient_menu, pattern="^patedit_"),
                 CallbackQueryHandler(pat_add_reading, pattern="^(pat_addsugar_|pat_addbp_)"),
                 CallbackQueryHandler(pat_note_start, pattern="^pat_note_"),
                 CallbackQueryHandler(pat_view_notes, pattern="^pat_viewnotes_"),
