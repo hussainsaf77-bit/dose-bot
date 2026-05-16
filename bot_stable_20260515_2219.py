@@ -647,7 +647,7 @@ def calc_child(drug, w, lang):
     if lang == "ar":
         lines += ["🍼 جرعة الطفل - " + n, "⚖️ الوزن: " + str(w) + " كغ", ""]
     else:
-        lines += ["🍼 Child Dose - " + n, "⚖️ الوزن: " + str(w) + " kg", ""]
+        lines += ["🍼 Child Dose - " + n, "⚖️ Weight: " + str(w) + " kg", ""]
 
     # معالجة فيتامين د بالقطرات
     if drug.get("name_en") == "vitamin_d_drops":
@@ -2290,13 +2290,13 @@ async def patient_menu(u, ctx):
             await q.message.edit_text("❌ " + ("لم يوجد" if lang=="ar" else "Not found"), reply_markup=kb_patient_menu(lang))
             return STATE_PAT_MENU
         lines = ["👤 *" + p.get("name","") + "*", ""]
-        lines.append(("📅 العمر: " if lang=="ar" else "📅 العمر: ") + str(p.get("age","-")))
-        lines.append(("⚖️ الوزن: " if lang=="ar" else "⚖️ الوزن: ") + str(p.get("weight","-")) + " kg")
-        lines.append(("👤 الجنس: " if lang=="ar" else "👤 الجنس: ") + str(p.get("gender","-")))
+        lines.append(("📅 العمر: " if lang=="ar" else "📅 Age: ") + str(p.get("age","-")))
+        lines.append(("⚖️ الوزن: " if lang=="ar" else "⚖️ Weight: ") + str(p.get("weight","-")) + " kg")
+        lines.append(("👤 الجنس: " if lang=="ar" else "👤 Gender: ") + str(p.get("gender","-")))
         if p.get("diseases"):
-            lines.append(("🏥 الأمراض: " if lang=="ar" else "🏥 الأمراض: ") + p["diseases"])
+            lines.append(("🏥 الأمراض: " if lang=="ar" else "🏥 Diseases: ") + p["diseases"])
         if p.get("meds"):
-            lines.append(("💊 الأدوية: " if lang=="ar" else "💊 الأدوية: ") + p["meds"])
+            lines.append(("💊 الأدوية: " if lang=="ar" else "💊 Medications: ") + p["meds"])
         if p.get("allergy"):
             lines.append(("⚠️ حساسية: " if lang=="ar" else "⚠️ Allergy: ") + p["allergy"])
         meds_btns = []
@@ -2626,29 +2626,16 @@ async def patient_menu(u, ctx):
         p = patients.get(pid,{})
         
         if field in ["meds","diseases"]:
+            # نعرض القيم الحالية مع أزرار إضافة وحذف
             current = p.get(field,"")
-            selected = [x.strip() for x in current.replace("،",",").split(",") if x.strip()] if current else []
-            
-            if field == "diseases":
-                options = ["ضغط","سكري","قلب","كلى","كبد","غدة","ربو","سرطان","روماتيزم","أنيميا","كولسترول","جلطة","قرحة","حساسية"]
-            else:
-                options = ["ميتفورمين","أملودبين","ليزينوبريل","أتورفاستاتين","أسبرين","ميتوبرولول","ليفوثيروكسين","أوميبرازول","وارفارين","لوساتران","إنسولين","كونكور"]
-            
-            lines = ["✏️ " + ("اختر الأمراض:" if field=="diseases" else "اختر الأدوية:"), ""]
-            lines.append("✅ " + ("المختار: " if lang=="ar" else "Selected: ") + ("، ".join(selected) if selected else "لا يوجد"))
-            
+            items = [x.strip() for x in current.replace("،",",").split(",") if x.strip()] if current else []
+            lines = ["✏️ " + ("الأدوية الحالية:" if field=="meds" else "الأمراض الحالية:"), ""]
             btns = []
-            row = []
-            for opt in options:
-                icon = "☑️" if opt in selected else "⬜"
-                row.append(InlineKeyboardButton(icon + " " + opt, callback_data=f"pattoggle_{field}_{pid}_{opt[:12]}"))
-                if len(row) == 2:
-                    btns.append(row)
-                    row = []
-            if row: btns.append(row)
-            btns.append([InlineKeyboardButton("➕ " + ("إضافة يدوي" if lang=="ar" else "Add manually"), callback_data=f"patadd_{field}_{pid}")])
-            btns.append([InlineKeyboardButton("✅ " + ("حفظ" if lang=="ar" else "Save"), callback_data=f"pat_edit_{pid}")])
+            for item in items:
+                btns.append([InlineKeyboardButton("🗑️ " + item, callback_data=f"patdel_{field}_{pid}_{item[:15]}")])
+            btns.append([InlineKeyboardButton("➕ " + ("إضافة" if lang=="ar" else "Add"), callback_data=f"patadd_{field}_{pid}")])
             btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_edit_" + pid)])
+            lines.append("\n".join(["• " + i for i in items]) if items else ("لا يوجد" if lang=="ar" else "None"))
             await q.message.edit_text("\n".join(lines), reply_markup=InlineKeyboardMarkup(btns))
             return STATE_PAT_MENU
         else:
@@ -2664,46 +2651,6 @@ async def patient_menu(u, ctx):
                 ("أدخل القيمة الجديدة:" if lang=="ar" else "Enter new value:"),
                 reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_edit_" + pid)]]))
             return STATE_PAT_NOTE
-
-    if q.data.startswith("pattoggle_"):
-        parts = q.data.split("_",4)
-        field = parts[1]
-        pid = parts[2]
-        item = parts[3]
-        p = patients.get(pid,{})
-        current = p.get(field,"")
-        items = [x.strip() for x in current.replace("،",",").split(",") if x.strip()] if current else []
-        if item in items:
-            items.remove(item)
-        else:
-            items.append(item)
-        p[field] = "، ".join(items)
-        save_patients(ctx)
-        
-        # نعرض الصفحة مرة أخرى
-        if field == "diseases":
-            options = ["ضغط","سكري","قلب","كلى","كبد","غدة","ربو","سرطان","روماتيزم","أنيميا","كولسترول","جلطة","قرحة","حساسية"]
-        else:
-            options = ["ميتفورمين","أملودبين","ليزينوبريل","أتورفاستاتين","أسبرين","ميتوبرولول","ليفوثيروكسين","أوميبرازول","وارفارين","لوساتران","إنسولين","كونكور"]
-        
-        selected = items
-        lines = ["✏️ " + ("اختر الأمراض:" if field=="diseases" else "اختر الأدوية:"), ""]
-        lines.append("✅ " + ("المختار: " if lang=="ar" else "Selected: ") + ("، ".join(selected) if selected else "لا يوجد"))
-        btns = []
-        row = []
-        for opt in options:
-            icon = "☑️" if opt in selected else "⬜"
-            row.append(InlineKeyboardButton(icon + " " + opt, callback_data=f"pattoggle_{field}_{pid}_{opt[:12]}"))
-            if len(row) == 2:
-                btns.append(row)
-                row = []
-        if row: btns.append(row)
-        btns.append([InlineKeyboardButton("➕ " + ("إضافة يدوي" if lang=="ar" else "Add manually"), callback_data=f"patadd_{field}_{pid}")])
-        btns.append([InlineKeyboardButton("✅ " + ("حفظ" if lang=="ar" else "Save"), callback_data=f"pat_edit_{pid}")])
-        btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_edit_" + pid)])
-        await q.answer("✅ " + ("تم التحديث" if lang=="ar" else "Updated"))
-        await q.message.edit_text("\n".join(lines), reply_markup=InlineKeyboardMarkup(btns))
-        return STATE_PAT_MENU
 
     if q.data.startswith("patdel_"):
         # حذف عنصر من قائمة
@@ -4024,7 +3971,6 @@ def build_conv():
                 CallbackQueryHandler(patient_menu, pattern="^sugtype_"),
                 CallbackQueryHandler(patient_menu, pattern="^pat_edit_"),
                 CallbackQueryHandler(patient_menu, pattern="^patedit_"),
-                CallbackQueryHandler(patient_menu, pattern="^pattoggle_"),
                 CallbackQueryHandler(patient_menu, pattern="^patdel_"),
                 CallbackQueryHandler(patient_menu, pattern="^patadd_"),
                 CallbackQueryHandler(pat_add_reading, pattern="^(pat_addsugar_|pat_addbp_)"),
