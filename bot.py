@@ -1678,12 +1678,22 @@ async def child_weight(u, ctx):
         await u.message.reply_text("❌ " + ("لم يُحدد الدواء، ابدأ من جديد" if lang=="ar" else "Drug not set, start over"), reply_markup=kb_back(lang))
         return STATE_CHILD_DRUG
     ctx.user_data["child_weight"] = w
-    # القطرات والكريمات تحتاج العمر
+    # القطرات والكريمات - نستخدم Claude API مباشرة بالوزن
     drug_form_cw = ctx.user_data.get("drug_form","syrup")
     if drug_form_cw in ["cream","drops"]:
-        await u.message.reply_text("📅 " + ("كم عمر الطفل بالسنوات؟" if lang=="ar" else "Child age in years?"),
-            reply_markup=kb_back(lang))
-        return STATE_BMI_AGE
+        drug_name_cw = d.get("name_ar" if lang=="ar" else "name_en","") or d.get("name_en","")
+        thinking_cw = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
+        try:
+            result_cw = await calc_special_form(drug_name_cw, w, drug_form_cw, lang)
+            await thinking_cw.delete()
+            if result_cw:
+                warning_cw = "\n\n⚠️ " + ("راجع الطبيب دائماً" if lang=="ar" else "Always consult doctor")
+                await u.message.reply_text(result_cw + warning_cw, reply_markup=kb_back(lang))
+                return STATE_MAIN_MENU
+        except Exception as e:
+            logger.error(f"drops/cream: {e}")
+            try: await thinking_cw.delete()
+            except: pass
     # نتحقق إذا كان مضاد حيوي
     name_key = d.get("name_en","").lower()
     logger.info(f"child_weight step2: name_key={name_key}, drug_form={ctx.user_data.get('drug_form')}")
