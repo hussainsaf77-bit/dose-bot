@@ -2396,12 +2396,27 @@ async def patient_menu(u, ctx):
             for n in notes:
                 if n.get("type") == "text":
                     lines.append("📝 " + n["date"] + ": " + n["content"])
+                elif n.get("type") == "photo":
+                    lines.append("📸 " + n["date"] + ": " + ("صورة - سيتم إرسالها منفصلة" if lang=="ar" else "Photo - will be sent separately"))
+                elif n.get("type") == "file":
+                    lines.append("📄 " + n["date"] + ": " + n.get("name","ملف"))
         
         lines.append("")
         lines.append("تاريخ التصدير: " + datetime.now().strftime("%Y-%m-%d %H:%M"))
         
         report = "\n".join(lines)
         await u.effective_chat.send_message("```\n" + report + "\n```", parse_mode="Markdown")
+        
+        # نرسل الصور منفصلة
+        photos = [n for n in p.get("notes",[]) if n.get("type") == "photo"]
+        if photos:
+            await u.effective_chat.send_message("📸 " + ("صور الملف:" if lang=="ar" else "File Photos:"))
+            for ph in photos:
+                try:
+                    caption = ph.get("caption","") or ph.get("date","")
+                    await u.effective_chat.send_photo(ph["file_id"], caption=caption)
+                except: pass
+        
         return STATE_PAT_MENU
     
     if q.data.startswith("pat_log_"):
