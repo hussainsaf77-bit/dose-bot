@@ -2630,9 +2630,9 @@ async def patient_menu(u, ctx):
             selected = [x.strip() for x in current.replace("،",",").split(",") if x.strip()] if current else []
             
             if field == "diseases":
-                options = ["ضغط","سكري","قلب","كلى","كبد","غدة","ربو","سرطان","روماتيزم","أنيميا","كولسترول","جلطة","قرحة","حساسية"]
+                options = ["ضغط","سكري","قلب","كلى","كبد","غدة","ربو","سرطان","روماتيزم","أنيميا","كولسترول","جلطة","قرحة","حساسية"] if lang=="ar" else ["Hypertension","Diabetes","Heart disease","Kidney disease","Liver disease","Thyroid","Asthma","Cancer","Arthritis","Anemia","Cholesterol","Stroke","Ulcer","Allergy"]
             else:
-                options = ["ميتفورمين","أملودبين","ليزينوبريل","أتورفاستاتين","أسبرين","ميتوبرولول","ليفوثيروكسين","أوميبرازول","وارفارين","لوساتران","إنسولين","كونكور"]
+                options = ["ميتفورمين","أملودبين","ليزينوبريل","أتورفاستاتين","أسبرين","ميتوبرولول","ليفوثيروكسين","أوميبرازول","وارفارين","لوساتران","إنسولين","كونكور"] if lang=="ar" else ["Metformin","Amlodipine","Lisinopril","Atorvastatin","Aspirin","Metoprolol","Levothyroxine","Omeprazole","Warfarin","Losartan","Insulin","Bisoprolol"]
             
             lines = ["✏️ " + ("اختر الأمراض:" if field=="diseases" else "اختر الأدوية:"), ""]
             lines.append("✅ " + ("المختار: " if lang=="ar" else "Selected: ") + ("، ".join(selected) if selected else "لا يوجد"))
