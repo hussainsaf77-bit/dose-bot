@@ -12705,7 +12705,12 @@
     "name_ar": "جنتامايسين",
     "aliases": [
       "gentamicin",
-      "جنتامايسين"
+      "جنتامايسين",
+      "جينتاميسين",
+      "جنتاميسين",
+      "جنتامايسين",
+      "garamycin",
+      "غاراميسين"
     ],
     "pediatric_mg_per_kg": "2.5",
     "pediatric_min_mg_per_kg": 5,
