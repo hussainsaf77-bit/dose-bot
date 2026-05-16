@@ -1678,6 +1678,12 @@ async def child_weight(u, ctx):
         await u.message.reply_text("❌ " + ("لم يُحدد الدواء، ابدأ من جديد" if lang=="ar" else "Drug not set, start over"), reply_markup=kb_back(lang))
         return STATE_CHILD_DRUG
     ctx.user_data["child_weight"] = w
+    # القطرات والكريمات تحتاج العمر
+    drug_form_cw = ctx.user_data.get("drug_form","syrup")
+    if drug_form_cw in ["cream","drops"]:
+        await u.message.reply_text("📅 " + ("كم عمر الطفل بالسنوات؟" if lang=="ar" else "Child age in years?"),
+            reply_markup=kb_back(lang))
+        return STATE_BMI_AGE
     # نتحقق إذا كان مضاد حيوي
     name_key = d.get("name_en","").lower()
     logger.info(f"child_weight step2: name_key={name_key}, drug_form={ctx.user_data.get('drug_form')}")
