@@ -2290,13 +2290,13 @@ async def patient_menu(u, ctx):
             await q.message.edit_text("❌ " + ("لم يوجد" if lang=="ar" else "Not found"), reply_markup=kb_patient_menu(lang))
             return STATE_PAT_MENU
         lines = ["👤 *" + p.get("name","") + "*", ""]
-        lines.append(("📅 العمر: " if lang=="ar" else "📅 العمر: ") + str(p.get("age","-")))
-        lines.append(("⚖️ الوزن: " if lang=="ar" else "⚖️ الوزن: ") + str(p.get("weight","-")) + " kg")
-        lines.append(("👤 الجنس: " if lang=="ar" else "👤 الجنس: ") + str(p.get("gender","-")))
+        lines.append(("📅 العمر: " if lang=="ar" else "📅 Age: ") + str(p.get("age","-")))
+        lines.append(("⚖️ الوزن: " if lang=="ar" else "⚖️ Weight: ") + str(p.get("weight","-")) + " kg")
+        lines.append(("👤 الجنس: " if lang=="ar" else "👤 Gender: ") + str(p.get("gender","-")))
         if p.get("diseases"):
-            lines.append(("🏥 الأمراض: " if lang=="ar" else "🏥 الأمراض: ") + p["diseases"])
+            lines.append(("🏥 الأمراض: " if lang=="ar" else "🏥 Diseases: ") + p["diseases"])
         if p.get("meds"):
-            lines.append(("💊 الأدوية: " if lang=="ar" else "💊 الأدوية: ") + p["meds"])
+            lines.append(("💊 الأدوية: " if lang=="ar" else "💊 Medications: ") + p["meds"])
         if p.get("allergy"):
             lines.append(("⚠️ حساسية: " if lang=="ar" else "⚠️ Allergy: ") + p["allergy"])
         meds_btns = []
