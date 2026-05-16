@@ -1637,18 +1637,11 @@ async def child_input(u, ctx):
         ctx.user_data["img_drug"] = name
         drug_form_img = ctx.user_data.get("drug_form","syrup")
         if drug_form_img in ["cream","drops"]:
-            # نستخدم Claude API مباشرة
-            thinking_img = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
-            try:
-                result_img = await calc_special_form(name, 0, drug_form_img, lang)
-                await thinking_img.delete()
-                if result_img:
-                    await u.message.reply_text(result_img, reply_markup=kb_back(lang))
-                    return STATE_MAIN_MENU
-            except Exception as e:
-                logger.error(f"img drops: {e}")
-                try: await thinking_img.delete()
-                except: pass
+            # نسأل عن العمر للقطرات والكريمات
+            ctx.user_data["child_drug"] = res[0]
+            await u.message.reply_text("📸 *" + name + "*\n\n📅 " + ("كم عمر الطفل بالسنوات؟" if lang=="ar" else "Child age in years?"),
+                reply_markup=kb_back(lang), parse_mode="Markdown")
+            return STATE_CHILD_WEIGHT
         msg2 = "📸 *" + name + "*\n\n" + tx("weight_prompt", lang)
         await u.message.reply_text(msg2, reply_markup=kb_image_result(lang, name), parse_mode=ParseMode.MARKDOWN)
         return STATE_CHILD_WEIGHT
