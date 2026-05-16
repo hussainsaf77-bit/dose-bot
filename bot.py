@@ -3990,7 +3990,7 @@ async def stats_cmd(u, ctx):
     bp = stats.get("bp", 0)
     premium = stats.get("premium", 0)
     # أكثر المستخدمين نشاطاً
-    top_users = sorted(users_dict.items(), key=lambda x: x[1], reverse=True)[:3]
+    top_users = sorted(users_dict.items(), key=lambda x: x[1].get("count",0) if isinstance(x[1],dict) else x[1], reverse=True)[:3]
     lang = get_lang(ctx)
     if lang == "ar":
         lines = [
