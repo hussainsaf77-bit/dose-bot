@@ -1660,18 +1660,10 @@ async def child_input(u, ctx):
         ctx.user_data["child_drug"] = res[0]
         drug_form_txt = ctx.user_data.get("drug_form","syrup")
         if drug_form_txt in ["cream","drops"]:
-            drug_name_txt = res[0].get("name_ar" if lang=="ar" else "name_en","") or res[0].get("name_en","")
-            thinking_txt = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
-            try:
-                result_txt = await calc_special_form(drug_name_txt, 0, drug_form_txt, lang)
-                await thinking_txt.delete()
-                if result_txt:
-                    await u.message.reply_text(result_txt, reply_markup=kb_back(lang))
-                    return STATE_MAIN_MENU
-            except Exception as e:
-                logger.error(f"txt drops: {e}")
-                try: await thinking_txt.delete()
-                except: pass
+            # نسأل عن العمر
+            await u.message.reply_text("📅 " + ("كم عمر الطفل بالسنوات؟" if lang=="ar" else "Child age in years?"),
+                reply_markup=kb_back(lang))
+            return STATE_CHILD_WEIGHT
         await u.message.reply_text(tx("weight_prompt", lang), reply_markup=kb_back(lang))
         return STATE_CHILD_WEIGHT
     ctx.user_data["results"] = res
@@ -1706,17 +1698,17 @@ async def child_weight(u, ctx):
         await u.message.reply_text("❌ " + ("لم يُحدد الدواء، ابدأ من جديد" if lang=="ar" else "Drug not set, start over"), reply_markup=kb_back(lang))
         return STATE_CHILD_DRUG
     ctx.user_data["child_weight"] = w
-    # القطرات والكريمات - نستخدم Claude API مباشرة بالوزن
+    # القطرات والكريمات - نستخدم العمر
     drug_form_cw = ctx.user_data.get("drug_form","syrup")
     if drug_form_cw in ["cream","drops"]:
         drug_name_cw = d.get("name_ar" if lang=="ar" else "name_en","") or d.get("name_en","")
+        age_years = w  # هنا w = العمر بالسنوات
         thinking_cw = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
         try:
-            result_cw = await calc_special_form(drug_name_cw, w, drug_form_cw, lang)
+            result_cw = await calc_special_form(drug_name_cw, age_years, drug_form_cw, lang)
             await thinking_cw.delete()
             if result_cw:
-                warning_cw = "\n\n⚠️ " + ("راجع الطبيب دائماً" if lang=="ar" else "Always consult doctor")
-                await u.message.reply_text(result_cw + warning_cw, reply_markup=kb_back(lang))
+                await u.message.reply_text(result_cw, reply_markup=kb_back(lang))
                 return STATE_MAIN_MENU
         except Exception as e:
             logger.error(f"drops/cream: {e}")
