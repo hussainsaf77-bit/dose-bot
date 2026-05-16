@@ -1635,6 +1635,20 @@ async def child_input(u, ctx):
             return STATE_CHILD_DRUG
         ctx.user_data["child_drug"] = res[0]
         ctx.user_data["img_drug"] = name
+        drug_form_img = ctx.user_data.get("drug_form","syrup")
+        if drug_form_img in ["cream","drops"]:
+            # نستخدم Claude API مباشرة
+            thinking_img = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
+            try:
+                result_img = await calc_special_form(name, 0, drug_form_img, lang)
+                await thinking_img.delete()
+                if result_img:
+                    await u.message.reply_text(result_img, reply_markup=kb_back(lang))
+                    return STATE_MAIN_MENU
+            except Exception as e:
+                logger.error(f"img drops: {e}")
+                try: await thinking_img.delete()
+                except: pass
         msg2 = "📸 *" + name + "*\n\n" + tx("weight_prompt", lang)
         await u.message.reply_text(msg2, reply_markup=kb_image_result(lang, name), parse_mode=ParseMode.MARKDOWN)
         return STATE_CHILD_WEIGHT
@@ -1644,6 +1658,20 @@ async def child_input(u, ctx):
         return STATE_CHILD_DRUG
     if len(res) == 1:
         ctx.user_data["child_drug"] = res[0]
+        drug_form_txt = ctx.user_data.get("drug_form","syrup")
+        if drug_form_txt in ["cream","drops"]:
+            drug_name_txt = res[0].get("name_ar" if lang=="ar" else "name_en","") or res[0].get("name_en","")
+            thinking_txt = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
+            try:
+                result_txt = await calc_special_form(drug_name_txt, 0, drug_form_txt, lang)
+                await thinking_txt.delete()
+                if result_txt:
+                    await u.message.reply_text(result_txt, reply_markup=kb_back(lang))
+                    return STATE_MAIN_MENU
+            except Exception as e:
+                logger.error(f"txt drops: {e}")
+                try: await thinking_txt.delete()
+                except: pass
         await u.message.reply_text(tx("weight_prompt", lang), reply_markup=kb_back(lang))
         return STATE_CHILD_WEIGHT
     ctx.user_data["results"] = res
