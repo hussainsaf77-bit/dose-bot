@@ -2683,11 +2683,11 @@ async def patient_menu(u, ctx):
         p[field] = "، ".join(items)
         save_patients(ctx)
         
-        # نعرض الصفحة مرة أخرى
+        # نعرض الصفحة مرة أخرى حسب اللغة
         if field == "diseases":
-            options = ["ضغط","سكري","قلب","كلى","كبد","غدة","ربو","سرطان","روماتيزم","أنيميا","كولسترول","جلطة","قرحة","حساسية"]
+            options = ["ضغط","سكري","قلب","كلى","كبد","غدة","ربو","سرطان","روماتيزم","أنيميا","كولسترول","جلطة","قرحة","حساسية"] if lang=="ar" else ["Hypertension","Diabetes","Heart disease","Kidney disease","Liver disease","Thyroid","Asthma","Cancer","Arthritis","Anemia","Cholesterol","Stroke","Ulcer","Allergy"]
         else:
-            options = ["ميتفورمين","أملودبين","ليزينوبريل","أتورفاستاتين","أسبرين","ميتوبرولول","ليفوثيروكسين","أوميبرازول","وارفارين","لوساتران","إنسولين","كونكور"]
+            options = ["ميتفورمين","أملودبين","ليزينوبريل","أتورفاستاتين","أسبرين","ميتوبرولول","ليفوثيروكسين","أوميبرازول","وارفارين","لوساتران","إنسولين","كونكور"] if lang=="ar" else ["Metformin","Amlodipine","Lisinopril","Atorvastatin","Aspirin","Metoprolol","Levothyroxine","Omeprazole","Warfarin","Losartan","Insulin","Bisoprolol"]
         
         selected = items
         lines = ["✏️ " + ("اختر الأمراض:" if field=="diseases" else "اختر الأدوية:"), ""]
