@@ -28551,5 +28551,49 @@
     "pediatric_frequency_en": "once or twice daily",
     "concentration": "5mg/5ml",
     "warning": "⚠️ راقب مستوى البوتاسيوم — تجنب مع مكملات البوتاسيوم"
+  },
+  {
+    "name_en": "tobradex",
+    "name_ar": "توبراديكس",
+    "aliases": "tobramycin dexamethasone eye drops, توبراميسين ديكساميثازون",
+    "drug_class": "قطرات عين — مضاد حيوي + كورتيزون",
+    "fixed_dose": true,
+    "age_doses": {
+      "جميع الأعمار": "1-2 قطرة في العين المصابة كل 4-6 ساعات"
+    },
+    "warning": "⚠️ بوصفة طبيب العيون فقط — لا تتجاوز أسبوعين"
+  },
+  {
+    "name_en": "tobramycin_drops",
+    "name_ar": "توبراميسين قطرة",
+    "aliases": "tobrex, توبريكس",
+    "drug_class": "قطرات عين — مضاد حيوي",
+    "fixed_dose": true,
+    "age_doses": {
+      "جميع الأعمار": "1-2 قطرة في العين المصابة كل 4 ساعات"
+    },
+    "warning": "⚠️ لا تتجاوز أسبوعين"
+  },
+  {
+    "name_en": "chloramphenicol_drops",
+    "name_ar": "كلورامفينيكول قطرة",
+    "aliases": "chloromycetin eye drops, كلورومايسيتين",
+    "drug_class": "قطرات عين — مضاد حيوي",
+    "fixed_dose": true,
+    "age_doses": {
+      "جميع الأعمار": "1-2 قطرة في العين المصابة كل 6 ساعات"
+    },
+    "warning": "⚠️ لا تُستخدم لفترات طويلة"
+  },
+  {
+    "name_en": "sofradex",
+    "name_ar": "سوفراديكس",
+    "aliases": "framycetin dexamethasone ear drops",
+    "drug_class": "قطرات أذن — مضاد حيوي + كورتيزون",
+    "fixed_dose": true,
+    "age_doses": {
+      "أكثر من سنة": "2-3 قطرات في الأذن المصابة 3-4 مرات يومياً"
+    },
+    "warning": "⚠️ ممنوع عند ثقب طبلة الأذن"
   }
 ]
