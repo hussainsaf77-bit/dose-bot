@@ -2292,7 +2292,10 @@ async def patient_menu(u, ctx):
         lines = ["👤 *" + p.get("name","") + "*", ""]
         lines.append(("📅 العمر: " if lang=="ar" else "📅 Age: ") + str(p.get("age","-")))
         lines.append(("⚖️ الوزن: " if lang=="ar" else "⚖️ Weight: ") + str(p.get("weight","-")) + " kg")
-        lines.append(("👤 الجنس: " if lang=="ar" else "👤 Gender: ") + str(p.get("gender","-")))
+        gender_val = p.get("gender","-")
+        if lang == "en":
+            gender_val = {"ذكر":"Male","أنثى":"Female"}.get(gender_val, gender_val)
+        lines.append(("👤 الجنس: " if lang=="ar" else "👤 Gender: ") + str(gender_val))
         if p.get("diseases"):
             lines.append(("🏥 الأمراض: " if lang=="ar" else "🏥 Diseases: ") + p["diseases"])
         if p.get("meds"):
