@@ -1827,6 +1827,7 @@ async def child_weight(u, ctx):
     
     # نضيف أزرار التراكيز في الأسفل
     change_btns = [[InlineKeyboardButton(c, callback_data="conc_" + c)] for c in concs[:4]]
+    change_btns.append([InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")])
     change_btns.append([InlineKeyboardButton("🔙 " + ("رجوع" if lang=="ar" else "Back"), callback_data="back")])
     
     note = "\n\n🔄 " + ("تغيير التركيز:" if lang=="ar" else "Change concentration:")
