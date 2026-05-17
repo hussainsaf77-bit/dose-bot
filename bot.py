@@ -1680,7 +1680,9 @@ async def child_sel(u, ctx):
 
 async def child_weight(u, ctx):
     lang = get_lang(ctx)
-    track(u, "child_doses")
+    try:
+        track(u, "child_doses")
+    except: pass
     try:
         w = float(u.message.text.strip().replace(",", "."))
         if not 0.5 <= w <= 150: raise ValueError
@@ -1688,142 +1690,69 @@ async def child_weight(u, ctx):
         await u.message.reply_text(tx("bad_weight", lang), reply_markup=kb_back(lang))
         return STATE_CHILD_WEIGHT
     d = ctx.user_data.get("child_drug")
-    logger.info(f"child_weight: drug={d}, weight={w}, form={ctx.user_data.get('drug_form')}")
     if not d:
-        await u.message.reply_text("❌ " + ("لم يُحدد الدواء، ابدأ من جديد" if lang=="ar" else "Drug not set, start over"), reply_markup=kb_back(lang))
-        return STATE_CHILD_DRUG
-    ctx.user_data["child_weight"] = w
-    # القطرات والكريمات - نستخدم العمر
-    drug_form_cw = ctx.user_data.get("drug_form","syrup")
-    if drug_form_cw in ["cream","drops"]:
-        drug_name_cw = d.get("name_ar" if lang=="ar" else "name_en","") or d.get("name_en","")
-        age_years = w  # هنا w = العمر بالسنوات
-        thinking_cw = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
-        try:
-            result_cw = await calc_special_form(drug_name_cw, age_years, drug_form_cw, lang)
-            await thinking_cw.delete()
-            if result_cw:
-                await u.message.reply_text(result_cw, reply_markup=kb_back(lang))
-                return STATE_MAIN_MENU
-        except Exception as e:
-            logger.error(f"drops/cream: {e}")
-            try: await thinking_cw.delete()
-            except: pass
-    # نتحقق إذا كان مضاد حيوي
-    name_key = d.get("name_en","").lower()
-    logger.info(f"child_weight step2: name_key={name_key}, drug_form={ctx.user_data.get('drug_form')}")
-    if name_key in ANTIBIOTIC_DOSES:
-        sites = INFECTION_SITES.get(lang, INFECTION_SITES["ar"])
-        available = [(k,v) for k,v in sites if k in ANTIBIOTIC_DOSES[name_key]]
-        btns = [[InlineKeyboardButton(v, callback_data=f"site_{k}")] for k,v in available]
-        btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
-        msg = "🦠 مكان الالتهاب؟" if lang=="ar" else "🦠 Infection site?"
-        await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup(btns))
-        return STATE_INFECTION_SITE
-    # التحقق من صحة شكل الدواء عبر Claude API
+        await show_main(u.message, lang)
+        return STATE_MAIN_MENU
     drug_form = ctx.user_data.get("drug_form", "syrup")
-    drug_name_check = d.get("name_ar","") or d.get("name_en","")
-    
-    if drug_form == "syrup" and not d.get("concentration") and not d.get("fixed_dose") and not d.get("pediatric_min_mg_per_kg"):
-        try:
-            async with httpx.AsyncClient(timeout=15) as hc:
-                r_check = await hc.post("https://api.anthropic.com/v1/messages",
-                    headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
-                    json={"model": "claude-haiku-4-5-20251001", "max_tokens": 50,
-                        "messages": [{"role": "user", "content": f"Is {drug_name_check} available as oral syrup/liquid for children? Answer ONLY: YES or NO"}]})
-                check_result = r_check.json().get("content", [{}])[0].get("text","").strip().upper()
-                if "NO" in check_result:
-                    msg = "⚠️ " + (f"{drug_name_check} غير متوفر كشراب للأطفال.\nيرجى اختيار الشكل الصحيح للدواء." if lang=="ar" else f"{drug_name_check} is not available as syrup for children.\nPlease select the correct drug form.")
-                    await u.message.reply_text(msg, reply_markup=kb_back(lang))
-                    return STATE_MAIN_MENU
-        except: pass
-    if drug_form in ["suppository", "cream", "drops"]:
+    if drug_form in ["cream", "drops"]:
         drug_name = d.get("name_ar","") if lang=="ar" else d.get("name_en","")
         if not drug_name: drug_name = d.get("name_en","") or d.get("name_ar","")
+        if d.get("fixed_dose") and d.get("age_doses"):
+            lines_d = ["💊 " + drug_name, ""]
+            for age_range, dose in d["age_doses"].items():
+                lines_d.append("  • " + age_range + ": " + dose)
+            lines_d.append("")
+            lines_d.append("⚠️ " + ("استشر الطبيب دائماً" if lang=="ar" else "Always consult doctor"))
+            btns = InlineKeyboardMarkup([
+                [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
+                [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+            ])
+            await u.message.reply_text("\n".join(lines_d), reply_markup=btns)
+            return STATE_MAIN_MENU
         thinking_f = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
         try:
             result_f = await calc_special_form(drug_name, w, drug_form, lang)
             await thinking_f.delete()
             if result_f:
-                await u.message.reply_text(result_f, reply_markup=kb_back(lang))
+                btns = InlineKeyboardMarkup([
+                    [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
+                    [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+                ])
+                await u.message.reply_text(result_f, reply_markup=btns)
                 return STATE_MAIN_MENU
         except Exception as e:
-            logger.error(f"Special form error: {e}")
             try: await thinking_f.delete()
             except: pass
-
-    # تراكيز شائعة لكل دواء
-    DRUG_CONCS = {
-        "paracetamol": ["120mg/5ml", "125mg/5ml", "160mg/5ml", "250mg/5ml"],
-        "ibuprofen": ["100mg/5ml", "200mg/5ml"],
-        "amoxicillin": ["125mg/5ml", "156mg/5ml", "250mg/5ml", "312mg/5ml"],
-        "amoxicillin_clavulanate": ["156mg/5ml", "228mg/5ml", "312mg/5ml", "457mg/5ml", "600mg/5ml"],
-        "azithromycin": ["100mg/5ml", "200mg/5ml"],
-        "metronidazole": ["125mg/5ml", "200mg/5ml"],
-        "cetirizine": ["5mg/5ml"],
-        "loratadine": ["5mg/5ml"],
-        "prednisolone": ["5mg/5ml", "15mg/5ml"],
-        "hyoscine_butylbromide": ["5mg/5ml"],
-        "hyoscine": ["5mg/5ml"],
-        "clarithromycin": ["125mg/5ml", "250mg/5ml"],
-        "cephalexin": ["125mg/5ml", "250mg/5ml"],
-        "salbutamol": ["2mg/5ml"],
-        "domperidone": ["5mg/5ml"],
-    "vitamin_d_drops": ["100IU/drop", "400IU/drop", "1000IU/drop"],
-    "xylometazoline": ["0.05%", "0.1%"],
-    "latanoprost": ["0.005%"],
-    "nitazoxanide": ["100mg/5ml", "200mg/5ml"],
-    "cinnarizine": ["25mg/5ml"],
-    "phenobarbital": ["10mg/5ml", "15mg/5ml"],
-    "levetiracetam": ["100mg/ml", "100mg/5ml"],
-    "lactulose": ["3.35g/5ml"],
-    "spironolactone": ["5mg/5ml", "25mg/5ml"],
-    "spironolactone_syrup": ["5mg/5ml", "25mg/5ml"],
-    "clarithromycin": ["125mg/5ml", "250mg/5ml"],
-    "cefuroxime": ["125mg/5ml", "250mg/5ml"],
-    "fusidic_acid": ["2% cream"],
-    "clotrimazole_cream": ["1% cream"],
-    "betamethasone_cream": ["0.1% cream"],
-    "zinc_syrup": ["10mg/5ml", "20mg/5ml"],
-    "iron_syrup": ["25mg/ml", "15mg/ml"],
-        "ondansetron": ["4mg/5ml"],
-        "fluconazole": ["50mg/5ml", "100mg/5ml"],
-    }
+    if drug_form == "suppository":
+        drug_name = d.get("name_ar","") if lang=="ar" else d.get("name_en","")
+        if not drug_name: drug_name = d.get("name_en","") or d.get("name_ar","")
+        thinking_s = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
+        try:
+            result_s = await calc_special_form(drug_name, w, drug_form, lang)
+            await thinking_s.delete()
+            if result_s:
+                btns = InlineKeyboardMarkup([
+                    [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
+                    [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+                ])
+                await u.message.reply_text(result_s, reply_markup=btns)
+                return STATE_MAIN_MENU
+        except Exception as e:
+            try: await thinking_s.delete()
+            except: pass
+    result = calc_child(d, w, lang)
+    change_btns = []
     name_key = d.get("name_en","").lower()
     concs = DRUG_CONCS.get(name_key, [])
-    default_conc = d.get("concentration", "")
-    btns = []
-    shown = set()
-    if default_conc and default_conc != "unknown":
-        btns.append([InlineKeyboardButton("✅ " + default_conc + " (افتراضي)", callback_data="conc_" + default_conc)])
-        shown.add(default_conc)
-    for c in concs:
-        if c not in shown:
-            btns.append([InlineKeyboardButton(c, callback_data="conc_" + c)])
-            shown.add(c)
-    if not btns:
-        for c in ["120mg/5ml", "250mg/5ml", "100mg/5ml", "200mg/5ml"]:
-            btns.append([InlineKeyboardButton(c, callback_data="conc_" + c)])
-    btns.append([InlineKeyboardButton("🔢 تركيز آخر", callback_data="conc_custom")])
-    btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
-    # نعطي الجرعة بالتركيز الافتراضي مباشرة مع زر لتغيير التركيز
-    default_conc = btns[0][0].text.replace("✅ ","").replace(" (افتراضي)","") if btns else "125mg/5ml"
-    d_copy = dict(d)
-    d_copy["concentration"] = default_conc.split("callback")[0] if "callback" in default_conc else default_conc
-    
-    # نأخذ التركيز الافتراضي من الزر الأول
-    first_conc = concs[0] if concs else d.get("concentration","125mg/5ml")
-    d_copy["concentration"] = first_conc
-    result = calc_child(d_copy, w, lang)
-    
-    # نضيف أزرار التراكيز في الأسفل
-    change_btns = [[InlineKeyboardButton(c, callback_data="conc_" + c)] for c in concs[:4]]
-    change_btns.append([InlineKeyboardButton("🔙 " + ("رجوع" if lang=="ar" else "Back"), callback_data="back")])
-    
-    note = "\n\n" + ("تغيير التركيز:" if lang=="ar" else "Change concentration:")
-
-    clean = (result + note).replace("*","").replace("_","").replace("`","")
-    await u.message.reply_text(clean, reply_markup=InlineKeyboardMarkup(change_btns))
+    for c in concs[:4]:
+        change_btns.append([InlineKeyboardButton(c, callback_data="conc_" + c)])
+    change_btns.append([InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")])
+    change_btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
+    try:
+        await u.message.reply_text(result, reply_markup=InlineKeyboardMarkup(change_btns), parse_mode=ParseMode.MARKDOWN)
+    except:
+        clean = result.replace("*","").replace("_","").replace("`","")
+        await u.message.reply_text(clean, reply_markup=InlineKeyboardMarkup(change_btns))
     return STATE_CHILD_CONC
 
 
