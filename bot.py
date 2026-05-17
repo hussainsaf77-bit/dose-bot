@@ -1677,6 +1677,7 @@ async def child_sel(u, ctx):
     return STATE_CHILD_WEIGHT
 
 async def child_weight(u, ctx):
+    await u.message.reply_text("✅ child_weight called")
     lang = get_lang(ctx)
     track(u, "child_doses")
     try:
