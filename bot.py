@@ -4112,7 +4112,7 @@ def build_conv():
                 MessageHandler(filters.TEXT & ~filters.COMMAND, set_country)],
             STATE_LANGUAGE: [
                 CallbackQueryHandler(pick_lang, pattern="^lang_"),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, reg_name_country)],
+],
             STATE_MAIN_MENU: [
                 CallbackQueryHandler(rem_done, pattern="^rem_done_"),
                 CallbackQueryHandler(rem_later, pattern="^rem_snooze_"),
