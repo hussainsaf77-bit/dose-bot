@@ -1741,6 +1741,9 @@ async def child_weight(u, ctx):
             try: await thinking_s.delete()
             except: pass
     result = calc_child(d, w, lang)
+    if result:
+        await u.message.reply_text(str(result)[:3000])
+        return STATE_CHILD_CONC
     change_btns = []
     name_key = d.get("name_en","").lower()
     concs = DRUG_CONCS.get(name_key, [])
