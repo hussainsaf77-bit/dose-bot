@@ -1656,6 +1656,7 @@ async def child_sel(u, ctx):
 async def child_weight(u, ctx):
     await u.message.reply_text("🟢 child_weight")
     await u.message.reply_text("drug=" + str(ctx.user_data.get("child_drug",{}).get("name_en","None")) + " form=" + str(ctx.user_data.get("drug_form","?")))
+    await u.message.reply_text("antibiotic=" + str(ctx.user_data.get("child_drug",{}).get("name_en","") in ANTIBIOTIC_DOSES))
     lang = get_lang(ctx)
     track(u, "child_doses")
     try:
