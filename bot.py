@@ -3994,9 +3994,6 @@ async def fallback(u, ctx):
     if u.callback_query:
         return None
     return None
-    # أي كلمة أخرى — نعرض القائمة الرئيسية
-    await show_main(u.message, lang)
-    return STATE_MAIN_MENU
 
 async def stats_cmd(u, ctx):
     stats = load_stats()
