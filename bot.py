@@ -1759,13 +1759,12 @@ async def child_weight(u, ctx):
     note = "\n\n🔄 " + ("تغيير التركيز:" if lang=="ar" else "Change concentration:")
 
     change_btns.append([InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")])
-    try:
-        await u.message.reply_text(result + note, reply_markup=InlineKeyboardMarkup(change_btns))
-    except:
-        try:
-            await u.message.reply_text(result, reply_markup=InlineKeyboardMarkup(change_btns))
-        except:
-            await u.message.reply_text(result)
+    send_text = result
+
+🔄 " + ("تغيير التركيز:" if lang=="ar" else "Change concentration:")
+    # نزيل Markdown الخاطئ
+    send_text = send_text.replace("*","").replace("_","").replace("`","")
+    await u.message.reply_text(send_text, reply_markup=InlineKeyboardMarkup(change_btns))
     return STATE_CHILD_CONC
 
 
