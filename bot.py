@@ -1377,26 +1377,6 @@ async def pick_lang(u, ctx):
     q = u.callback_query; await q.answer()
     ctx.user_data["lang"] = "ar" if q.data == "lang_ar" else "en"
     lang = get_lang(ctx)
-    uid = str(u.effective_user.id)
-    
-    # نتحقق إذا مسجل في Supabase
-    is_registered = False
-    if supabase_client:
-        try:
-            res = supabase_client.table("users").select("uid,level").eq("uid", uid).execute()
-            if res.data:
-                is_registered = True
-                ctx.user_data["user_level"] = res.data[0].get("level","guest")
-        except: pass
-    
-    if not is_registered:
-        btns = InlineKeyboardMarkup([
-            [InlineKeyboardButton("👤 " + ("تسجيل سريع — 30 ثانية" if lang=="ar" else "Quick Register — 30 sec"), callback_data="reg_start")],
-            [InlineKeyboardButton("👻 " + ("دخول كضيف" if lang=="ar" else "Continue as Guest"), callback_data="reg_guest")],
-        ])
-        msg = "👋 " + ("مرحباً! كيف تريد البدء؟" if lang=="ar" else "Welcome! How would you like to start?")
-        await q.message.edit_text(msg, reply_markup=btns)
-        return STATE_MAIN_MENU
     
     await show_main(q.message, lang, edit=True)
     return STATE_MAIN_MENU
@@ -1729,7 +1709,7 @@ async def child_weight(u, ctx):
                 lines_d.append("  • " + age_range + ": " + dose)
             lines_d.append("")
             lines_d.append("⚠️ " + ("استشر الطبيب دائماً" if lang=="ar" else "Always consult doctor"))
-            await u.message.reply_text("\n".join(lines_d), reply_markup=kb_child_result(lang))
+            await u.message.reply_text("\n".join(lines_d), reply_markup=kb_back(lang))
             return STATE_MAIN_MENU
         # إذا لا يوجد fixed_dose نستخدم Claude
         age_years = w
@@ -3400,6 +3380,40 @@ async def show_registration(u, ctx, lang):
     else:
         await u.callback_query.message.edit_text(msg, reply_markup=btns)
 
+async def reg_handler(u, ctx):
+    """يحفظ التسجيل ويكمل للقائمة الرئيسية"""
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    user = u.effective_user
+    uid = str(user.id)
+    
+    role_map = {
+        "reg_doctor": "طبيب" if lang=="ar" else "Doctor",
+        "reg_pharmacist": "صيدلاني" if lang=="ar" else "Pharmacist", 
+        "reg_parent": "أم/أب" if lang=="ar" else "Parent",
+        "reg_student": "طالب طب" if lang=="ar" else "Med Student",
+        "reg_general": "مستخدم عام" if lang=="ar" else "General User",
+    }
+    role = role_map.get(q.data, "عام")
+    
+    # نحفظ في الإحصائيات
+    stats = load_stats()
+    if "users" not in stats:
+        stats["users"] = {}
+    if uid not in stats["users"]:
+        stats["users"][uid] = 0
+    if isinstance(stats["users"][uid], int):
+        stats["users"][uid] = {"count": stats["users"][uid], "registered": True, "role": role, "name": user.first_name or ""}
+    else:
+        stats["users"][uid]["registered"] = True
+        stats["users"][uid]["role"] = role
+    save_stats(stats)
+    
+    ctx.user_data["reg_role"] = role
+    ctx.user_data["lang"] = "ar"
+    await q.message.edit_text("✅ ممتاز!\n\n📝 اكتب اسمك ودولتك في رسالة واحدة\nمثال: أحمد — السعودية")
+    return STATE_LANGUAGE
+
 
 async def pat_note_start(u, ctx):
     q = u.callback_query; await q.answer()
@@ -3834,112 +3848,6 @@ async def pat_view_log(u, ctx):
         parse_mode="Markdown")
     return STATE_PAT_MENU
 
-
-async def reg_start(u, ctx):
-    """بداية التسجيل - نوع المستخدم"""
-    q = u.callback_query; await q.answer()
-    lang = get_lang(ctx)
-    
-    if q.data == "reg_guest":
-        # دخول كضيف
-        uid = str(u.effective_user.id)
-        if supabase_client:
-            try:
-                supabase_client.table("users").upsert({
-                    "uid": uid, "name": u.effective_user.first_name or "",
-                    "level": "guest", "lang": lang
-                }).execute()
-            except: pass
-        ctx.user_data["user_level"] = "guest"
-        await show_main(q.message, lang, edit=True)
-        return STATE_MAIN_MENU
-    
-    # تسجيل كامل - نوع المستخدم
-    btns = InlineKeyboardMarkup([
-        [InlineKeyboardButton("👨‍⚕️ " + ("طبيب" if lang=="ar" else "Doctor"), callback_data="regu_doctor"),
-         InlineKeyboardButton("💊 " + ("صيدلاني" if lang=="ar" else "Pharmacist"), callback_data="regu_pharmacist")],
-        [InlineKeyboardButton("👩 " + ("أم/أب" if lang=="ar" else "Parent"), callback_data="regu_parent"),
-         InlineKeyboardButton("🎓 " + ("طالب طب" if lang=="ar" else "Med Student"), callback_data="regu_student")],
-        [InlineKeyboardButton("👤 " + ("مستخدم عام" if lang=="ar" else "General"), callback_data="regu_general")],
-    ])
-    await q.message.edit_text("1️⃣ " + ("ما نوع مستخدمك؟" if lang=="ar" else "Your user type?"), reply_markup=btns)
-    return STATE_MAIN_MENU
-
-async def regu_handler(u, ctx):
-    """اختيار نوع المستخدم"""
-    q = u.callback_query; await q.answer()
-    lang = get_lang(ctx)
-    
-    role_map = {
-        "regu_doctor": {"ar":"طبيب","en":"Doctor"},
-        "regu_pharmacist": {"ar":"صيدلاني","en":"Pharmacist"},
-        "regu_parent": {"ar":"أم/أب","en":"Parent"},
-        "regu_student": {"ar":"طالب طب","en":"Med Student"},
-        "regu_general": {"ar":"مستخدم عام","en":"General"},
-    }
-    role = role_map.get(q.data, {"ar":"عام","en":"General"})[lang]
-    ctx.user_data["reg_role"] = role
-    
-    # نسأل عن الدولة
-    countries_ar = [("🇸🇦","السعودية","sa"),("🇦🇪","الإمارات","ae"),("🇰🇼","الكويت","kw"),
-                    ("🇶🇦","قطر","qa"),("🇧🇭","البحرين","bh"),("🇴🇲","عُمان","om"),
-                    ("🇯🇴","الأردن","jo"),("🇸🇾","سوريا","sy"),("🇱🇧","لبنان","lb"),
-                    ("🇮🇶","العراق","iq"),("🇪🇬","مصر","eg"),("🌍","أخرى","other")]
-    
-    btns = []
-    row = []
-    for flag, name, code in countries_ar:
-        row.append(InlineKeyboardButton(flag + " " + name, callback_data="regc_" + code))
-        if len(row) == 3:
-            btns.append(row)
-            row = []
-    if row: btns.append(row)
-    
-    await q.message.edit_text("2️⃣ " + ("اختر دولتك:" if lang=="ar" else "Select your country:"), reply_markup=InlineKeyboardMarkup(btns))
-    return STATE_MAIN_MENU
-
-async def regc_handler(u, ctx):
-    """اختيار الدولة وإتمام التسجيل"""
-    q = u.callback_query; await q.answer()
-    lang = get_lang(ctx)
-    uid = str(u.effective_user.id)
-    user = u.effective_user
-    
-    country_data = {
-        "sa":("السعودية","Asia/Riyadh"), "ae":("الإمارات","Asia/Dubai"),
-        "kw":("الكويت","Asia/Kuwait"), "qa":("قطر","Asia/Qatar"),
-        "bh":("البحرين","Asia/Bahrain"), "om":("عُمان","Asia/Muscat"),
-        "jo":("الأردن","Asia/Amman"), "sy":("سوريا","Asia/Damascus"),
-        "lb":("لبنان","Asia/Beirut"), "iq":("العراق","Asia/Baghdad"),
-        "eg":("مصر","Africa/Cairo"), "other":("أخرى","Asia/Riyadh"),
-    }
-    
-    code = q.data.replace("regc_","")
-    country, tz = country_data.get(code, ("أخرى","Asia/Riyadh"))
-    ctx.user_data["timezone"] = tz
-    role = ctx.user_data.get("reg_role","عام")
-    
-    # نحفظ في Supabase
-    if supabase_client:
-        try:
-            supabase_client.table("users").upsert({
-                "uid": uid,
-                "name": user.first_name or "",
-                "country": country,
-                "role": role,
-                "level": "registered",
-                "lang": lang,
-            }).execute()
-        except Exception as e:
-            logger.error(f"reg supabase: {e}")
-    
-    ctx.user_data["user_level"] = "registered"
-    
-    welcome = "✅ " + ("تم التسجيل! مرحباً " if lang=="ar" else "Registered! Welcome ") + (user.first_name or "") + " 🎉"
-    await q.message.edit_text(welcome)
-    await show_main(q.message, lang)
-    return STATE_MAIN_MENU
-
 async def rem_menu(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -4111,9 +4019,7 @@ async def fallback(u, ctx):
             elif action == "main":
                 await show_main(u.message, lang)
                 return STATE_MAIN_MENU
-    # أي كلمة أخرى — نعرض القائمة الرئيسية
-    await show_main(u.message, lang)
-    return STATE_MAIN_MENU
+    return None
 
 async def stats_cmd(u, ctx):
     stats = load_stats()
@@ -4253,14 +4159,13 @@ def build_conv():
                 MessageHandler(filters.TEXT & ~filters.COMMAND, set_country)],
             STATE_LANGUAGE: [
                 CallbackQueryHandler(pick_lang, pattern="^lang_"),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, lambda u,c: start(u,c)),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, reg_name_country)],
             STATE_MAIN_MENU: [
                 CallbackQueryHandler(rem_done, pattern="^rem_done_"),
                 CallbackQueryHandler(rem_later, pattern="^rem_snooze_"),
 
                 CallbackQueryHandler(go_back, pattern="^back$"),
-                CallbackQueryHandler(regu_handler, pattern="^regu_"),
+                CallbackQueryHandler(reg_handler, pattern="^reg_"),
                 CallbackQueryHandler(drug_form_selected, pattern="^form_"),
                 CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_|sugar_)"), CallbackQueryHandler(manual_drug_input, pattern="^manual_input$")],
             STATE_BMI_WEIGHT: [
