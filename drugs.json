@@ -24683,9 +24683,9 @@
   },
   {
     "name_en": "olopatadine_eye",
-    "name_ar": "أولوباتادين للعين",
-    "aliases": "pataday, باتاداي",
-    "drug_class": "مضاد هيستامين للعين / حساسية",
+    "name_ar": "باتانول قطرة عين",
+    "aliases": "patanol, olopatadine",
+    "drug_class": "قطرات عين — مضاد حساسية",
     "drug_class_en": "Ophthalmic Antihistamine / Allergy",
     "pediatric_min_mg_per_kg": 0,
     "pediatric_max_mg_per_kg": 0,
@@ -24708,7 +24708,13 @@
     "interactions": "قليلة",
     "interactions_en": "Few known",
     "renal": "آمن موضعياً",
-    "renal_dose": "Safe topically"
+    "renal_dose": "Safe topically",
+    "fixed_dose": true,
+    "age_doses": {
+      "أكثر من 3 سنوات": "قطرة واحدة في كل عين مرتين يومياً",
+      "أقل من 3 سنوات": "❌ غير موصى به"
+    },
+    "warning": "⚠️ لا تستخدم العدسات اللاصقة أثناء العلاج"
   },
   {
     "name_en": "pilocarpine_eye",
@@ -24981,9 +24987,9 @@
   },
   {
     "name_en": "fluticasone_nasal",
-    "name_ar": "فلوتيكازون أنفي",
-    "aliases": "flixonase, فليكسوناز, avamys",
-    "drug_class": "كورتيكوستيرويد أنفي",
+    "name_ar": "فلوتيكازون بخاخ أنف",
+    "aliases": "flixonase, nasobec, فليكسوناز",
+    "drug_class": "بخاخ أنف — كورتيزون",
     "drug_class_en": "Intranasal Corticosteroid",
     "pediatric_min_mg_per_kg": 0,
     "pediatric_max_mg_per_kg": 0,
@@ -25006,7 +25012,13 @@
     "interactions": "قليلة",
     "interactions_en": "Few known",
     "renal": "آمن",
-    "renal_dose": "Safe"
+    "renal_dose": "Safe",
+    "fixed_dose": true,
+    "age_doses": {
+      "4-11 سنة": "بخة واحدة في كل فتحة أنف مرة يومياً",
+      "12 سنة وأكثر": "بخة-بختان في كل فتحة أنف مرة يومياً"
+    },
+    "warning": "⚠️ ممنوع تحت 4 سنوات"
   },
   {
     "name_en": "budesonide_inhaler",
@@ -28555,13 +28567,14 @@
   {
     "name_en": "tobradex",
     "name_ar": "توبراديكس",
-    "aliases": "tobramycin dexamethasone eye drops, توبراميسين ديكساميثازون",
+    "aliases": "tobramycin dexamethasone, توبراميسين ديكساميثازون",
     "drug_class": "قطرات عين — مضاد حيوي + كورتيزون",
     "fixed_dose": true,
     "age_doses": {
-      "جميع الأعمار": "1-2 قطرة في العين المصابة كل 4-6 ساعات"
+      "أكثر من سنتين": "1-2 قطرة في العين المصابة كل 4-6 ساعات",
+      "أقل من سنتين": "❌ استشر طبيب العيون"
     },
-    "warning": "⚠️ بوصفة طبيب العيون فقط — لا تتجاوز أسبوعين"
+    "warning": "⚠️ بوصفة طبيب العيون — لا تتجاوز أسبوعين"
   },
   {
     "name_en": "tobramycin_drops",
@@ -28587,13 +28600,36 @@
   },
   {
     "name_en": "sofradex",
-    "name_ar": "سوفراديكس",
-    "aliases": "framycetin dexamethasone ear drops",
+    "name_ar": "سوفراديكس قطرة أذن",
+    "aliases": "framycetin dexamethasone",
     "drug_class": "قطرات أذن — مضاد حيوي + كورتيزون",
     "fixed_dose": true,
     "age_doses": {
-      "أكثر من سنة": "2-3 قطرات في الأذن المصابة 3-4 مرات يومياً"
+      "أكثر من سنة": "2-3 قطرات في الأذن المصابة 3-4 مرات يومياً",
+      "أقل من سنة": "❌ استشر الطبيب"
     },
     "warning": "⚠️ ممنوع عند ثقب طبلة الأذن"
+  },
+  {
+    "name_en": "gentamicin_drops",
+    "name_ar": "جنتامايسين قطرة",
+    "aliases": "garamycin drops, جنتاميسين قطرة, جنتامايسين, gentamicin eye drops, gentamicin ear drops",
+    "drug_class": "قطرات — مضاد حيوي",
+    "fixed_dose": true,
+    "age_doses": {
+      "جميع الأعمار": "1-2 قطرة في المنطقة المصابة كل 4-6 ساعات"
+    },
+    "warning": "⚠️ ممنوع عند ثقب طبلة الأذن — لا تتجاوز 7 أيام"
+  },
+  {
+    "name_en": "fusidic_acid_eye",
+    "name_ar": "فيوسيدين قطرة عين",
+    "aliases": "fucithalmic, فيوسيثالميك",
+    "drug_class": "قطرات عين — مضاد حيوي",
+    "fixed_dose": true,
+    "age_doses": {
+      "جميع الأعمار": "قطرة واحدة في العين المصابة مرتين يومياً"
+    },
+    "warning": "⚠️ آمن للأطفال من جميع الأعمار"
   }
 ]
