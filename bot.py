@@ -1765,7 +1765,21 @@ async def child_weight(u, ctx):
         except Exception as e:
             try: await thinking_s.delete()
             except: pass
+    # مضادات حيوية
+    name_key = d.get("name_en","").lower()
+    if name_key in ANTIBIOTIC_DOSES:
+        sites = INFECTION_SITES.get(lang, INFECTION_SITES["ar"])
+        available = [(k,v) for k,v in sites if k in ANTIBIOTIC_DOSES[name_key]]
+        if available:
+            btns = [[InlineKeyboardButton(v, callback_data=f"site_{k}")] for k,v in available]
+            btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
+            await u.message.reply_text("🦠 " + ("مكان الالتهاب؟" if lang=="ar" else "Infection site?"), reply_markup=InlineKeyboardMarkup(btns))
+            return STATE_INFECTION_SITE
+
     result = calc_child(d, w, lang)
+    
+    # أزرار التراكيز
+    concs = DRUG_CONCS.get(name_key, [])
     if result:
         btns = InlineKeyboardMarkup([
             [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
