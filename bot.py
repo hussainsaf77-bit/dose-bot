@@ -1098,6 +1098,12 @@ def kb_main(lang):
         [InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],
         [InlineKeyboardButton(tx("btn_settings", lang), callback_data="m_settings")]])
 
+def kb_child_result(lang):
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
+        [InlineKeyboardButton("🔙 " + ("القائمة الرئيسية" if lang=="ar" else "Main Menu"), callback_data="back")]
+    ])
+
 def kb_back(lang):
     return InlineKeyboardMarkup([[
         InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]])
