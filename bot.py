@@ -1519,14 +1519,10 @@ async def drug_search_image(u, ctx):
     return STATE_DRUG_SEARCH
 
 async def drug_search(u, ctx):
-    try:
-        lang = get_lang(ctx)
-    except:
-        lang = "ar"
+    lang = get_lang(ctx)
     try:
         track(u, "searches")
-    except:
-        pass
+    except: pass
     query = u.message.text.strip()
     
     # Claude API مباشرة
