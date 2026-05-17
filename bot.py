@@ -1755,7 +1755,11 @@ async def child_weight(u, ctx):
             result_f = await calc_special_form(drug_name, w, drug_form, lang)
             await thinking_f.delete()
             if result_f:
-                await u.message.reply_text(result_f, reply_markup=kb_back(lang))
+                form_btns = InlineKeyboardMarkup([
+                    [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
+                    [InlineKeyboardButton(tx("btn_back",lang), callback_data="back")]
+                ])
+                await u.message.reply_text(result_f, reply_markup=form_btns)
                 return STATE_MAIN_MENU
         except Exception as e:
             logger.error(f"Special form error: {e}")
