@@ -1710,8 +1710,8 @@ async def child_weight(u, ctx):
     except: pass
     try:
         w = float(u.message.text.strip().replace(",", "."))
-    ctx.user_data["child_weight"] = w
         if not 0.5 <= w <= 150: raise ValueError
+        ctx.user_data["child_weight"] = w
     except:
         await u.message.reply_text(tx("bad_weight", lang), reply_markup=kb_back(lang))
         return STATE_CHILD_WEIGHT
