@@ -1098,6 +1098,12 @@ def kb_main(lang):
         [InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],
         [InlineKeyboardButton(tx("btn_settings", lang), callback_data="m_settings")]])
 
+def kb_child_done(lang):
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
+        [InlineKeyboardButton("🔙 " + ("القائمة الرئيسية" if lang=="ar" else "Main Menu"), callback_data="back")]
+    ])
+
 def kb_back(lang):
     return InlineKeyboardMarkup([[
         InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]])
@@ -1703,22 +1709,14 @@ async def child_weight(u, ctx):
                 lines_d.append("  • " + age_range + ": " + dose)
             lines_d.append("")
             lines_d.append("⚠️ " + ("استشر الطبيب دائماً" if lang=="ar" else "Always consult doctor"))
-            btns = InlineKeyboardMarkup([
-                [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
-                [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
-            ])
-            await u.message.reply_text("\n".join(lines_d), reply_markup=btns)
+            await u.message.reply_text("\n".join(lines_d), reply_markup=kb_child_done(lang))
             return STATE_MAIN_MENU
         thinking_f = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
         try:
             result_f = await calc_special_form(drug_name, w, drug_form, lang)
             await thinking_f.delete()
             if result_f:
-                btns = InlineKeyboardMarkup([
-                    [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
-                    [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
-                ])
-                await u.message.reply_text(result_f, reply_markup=btns)
+                await u.message.reply_text(result_f, reply_markup=kb_child_done(lang))
                 return STATE_MAIN_MENU
         except Exception as e:
             try: await thinking_f.delete()
@@ -1731,11 +1729,7 @@ async def child_weight(u, ctx):
             result_s = await calc_special_form(drug_name, w, drug_form, lang)
             await thinking_s.delete()
             if result_s:
-                btns = InlineKeyboardMarkup([
-                    [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
-                    [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
-                ])
-                await u.message.reply_text(result_s, reply_markup=btns)
+                await u.message.reply_text(result_s, reply_markup=kb_child_done(lang))
                 return STATE_MAIN_MENU
         except Exception as e:
             try: await thinking_s.delete()
