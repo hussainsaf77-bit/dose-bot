@@ -1709,7 +1709,7 @@ async def child_weight(u, ctx):
                 lines_d.append("  • " + age_range + ": " + dose)
             lines_d.append("")
             lines_d.append("⚠️ " + ("استشر الطبيب دائماً" if lang=="ar" else "Always consult doctor"))
-            await u.message.reply_text("\n".join(lines_d), reply_markup=kb_back(lang))
+            await u.message.reply_text("\n".join(lines_d), reply_markup=kb_child_result(lang))
             return STATE_MAIN_MENU
         # إذا لا يوجد fixed_dose نستخدم Claude
         age_years = w
