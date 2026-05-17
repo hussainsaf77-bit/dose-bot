@@ -2053,14 +2053,7 @@ async def infection_site(u, ctx):
             cmsg = "💊 اختر التركيز:" if lang=="ar" else "💊 Select concentration:"
             await q.message.edit_text(cmsg, reply_markup=InlineKeyboardMarkup(btns))
             return STATE_CHILD_CONC
-        ab_btns = InlineKeyboardMarkup([
-            [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
-            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
-        ])
-        try:
-            await q.message.edit_text(msg, reply_markup=ab_btns, parse_mode=ParseMode.MARKDOWN)
-        except:
-            await q.message.edit_text(msg.replace("*","").replace("_",""), reply_markup=ab_btns)
+        await q.message.edit_text(msg, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
     return STATE_CHILD_WEIGHT
 
 
