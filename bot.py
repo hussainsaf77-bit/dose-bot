@@ -1573,7 +1573,6 @@ async def drug_sel(u, ctx):
     return STATE_DRUG_SEARCH
 
 async def child_input(u, ctx):
-    await u.message.reply_text("🔵 child_input")
     lang = get_lang(ctx)
     drug_form = ctx.user_data.get("drug_form", "syrup")
     if u.message.photo:
@@ -1654,11 +1653,6 @@ async def child_sel(u, ctx):
     return STATE_CHILD_WEIGHT
 
 async def child_weight(u, ctx):
-    await u.message.reply_text("🟢 child_weight")
-    await u.message.reply_text("drug=" + str(ctx.user_data.get("child_drug",{}).get("name_en","None")) + " form=" + str(ctx.user_data.get("drug_form","?")))
-    await u.message.reply_text("antibiotic=" + str(ctx.user_data.get("child_drug",{}).get("name_en","") in ANTIBIOTIC_DOSES))
-    await u.message.reply_text("⏩ continuing after antibiotic check")
-    await u.message.reply_text("form_check=" + str(ctx.user_data.get("drug_form","syrup")))
     lang = get_lang(ctx)
     track(u, "child_doses")
     try:
@@ -1764,11 +1758,14 @@ async def child_weight(u, ctx):
     
     note = "\n\n🔄 " + ("تغيير التركيز:" if lang=="ar" else "Change concentration:")
 
+    change_btns.append([InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")])
     try:
         await u.message.reply_text(result + note, reply_markup=InlineKeyboardMarkup(change_btns))
-    except Exception as e:
-        logger.error(f"child_weight final error: {e}")
-        await u.message.reply_text(result, reply_markup=InlineKeyboardMarkup(change_btns))
+    except:
+        try:
+            await u.message.reply_text(result, reply_markup=InlineKeyboardMarkup(change_btns))
+        except:
+            await u.message.reply_text(result)
     return STATE_CHILD_CONC
 
 
