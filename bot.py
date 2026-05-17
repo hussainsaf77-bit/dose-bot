@@ -1098,6 +1098,12 @@ def kb_main(lang):
         [InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],
         [InlineKeyboardButton(tx("btn_settings", lang), callback_data="m_settings")]])
 
+def kb_child_result(lang):
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
+        [InlineKeyboardButton("🔙 " + ("القائمة الرئيسية" if lang=="ar" else "Main Menu"), callback_data="back")]
+    ])
+
 def kb_back(lang):
     return InlineKeyboardMarkup([[
         InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]])
@@ -1635,6 +1641,13 @@ async def child_input(u, ctx):
             return STATE_CHILD_DRUG
         ctx.user_data["child_drug"] = res[0]
         ctx.user_data["img_drug"] = name
+        drug_form_img = ctx.user_data.get("drug_form","syrup")
+        if drug_form_img in ["cream","drops"]:
+            # نسأل عن العمر للقطرات والكريمات
+            ctx.user_data["child_drug"] = res[0]
+            await u.message.reply_text("📸 *" + name + "*\n\n📅 " + ("كم عمر الطفل بالسنوات؟" if lang=="ar" else "Child age in years?"),
+                reply_markup=kb_back(lang), parse_mode="Markdown")
+            return STATE_CHILD_WEIGHT
         msg2 = "📸 *" + name + "*\n\n" + tx("weight_prompt", lang)
         await u.message.reply_text(msg2, reply_markup=kb_image_result(lang, name), parse_mode=ParseMode.MARKDOWN)
         return STATE_CHILD_WEIGHT
@@ -1644,6 +1657,12 @@ async def child_input(u, ctx):
         return STATE_CHILD_DRUG
     if len(res) == 1:
         ctx.user_data["child_drug"] = res[0]
+        drug_form_txt = ctx.user_data.get("drug_form","syrup")
+        if drug_form_txt in ["cream","drops"]:
+            # نسأل عن العمر
+            await u.message.reply_text("📅 " + ("كم عمر الطفل بالسنوات؟" if lang=="ar" else "Child age in years?"),
+                reply_markup=kb_back(lang))
+            return STATE_CHILD_WEIGHT
         await u.message.reply_text(tx("weight_prompt", lang), reply_markup=kb_back(lang))
         return STATE_CHILD_WEIGHT
     ctx.user_data["results"] = res
@@ -1678,6 +1697,34 @@ async def child_weight(u, ctx):
         await u.message.reply_text("❌ " + ("لم يُحدد الدواء، ابدأ من جديد" if lang=="ar" else "Drug not set, start over"), reply_markup=kb_back(lang))
         return STATE_CHILD_DRUG
     ctx.user_data["child_weight"] = w
+    # القطرات والكريمات - نستخدم العمر
+    drug_form_cw = ctx.user_data.get("drug_form","syrup")
+    if drug_form_cw in ["cream","drops"]:
+        drug_name_cw = d.get("name_ar" if lang=="ar" else "name_en","") or d.get("name_en","")
+        # نستخدم fixed_dose إذا موجود
+        if d.get("fixed_dose") and d.get("age_doses"):
+            age_doses = d["age_doses"]
+            lines_d = ["💊 " + drug_name_cw, ""]
+            for age_range, dose in age_doses.items():
+                lines_d.append("  • " + age_range + ": " + dose)
+            lines_d.append("")
+            lines_d.append("⚠️ " + ("استشر الطبيب دائماً" if lang=="ar" else "Always consult doctor"))
+            await u.message.reply_text("\n".join(lines_d), reply_markup=kb_child_result(lang))
+            return STATE_MAIN_MENU
+        # إذا لا يوجد fixed_dose نستخدم Claude
+        age_years = w
+        thinking_cw = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
+        try:
+            result_cw = await calc_special_form(drug_name_cw, age_years, drug_form_cw, lang)
+            await thinking_cw.delete()
+            if result_cw:
+                drops_btns = InlineKeyboardMarkup([[InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],[InlineKeyboardButton(tx("btn_back",lang), callback_data="back")]])
+                await u.message.reply_text(result_cw, reply_markup=drops_btns)
+                return STATE_MAIN_MENU
+        except Exception as e:
+            logger.error(f"drops/cream: {e}")
+            try: await thinking_cw.delete()
+            except: pass
     # نتحقق إذا كان مضاد حيوي
     name_key = d.get("name_en","").lower()
     logger.info(f"child_weight step2: name_key={name_key}, drug_form={ctx.user_data.get('drug_form')}")
@@ -1714,7 +1761,11 @@ async def child_weight(u, ctx):
             result_f = await calc_special_form(drug_name, w, drug_form, lang)
             await thinking_f.delete()
             if result_f:
-                await u.message.reply_text(result_f, reply_markup=kb_back(lang))
+                form_btns = InlineKeyboardMarkup([
+                    [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
+                    [InlineKeyboardButton(tx("btn_back",lang), callback_data="back")]
+                ])
+                await u.message.reply_text(result_f, reply_markup=form_btns)
                 return STATE_MAIN_MENU
         except Exception as e:
             logger.error(f"Special form error: {e}")
@@ -1787,6 +1838,7 @@ async def child_weight(u, ctx):
     
     # نضيف أزرار التراكيز في الأسفل
     change_btns = [[InlineKeyboardButton(c, callback_data="conc_" + c)] for c in concs[:4]]
+    change_btns.append([InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")])
     change_btns.append([InlineKeyboardButton("🔙 " + ("رجوع" if lang=="ar" else "Back"), callback_data="back")])
     
     note = "\n\n🔄 " + ("تغيير التركيز:" if lang=="ar" else "Change concentration:")
@@ -3269,8 +3321,8 @@ async def calc_special_form(drug_name, weight, drug_form, lang):
 أجب بهذا التنسيق فقط:
 💊 الدواء: {drug_name}
 📋 النوع: {form_name}
-⚖️ الوزن: {weight} كغ
-💉 الجرعة المحسوبة: [احسب بدقة حسب الوزن]
+👶 العمر: {int(weight)} سنوات
+💉 الجرعة: [احسب بدقة حسب الوزن]
 🔁 التكرار: 
 ⏱️ مدة العلاج: 
 ⚠️ تحذير مهم: 
@@ -3939,11 +3991,37 @@ async def rem_edit_val(u, ctx):
     return STATE_REM_MENU
 
 async def fallback(u, ctx):
-    # تجاهل callbacks فقط
     if u.callback_query:
         return None
-    # لا نتدخل في النصوص - نتركها للـ handlers
-    return None
+    if not u.message or not u.message.text:
+        return None
+    txt = u.message.text.strip()
+    lang = get_lang(ctx)
+    shortcuts = {
+        "جرعات": "m_child", "جرعة": "m_child", "اطفال": "m_child",
+        "ملف": "m_pat", "مريض": "m_pat", "مرضى": "m_pat",
+        "دواء": "m_search", "بحث": "m_search",
+        "تذكير": "m_rem", "تذكيرات": "m_rem",
+        "قائمة": "main", "رئيسية": "main",
+    }
+    for kw, action in shortcuts.items():
+        if txt.startswith(kw):
+            if action == "m_child":
+                return await ask_drug_form(u, ctx)
+            elif action == "m_pat":
+                await u.message.reply_text("👤 " + ("ملف المريض:" if lang=="ar" else "Patient File:"), reply_markup=kb_patient_menu(lang))
+                return STATE_PAT_MENU
+            elif action == "m_search":
+                await u.message.reply_text("🔍 " + ("اكتب اسم الدواء:" if lang=="ar" else "Drug name:"), reply_markup=kb_back(lang))
+                return STATE_DRUG_SEARCH
+            elif action == "m_rem":
+                return await rem_menu(u, ctx)
+            elif action == "main":
+                await show_main(u.message, lang)
+                return STATE_MAIN_MENU
+    # أي كلمة أخرى — نعرض القائمة الرئيسية
+    await show_main(u.message, lang)
+    return STATE_MAIN_MENU
 
 async def stats_cmd(u, ctx):
     stats = load_stats()
@@ -3961,7 +4039,7 @@ async def stats_cmd(u, ctx):
     bp = stats.get("bp", 0)
     premium = stats.get("premium", 0)
     # أكثر المستخدمين نشاطاً
-    top_users = sorted(users_dict.items(), key=lambda x: x[1], reverse=True)[:3]
+    top_users = sorted(users_dict.items(), key=lambda x: x[1].get("count",0) if isinstance(x[1],dict) else x[1], reverse=True)[:3]
     lang = get_lang(ctx)
     if lang == "ar":
         lines = [
@@ -4120,6 +4198,7 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, child_weight)],
             STATE_CHILD_CONC: [
+                CallbackQueryHandler(main_cb, pattern="^m_child$"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(child_conc, pattern="^conc_"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, child_conc)],
