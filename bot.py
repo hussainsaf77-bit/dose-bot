@@ -1740,6 +1740,7 @@ async def child_weight(u, ctx):
         except Exception as e:
             try: await thinking_s.delete()
             except: pass
+    ctx.user_data["child_weight"] = w
     # مضادات حيوية - نسأل عن مكان الالتهاب
     name_key = d.get("name_en","").lower()
     if name_key in ANTIBIOTIC_DOSES:
