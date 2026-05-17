@@ -4162,6 +4162,7 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, child_weight)],
             STATE_CHILD_CONC: [
+                CallbackQueryHandler(main_cb, pattern="^m_child$"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(child_conc, pattern="^conc_"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, child_conc)],
