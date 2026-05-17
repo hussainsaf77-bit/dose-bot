@@ -1756,12 +1756,9 @@ async def child_weight(u, ctx):
     change_btns = [[InlineKeyboardButton(c, callback_data="conc_" + c)] for c in concs[:4]]
     change_btns.append([InlineKeyboardButton("🔙 " + ("رجوع" if lang=="ar" else "Back"), callback_data="back")])
     
-    note = "\n\n🔄 " + ("تغيير التركيز:" if lang=="ar" else "Change concentration:")
 
     change_btns.append([InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")])
-    send_text = result
 
-🔄 " + ("تغيير التركيز:" if lang=="ar" else "Change concentration:")
     # نزيل Markdown الخاطئ
     send_text = send_text.replace("*","").replace("_","").replace("`","")
     await u.message.reply_text(send_text, reply_markup=InlineKeyboardMarkup(change_btns))
@@ -2638,7 +2635,6 @@ async def interaction_input(u, ctx):
             await thinking_msg.delete()
 
         btns = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🔄 " + ("بحث جديد" if lang=="ar" else "New Search"), callback_data="m_interaction")],
             [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
         ])
         await u.message.reply_text(msg, reply_markup=btns, parse_mode=ParseMode.MARKDOWN)
