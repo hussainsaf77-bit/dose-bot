@@ -1740,31 +1740,10 @@ async def child_weight(u, ctx):
         except Exception as e:
             try: await thinking_s.delete()
             except: pass
-    # مضادات حيوية - نسأل عن مكان الالتهاب
-    name_key = d.get("name_en","").lower()
-    if name_key in ANTIBIOTIC_DOSES:
-        sites = INFECTION_SITES.get(lang, INFECTION_SITES["ar"])
-        available = [(k,v) for k,v in sites if k in ANTIBIOTIC_DOSES[name_key]]
-        if available:
-            btns = [[InlineKeyboardButton(v, callback_data=f"site_{k}")] for k,v in available]
-            btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
-            await u.message.reply_text("🦠 " + ("مكان الالتهاب؟" if lang=="ar" else "Infection site?"), reply_markup=InlineKeyboardMarkup(btns))
-            return STATE_INFECTION_SITE
-
     result = calc_child(d, w, lang)
-    
-    # أزرار التراكيز
-    concs = DRUG_CONCS.get(name_key, [])
-    change_btns = [[InlineKeyboardButton(c, callback_data="conc_" + c)] for c in concs[:4]]
-    change_btns.append([InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")])
-    change_btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
-    
-    try:
-        await u.message.reply_text(str(result)[:3000], reply_markup=InlineKeyboardMarkup(change_btns), parse_mode=ParseMode.MARKDOWN)
-    except:
-        clean = str(result)[:3000].replace("*","").replace("_","").replace("`","")
-        await u.message.reply_text(clean, reply_markup=InlineKeyboardMarkup(change_btns))
-    return STATE_CHILD_CONC
+    if result:
+        await u.message.reply_text(str(result)[:3000])
+        return STATE_CHILD_CONC
     change_btns = []
     name_key = d.get("name_en","").lower()
     concs = DRUG_CONCS.get(name_key, [])
