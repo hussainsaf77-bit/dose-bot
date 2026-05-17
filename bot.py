@@ -149,7 +149,7 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_FOOD_SEARCH, STATE_SUGAR, STATE_BP, STATE_BP_AGE,
  STATE_PAT_MENU, STATE_PAT_NAME, STATE_PAT_AGE, STATE_PAT_WEIGHT,
  STATE_PAT_GENDER, STATE_PAT_DISEASE, STATE_PAT_MEDS, STATE_PAT_ALLERGY,
- STATE_INTERACTION, STATE_DRUG_FORM, STATE_PAT_NOTE, STATE_PAT_LOG) = range(43)
+ STATE_INTERACTION, STATE_DRUG_FORM, STATE_PAT_NOTE) = range(42)
 
 TEXTS = {
 "ar": {
@@ -559,24 +559,6 @@ def clean_val(v):
     s = str(v).strip().strip("'").strip('"')
     return s if s and s != "nan" else "—"
 
-
-AR_TO_EN = {
-    "مرة يوميًا":"once daily", "مرتين يوميًا":"twice daily",
-    "3 مرات يوميًا":"3 times daily", "4 مرات يوميًا":"4 times daily",
-    "يمنع إذا GFR < 30":"Avoid if GFR < 30",
-    "لا حاجة لتعديل الجرعة":"No dose adjustment needed",
-    "لا تعديل":"No adjustment", "لا تعديل الجرعة":"No dose adjustment",
-    "مسموح":"Allowed", "ممنوع":"Contraindicated", "بحذر":"Use with caution",
-    "مسموح بحذر":"Allowed with caution",
-    "تعديل الجرعة":"Dose adjustment needed",
-    "2 مرات يوميًا":"twice daily", "1 مرة يوميًا":"once daily",
-    "غير محدد":"Not specified",
-}
-
-def ar_to_en(text):
-    if not text or text == "—": return text
-    return AR_TO_EN.get(str(text).strip(), str(text))
-
 def fmt_drug(drug, lang):
     def g(*keys, fb="—"):
         for k in keys:
@@ -621,15 +603,15 @@ def fmt_drug(drug, lang):
             f"🔬 *Drug Class:* {g('drug_class_en','drug_class')}\n"
             f"🏷️ *Aliases:* {g('aliases','drug_class_en','drug_class')}\n"
             f"👶 *Child Dose:* {dose_child()}\n"
-            f"🔁 *Child Frequency:* {ar_to_en(g('pediatric_frequency_en') if g('pediatric_frequency_en') != '—' else g('pediatric_frequency'))}\n"
+            f"🔁 *Child Frequency:* {g('pediatric_frequency_en','pediatric_frequency')}\n"
             f"🧑 *Adult Dose:* {dose_adult()}\n"
-            f"🔁 *Adult Frequency:* {ar_to_en(g('adult_frequency_en') if g('adult_frequency_en') != '—' else g('adult_frequency'))}\n"
+            f"🔁 *Adult Frequency:* {g('adult_frequency_en','adult_frequency')}\n"
             f"⚠️ *Max Daily:* {g('max_daily')}\n\n"
             f"🚫 *Contraindications:* {g('contraindications_en','contraindications')}\n"
             f"⚡ *Side Effects:* {g('side_effects_en','side_effects')}\n"
             f"💊 *Interactions:* {g('interactions_en','interactions')}\n\n"
-            f"🤰 *Pregnancy:* {ar_to_en(g('pregnancy_en') if g('pregnancy_en') != '—' else g('pregnancy'))}\n"
-            f"🍼 *Lactation:* {ar_to_en(g('lactation_en') if g('lactation_en') != '—' else g('lactation'))}\n"
+            f"🤰 *Pregnancy:* {g('pregnancy_en','pregnancy')}\n"
+            f"🍼 *Lactation:* {g('lactation_en','lactation')}\n"
             f"🫘 *Renal:* {g('renal','renal_dose')}\n\n"
             f"🔗 [More Information]({drug_link})")
 
@@ -647,7 +629,7 @@ def calc_child(drug, w, lang):
     if lang == "ar":
         lines += ["🍼 جرعة الطفل - " + n, "⚖️ الوزن: " + str(w) + " كغ", ""]
     else:
-        lines += ["🍼 Child Dose - " + n, "⚖️ الوزن: " + str(w) + " kg", ""]
+        lines += ["🍼 Child Dose - " + n, "⚖️ Weight: " + str(w) + " kg", ""]
 
     # معالجة فيتامين د بالقطرات
     if drug.get("name_en") == "vitamin_d_drops":
@@ -680,7 +662,7 @@ def calc_child(drug, w, lang):
         age_doses = drug["age_doses"]
         dose_lines = ["📋 " + ("جرعة الأطفال:" if lang=="ar" else "Pediatric Doses:")]
         for age_range, dose in age_doses.items():
-            dose_lines.append("  • " + age_range + ": " + dose if lang=="ar" else "  • " + age_range + ": " + dose)
+            dose_lines.append("  • " + age_range + " سنة: " + dose if lang=="ar" else "  • " + age_range + " yr: " + dose)
         dose_lines.append("")
         dose_lines.append("🔁 " + freq)
         dose_lines.append("⚠️ " + ("استشر الطبيب أو الصيدلاني." if lang=="ar" else "Consult doctor or pharmacist."))
@@ -970,7 +952,7 @@ async def analyze_image(img_bytes, lang):
         if not txt or txt == "UNKNOWN":
             return ""
         # بحث في القاموس
-        ARABIC_MAP = {"bronchikam":"guaifenesin","برونشيكام":"guaifenesin","bronchikam syrup":"guaifenesin","bronchikam syrup analysis":"guaifenesin","bronchicum":"guaifenesin","برونكام":"guaifenesin","برونشيكام":"guaifenesin","برونكيكام":"guaifenesin","bronchicum":"guaifenesin","كلورفينيرامين":"chlorpheniramine","chlorphenamine":"chlorpheniramine","كلور فينيرامين":"chlorpheniramine","جوايفينيزين":"guaifenesin","غوايفينيزين":"guaifenesin","guaifenisine":"guaifenesin","فينيلايفرين":"phenylephrine","فينيل ايفرين":"phenylephrine","فينيلفرين":"phenylephrine","phenylephrine":"phenylephrine","برونكيكام":"guaifenesin","bronchicum":"guaifenesin","phenylephrine":"phenylephrine","فينيلفرين":"phenylephrine","nasofed":"phenylephrine","ناسوفيد":"phenylephrine","xylometazoline hydrochloride":"xylometazoline","rovfenac":"diclofenac_suppository","diclogesic":"diclofenac_suppository","ديكلوجيزيك":"diclofenac_suppository","diclofenac suppository":"diclofenac_suppository","voltaren supp":"diclofenac_suppository","روفيناك":"diclofenac_suppository","voltaren suppository":"diclofenac_suppository","paracetamol suppository":"paracetamol_suppository","panadol suppository":"paracetamol_suppository","تحميلة باراسيتامول":"paracetamol_suppository","paracetamol supp":"paracetamol_suppository","fucidicacid":"fusidic_acid","fucidic acid":"fusidic_acid","fucidin":"fusidic_acid","فيوسيدين":"fusidic_acid","fusidic":"fusidic_acid","xylometazoline hcl":"xylometazoline","oxymetazoline":"xylometazoline","otrivin":"xylometazoline","أوتريفين":"xylometazoline","سبيرونولاكتون شراب":"spironolactone_syrup","سبيرنولاكتون":"spironolactone_syrup","سبيرونولاكتون":"spironolactone_syrup","spironolactone":"spironolactone_syrup","aldactone":"spironolactone_syrup","gentamicin":"gentamicin","جنتاميسين":"gentamicin","توبراديكس":"tobradex","tobradex":"tobradex","توبراميسين":"tobramycin","tobramycin":"tobramycin","سيبروفلوكساسين قطرة":"ciprofloxacin_drops","كلورامفينيكول قطرة":"chloramphenicol_drops","سوفراديكس":"sofradex","أوتوسبورين":"otosporin","جينتاميسين":"gentamicin","جنتامايسين":"gentamicin","garamycin":"gentamicin","غاراميسين":"gentamicin","غارامايسين":"gentamicin","ألداكتون":"spironolactone_syrup","aldactone syrup":"spironolactone_syrup","spironolactone syrup":"spironolactone_syrup","infacol":"simethicone","simeticone":"simethicone","dimethicone":"simethicone","zinc origin":"zinc_syrup","zinc sulfate":"zinc_syrup","ferric hydroxide":"iron_syrup","ferrous sulphate":"iron_syrup","ferose":"iron_syrup","فيرومين":"iron_syrup","feromin":"iron_syrup","فيروز":"iron_syrup","feroz":"iron_syrup","ferrum":"iron_syrup","فيرم":"iron_syrup","ferroussyrup":"iron_syrup","label analysis":"unknown","medicine label reading":"unknown","medicine label":"unknown","label reading":"unknown","i can see a":"unknown","this is a":"unknown","the image shows":"unknown","medicine bottle":"unknown","drug label":"unknown","® label":"iron_syrup","ferose® label analysis":"iron_syrup","ferrous syrup":"iron_syrup","ferrous sulfate":"iron_syrup","ferrous gluconate":"iron_syrup","iron sulphate":"iron_syrup","iron sulfate":"iron_syrup","zinc gluconate":"zinc_syrup","zinc acetate":"zinc_syrup","zinc chloride":"zinc_syrup","multivitamin":"multivitamin","multi vitamin":"multivitamin","فيتامينات متعددة":"multivitamin","ferrous sulfate":"iron_syrup","iron drops":"iron_syrup","iron supplement":"iron_syrup","vitamin d drops":"vitamin_d_drops","vitamin d3":"vitamin_d_drops","cholecalciferol":"vitamin_d_drops","colecalciferol":"vitamin_d_drops","vit d":"vitamin_d_drops","vit d3":"vitamin_d_drops","bronchikam":"guaifenesin","برونشيكام":"guaifenesin","bronchikam syrup":"guaifenesin","bronchikam syrup analysis":"guaifenesin","bronchicum":"guaifenesin","برونكام":"guaifenesin","برونشيكام":"guaifenesin","برونكيكام":"guaifenesin","bronchicum":"guaifenesin","كلورفينيرامين":"chlorpheniramine","chlorphenamine":"chlorpheniramine","كلور فينيرامين":"chlorpheniramine","جوايفينيزين":"guaifenesin","غوايفينيزين":"guaifenesin","guaifenisine":"guaifenesin","فينيلايفرين":"phenylephrine","فينيل ايفرين":"phenylephrine","فينيلفرين":"phenylephrine","phenylephrine":"phenylephrine","برونكيكام":"guaifenesin","bronchicum":"guaifenesin","phenylephrine":"phenylephrine","فينيلفرين":"phenylephrine","nasofed":"phenylephrine","ناسوفيد":"phenylephrine","xylometazoline hydrochloride":"xylometazoline","rovfenac":"diclofenac_suppository","diclogesic":"diclofenac_suppository","ديكلوجيزيك":"diclofenac_suppository","diclofenac suppository":"diclofenac_suppository","voltaren supp":"diclofenac_suppository","روفيناك":"diclofenac_suppository","voltaren suppository":"diclofenac_suppository","paracetamol suppository":"paracetamol_suppository","panadol suppository":"paracetamol_suppository","تحميلة باراسيتامول":"paracetamol_suppository","paracetamol supp":"paracetamol_suppository","fucidicacid":"fusidic_acid","fucidic acid":"fusidic_acid","fucidin":"fusidic_acid","فيوسيدين":"fusidic_acid","fusidic":"fusidic_acid","xylometazoline hcl":"xylometazoline","oxymetazoline":"xylometazoline","otrivin":"xylometazoline","أوتريفين":"xylometazoline","سبيرونولاكتون شراب":"spironolactone_syrup","سبيرنولاكتون":"spironolactone_syrup","سبيرونولاكتون":"spironolactone_syrup","spironolactone":"spironolactone_syrup","aldactone":"spironolactone_syrup","gentamicin":"gentamicin","جنتاميسين":"gentamicin","توبراديكس":"tobradex","tobradex":"tobradex","توبراميسين":"tobramycin","tobramycin":"tobramycin","سيبروفلوكساسين قطرة":"ciprofloxacin_drops","كلورامفينيكول قطرة":"chloramphenicol_drops","سوفراديكس":"sofradex","أوتوسبورين":"otosporin","جينتاميسين":"gentamicin","جنتامايسين":"gentamicin","garamycin":"gentamicin","غاراميسين":"gentamicin","غارامايسين":"gentamicin","ألداكتون":"spironolactone_syrup","aldactone syrup":"spironolactone_syrup","spironolactone syrup":"spironolactone_syrup","infacol":"simethicone","انفاكول":"simethicone","simethicone":"simethicone","سيميثيكون":"simethicone","mylicon":"simethicone","zincomed":"zinc_syrup","زنكوميد":"zinc_syrup","zinc_syrup":"zinc_syrup","زنك شراب":"zinc_syrup","iron_syrup":"iron_syrup","maltofer":"iron_syrup","حديد شراب":"iron_syrup","فيروجلوبين":"iron_syrup","feroglobin":"iron_syrup","devit":"vitamin_d_drops","دي فيت":"vitamin_d_drops","vitamin_d_drops":"vitamin_d_drops","فيتامين د قطرات":"vitamin_d_drops","prospan":"hedera_helix","ezyban":"hedera_helix","ايزيبان":"hedera_helix","إيزيبان":"hedera_helix","bronchokor":"hedera_helix","برونشيكور":"hedera_helix","bronchocor":"hedera_helix","بروسبان":"hedera_helix","hedelix":"hedera_helix","hedera helix":"hedera_helix","hedera_helix":"hedera_helix","ivy leaf":"hedera_helix","piriton":"chlorpheniramine","بيريتون":"chlorpheniramine","chlorpheniramine":"chlorpheniramine","phenergan":"promethazine","فينيرغان":"promethazine","promethazine":"promethazine","robitussin":"guaifenesin","روبيتوسين":"guaifenesin","mucinex":"guaifenesin","guaifenesin":"guaifenesin","delsym":"dextromethorphan","dextromethorphan":"dextromethorphan","benylin":"dextromethorphan","coldact":"chlorpheniramine_pseudoephedrine","كولداكت":"chlorpheniramine_pseudoephedrine","triaminic":"chlorpheniramine_pseudoephedrine","تريامينيك":"chlorpheniramine_pseudoephedrine","diphenhydramine":"diphenhydramine","exylin":"diphenhydramine","إكسيلين":"diphenhydramine","exilin":"diphenhydramine","benylin":"diphenhydramine","بينيلين":"diphenhydramine","benadryl":"diphenhydramine","بينادريل":"diphenhydramine","ديفينهيدرامين":"diphenhydramine","actifed":"triprolidine_pseudoephedrine","أكتيفيد":"triprolidine_pseudoephedrine","triominic":"triprolidine_pseudoephedrine","exillin":"amoxicillin","إكسيلين":"amoxicillin","exacillin":"amoxicillin","ampicillin":"ampicillin","أمبيسيلين":"ampicillin","ampiclox":"ampicillin","أمبيكلوكس":"ampicillin","coldact":"chlorpheniramine","كولداكت":"chlorpheniramine","piriton":"chlorpheniramine","بيريتون":"chlorpheniramine","phenergan":"promethazine","فينيرغان":"promethazine","robitussin":"dextromethorphan","روبيتوسين":"dextromethorphan","actifed":"triprolidine_pseudoephedrine","أكتيفيد":"triprolidine_pseudoephedrine","broncholisin":"salbutamol_bromhexine","برونكوليتين":"salbutamol_bromhexine","sudafed":"pseudoephedrine","سودافيد":"pseudoephedrine","mucinex":"guaifenesin","موسينكس":"guaifenesin","aerius":"desloratadine","neoclarityn":"desloratadine","إيريوس":"desloratadine","xyzal":"levocetirizine","زيزال":"levocetirizine","ليفوسيتيريزين":"levocetirizine","ديسلوراتادين":"desloratadine","دولوبي":"domperidone","موتيلين":"domperidone","motilene":"domperidone","موتيليوم":"domperidone","motilium":"domperidone","بروكينين":"domperidone","prokineen":"domperidone","دومبيريدون":"domperidone","domperidone":"domperidone","دوميبيريدون":"domperidone","دوم بي":"domperidone","dolopi":"domperidone","dolopy":"domperidone","دومبي":"domperidone","dompy":"domperidone","motilium":"domperidone","موتيليوم":"domperidone","دوميريدون":"domperidone",
+        ARABIC_MAP = {"bronchikam":"guaifenesin","برونشيكام":"guaifenesin","bronchikam syrup":"guaifenesin","bronchikam syrup analysis":"guaifenesin","bronchicum":"guaifenesin","برونكام":"guaifenesin","برونشيكام":"guaifenesin","برونكيكام":"guaifenesin","bronchicum":"guaifenesin","كلورفينيرامين":"chlorpheniramine","chlorphenamine":"chlorpheniramine","كلور فينيرامين":"chlorpheniramine","جوايفينيزين":"guaifenesin","غوايفينيزين":"guaifenesin","guaifenisine":"guaifenesin","فينيلايفرين":"phenylephrine","فينيل ايفرين":"phenylephrine","فينيلفرين":"phenylephrine","phenylephrine":"phenylephrine","برونكيكام":"guaifenesin","bronchicum":"guaifenesin","phenylephrine":"phenylephrine","فينيلفرين":"phenylephrine","nasofed":"phenylephrine","ناسوفيد":"phenylephrine","xylometazoline hydrochloride":"xylometazoline","rovfenac":"diclofenac_suppository","diclogesic":"diclofenac_suppository","ديكلوجيزيك":"diclofenac_suppository","diclofenac suppository":"diclofenac_suppository","voltaren supp":"diclofenac_suppository","روفيناك":"diclofenac_suppository","voltaren suppository":"diclofenac_suppository","paracetamol suppository":"paracetamol_suppository","panadol suppository":"paracetamol_suppository","تحميلة باراسيتامول":"paracetamol_suppository","paracetamol supp":"paracetamol_suppository","fucidicacid":"fusidic_acid","fucidic acid":"fusidic_acid","fucidin":"fusidic_acid","فيوسيدين":"fusidic_acid","fusidic":"fusidic_acid","xylometazoline hcl":"xylometazoline","oxymetazoline":"xylometazoline","otrivin":"xylometazoline","أوتريفين":"xylometazoline","infacol":"simethicone","simeticone":"simethicone","dimethicone":"simethicone","zinc origin":"zinc_syrup","zinc sulfate":"zinc_syrup","ferric hydroxide":"iron_syrup","ferrous sulphate":"iron_syrup","ferose":"iron_syrup","فيرومين":"iron_syrup","feromin":"iron_syrup","فيروز":"iron_syrup","feroz":"iron_syrup","ferrum":"iron_syrup","فيرم":"iron_syrup","ferroussyrup":"iron_syrup","label analysis":"unknown","medicine label reading":"unknown","medicine label":"unknown","label reading":"unknown","i can see a":"unknown","this is a":"unknown","the image shows":"unknown","medicine bottle":"unknown","drug label":"unknown","® label":"iron_syrup","ferose® label analysis":"iron_syrup","ferrous syrup":"iron_syrup","ferrous sulfate":"iron_syrup","ferrous gluconate":"iron_syrup","iron sulphate":"iron_syrup","iron sulfate":"iron_syrup","zinc gluconate":"zinc_syrup","zinc acetate":"zinc_syrup","zinc chloride":"zinc_syrup","multivitamin":"multivitamin","multi vitamin":"multivitamin","فيتامينات متعددة":"multivitamin","ferrous sulfate":"iron_syrup","iron drops":"iron_syrup","iron supplement":"iron_syrup","vitamin d drops":"vitamin_d_drops","vitamin d3":"vitamin_d_drops","cholecalciferol":"vitamin_d_drops","colecalciferol":"vitamin_d_drops","vit d":"vitamin_d_drops","vit d3":"vitamin_d_drops","bronchikam":"guaifenesin","برونشيكام":"guaifenesin","bronchikam syrup":"guaifenesin","bronchikam syrup analysis":"guaifenesin","bronchicum":"guaifenesin","برونكام":"guaifenesin","برونشيكام":"guaifenesin","برونكيكام":"guaifenesin","bronchicum":"guaifenesin","كلورفينيرامين":"chlorpheniramine","chlorphenamine":"chlorpheniramine","كلور فينيرامين":"chlorpheniramine","جوايفينيزين":"guaifenesin","غوايفينيزين":"guaifenesin","guaifenisine":"guaifenesin","فينيلايفرين":"phenylephrine","فينيل ايفرين":"phenylephrine","فينيلفرين":"phenylephrine","phenylephrine":"phenylephrine","برونكيكام":"guaifenesin","bronchicum":"guaifenesin","phenylephrine":"phenylephrine","فينيلفرين":"phenylephrine","nasofed":"phenylephrine","ناسوفيد":"phenylephrine","xylometazoline hydrochloride":"xylometazoline","rovfenac":"diclofenac_suppository","diclogesic":"diclofenac_suppository","ديكلوجيزيك":"diclofenac_suppository","diclofenac suppository":"diclofenac_suppository","voltaren supp":"diclofenac_suppository","روفيناك":"diclofenac_suppository","voltaren suppository":"diclofenac_suppository","paracetamol suppository":"paracetamol_suppository","panadol suppository":"paracetamol_suppository","تحميلة باراسيتامول":"paracetamol_suppository","paracetamol supp":"paracetamol_suppository","fucidicacid":"fusidic_acid","fucidic acid":"fusidic_acid","fucidin":"fusidic_acid","فيوسيدين":"fusidic_acid","fusidic":"fusidic_acid","xylometazoline hcl":"xylometazoline","oxymetazoline":"xylometazoline","otrivin":"xylometazoline","أوتريفين":"xylometazoline","infacol":"simethicone","انفاكول":"simethicone","simethicone":"simethicone","سيميثيكون":"simethicone","mylicon":"simethicone","zincomed":"zinc_syrup","زنكوميد":"zinc_syrup","zinc_syrup":"zinc_syrup","زنك شراب":"zinc_syrup","iron_syrup":"iron_syrup","maltofer":"iron_syrup","حديد شراب":"iron_syrup","فيروجلوبين":"iron_syrup","feroglobin":"iron_syrup","devit":"vitamin_d_drops","دي فيت":"vitamin_d_drops","vitamin_d_drops":"vitamin_d_drops","فيتامين د قطرات":"vitamin_d_drops","prospan":"hedera_helix","ezyban":"hedera_helix","ايزيبان":"hedera_helix","إيزيبان":"hedera_helix","bronchokor":"hedera_helix","برونشيكور":"hedera_helix","bronchocor":"hedera_helix","بروسبان":"hedera_helix","hedelix":"hedera_helix","hedera helix":"hedera_helix","hedera_helix":"hedera_helix","ivy leaf":"hedera_helix","piriton":"chlorpheniramine","بيريتون":"chlorpheniramine","chlorpheniramine":"chlorpheniramine","phenergan":"promethazine","فينيرغان":"promethazine","promethazine":"promethazine","robitussin":"guaifenesin","روبيتوسين":"guaifenesin","mucinex":"guaifenesin","guaifenesin":"guaifenesin","delsym":"dextromethorphan","dextromethorphan":"dextromethorphan","benylin":"dextromethorphan","coldact":"chlorpheniramine_pseudoephedrine","كولداكت":"chlorpheniramine_pseudoephedrine","triaminic":"chlorpheniramine_pseudoephedrine","تريامينيك":"chlorpheniramine_pseudoephedrine","diphenhydramine":"diphenhydramine","exylin":"diphenhydramine","إكسيلين":"diphenhydramine","exilin":"diphenhydramine","benylin":"diphenhydramine","بينيلين":"diphenhydramine","benadryl":"diphenhydramine","بينادريل":"diphenhydramine","ديفينهيدرامين":"diphenhydramine","actifed":"triprolidine_pseudoephedrine","أكتيفيد":"triprolidine_pseudoephedrine","triominic":"triprolidine_pseudoephedrine","exillin":"amoxicillin","إكسيلين":"amoxicillin","exacillin":"amoxicillin","ampicillin":"ampicillin","أمبيسيلين":"ampicillin","ampiclox":"ampicillin","أمبيكلوكس":"ampicillin","coldact":"chlorpheniramine","كولداكت":"chlorpheniramine","piriton":"chlorpheniramine","بيريتون":"chlorpheniramine","phenergan":"promethazine","فينيرغان":"promethazine","robitussin":"dextromethorphan","روبيتوسين":"dextromethorphan","actifed":"triprolidine_pseudoephedrine","أكتيفيد":"triprolidine_pseudoephedrine","broncholisin":"salbutamol_bromhexine","برونكوليتين":"salbutamol_bromhexine","sudafed":"pseudoephedrine","سودافيد":"pseudoephedrine","mucinex":"guaifenesin","موسينكس":"guaifenesin","aerius":"desloratadine","neoclarityn":"desloratadine","إيريوس":"desloratadine","xyzal":"levocetirizine","زيزال":"levocetirizine","ليفوسيتيريزين":"levocetirizine","ديسلوراتادين":"desloratadine","دولوبي":"domperidone","موتيلين":"domperidone","motilene":"domperidone","موتيليوم":"domperidone","motilium":"domperidone","بروكينين":"domperidone","prokineen":"domperidone","دومبيريدون":"domperidone","domperidone":"domperidone","دوميبيريدون":"domperidone","دوم بي":"domperidone","dolopi":"domperidone","dolopy":"domperidone","دومبي":"domperidone","dompy":"domperidone","motilium":"domperidone","موتيليوم":"domperidone","دوميريدون":"domperidone",
                 # أموكسيسيلين
                 "amoxicillin":"amoxicillin","أموكسيسيلين":"amoxicillin","اموكسيسيلين":"amoxicillin",
                 "amoxil":"amoxicillin","أموكسيل":"amoxicillin","flumox":"amoxicillin","فلوموكس":"amoxicillin",
@@ -1097,12 +1079,6 @@ def kb_main(lang):
         [InlineKeyboardButton(tx("btn_remind", lang), callback_data="m_remind")],
         [InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],
         [InlineKeyboardButton(tx("btn_settings", lang), callback_data="m_settings")]])
-
-def kb_child_result(lang):
-    return InlineKeyboardMarkup([
-        [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
-        [InlineKeyboardButton("🔙 " + ("القائمة الرئيسية" if lang=="ar" else "Main Menu"), callback_data="back")]
-    ])
 
 def kb_back(lang):
     return InlineKeyboardMarkup([[
@@ -1528,56 +1504,63 @@ async def drug_search(u, ctx):
     lang = get_lang(ctx)
     track(u, "searches")
     query = u.message.text.strip()
-    
-    # Claude API مباشرة
-    thinking = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
-    try:
-        if lang == "ar":
-            prompt = f"""أنت صيدلاني خبير. أعطني معلومات شاملة عن دواء: {query}
-أجب بالعربية فقط:
-💊 الاسم العلمي:
-🏷️ الأسماء التجارية:
-📋 الاستخدامات:
-💉 الجرعة للبالغين:
-👶 جرعة الأطفال:
-⚠️ الآثار الجانبية:
-🔴 موانع الاستخدام:
-🤰 الحمل والرضاعة:
-🫘 الكلى والكبد:
-💊 التفاعلات الدوائية:
-❗ تحذيرات خاصة:
-إذا لم تعرف اكتب: غير معروف"""
-        else:
-            prompt = f"""You are an expert pharmacist. Give info about: {query}
-Reply in English ONLY:
-💊 Generic Name:
-🏷️ Brand Names:
-📋 Indications:
-💉 Adult Dose:
-👶 Pediatric Dose:
-⚠️ Side Effects:
-🔴 Contraindications:
-🤰 Pregnancy & Lactation:
-🫘 Renal & Hepatic:
-💊 Drug Interactions:
-❗ Special Warnings:
-If unknown write: unknown"""
-        async with httpx.AsyncClient(timeout=30) as c:
-            r = await c.post("https://api.anthropic.com/v1/messages",
-                headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
-                json={"model": "claude-haiku-4-5-20251001", "max_tokens": 800,
-                    "messages": [{"role": "user", "content": prompt}]})
-            result = r.json().get("content", [{}])[0].get("text", "").strip()
-        await thinking.delete()
-        if "غير معروف" not in result and "unknown" not in result.lower():
-            await u.message.reply_text(result, reply_markup=kb_back(lang))
-            return STATE_DRUG_SEARCH
-    except Exception as e:
-        logger.error(f"drug_search: {e}")
-        try: await thinking.delete()
-        except: pass
-    
-    await u.message.reply_text(tx("not_found", lang), reply_markup=kb_back(lang))
+    # نضيف نوع الدواء للبحث
+    drug_form = ctx.user_data.get("drug_form", "syrup")
+    if drug_form == "suppository" and "suppository" not in query.lower() and "تحميل" not in query:
+        query_search = query + " suppository"
+    else:
+        query_search = query
+    res = search_drugs(query_search)
+    if not res:
+        res = search_drugs(query)
+    if not res:
+        # نستخدم Claude API
+        thinking = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
+        try:
+            prompt = f"""أنت صيدلاني خبير. أعطني معلومات شاملة عن: {query}
+
+أجب بهذا التنسيق بالضبط:
+💊 *الاسم العلمي:* 
+🏷️ *الأسماء التجارية:* 
+📋 *الاستخدامات:* 
+💉 *الجرعة للبالغين:* 
+👶 *جرعة الأطفال:* 
+⏰ *طريقة الاستخدام:* 
+⚠️ *الآثار الجانبية:* 
+🔴 *موانع الاستخدام:* 
+🤰 *الحمل والرضاعة:* 
+🫘 *الكلى والكبد:* 
+💊 *التفاعلات الدوائية المهمة:* 
+❗ *تحذيرات خاصة:* 
+
+أجب {"بالعربية" if lang=="ar" else "in English"} فقط بدون مقدمة. إذا لم تعرف الدواء اكتب فقط: غير معروف"""
+
+            async with httpx.AsyncClient(timeout=30) as c:
+                r = await c.post("https://api.anthropic.com/v1/messages",
+                    headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                    json={"model": "claude-haiku-4-5-20251001", "max_tokens": 800,
+                        "messages": [{"role": "user", "content": prompt}]})
+                ai_result = r.json().get("content", [{}])[0].get("text", "").strip()
+            await thinking.delete()
+            if "غير معروف" in ai_result or "unknown" in ai_result.lower():
+                await u.message.reply_text(tx("not_found", lang), reply_markup=kb_back(lang))
+            else:
+                await u.message.reply_text(ai_result, reply_markup=kb_back(lang))
+        except Exception as e:
+            logger.error(f"Drug search API error: {e}")
+            try: await thinking.delete()
+            except: pass
+            await u.message.reply_text("⚠️ " + ("خطأ في الاتصال، حاول مرة أخرى" if lang=="ar" else "Connection error, try again"), reply_markup=kb_back(lang))
+        return STATE_DRUG_SEARCH
+    if len(res) == 1:
+        await u.message.reply_text(fmt_drug(res[0], lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN_V2 if False else ParseMode.MARKDOWN)
+        return STATE_DRUG_SEARCH
+    ctx.user_data["results"] = res
+    btns = [[InlineKeyboardButton(
+        str(d.get("name_ar" if lang=="ar" else "name_en", d.get("name_en", "?"))),
+        callback_data=f"ds_{i}")] for i, d in enumerate(res)]
+    btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
+    await u.message.reply_text(tx("multi_results", lang), reply_markup=InlineKeyboardMarkup(btns))
     return STATE_DRUG_SEARCH
 
 async def drug_sel(u, ctx):
@@ -1632,22 +1615,15 @@ async def child_input(u, ctx):
                 if ai_dose:
                     await u.message.reply_text("📸 " + name + "\n\n" + ai_dose, reply_markup=kb_image_result(lang))
                 else:
-                    await u.message.reply_text("📸 " + name + "\n\n" + ("❌ لم يُعثر على الدواء\n\n💡 جرّب صورة أخرى أو أدخل الاسم يدوياً" if lang=="ar" else "❌ Drug not found\n\n💡 Try another photo or type name manually"), reply_markup=kb_image_result(lang))
+                    await u.message.reply_text("📸 " + name + "\n\n" + ("❌ لم يُعثر على الدواء" if lang=="ar" else "❌ Not found"), reply_markup=kb_image_result(lang))
             except Exception as e:
                 logger.error(f"Image drug API: {e}")
                 try: await thinking2.delete()
                 except: pass
-                await u.message.reply_text("📸 " + name + "\n\n" + ("❌ لم يُعثر على الدواء\n\n💡 جرّب صورة أخرى أو أدخل الاسم يدوياً" if lang=="ar" else "❌ Drug not found\n\n💡 Try another photo or type name manually"), reply_markup=kb_image_result(lang))
+                await u.message.reply_text("📸 " + name + "\n\n" + ("❌ لم يُعثر على الدواء" if lang=="ar" else "❌ Not found"), reply_markup=kb_image_result(lang))
             return STATE_CHILD_DRUG
         ctx.user_data["child_drug"] = res[0]
         ctx.user_data["img_drug"] = name
-        drug_form_img = ctx.user_data.get("drug_form","syrup")
-        if drug_form_img in ["cream","drops"]:
-            # نسأل عن العمر للقطرات والكريمات
-            ctx.user_data["child_drug"] = res[0]
-            await u.message.reply_text("📸 *" + name + "*\n\n📅 " + ("كم عمر الطفل بالسنوات؟" if lang=="ar" else "Child age in years?"),
-                reply_markup=kb_back(lang), parse_mode="Markdown")
-            return STATE_CHILD_WEIGHT
         msg2 = "📸 *" + name + "*\n\n" + tx("weight_prompt", lang)
         await u.message.reply_text(msg2, reply_markup=kb_image_result(lang, name), parse_mode=ParseMode.MARKDOWN)
         return STATE_CHILD_WEIGHT
@@ -1657,12 +1633,6 @@ async def child_input(u, ctx):
         return STATE_CHILD_DRUG
     if len(res) == 1:
         ctx.user_data["child_drug"] = res[0]
-        drug_form_txt = ctx.user_data.get("drug_form","syrup")
-        if drug_form_txt in ["cream","drops"]:
-            # نسأل عن العمر
-            await u.message.reply_text("📅 " + ("كم عمر الطفل بالسنوات؟" if lang=="ar" else "Child age in years?"),
-                reply_markup=kb_back(lang))
-            return STATE_CHILD_WEIGHT
         await u.message.reply_text(tx("weight_prompt", lang), reply_markup=kb_back(lang))
         return STATE_CHILD_WEIGHT
     ctx.user_data["results"] = res
@@ -1697,34 +1667,6 @@ async def child_weight(u, ctx):
         await u.message.reply_text("❌ " + ("لم يُحدد الدواء، ابدأ من جديد" if lang=="ar" else "Drug not set, start over"), reply_markup=kb_back(lang))
         return STATE_CHILD_DRUG
     ctx.user_data["child_weight"] = w
-    # القطرات والكريمات - نستخدم العمر
-    drug_form_cw = ctx.user_data.get("drug_form","syrup")
-    if drug_form_cw in ["cream","drops"]:
-        drug_name_cw = d.get("name_ar" if lang=="ar" else "name_en","") or d.get("name_en","")
-        # نستخدم fixed_dose إذا موجود
-        if d.get("fixed_dose") and d.get("age_doses"):
-            age_doses = d["age_doses"]
-            lines_d = ["💊 " + drug_name_cw, ""]
-            for age_range, dose in age_doses.items():
-                lines_d.append("  • " + age_range + ": " + dose)
-            lines_d.append("")
-            lines_d.append("⚠️ " + ("استشر الطبيب دائماً" if lang=="ar" else "Always consult doctor"))
-            await u.message.reply_text("\n".join(lines_d), reply_markup=kb_child_result(lang))
-            return STATE_MAIN_MENU
-        # إذا لا يوجد fixed_dose نستخدم Claude
-        age_years = w
-        thinking_cw = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
-        try:
-            result_cw = await calc_special_form(drug_name_cw, age_years, drug_form_cw, lang)
-            await thinking_cw.delete()
-            if result_cw:
-                drops_btns = InlineKeyboardMarkup([[InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],[InlineKeyboardButton(tx("btn_back",lang), callback_data="back")]])
-                await u.message.reply_text(result_cw, reply_markup=drops_btns)
-                return STATE_MAIN_MENU
-        except Exception as e:
-            logger.error(f"drops/cream: {e}")
-            try: await thinking_cw.delete()
-            except: pass
     # نتحقق إذا كان مضاد حيوي
     name_key = d.get("name_en","").lower()
     logger.info(f"child_weight step2: name_key={name_key}, drug_form={ctx.user_data.get('drug_form')}")
@@ -1736,23 +1678,8 @@ async def child_weight(u, ctx):
         msg = "🦠 مكان الالتهاب؟" if lang=="ar" else "🦠 Infection site?"
         await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup(btns))
         return STATE_INFECTION_SITE
-    # التحقق من صحة شكل الدواء عبر Claude API
+    # التحاميل والكريمات والقطرات - Claude API
     drug_form = ctx.user_data.get("drug_form", "syrup")
-    drug_name_check = d.get("name_ar","") or d.get("name_en","")
-    
-    if drug_form == "syrup" and not d.get("concentration") and not d.get("fixed_dose") and not d.get("pediatric_min_mg_per_kg"):
-        try:
-            async with httpx.AsyncClient(timeout=15) as hc:
-                r_check = await hc.post("https://api.anthropic.com/v1/messages",
-                    headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
-                    json={"model": "claude-haiku-4-5-20251001", "max_tokens": 50,
-                        "messages": [{"role": "user", "content": f"Is {drug_name_check} available as oral syrup/liquid for children? Answer ONLY: YES or NO"}]})
-                check_result = r_check.json().get("content", [{}])[0].get("text","").strip().upper()
-                if "NO" in check_result:
-                    msg = "⚠️ " + (f"{drug_name_check} غير متوفر كشراب للأطفال.\nيرجى اختيار الشكل الصحيح للدواء." if lang=="ar" else f"{drug_name_check} is not available as syrup for children.\nPlease select the correct drug form.")
-                    await u.message.reply_text(msg, reply_markup=kb_back(lang))
-                    return STATE_MAIN_MENU
-        except: pass
     if drug_form in ["suppository", "cream", "drops"]:
         drug_name = d.get("name_ar","") if lang=="ar" else d.get("name_en","")
         if not drug_name: drug_name = d.get("name_en","") or d.get("name_ar","")
@@ -1761,11 +1688,7 @@ async def child_weight(u, ctx):
             result_f = await calc_special_form(drug_name, w, drug_form, lang)
             await thinking_f.delete()
             if result_f:
-                form_btns = InlineKeyboardMarkup([
-                    [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
-                    [InlineKeyboardButton(tx("btn_back",lang), callback_data="back")]
-                ])
-                await u.message.reply_text(result_f, reply_markup=form_btns)
+                await u.message.reply_text(result_f, reply_markup=kb_back(lang))
                 return STATE_MAIN_MENU
         except Exception as e:
             logger.error(f"Special form error: {e}")
@@ -1794,13 +1717,6 @@ async def child_weight(u, ctx):
     "latanoprost": ["0.005%"],
     "nitazoxanide": ["100mg/5ml", "200mg/5ml"],
     "cinnarizine": ["25mg/5ml"],
-    "phenobarbital": ["10mg/5ml", "15mg/5ml"],
-    "levetiracetam": ["100mg/ml", "100mg/5ml"],
-    "lactulose": ["3.35g/5ml"],
-    "spironolactone": ["5mg/5ml", "25mg/5ml"],
-    "spironolactone_syrup": ["5mg/5ml", "25mg/5ml"],
-    "clarithromycin": ["125mg/5ml", "250mg/5ml"],
-    "cefuroxime": ["125mg/5ml", "250mg/5ml"],
     "fusidic_acid": ["2% cream"],
     "clotrimazole_cream": ["1% cream"],
     "betamethasone_cream": ["0.1% cream"],
@@ -1838,7 +1754,6 @@ async def child_weight(u, ctx):
     
     # نضيف أزرار التراكيز في الأسفل
     change_btns = [[InlineKeyboardButton(c, callback_data="conc_" + c)] for c in concs[:4]]
-    change_btns.append([InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")])
     change_btns.append([InlineKeyboardButton("🔙 " + ("رجوع" if lang=="ar" else "Back"), callback_data="back")])
     
     note = "\n\n🔄 " + ("تغيير التركيز:" if lang=="ar" else "Change concentration:")
@@ -2344,10 +2259,7 @@ async def patient_menu(u, ctx):
         lines = ["👤 *" + p.get("name","") + "*", ""]
         lines.append(("📅 العمر: " if lang=="ar" else "📅 Age: ") + str(p.get("age","-")))
         lines.append(("⚖️ الوزن: " if lang=="ar" else "⚖️ Weight: ") + str(p.get("weight","-")) + " kg")
-        gender_val = p.get("gender","-")
-        if lang == "en":
-            gender_val = {"ذكر":"Male","أنثى":"Female"}.get(gender_val, gender_val)
-        lines.append(("👤 الجنس: " if lang=="ar" else "👤 Gender: ") + str(gender_val))
+        lines.append(("👤 الجنس: " if lang=="ar" else "👤 Gender: ") + str(p.get("gender","-")))
         if p.get("diseases"):
             lines.append(("🏥 الأمراض: " if lang=="ar" else "🏥 Diseases: ") + p["diseases"])
         if p.get("meds"):
@@ -2364,14 +2276,9 @@ async def patient_menu(u, ctx):
                 meds_btns.append([InlineKeyboardButton("⏰ " + med[:15], callback_data=cb)])
         
         btns = meds_btns + [
-            [InlineKeyboardButton("📊 " + ("سجل السكر/الضغط" if lang=="ar" else "Sugar/BP Log"), callback_data="pat_log_" + pid)],
-            [InlineKeyboardButton("🖨️ " + ("تصدير PDF" if lang=="ar" else "Export PDF"), callback_data="pat_pdf_" + pid)],
             [InlineKeyboardButton("📝 " + ("إضافة ملاحظة" if lang=="ar" else "Add Note"), callback_data="pat_note_" + pid)],
-            [InlineKeyboardButton("📊 " + ("سجل السكر والضغط" if lang=="ar" else "Sugar & BP Log"), callback_data="pat_log_" + pid)],
-            [InlineKeyboardButton("✏️ " + ("تعديل البيانات" if lang=="ar" else "Edit Data"), callback_data="pat_edit_" + pid)],
-            [InlineKeyboardButton("➕ " + ("إضافة مريض آخر" if lang=="ar" else "Add Another Patient"), callback_data="pat_add")],
             [InlineKeyboardButton("🗑️ " + ("حذف" if lang=="ar" else "Delete"), callback_data="pat_del_" + pid)],
-            [InlineKeyboardButton("🔙 " + ("القائمة الرئيسية" if lang=="ar" else "Main Menu"), callback_data="back")]
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_list")]
         ]
         await q.message.edit_text("\n".join(lines), reply_markup=InlineKeyboardMarkup(btns), parse_mode=ParseMode.MARKDOWN)
         return STATE_PAT_MENU
@@ -2387,427 +2294,6 @@ async def patient_menu(u, ctx):
             await q.message.edit_text("🕐 " + ("أدخل وقت التذكير مثال 08:00:" if lang=="ar" else "Enter time e.g. 08:00:"))
             return STATE_REM_ADD_TIME
     
-    if q.data.startswith("pat_pdf_"):
-        pid = q.data.replace("pat_pdf_","")
-        p = patients.get(pid,{})
-        await q.answer("🔄 " + ("جارٍ إنشاء PDF..." if lang=="ar" else "Creating PDF..."), show_alert=True)
-        
-        # نبني محتوى التقرير
-        from datetime import datetime
-        lines = []
-        lines.append("=" * 40)
-        lines.append("ملف المريض الطبي" if lang=="ar" else "Patient Medical File")
-        lines.append("=" * 40)
-        lines.append("")
-        lines.append(("الاسم: " if lang=="ar" else "Name: ") + p.get("name",""))
-        lines.append(("العمر: " if lang=="ar" else "Age: ") + str(p.get("age","")))
-        lines.append(("الوزن: " if lang=="ar" else "Weight: ") + str(p.get("weight","")) + " kg")
-        lines.append(("الجنس: " if lang=="ar" else "Gender: ") + str(p.get("gender","")))
-        if p.get("diseases"):
-            lines.append(("الأمراض: " if lang=="ar" else "Diseases: ") + p["diseases"])
-        if p.get("meds"):
-            lines.append(("الأدوية: " if lang=="ar" else "Medications: ") + p["meds"])
-        if p.get("allergy"):
-            lines.append(("الحساسية: " if lang=="ar" else "Allergies: ") + p["allergy"])
-        
-        # القراءات
-        readings = p.get("readings",[])
-        if readings:
-            lines.append("")
-            lines.append("=" * 40)
-            lines.append("سجل القراءات:" if lang=="ar" else "Readings Log:")
-            
-            bp_r = [r for r in readings if r.get("bp")]
-            fasting_r = [r for r in readings if r.get("sugar") and r.get("stype") == "fasting"]
-            postmeal_r = [r for r in readings if r.get("sugar") and r.get("stype") == "postmeal"]
-            hba1c_r = [r for r in readings if r.get("sugar") and r.get("stype") == "hba1c"]
-            random_r = [r for r in readings if r.get("sugar") and r.get("stype","random") not in ["fasting","postmeal","hba1c"]]
-            
-            if bp_r:
-                lines.append("💉 قراءات الضغط:")
-                for r in bp_r: lines.append("  " + r["date"] + ": " + str(r["bp"]))
-            if fasting_r:
-                lines.append("🌅 سكر الصيام:")
-                for r in fasting_r: lines.append("  " + r["date"] + ": " + str(r["sugar"]) + " mg/dL")
-            if postmeal_r:
-                lines.append("🍽️ سكر بعد الأكل:")
-                for r in postmeal_r: lines.append("  " + r["date"] + ": " + str(r["sugar"]) + " mg/dL")
-            if hba1c_r:
-                lines.append("📊 HbA1c التراكمي:")
-                for r in hba1c_r: lines.append("  " + r["date"] + ": " + str(r["sugar"]) + "%")
-            if random_r:
-                lines.append("🎲 قراءات عشوائية:")
-                for r in random_r: lines.append("  " + r["date"] + ": " + str(r["sugar"]) + " mg/dL")
-        
-        # الملاحظات
-        notes = p.get("notes",[])
-        if notes:
-            lines.append("")
-            lines.append("=" * 40)
-            lines.append("الملاحظات:" if lang=="ar" else "Notes:")
-            for n in notes:
-                if n.get("type") == "text":
-                    lines.append("📝 " + n["date"] + ": " + n["content"])
-                elif n.get("type") == "photo":
-                    lines.append("📸 " + n["date"] + ": " + ("صورة - سيتم إرسالها منفصلة" if lang=="ar" else "Photo - will be sent separately"))
-                elif n.get("type") == "file":
-                    lines.append("📄 " + n["date"] + ": " + n.get("name","ملف"))
-        
-        lines.append("")
-        lines.append("تاريخ التصدير: " + datetime.now().strftime("%Y-%m-%d %H:%M"))
-        
-        report = "\n".join(lines)
-        await u.effective_chat.send_message("```\n" + report + "\n```", parse_mode="Markdown")
-        
-        # نرسل الصور منفصلة
-        photos = [n for n in p.get("notes",[]) if n.get("type") == "photo"]
-        if photos:
-            await u.effective_chat.send_message("📸 " + ("صور الملف:" if lang=="ar" else "File Photos:"))
-            for ph in photos:
-                try:
-                    caption = ph.get("caption","") or ph.get("date","")
-                    await u.effective_chat.send_photo(ph["file_id"], caption=caption)
-                except: pass
-        
-        return STATE_PAT_MENU
-    
-    if q.data.startswith("pat_log_"):
-        pid = q.data.replace("pat_log_","")
-        p = patients.get(pid,{})
-        readings = p.get("readings",[])
-        lines = ["📊 *" + ("سجل " if lang=="ar" else "Log: ") + p.get("name","") + "*",""]
-        if readings:
-            sugar_readings = [r for r in readings if r.get("sugar")]
-            bp_readings = [r for r in readings if r.get("bp")]
-            if bp_readings:
-                lines.append("💉 " + ("آخر قراءات الضغط:" if lang=="ar" else "Latest BP:"))
-                for r in bp_readings[-3:]:
-                    sys_val = r.get("sys",0)
-                    if sys_val < 120: status = "✅"
-                    elif sys_val < 130: status = "🟡"
-                    elif sys_val < 140: status = "🟠"
-                    else: status = "🔴"
-                    lines.append("  " + status + " " + r["date"] + ": " + str(r["bp"]))
-            if sugar_readings:
-                lines.append("")
-                lines.append("🩸 " + ("آخر قراءات السكر:" if lang=="ar" else "Latest Sugar:"))
-                for r in sugar_readings[-3:]:
-                    val = r["sugar"]
-                    if val < 70: status = "⚠️"
-                    elif val <= 100: status = "✅"
-                    elif val <= 125: status = "🟡"
-                    else: status = "🔴"
-                    stype = r.get("stype","")
-                    stype_ar = r.get("stype_ar","")
-                    if stype == "hba1c":
-                        if val < 5.7: status = "✅"
-                        elif val <= 6.4: status = "🟡"
-                        elif val <= 7.0: status = "🟠"
-                        else: status = "🔴"
-                        lines.append("  " + status + " " + r["date"] + ": " + str(val) + "% (HbA1c تراكمي)")
-                    else:
-                        if val < 70: status = "⚠️"
-                        elif val <= 100: status = "✅"
-                        elif val <= 125: status = "🟡"
-                        else: status = "🔴"
-                        label = " (" + stype_ar + ")" if stype_ar else ""
-                        lines.append("  " + status + " " + r["date"] + ": " + str(val) + " mg/dL" + label)
-        else:
-            lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings"))
-        btns = InlineKeyboardMarkup([
-            [InlineKeyboardButton("✏️ " + ("أضف قراءة" if lang=="ar" else "Add Reading"), callback_data="pat_addreading_" + pid)],
-            [InlineKeyboardButton("📈 " + ("سجل السكر" if lang=="ar" else "Sugar Log"), callback_data="pat_viewsugar_" + pid),
-             InlineKeyboardButton("📉 " + ("سجل الضغط" if lang=="ar" else "BP Log"), callback_data="pat_viewbp_" + pid)],
-            [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]
-        ])
-        await q.message.edit_text("\n".join(lines), reply_markup=btns, parse_mode="Markdown")
-        return STATE_PAT_MENU
-    
-    if q.data.startswith("pat_viewfasting_") or q.data.startswith("pat_viewpostmeal_") or q.data.startswith("pat_viewhba1c_") or q.data.startswith("pat_viewrandom_"):
-        for prefix in ["pat_viewfasting_","pat_viewpostmeal_","pat_viewhba1c_","pat_viewrandom_"]:
-            if q.data.startswith(prefix):
-                pid = q.data.replace(prefix,"")
-                stype = prefix.replace("pat_view","").replace("_","")
-                break
-        p = patients.get(pid,{})
-        readings = p.get("readings",[])
-        
-        stype_map = {"fasting":"🌅 سكر الصيام","postmeal":"🍽️ سكر بعد الأكل","hba1c":"📊 HbA1c التراكمي","random":"🎲 عشوائي"}
-        unit_map = {"hba1c":"%","fasting":"mg/dL","postmeal":"mg/dL","random":"mg/dL"}
-        
-        filtered = [r for r in readings if r.get("sugar") and r.get("stype","random") == stype]
-        lines = [stype_map.get(stype,"📊") + " *" + p.get("name","") + "*",""]
-        
-        if filtered:
-            for i, r in enumerate(filtered[-10:]):
-                unit = unit_map.get(stype,"mg/dL")
-                lines.append(f"  {i+1}. {r['date'][:16]}: {r['sugar']} {unit}")
-        else:
-            lines.append("📭 لا توجد قراءات")
-        
-        # أزرار حذف
-        del_btns = []
-        for i, r in enumerate(filtered[-5:]):
-            del_btns.append([InlineKeyboardButton(f"🗑️ {r['date'][:10]}: {r['sugar']}", callback_data=f"pat_delreading_{pid}_{r['date']}")])
-        del_btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)])
-        
-        await q.message.edit_text("\n".join(lines), reply_markup=InlineKeyboardMarkup(del_btns), parse_mode="Markdown")
-        return STATE_PAT_MENU
-
-    if q.data.startswith("pat_delreading_"):
-        parts = q.data.replace("pat_delreading_","").split("_",1)
-        pid = parts[0]
-        date_key = parts[1] if len(parts)>1 else ""
-        p = patients.get(pid,{})
-        before = len(p.get("readings",[]))
-        p["readings"] = [r for r in p.get("readings",[]) if r.get("date","") != date_key]
-        after = len(p.get("readings",[]))
-        save_patients(ctx)
-        await q.answer("✅ " + (f"تم حذف {before-after} قراءة" if lang=="ar" else f"Deleted {before-after} reading"))
-        return STATE_PAT_MENU
-
-    if q.data.startswith("pat_viewsugar_"):
-        pid = q.data.replace("pat_viewsugar_","")
-        p = patients.get(pid,{})
-        readings = [r for r in p.get("readings",[]) if r.get("sugar")]
-        lines = ["🩸 *" + ("سجل السكر - " if lang=="ar" else "Sugar Log - ") + p.get("name","") + "*",""]
-        if readings:
-            for r in readings[-15:]:
-                val = r["sugar"]
-                if val < 70: status = "⚠️"
-                elif val <= 100: status = "✅"
-                elif val <= 125: status = "🟡"
-                else: status = "🔴"
-                lines.append(status + " " + r["date"] + ": " + str(val) + " mg/dL")
-        else:
-            lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings"))
-        await q.message.edit_text("\n".join(lines),
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]),
-            parse_mode="Markdown")
-        return STATE_PAT_MENU
-
-    if q.data.startswith("pat_viewbp_"):
-        pid = q.data.replace("pat_viewbp_","")
-        p = patients.get(pid,{})
-        readings = [r for r in p.get("readings",[]) if r.get("bp")]
-        lines = ["💉 *" + ("سجل الضغط - " if lang=="ar" else "BP Log - ") + p.get("name","") + "*",""]
-        if readings:
-            for r in readings[-15:]:
-                sys_val = r.get("sys",0)
-                if sys_val < 120: status = "✅"
-                elif sys_val < 130: status = "🟡"
-                elif sys_val < 140: status = "🟠"
-                else: status = "🔴"
-                lines.append(status + " " + r["date"] + ": " + str(r["bp"]))
-        else:
-            lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings"))
-        await q.message.edit_text("\n".join(lines),
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]),
-            parse_mode="Markdown")
-        return STATE_PAT_MENU
-
-    if q.data.startswith("pat_addreading_"):
-        pid = q.data.replace("pat_addreading_","")
-        ctx.user_data["log_pid"] = pid
-        btns = InlineKeyboardMarkup([
-            [InlineKeyboardButton("💉 " + ("قراءة ضغط" if lang=="ar" else "Blood Pressure"), callback_data="sugtype_bp_" + pid)],
-            [InlineKeyboardButton("🌅 " + ("سكر صيام" if lang=="ar" else "Fasting Sugar"), callback_data="sugtype_fasting_" + pid)],
-            [InlineKeyboardButton("🍽️ " + ("سكر بعد الأكل بساعتين" if lang=="ar" else "Post-meal 2hrs"), callback_data="sugtype_postmeal_" + pid)],
-            [InlineKeyboardButton("📊 " + ("سكر تراكمي HbA1c" if lang=="ar" else "HbA1c"), callback_data="sugtype_hba1c_" + pid)],
-            [InlineKeyboardButton("🎲 " + ("سكر عشوائي" if lang=="ar" else "Random Sugar"), callback_data="sugtype_random_" + pid)],
-            [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]
-        ])
-        await q.message.edit_text("📝 " + ("اختر نوع القراءة:" if lang=="ar" else "Select reading type:"), reply_markup=btns)
-        return STATE_PAT_MENU
-
-    if q.data.startswith("pat_addsugar_"):
-        pid = q.data.replace("pat_addsugar_","")
-        ctx.user_data["log_pid"] = pid
-        ctx.user_data["log_type"] = "sugar"
-        btns = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🌅 " + ("صيام" if lang=="ar" else "Fasting"), callback_data="sugtype_fasting_" + pid),
-             InlineKeyboardButton("🍽️ " + ("بعد الأكل" if lang=="ar" else "Post-meal"), callback_data="sugtype_postmeal_" + pid)],
-            [InlineKeyboardButton("🎲 " + ("عشوائي" if lang=="ar" else "Random"), callback_data="sugtype_random_" + pid),
-             InlineKeyboardButton("📊 " + ("تراكمي HbA1c" if lang=="ar" else "HbA1c"), callback_data="sugtype_hba1c_" + pid)],
-        ])
-        await q.message.edit_text("🩸 " + ("نوع قراءة السكر؟" if lang=="ar" else "Sugar reading type?"), reply_markup=btns)
-        return STATE_PAT_MENU
-    
-    if q.data.startswith("sugtype_"):
-        parts = q.data.split("_")
-        stype = parts[1]
-        pid = parts[2]
-        ctx.user_data["log_pid"] = pid
-        ctx.user_data[f"stype_{pid}"] = stype
-        
-        if stype == "bp":
-            ctx.user_data["log_type"] = "bp"
-            await q.message.edit_text("💉 " + ("أدخل قراءة الضغط (مثال: 120/80):" if lang=="ar" else "Enter BP (e.g. 120/80):"),
-                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_addreading_" + pid)]]))
-            return STATE_PAT_LOG
-        else:
-            ctx.user_data["log_type"] = "sugar"
-            ctx.user_data["sugar_type"] = stype
-        type_names = {"fasting":"صيام","postmeal":"بعد الأكل","random":"عشوائي","hba1c":"تراكمي"}
-        type_name = type_names.get(stype, stype)
-        type_emoji = {"hba1c":"📊","fasting":"🌅","postmeal":"🍽️","random":"🎲"}.get(stype,"🩸")
-        type_unit = "%" if stype == "hba1c" else "mg/dL"
-        # نحفظ النوع في اسم المفتاح الثابت
-        ctx.user_data[f"stype_{pid}"] = stype
-        if stype == "hba1c":
-            msg = "📊 اكتب مثال: تراكمي 7.5"
-        elif stype == "fasting":
-            msg = "🌅 اكتب مثال: صيام 95"
-        elif stype == "postmeal":
-            msg = "🍽️ اكتب مثال: بعداكل 140"
-        else:
-            msg = "🎲 اكتب مثال: عشوائي 110"
-        await q.message.edit_text(msg)
-        return STATE_PAT_LOG
-    
-    if q.data.startswith("pat_addbp_"):
-        pid = q.data.replace("pat_addbp_","")
-        ctx.user_data["log_pid"] = pid
-        ctx.user_data["log_type"] = "bp"
-        await q.message.edit_text("💉 اكتب مثال: ضغط 120/80")
-        return STATE_PAT_LOG
-    
-    if q.data.startswith("pat_edit_"):
-        pid = q.data.replace("pat_edit_","")
-        p = patients.get(pid,{})
-        btns = InlineKeyboardMarkup([
-            [InlineKeyboardButton("👤 " + ("الاسم: " if lang=="ar" else "Name: ") + str(p.get("name","")), callback_data="patedit_name_" + pid)],
-            [InlineKeyboardButton("📅 " + ("العمر: " if lang=="ar" else "Age: ") + str(p.get("age","")), callback_data="patedit_age_" + pid)],
-            [InlineKeyboardButton("⚖️ " + ("الوزن: " if lang=="ar" else "Weight: ") + str(p.get("weight","")), callback_data="patedit_weight_" + pid)],
-            [InlineKeyboardButton("💊 " + ("الأدوية" if lang=="ar" else "Medications"), callback_data="patedit_meds_" + pid)],
-            [InlineKeyboardButton("🏥 " + ("الأمراض" if lang=="ar" else "Diseases"), callback_data="patedit_diseases_" + pid)],
-            [InlineKeyboardButton("⚠️ " + ("الحساسية" if lang=="ar" else "Allergies"), callback_data="patedit_allergy_" + pid)],
-            [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]
-        ])
-        await q.message.edit_text("✏️ " + ("اختر ما تريد تعديله:" if lang=="ar" else "Select what to edit:"), reply_markup=btns)
-        return STATE_PAT_MENU
-
-    if q.data.startswith("patedit_"):
-        parts = q.data.split("_")
-        field = parts[1]
-        pid = parts[2]
-        ctx.user_data["edit_pid"] = pid
-        ctx.user_data["edit_field"] = field
-        p = patients.get(pid,{})
-        
-        if field in ["meds","diseases"]:
-            current = p.get(field,"")
-            selected = [x.strip() for x in current.replace("،",",").split(",") if x.strip()] if current else []
-            
-            if field == "diseases":
-                options = ["ضغط","سكري","قلب","كلى","كبد","غدة","ربو","سرطان","روماتيزم","أنيميا","كولسترول","جلطة","قرحة","حساسية"] if lang=="ar" else ["Hypertension","Diabetes","Heart disease","Kidney disease","Liver disease","Thyroid","Asthma","Cancer","Arthritis","Anemia","Cholesterol","Stroke","Ulcer","Allergy"]
-            else:
-                options = ["ميتفورمين","أملودبين","ليزينوبريل","أتورفاستاتين","أسبرين","ميتوبرولول","ليفوثيروكسين","أوميبرازول","وارفارين","لوساتران","إنسولين","كونكور"] if lang=="ar" else ["Metformin","Amlodipine","Lisinopril","Atorvastatin","Aspirin","Metoprolol","Levothyroxine","Omeprazole","Warfarin","Losartan","Insulin","Bisoprolol"]
-            
-            lines = ["✏️ " + ("اختر الأمراض:" if field=="diseases" else "اختر الأدوية:"), ""]
-            lines.append("✅ " + ("المختار: " if lang=="ar" else "Selected: ") + ("، ".join(selected) if selected else "لا يوجد"))
-            
-            btns = []
-            row = []
-            for opt in options:
-                icon = "☑️" if opt in selected else "⬜"
-                row.append(InlineKeyboardButton(icon + " " + opt, callback_data=f"pattoggle_{field}_{pid}_{opt[:12]}"))
-                if len(row) == 2:
-                    btns.append(row)
-                    row = []
-            if row: btns.append(row)
-            btns.append([InlineKeyboardButton("➕ " + ("إضافة يدوي" if lang=="ar" else "Add manually"), callback_data=f"patadd_{field}_{pid}")])
-            btns.append([InlineKeyboardButton("✅ " + ("حفظ" if lang=="ar" else "Save"), callback_data=f"pat_edit_{pid}")])
-            btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_edit_" + pid)])
-            await q.message.edit_text("\n".join(lines), reply_markup=InlineKeyboardMarkup(btns))
-            return STATE_PAT_MENU
-        else:
-            field_names = {
-                "name": "الاسم" if lang=="ar" else "Name",
-                "age": "العمر" if lang=="ar" else "Age",
-                "weight": "الوزن (كغ)" if lang=="ar" else "Weight (kg)",
-                "allergy": "الحساسية" if lang=="ar" else "Allergies"
-            }
-            current_val = str(p.get(field,""))
-            await q.message.edit_text(
-                "✏️ " + ("القيمة الحالية: " if lang=="ar" else "Current: ") + current_val + "\n" +
-                ("أدخل القيمة الجديدة:" if lang=="ar" else "Enter new value:"),
-                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_edit_" + pid)]]))
-            return STATE_PAT_NOTE
-
-    if q.data.startswith("pattoggle_"):
-        parts = q.data.split("_",4)
-        field = parts[1]
-        pid = parts[2]
-        item = parts[3]
-        p = patients.get(pid,{})
-        current = p.get(field,"")
-        items = [x.strip() for x in current.replace("،",",").split(",") if x.strip()] if current else []
-        if item in items:
-            items.remove(item)
-        else:
-            items.append(item)
-        p[field] = "، ".join(items)
-        save_patients(ctx)
-        
-        # نعرض الصفحة مرة أخرى حسب اللغة
-        if field == "diseases":
-            options = ["ضغط","سكري","قلب","كلى","كبد","غدة","ربو","سرطان","روماتيزم","أنيميا","كولسترول","جلطة","قرحة","حساسية"] if lang=="ar" else ["Hypertension","Diabetes","Heart disease","Kidney disease","Liver disease","Thyroid","Asthma","Cancer","Arthritis","Anemia","Cholesterol","Stroke","Ulcer","Allergy"]
-        else:
-            options = ["ميتفورمين","أملودبين","ليزينوبريل","أتورفاستاتين","أسبرين","ميتوبرولول","ليفوثيروكسين","أوميبرازول","وارفارين","لوساتران","إنسولين","كونكور"] if lang=="ar" else ["Metformin","Amlodipine","Lisinopril","Atorvastatin","Aspirin","Metoprolol","Levothyroxine","Omeprazole","Warfarin","Losartan","Insulin","Bisoprolol"]
-        
-        selected = items
-        lines = ["✏️ " + ("اختر الأمراض:" if field=="diseases" else "اختر الأدوية:"), ""]
-        lines.append("✅ " + ("المختار: " if lang=="ar" else "Selected: ") + ("، ".join(selected) if selected else "لا يوجد"))
-        btns = []
-        row = []
-        for opt in options:
-            icon = "☑️" if opt in selected else "⬜"
-            row.append(InlineKeyboardButton(icon + " " + opt, callback_data=f"pattoggle_{field}_{pid}_{opt[:12]}"))
-            if len(row) == 2:
-                btns.append(row)
-                row = []
-        if row: btns.append(row)
-        btns.append([InlineKeyboardButton("➕ " + ("إضافة يدوي" if lang=="ar" else "Add manually"), callback_data=f"patadd_{field}_{pid}")])
-        btns.append([InlineKeyboardButton("✅ " + ("حفظ" if lang=="ar" else "Save"), callback_data=f"pat_edit_{pid}")])
-        btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_edit_" + pid)])
-        await q.answer("✅ " + ("تم التحديث" if lang=="ar" else "Updated"))
-        await q.message.edit_text("\n".join(lines), reply_markup=InlineKeyboardMarkup(btns))
-        return STATE_PAT_MENU
-
-    if q.data.startswith("patdel_"):
-        # حذف عنصر من قائمة
-        parts = q.data.split("_",4)
-        field = parts[1]
-        pid = parts[2]
-        item = parts[3] if len(parts) > 3 else ""
-        p = patients.get(pid,{})
-        current = p.get(field,"")
-        items = [x.strip() for x in current.replace("،",",").split(",") if x.strip()]
-        items = [x for x in items if not x.startswith(item)]
-        p[field] = "، ".join(items)
-        save_patients(ctx)
-        await q.answer("✅ " + ("تم الحذف" if lang=="ar" else "Deleted"))
-        # نعيد عرض القائمة
-        btns = []
-        for i in items:
-            btns.append([InlineKeyboardButton("🗑️ " + i, callback_data=f"patdel_{field}_{pid}_{i[:15]}")])
-        btns.append([InlineKeyboardButton("➕ " + ("إضافة" if lang=="ar" else "Add"), callback_data=f"patadd_{field}_{pid}")])
-        btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_edit_" + pid)])
-        await q.message.edit_text("✅ " + ("تم الحذف\n" if lang=="ar" else "Deleted\n") + "\n".join(["• " + i for i in items]) if items else "📭", reply_markup=InlineKeyboardMarkup(btns))
-        return STATE_PAT_MENU
-
-    if q.data.startswith("patadd_"):
-        parts = q.data.split("_",3)
-        field = parts[1]
-        pid = parts[2]
-        ctx.user_data["edit_pid"] = pid
-        ctx.user_data["edit_field"] = field
-        ctx.user_data["edit_append"] = True
-        await q.message.edit_text("➕ " + ("أدخل الإضافة:" if lang=="ar" else "Enter to add:"),
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data=f"patedit_{field}_{pid}")]]))
-        return STATE_PAT_NOTE
-
     if q.data.startswith("pat_del_"):
         pid = q.data.replace("pat_del_", "")
         patients = ctx.user_data.get("patients", {})
@@ -2973,96 +2459,7 @@ async def pat_meds_cb(u, ctx):
 
 async def pat_allergy(u, ctx):
     lang = get_lang(ctx)
-    text = u.message.text.strip()
-    
-    # إذا كنا في وضع تسجيل القراءات
-    log_type = ctx.user_data.get("log_type","")
-    if log_type == "reading":
-        pid = ctx.user_data.get("log_pid","")
-        load_patients(ctx)
-        patients = ctx.user_data.get("patients",{})
-        p = patients.get(pid,{})
-        if p:
-            from datetime import datetime
-            date = datetime.now().strftime("%Y-%m-%d %H:%M")
-            readings = p.setdefault("readings",[])
-            txt_lower = text.lower().strip()
-            
-            # نحدد النوع والقيمة
-            if txt_lower.startswith("صيام") or txt_lower.startswith("fasting"):
-                val = txt_lower.replace("صيام","").replace("fasting","").strip()
-                readings.append({"date":date,"sugar":float(val),"stype":"fasting","stype_ar":"صيام"})
-                msg = "✅ سكر صيام: " + val + " mg/dL"
-            elif txt_lower.startswith("بعد_اكل") or txt_lower.startswith("postmeal"):
-                val = txt_lower.replace("بعد_اكل","").replace("postmeal","").strip()
-                readings.append({"date":date,"sugar":float(val),"stype":"postmeal","stype_ar":"بعد الأكل"})
-                msg = "✅ سكر بعد الأكل: " + val + " mg/dL"
-            elif txt_lower.startswith("hba1c"):
-                val = txt_lower.replace("hba1c","").strip()
-                readings.append({"date":date,"sugar":float(val),"stype":"hba1c","stype_ar":"تراكمي HbA1c","unit":"%"})
-                msg = "✅ HbA1c: " + val + "%"
-            elif txt_lower.startswith("ضغط") or txt_lower.startswith("bp"):
-                val = txt_lower.replace("ضغط","").replace("bp","").strip()
-                parts = val.split("/")
-                readings.append({"date":date,"bp":val,"sys":int(parts[0]),"dia":int(parts[1])})
-                msg = "✅ ضغط: " + val
-            else:
-                try:
-                    val = float(txt_lower)
-                    readings.append({"date":date,"sugar":val,"stype":"random","stype_ar":"عشوائي"})
-                    msg = "✅ قراءة عشوائية: " + str(val) + " mg/dL"
-                except:
-                    await u.message.reply_text("❌ صيغة خاطئة — جرّب: صيام 95")
-                    return STATE_PAT_ALLERGY
-            
-            save_patients(ctx)
-            ctx.user_data.pop("log_type","")
-            await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📊 " + ("عرض السجل" if lang=="ar" else "View Log"), callback_data="pat_log_" + pid)]]))
-            return STATE_PAT_MENU
-    
-    if log_type in ["sugar","bp"]:
-        pid = ctx.user_data.get("log_pid","")
-        load_patients(ctx)
-        patients = ctx.user_data.get("patients",{})
-        p = patients.get(pid,{})
-        if p:
-            from datetime import datetime
-            date = datetime.now().strftime("%Y-%m-%d %H:%M")
-            readings = p.setdefault("readings",[])
-            if log_type == "sugar":
-                try:
-                    val = float(text)
-                    stype = ctx.user_data.pop("sugar_type","random")
-                    type_names = {"fasting":"صيام","postmeal":"بعد الأكل","random":"عشوائي","hba1c":"تراكمي HbA1c"}
-                    readings.append({"date":date,"sugar":val,"stype":stype,"stype_ar":type_names.get(stype,stype)})
-                    if stype_clean == "hba1c":
-                        if val < 5.7: status = "✅ طبيعي"
-                        elif val <= 6.4: status = "🟡 ما قبل السكري"
-                        elif val <= 7.0: status = "🟠 مضبوط"
-                        else: status = "🔴 مرتفع"
-                    else:
-                        if val < 70: status = "⚠️ منخفض"
-                        elif val <= 100: status = "✅ طبيعي"
-                        elif val <= 125: status = "🟡 ما قبل السكري"
-                        else: status = "🔴 مرتفع"
-                    msg = "✅ تم الحفظ\n🩸 " + str(val) + " mg/dL " + status
-                except:
-                    await u.message.reply_text("❌ أدخل رقماً")
-                    return STATE_PAT_ALLERGY
-            else:
-                try:
-                    parts = text.replace(" ","").split("/")
-                    readings.append({"date":date,"bp":text,"sys":int(parts[0]),"dia":int(parts[1])})
-                    msg = "✅ تم الحفظ\n💉 " + text
-                except:
-                    await u.message.reply_text("❌ صيغة خاطئة مثال: 120/80")
-                    return STATE_PAT_ALLERGY
-            save_patients(ctx)
-            ctx.user_data.pop("log_type","")
-            await u.message.reply_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📊 " + ("عرض السجل" if lang=="ar" else "View Log"), callback_data="pat_log_" + pid)]]))
-            return STATE_PAT_MENU
-    
-    allergy = text
+    allergy = u.message.text.strip()
     ctx.user_data["new_patient"]["allergy"] = "" if allergy.lower() in ["لا","no","none","-"] else allergy
     # نحفظ المريض
     import time
@@ -3321,8 +2718,8 @@ async def calc_special_form(drug_name, weight, drug_form, lang):
 أجب بهذا التنسيق فقط:
 💊 الدواء: {drug_name}
 📋 النوع: {form_name}
-👶 العمر: {int(weight)} سنوات
-💉 الجرعة: [احسب بدقة حسب الوزن]
+⚖️ الوزن: {weight} كغ
+💉 الجرعة المحسوبة: [احسب بدقة حسب الوزن]
 🔁 التكرار: 
 ⏱️ مدة العلاج: 
 ⚠️ تحذير مهم: 
@@ -3427,35 +2824,6 @@ async def pat_note_start(u, ctx):
 
 async def pat_note_save(u, ctx):
     lang = get_lang(ctx)
-    
-    # تعديل بيانات المريض
-    edit_pid = ctx.user_data.get("edit_pid","")
-    edit_field = ctx.user_data.get("edit_field","")
-    if edit_pid and edit_field:
-        load_patients(ctx)
-        patients = ctx.user_data.get("patients",{})
-        p = patients.get(edit_pid,{})
-        if p:
-            val = u.message.text.strip()
-            if edit_field == "weight":
-                try: p["weight"] = float(val)
-                except: pass
-            elif edit_field == "age":
-                try: p["age"] = int(val)
-                except: p["age"] = val
-            elif ctx.user_data.get("edit_append") and edit_field in ["meds","diseases"]:
-                current = p.get(edit_field,"")
-                p[edit_field] = current + "، " + val if current else val
-                ctx.user_data.pop("edit_append","")
-            else:
-                p[edit_field] = val
-            save_patients(ctx)
-            ctx.user_data.pop("edit_pid","")
-            ctx.user_data.pop("edit_field","")
-            await u.message.reply_text("✅ " + ("تم التعديل!" if lang=="ar" else "Updated!"),
-                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("👤 " + ("عرض الملف" if lang=="ar" else "View File"), callback_data="pat_view_" + edit_pid)]]))
-            return STATE_PAT_MENU
-    
     pid = ctx.user_data.get("note_pid", "")
     if not pid:
         return STATE_PAT_MENU
@@ -3543,309 +2911,6 @@ async def pat_view_notes(u, ctx):
     
     await u.effective_chat.send_message("✅ " + ("انتهت الملاحظات" if lang=="ar" else "End of notes"),
         reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
-    return STATE_PAT_MENU
-
-
-async def pat_log_menu(u, ctx):
-    q = u.callback_query; await q.answer()
-    lang = get_lang(ctx)
-    pid = q.data.replace("pat_log_","")
-    ctx.user_data["log_pid"] = pid
-    load_patients(ctx)
-    patients = ctx.user_data.get("patients",{})
-    p = patients.get(pid,{})
-    
-    # نعرض آخر القراءات
-    logs = p.get("readings", [])
-    lines = ["📊 *" + ("سجل " if lang=="ar" else "Log: ") + p.get("name","") + "*", ""]
-    
-    if logs:
-        for r in logs[-5:]:
-            date = r.get("date","")
-            if r.get("sugar"):
-                lines.append("🩸 " + date + ": سكر " + str(r["sugar"]) + " mg/dL")
-            if r.get("bp"):
-                lines.append("💉 " + date + ": ضغط " + str(r["bp"]))
-    else:
-        lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings yet"))
-    
-    btns = InlineKeyboardMarkup([
-        [InlineKeyboardButton("➕ " + ("أضف قراءة" if lang=="ar" else "Add Reading"), callback_data="pat_addreading_" + pid)],
-        [InlineKeyboardButton("💉 " + ("سجل الضغط" if lang=="ar" else "BP Log"), callback_data="pat_viewbp_" + pid)],
-        [InlineKeyboardButton("🌅 " + ("سكر صيام" if lang=="ar" else "Fasting"), callback_data="pat_viewfasting_" + pid)],
-        [InlineKeyboardButton("🍽️ " + ("سكر بعد الأكل" if lang=="ar" else "Post-meal"), callback_data="pat_viewpostmeal_" + pid)],
-        [InlineKeyboardButton("📊 " + ("سكر تراكمي HbA1c" if lang=="ar" else "HbA1c"), callback_data="pat_viewhba1c_" + pid)],
-        [InlineKeyboardButton("🎲 " + ("سكر عشوائي" if lang=="ar" else "Random"), callback_data="pat_viewrandom_" + pid)],
-        [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]
-    ])
-    
-    await q.message.edit_text("\n".join(lines), reply_markup=btns, parse_mode="Markdown")
-    return STATE_PAT_MENU
-
-async def pat_add_reading(u, ctx):
-    q = u.callback_query; await q.answer()
-    lang = get_lang(ctx)
-    
-    if q.data.startswith("pat_viewfasting_") or q.data.startswith("pat_viewpostmeal_") or q.data.startswith("pat_viewhba1c_") or q.data.startswith("pat_viewrandom_"):
-        for prefix in ["pat_viewfasting_","pat_viewpostmeal_","pat_viewhba1c_","pat_viewrandom_"]:
-            if q.data.startswith(prefix):
-                pid = q.data.replace(prefix,"")
-                stype = prefix.replace("pat_view","").replace("_","")
-                break
-        p = patients.get(pid,{})
-        readings = p.get("readings",[])
-        
-        stype_map = {"fasting":"🌅 سكر الصيام","postmeal":"🍽️ سكر بعد الأكل","hba1c":"📊 HbA1c التراكمي","random":"🎲 عشوائي"}
-        unit_map = {"hba1c":"%","fasting":"mg/dL","postmeal":"mg/dL","random":"mg/dL"}
-        
-        filtered = [r for r in readings if r.get("sugar") and r.get("stype","random") == stype]
-        lines = [stype_map.get(stype,"📊") + " *" + p.get("name","") + "*",""]
-        
-        if filtered:
-            for i, r in enumerate(filtered[-10:]):
-                unit = unit_map.get(stype,"mg/dL")
-                lines.append(f"  {i+1}. {r['date'][:16]}: {r['sugar']} {unit}")
-        else:
-            lines.append("📭 لا توجد قراءات")
-        
-        # أزرار حذف
-        del_btns = []
-        for i, r in enumerate(filtered[-5:]):
-            del_btns.append([InlineKeyboardButton(f"🗑️ {r['date'][:10]}: {r['sugar']}", callback_data=f"pat_delreading_{pid}_{r['date']}")])
-        del_btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)])
-        
-        await q.message.edit_text("\n".join(lines), reply_markup=InlineKeyboardMarkup(del_btns), parse_mode="Markdown")
-        return STATE_PAT_MENU
-
-    if q.data.startswith("pat_delreading_"):
-        parts = q.data.replace("pat_delreading_","").split("_",1)
-        pid = parts[0]
-        date_key = parts[1] if len(parts)>1 else ""
-        p = patients.get(pid,{})
-        before = len(p.get("readings",[]))
-        p["readings"] = [r for r in p.get("readings",[]) if r.get("date","") != date_key]
-        after = len(p.get("readings",[]))
-        save_patients(ctx)
-        await q.answer("✅ " + (f"تم حذف {before-after} قراءة" if lang=="ar" else f"Deleted {before-after} reading"))
-        return STATE_PAT_MENU
-
-    if q.data.startswith("pat_viewsugar_"):
-        pid = q.data.replace("pat_viewsugar_","")
-        p = patients.get(pid,{})
-        readings = [r for r in p.get("readings",[]) if r.get("sugar")]
-        lines = ["🩸 *" + ("سجل السكر - " if lang=="ar" else "Sugar Log - ") + p.get("name","") + "*",""]
-        if readings:
-            for r in readings[-15:]:
-                val = r["sugar"]
-                if val < 70: status = "⚠️"
-                elif val <= 100: status = "✅"
-                elif val <= 125: status = "🟡"
-                else: status = "🔴"
-                lines.append(status + " " + r["date"] + ": " + str(val) + " mg/dL")
-        else:
-            lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings"))
-        await q.message.edit_text("\n".join(lines),
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]),
-            parse_mode="Markdown")
-        return STATE_PAT_MENU
-
-    if q.data.startswith("pat_viewbp_"):
-        pid = q.data.replace("pat_viewbp_","")
-        p = patients.get(pid,{})
-        readings = [r for r in p.get("readings",[]) if r.get("bp")]
-        lines = ["💉 *" + ("سجل الضغط - " if lang=="ar" else "BP Log - ") + p.get("name","") + "*",""]
-        if readings:
-            for r in readings[-15:]:
-                sys_val = r.get("sys",0)
-                if sys_val < 120: status = "✅"
-                elif sys_val < 130: status = "🟡"
-                elif sys_val < 140: status = "🟠"
-                else: status = "🔴"
-                lines.append(status + " " + r["date"] + ": " + str(r["bp"]))
-        else:
-            lines.append("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings"))
-        await q.message.edit_text("\n".join(lines),
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]),
-            parse_mode="Markdown")
-        return STATE_PAT_MENU
-
-
-    if q.data.startswith("pat_addsugar_"):
-        pid = q.data.replace("pat_addsugar_","")
-        ctx.user_data["log_pid"] = pid
-        ctx.user_data["log_type"] = "sugar"
-        btns = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🌅 " + ("صيام" if lang=="ar" else "Fasting"), callback_data="logsugar_fasting"),
-             InlineKeyboardButton("🍽️ " + ("بعد الأكل" if lang=="ar" else "Post-meal"), callback_data="logsugar_postmeal")],
-            [InlineKeyboardButton("📊 HbA1c", callback_data="logsugar_hba1c")],
-        ])
-        await q.message.edit_text("🩸 " + ("نوع قراءة السكر؟" if lang=="ar" else "Sugar reading type?"), reply_markup=btns)
-        return STATE_PAT_LOG
-    
-    elif q.data.startswith("pat_addbp_"):
-        pid = q.data.replace("pat_addbp_","")
-        ctx.user_data["log_pid"] = pid
-        ctx.user_data["log_type"] = "bp"
-        await q.message.edit_text("💉 اكتب مثال: ضغط 120/80")
-        return STATE_PAT_LOG
-    
-    elif q.data.startswith("logsugar_"):
-        ctx.user_data["sugar_log_type"] = q.data.replace("logsugar_","")
-        await q.message.edit_text("🩸 " + ("أدخل قراءة السكر (mg/dL):" if lang=="ar" else "Enter sugar value (mg/dL):"))
-        return STATE_PAT_LOG
-
-async def pat_save_reading(u, ctx):
-    lang = get_lang(ctx)
-    pid = ctx.user_data.get("log_pid","")
-    log_type = ctx.user_data.get("log_type","")
-    text = u.message.text.strip()
-    # نقرأ النوع من النص مباشرة
-    txt = text.strip()
-    stype_detected = "random"
-    val_text = txt
-    for kw, st in [("صيام ","fasting"),("صايم ","fasting"),("بعداكل ","postmeal"),
-                   ("بعد اكل ","postmeal"),("تراكمي ","hba1c"),("hba1c ","hba1c"),
-                   ("ضغط ","bp"),("عشوائي ","random")]:
-        if txt.lower().startswith(kw.lower()):
-            stype_detected = st
-            val_text = txt[len(kw):].strip()
-            break
-    
-    
-    load_patients(ctx)
-    patients = ctx.user_data.get("patients",{})
-    p = patients.get(pid,{})
-    if not p: return STATE_PAT_MENU
-    
-    from datetime import datetime
-    date = datetime.now().strftime("%Y-%m-%d %H:%M")
-    readings = p.setdefault("readings",[])
-    
-    # نقرأ النوع من النص مباشرة
-    text_lower = text.strip().lower()
-    detected_stype = "random"
-    detected_val = text_lower
-    
-    type_keywords = {
-        "صيام": "fasting", "صايم": "fasting", "fasting": "fasting", "f ": "fasting",
-        "بعداكل": "postmeal", "بعد اكل": "postmeal", "postmeal": "postmeal", "p ": "postmeal",
-        "تراكمي": "hba1c", "hba1c": "hba1c", "h ": "hba1c",
-        "ضغط": "bp", "bp": "bp", "b ": "bp",
-        "عشوائي": "random", "random": "random", "r ": "random"
-    }
-    
-    for keyword, stype_val in type_keywords.items():
-        if text_lower.startswith(keyword):
-            detected_stype = stype_val
-            detected_val = text_lower.replace(keyword,"").strip().strip(":")
-            break
-    
-    if detected_stype == "bp" or (log_type == "bp" and "/"  in text):
-        # معالجة الضغط
-        try:
-            bp_text = detected_val if detected_val else text
-            parts_bp = bp_text.replace(" ","").split("/")
-            from datetime import datetime
-            date = datetime.now().strftime("%Y-%m-%d %H:%M")
-            load_patients(ctx)
-            patients = ctx.user_data.get("patients",{})
-            p2 = patients.get(pid,{})
-            if p2:
-                p2.setdefault("readings",[]).append({"date":date,"bp":bp_text,"sys":int(parts_bp[0]),"dia":int(parts_bp[1])})
-                save_patients(ctx)
-                await u.message.reply_text("✅ 💉 ضغط: " + bp_text,
-                    reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙", callback_data="pat_view_" + pid)]]))
-        except:
-            await u.message.reply_text("❌ صيغة خاطئة مثال: ضغط 120/80")
-            return STATE_PAT_LOG
-        return STATE_PAT_MENU
-
-    if log_type == "sugar" or detected_stype != "random":
-        try:
-            val = float(detected_val.replace(",",".") if detected_val else text.replace(",","."))
-            # نقرأ النوع من كل المصادر الممكنة
-            sugar_type = (ctx.user_data.get(f"stype_{pid}") or 
-                         ctx.user_data.get("sugar_type") or 
-                         ctx.user_data.get("sugar_type_confirmed") or 
-                         "random")
-            type_names = {
-                "fasting":"صيام","postmeal":"بعد الأكل",
-                "random":"عشوائي","hba1c":"تراكمي HbA1c"
-            }
-            stype_clean = sugar_type.replace("sugar_","")
-            readings.append({"date": date, "sugar": val, "stype": stype_clean, "stype_ar": type_names.get(sugar_type,"")})
-            
-            # تصنيف القراءة
-            if stype_clean == "hba1c" or val < 20:
-                if val < 5.7: status = "✅ طبيعي"
-                elif val <= 6.4: status = "🟡 ما قبل السكري"
-                elif val <= 7.0: status = "🟠 مضبوط"
-                else: status = "🔴 مرتفع"
-            elif stype_clean == "fasting":
-                if val < 70: status = "⚠️ منخفض"
-                elif val <= 100: status = "✅ طبيعي"
-                elif val <= 125: status = "🟡 ما قبل السكري"
-                else: status = "🔴 مرتفع"
-            else:
-                if val < 140: status = "✅ طبيعي"
-                elif val <= 199: status = "🟡 ما قبل السكري"
-                else: status = "🔴 مرتفع"
-            
-            msg = "✅ " + ("تم حفظ قراءة السكر\n🩸 " if lang=="ar" else "Sugar reading saved\n🩸 ") + str(val) + " mg/dL " + status
-        except:
-            await u.message.reply_text("❌ " + ("أدخل رقماً صحيحاً" if lang=="ar" else "Enter valid number"))
-            return STATE_PAT_LOG
-    
-    elif log_type == "bp":
-        try:
-            parts = text.replace(" ","").split("/")
-            sys_val = int(parts[0])
-            dia_val = int(parts[1])
-            readings.append({"date": date, "bp": text, "sys": sys_val, "dia": dia_val})
-            
-            if sys_val < 120 and dia_val < 80: status = "✅ طبيعي"
-            elif sys_val < 130: status = "🟡 مرتفع قليلاً"
-            elif sys_val < 140: status = "🟠 مرحلة 1"
-            else: status = "🔴 مرتفع"
-            
-            msg = "✅ " + ("تم حفظ قراءة الضغط\n💉 " if lang=="ar" else "BP saved\n💉 ") + text + " " + status
-        except:
-            await u.message.reply_text("❌ " + ("صيغة خاطئة، مثال: 120/80" if lang=="ar" else "Wrong format, e.g. 120/80"))
-            return STATE_PAT_LOG
-    
-    save_patients(ctx)
-    
-    btns = InlineKeyboardMarkup([
-        [InlineKeyboardButton("📊 " + ("سجل القراءات" if lang=="ar" else "View Log"), callback_data="pat_log_" + pid)],
-        [InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_view_" + pid)]
-    ])
-    await u.message.reply_text(msg, reply_markup=btns)
-    return STATE_PAT_MENU
-
-async def pat_view_log(u, ctx):
-    q = u.callback_query; await q.answer()
-    lang = get_lang(ctx)
-    pid = q.data.replace("pat_viewlog_","")
-    load_patients(ctx)
-    patients = ctx.user_data.get("patients",{})
-    p = patients.get(pid,{})
-    readings = p.get("readings",[])
-    
-    if not readings:
-        await q.message.edit_text("📭 " + ("لا توجد قراءات" if lang=="ar" else "No readings"),
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]))
-        return STATE_PAT_MENU
-    
-    lines = ["📊 *" + ("كل القراءات - " if lang=="ar" else "All Readings - ") + p.get("name","") + "*", ""]
-    for r in readings[-20:]:
-        if r.get("sugar"):
-            lines.append("🩸 " + r["date"] + ": " + str(r["sugar"]) + " mg/dL")
-        if r.get("bp"):
-            lines.append("💉 " + r["date"] + ": " + str(r["bp"]))
-    
-    await q.message.edit_text("\n".join(lines),
-        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="pat_log_" + pid)]]),
-        parse_mode="Markdown")
     return STATE_PAT_MENU
 
 async def rem_menu(u, ctx):
@@ -3991,8 +3056,10 @@ async def rem_edit_val(u, ctx):
     return STATE_REM_MENU
 
 async def fallback(u, ctx):
+    # تجاهل callbacks فقط
     if u.callback_query:
         return None
+    # لا نتدخل في النصوص - نتركها للـ handlers
     return None
 
 async def stats_cmd(u, ctx):
@@ -4011,7 +3078,7 @@ async def stats_cmd(u, ctx):
     bp = stats.get("bp", 0)
     premium = stats.get("premium", 0)
     # أكثر المستخدمين نشاطاً
-    top_users = sorted(users_dict.items(), key=lambda x: x[1].get("count",0) if isinstance(x[1],dict) else x[1], reverse=True)[:3]
+    top_users = sorted(users_dict.items(), key=lambda x: x[1], reverse=True)[:3]
     lang = get_lang(ctx)
     if lang == "ar":
         lines = [
@@ -4075,12 +3142,6 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(interaction_start, pattern="^m_interaction$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, interaction_input)],
-            STATE_PAT_LOG: [
-                CallbackQueryHandler(pat_add_reading, pattern="^(pat_addsugar_|pat_addbp_|logsugar_)"),
-                CallbackQueryHandler(pat_view_log, pattern="^pat_viewlog_"),
-                CallbackQueryHandler(patient_menu, pattern="^pat_log_"),
-                CallbackQueryHandler(go_back, pattern="^back$"),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, pat_save_reading)],
             STATE_PAT_NOTE: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, pat_note_save),
@@ -4088,14 +3149,6 @@ def build_conv():
                 MessageHandler(filters.Document.ALL, pat_note_save)],
             STATE_PAT_MENU: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
-                CallbackQueryHandler(pat_log_menu, pattern="^pat_log_"),
-                CallbackQueryHandler(patient_menu, pattern="^sugtype_"),
-                CallbackQueryHandler(patient_menu, pattern="^pat_edit_"),
-                CallbackQueryHandler(patient_menu, pattern="^patedit_"),
-                CallbackQueryHandler(patient_menu, pattern="^pattoggle_"),
-                CallbackQueryHandler(patient_menu, pattern="^patdel_"),
-                CallbackQueryHandler(patient_menu, pattern="^patadd_"),
-                CallbackQueryHandler(pat_add_reading, pattern="^(pat_addsugar_|pat_addbp_)"),
                 CallbackQueryHandler(pat_note_start, pattern="^pat_note_"),
                 CallbackQueryHandler(pat_view_notes, pattern="^pat_viewnotes_"),
                 CallbackQueryHandler(patient_menu, pattern="^pat_"),
@@ -4170,7 +3223,6 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, child_weight)],
             STATE_CHILD_CONC: [
-                CallbackQueryHandler(main_cb, pattern="^m_child$"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(child_conc, pattern="^conc_"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, child_conc)],
@@ -4202,83 +3254,6 @@ def build_conv():
         allow_reentry=True,
         per_user=True,
         per_chat=True)
-
-
-async def fix_doses_cmd(u, ctx):
-    """أمر للأدمن لإصلاح الجرعات من Claude API"""
-    if str(u.effective_user.id) != "6298206492":
-        return
-    
-    import json
-    with open("drugs.json", encoding="utf-8") as f:
-        drugs = json.load(f)
-    
-    await u.message.reply_text("🔍 جارٍ فحص الجرعات...")
-    fixed = 0
-    
-    for d in drugs:
-        name_en = d.get("name_en","")
-        name_ar = d.get("name_ar","")
-        
-        # نتخطى الأدوية ذات الجرعات الثابتة الصحيحة
-        if d.get("fixed_dose") and d.get("age_doses"):
-            continue
-        
-        # نتخطى الأدوية التي لديها جرعات صحيحة
-        mn = d.get("pediatric_min_mg_per_kg", 0)
-        mx = d.get("pediatric_max_mg_per_kg", 0)
-        if mn and mx and float(str(mn)) < 100 and float(str(mx)) < 100:
-            continue
-        
-        # نطلب الجرعة الصحيحة من Claude
-        try:
-            async with httpx.AsyncClient(timeout=20) as hc:
-                prompt = f"""What is the correct pediatric oral syrup dose for {name_en}?
-Reply ONLY in this format:
-min_mg_per_kg: [number]
-max_mg_per_kg: [number]
-concentration: [e.g. 125mg/5ml]
-frequency: [e.g. 3 times daily]
-If not available as syrup write: NOT_SYRUP"""
-                
-                r = await hc.post("https://api.anthropic.com/v1/messages",
-                    headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
-                    json={"model": "claude-haiku-4-5-20251001", "max_tokens": 100,
-                        "messages": [{"role": "user", "content": prompt}]})
-                result = r.json().get("content", [{}])[0].get("text","").strip()
-                
-                if "NOT_SYRUP" in result:
-                    d["not_syrup"] = True
-                    continue
-                
-                lines = result.split("\n")
-                for line in lines:
-                    if "min_mg_per_kg:" in line:
-                        val = line.split(":")[1].strip()
-                        try: d["pediatric_min_mg_per_kg"] = float(val)
-                        except: pass
-                    if "max_mg_per_kg:" in line:
-                        val = line.split(":")[1].strip()
-                        try: d["pediatric_max_mg_per_kg"] = float(val)
-                        except: pass
-                    if "concentration:" in line:
-                        val = line.split(":")[1].strip()
-                        if val and val != "N/A":
-                            d["concentration"] = val
-                    if "frequency:" in line:
-                        val = line.split(":")[1].strip()
-                        if val:
-                            d["pediatric_frequency_en"] = val
-                
-                fixed += 1
-                
-        except Exception as e:
-            logger.error(f"fix_doses: {name_en}: {e}")
-    
-    with open("drugs.json", "w", encoding="utf-8") as f:
-        json.dump(drugs, f, ensure_ascii=False, indent=2)
-    
-    await u.message.reply_text(f"✅ تم إصلاح {fixed} دواء!")
 
 async def restore_reminders(app):
     """إعادة جدولة التذكيرات عند بدء التشغيل"""
@@ -4606,7 +3581,6 @@ def main():
     app.add_handler(CallbackQueryHandler(rem_done, pattern="^rem_done_"))
     app.add_handler(CallbackQueryHandler(rem_later, pattern="^rem_snooze_"))
     app.add_handler(CommandHandler("stats", stats_cmd))
-    app.add_handler(CommandHandler("fixdose", fix_doses_cmd))
     app.add_handler(PreCheckoutQueryHandler(pre_checkout))
     app.add_handler(MessageHandler(filters.SUCCESSFUL_PAYMENT, successful_payment))
     # استعادة التذكيرات
