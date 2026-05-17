@@ -1712,7 +1712,8 @@ async def child_weight(u, ctx):
             result_cw = await calc_special_form(drug_name_cw, age_years, drug_form_cw, lang)
             await thinking_cw.delete()
             if result_cw:
-                await u.message.reply_text(result_cw, reply_markup=kb_back(lang))
+                drops_btns = InlineKeyboardMarkup([[InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],[InlineKeyboardButton(tx("btn_back",lang), callback_data="back")]])
+                await u.message.reply_text(result_cw, reply_markup=drops_btns)
                 return STATE_MAIN_MENU
         except Exception as e:
             logger.error(f"drops/cream: {e}")
