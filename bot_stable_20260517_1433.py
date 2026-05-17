@@ -4019,9 +4019,7 @@ async def fallback(u, ctx):
             elif action == "main":
                 await show_main(u.message, lang)
                 return STATE_MAIN_MENU
-    # أي كلمة أخرى — نعرض القائمة الرئيسية
-    await show_main(u.message, lang)
-    return STATE_MAIN_MENU
+    return None
 
 async def stats_cmd(u, ctx):
     stats = load_stats()
