@@ -1573,7 +1573,7 @@ async def drug_sel(u, ctx):
     return STATE_DRUG_SEARCH
 
 async def child_input(u, ctx):
-    print("🔵 CHILD_INPUT CALLED", flush=True)
+    await u.message.reply_text("🔵 child_input")
     lang = get_lang(ctx)
     drug_form = ctx.user_data.get("drug_form", "syrup")
     if u.message.photo:
@@ -1654,7 +1654,7 @@ async def child_sel(u, ctx):
     return STATE_CHILD_WEIGHT
 
 async def child_weight(u, ctx):
-    print("🟢 CHILD_WEIGHT CALLED", flush=True)
+    await u.message.reply_text("🟢 child_weight")
     lang = get_lang(ctx)
     track(u, "child_doses")
     try:
