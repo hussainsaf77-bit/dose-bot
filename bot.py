@@ -1695,7 +1695,18 @@ async def child_weight(u, ctx):
     drug_form_cw = ctx.user_data.get("drug_form","syrup")
     if drug_form_cw in ["cream","drops"]:
         drug_name_cw = d.get("name_ar" if lang=="ar" else "name_en","") or d.get("name_en","")
-        age_years = w  # هنا w = العمر بالسنوات
+        # نستخدم fixed_dose إذا موجود
+        if d.get("fixed_dose") and d.get("age_doses"):
+            age_doses = d["age_doses"]
+            lines_d = ["💊 " + drug_name_cw, ""]
+            for age_range, dose in age_doses.items():
+                lines_d.append("  • " + age_range + ": " + dose)
+            lines_d.append("")
+            lines_d.append("⚠️ " + ("استشر الطبيب دائماً" if lang=="ar" else "Always consult doctor"))
+            await u.message.reply_text("\n".join(lines_d), reply_markup=kb_back(lang))
+            return STATE_MAIN_MENU
+        # إذا لا يوجد fixed_dose نستخدم Claude
+        age_years = w
         thinking_cw = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
         try:
             result_cw = await calc_special_form(drug_name_cw, age_years, drug_form_cw, lang)
