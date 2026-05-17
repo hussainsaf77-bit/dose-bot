@@ -1525,6 +1525,7 @@ async def drug_search(u, ctx):
     query = u.message.text.strip()
     
     # Claude API مباشرة
+    await u.message.reply_text("⏩ before API call")
     thinking = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
     try:
         if lang == "ar":
