@@ -1519,6 +1519,7 @@ async def drug_search_image(u, ctx):
     return STATE_DRUG_SEARCH
 
 async def drug_search(u, ctx):
+    await u.message.reply_text("🔵 drug_search called: " + u.message.text[:20])
     lang = get_lang(ctx)
     track(u, "searches")
     query = u.message.text.strip()
