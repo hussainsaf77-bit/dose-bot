@@ -1820,11 +1820,8 @@ async def child_weight(u, ctx):
     
     note = "\n\n" + ("تغيير التركيز:" if lang=="ar" else "Change concentration:")
 
-    try:
-        await u.message.reply_text(result + note, reply_markup=InlineKeyboardMarkup(change_btns))
-    except Exception as e:
-        logger.error(f"child_weight final error: {e}")
-        await u.message.reply_text(result, reply_markup=InlineKeyboardMarkup(change_btns))
+    clean = (result + note).replace("*","").replace("_","").replace("`","")
+    await u.message.reply_text(clean, reply_markup=InlineKeyboardMarkup(change_btns))
     return STATE_CHILD_CONC
 
 
