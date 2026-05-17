@@ -1709,7 +1709,7 @@ async def child_weight(u, ctx):
                 lines_d.append("  • " + age_range + ": " + dose)
             lines_d.append("")
             lines_d.append("⚠️ " + ("استشر الطبيب دائماً" if lang=="ar" else "Always consult doctor"))
-            await u.message.reply_text("\n".join(lines_d), reply_markup=kb_back(lang))
+            await u.message.reply_text("\n".join(lines_d), reply_markup=kb_child_result(lang))
             return STATE_MAIN_MENU
         # إذا لا يوجد fixed_dose نستخدم Claude
         age_years = w
@@ -4019,7 +4019,9 @@ async def fallback(u, ctx):
             elif action == "main":
                 await show_main(u.message, lang)
                 return STATE_MAIN_MENU
-    return None
+    # أي كلمة أخرى — نعرض القائمة الرئيسية
+    await show_main(u.message, lang)
+    return STATE_MAIN_MENU
 
 async def stats_cmd(u, ctx):
     stats = load_stats()
