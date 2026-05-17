@@ -1765,6 +1765,7 @@ async def child_weight(u, ctx):
     # نزيل Markdown الخاطئ
     send_text = send_text.replace("*","").replace("_","").replace("`","")
     await u.message.reply_text(send_text, reply_markup=InlineKeyboardMarkup(change_btns))
+    await u.message.reply_text(str(result), reply_markup=InlineKeyboardMarkup(change_btns))
     return STATE_CHILD_CONC
 
 
