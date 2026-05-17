@@ -3993,32 +3993,7 @@ async def rem_edit_val(u, ctx):
 async def fallback(u, ctx):
     if u.callback_query:
         return None
-    if not u.message or not u.message.text:
-        return None
-    txt = u.message.text.strip()
-    lang = get_lang(ctx)
-    shortcuts = {
-        "جرعات": "m_child", "جرعة": "m_child", "اطفال": "m_child",
-        "ملف": "m_pat", "مريض": "m_pat", "مرضى": "m_pat",
-        "دواء": "m_search", "بحث": "m_search",
-        "تذكير": "m_rem", "تذكيرات": "m_rem",
-        "قائمة": "main", "رئيسية": "main",
-    }
-    for kw, action in shortcuts.items():
-        if txt.startswith(kw):
-            if action == "m_child":
-                return await ask_drug_form(u, ctx)
-            elif action == "m_pat":
-                await u.message.reply_text("👤 " + ("ملف المريض:" if lang=="ar" else "Patient File:"), reply_markup=kb_patient_menu(lang))
-                return STATE_PAT_MENU
-            elif action == "m_search":
-                await u.message.reply_text("🔍 " + ("اكتب اسم الدواء:" if lang=="ar" else "Drug name:"), reply_markup=kb_back(lang))
-                return STATE_DRUG_SEARCH
-            elif action == "m_rem":
-                return await rem_menu(u, ctx)
-            elif action == "main":
-                await show_main(u.message, lang)
-                return STATE_MAIN_MENU
+    return None
     # أي كلمة أخرى — نعرض القائمة الرئيسية
     await show_main(u.message, lang)
     return STATE_MAIN_MENU
