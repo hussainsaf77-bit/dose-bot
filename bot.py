@@ -2806,10 +2806,8 @@ async def reg_handler(u, ctx):
         stats["users"][uid]["role"] = role
     save_stats(stats)
     
-    ctx.user_data["reg_role"] = role
-    ctx.user_data["lang"] = "ar"
-    await q.message.edit_text("✅ ممتاز!\n\n📝 اكتب اسمك ودولتك في رسالة واحدة\nمثال: أحمد — السعودية")
-    return STATE_LANGUAGE
+    await show_main(q.message, lang, edit=True)
+    return STATE_MAIN_MENU
 
 
 async def pat_note_start(u, ctx):
