@@ -2171,6 +2171,15 @@ async def bp_age_btn(u, ctx):
         reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
     return STATE_BP
 
+
+ADMIN_ID = 6298206492
+
+async def dbg(ctx, msg):
+    """يرسل رسالة debug للأدمن"""
+    try:
+        await ctx.bot.send_message(ADMIN_ID, "🔍 " + str(msg)[:200])
+    except: pass
+
 async def bp_age(u, ctx):
     track(u, "bp")
     lang = get_lang(ctx)
