@@ -2171,6 +2171,90 @@ async def bp_age_btn(u, ctx):
         reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
     return STATE_BP
 
+
+# ═══ Sugar Standalone Handler ═══
+_sugar_pending = {}  # uid -> value
+
+async def sugar_start(u, ctx):
+    """يبدأ قياس السكر"""
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    uid = str(u.effective_user.id)
+    _sugar_pending[uid] = {"lang": lang, "step": "waiting_value"}
+    await q.message.edit_text(
+        "🩸 " + ("أدخل قراءة السكر (mg/dL):" if lang=="ar" else "Enter sugar value (mg/dL):"),
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
+
+async def sugar_value_received(u, ctx):
+    """يستقبل الرقم ويعرض أزرار النوع"""
+    uid = str(u.effective_user.id)
+    if uid not in _sugar_pending or _sugar_pending[uid].get("step") != "waiting_value":
+        return
+    lang = _sugar_pending[uid]["lang"]
+    try:
+        val = float(u.message.text.strip().replace(",","."))
+        if not 1 <= val <= 50 and not 50 <= val <= 600:
+            raise ValueError
+    except:
+        await u.message.reply_text("❌ " + ("رقم غير صحيح" if lang=="ar" else "Invalid number"))
+        return
+    _sugar_pending[uid]["val"] = val
+    _sugar_pending[uid]["step"] = "waiting_type"
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🌅 " + ("صيام" if lang=="ar" else "Fasting"), callback_data="sug2_fasting"),
+         InlineKeyboardButton("🍽️ " + ("بعد الأكل" if lang=="ar" else "Post-meal"), callback_data="sug2_postmeal")],
+        [InlineKeyboardButton("📊 HbA1c", callback_data="sug2_hba1c"),
+         InlineKeyboardButton("🎲 " + ("عشوائي" if lang=="ar" else "Random"), callback_data="sug2_random")],
+    ])
+    await u.message.reply_text(
+        "✅ " + str(val) + " mg/dL" + chr(10) + ("اختر نوع القراءة:" if lang=="ar" else "Select type:"),
+        reply_markup=btns)
+
+async def sugar_type_received(u, ctx):
+    """يحسب النتيجة"""
+    q = u.callback_query; await q.answer()
+    uid = str(u.effective_user.id)
+    lang = _sugar_pending.get(uid, {}).get("lang", "ar")
+    val = _sugar_pending.get(uid, {}).get("val", 0)
+    stype = q.data.replace("sug2_", "")
+
+    if stype == "hba1c":
+        unit = "%"
+        if val < 5.7: color, st = "🟢", ("طبيعي" if lang=="ar" else "Normal")
+        elif val < 6.5: color, st = "🟡", ("ما قبل السكري" if lang=="ar" else "Pre-diabetic")
+        elif val < 8: color, st = "🔴", ("سكري مضبوط" if lang=="ar" else "Controlled")
+        else: color, st = "🚨", ("سكري غير مضبوط" if lang=="ar" else "Uncontrolled")
+    elif stype == "fasting":
+        unit = "mg/dL"
+        if val < 70: color, st = "⚠️", ("انخفاض" if lang=="ar" else "Low")
+        elif val <= 100: color, st = "🟢", ("طبيعي" if lang=="ar" else "Normal")
+        elif val <= 125: color, st = "🟡", ("ما قبل السكري" if lang=="ar" else "Pre-diabetic")
+        else: color, st = "🔴", ("سكري" if lang=="ar" else "Diabetic")
+    elif stype == "postmeal":
+        unit = "mg/dL"
+        if val < 70: color, st = "⚠️", ("انخفاض" if lang=="ar" else "Low")
+        elif val <= 140: color, st = "🟢", ("طبيعي" if lang=="ar" else "Normal")
+        elif val <= 199: color, st = "🟡", ("ما قبل السكري" if lang=="ar" else "Pre-diabetic")
+        else: color, st = "🔴", ("سكري" if lang=="ar" else "Diabetic")
+    else:
+        unit = "mg/dL"
+        if val < 70: color, st = "⚠️", ("انخفاض" if lang=="ar" else "Low")
+        elif val <= 140: color, st = "🟢", ("طبيعي" if lang=="ar" else "Normal")
+        elif val <= 199: color, st = "🟡", ("مرتفع" if lang=="ar" else "High")
+        else: color, st = "🔴", ("مرتفع جداً" if lang=="ar" else "Very High")
+
+    type_names = {"fasting":"🌅 صيام","postmeal":"🍽️ بعد الأكل","hba1c":"📊 تراكمي","random":"🎲 عشوائي"}
+    type_name = type_names.get(stype, stype)
+    msg = color + " " + str(val) + " " + unit + chr(10) + type_name + chr(10) + color + " " + st
+
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🩸 " + ("قراءة أخرى" if lang=="ar" else "Another"), callback_data="m_sugar")],
+        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+    ])
+    await q.message.edit_text(msg, reply_markup=btns)
+    if uid in _sugar_pending:
+        del _sugar_pending[uid]
+
 async def bp_age(u, ctx):
     track(u, "bp")
     lang = get_lang(ctx)
