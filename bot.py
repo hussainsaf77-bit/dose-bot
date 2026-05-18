@@ -1485,7 +1485,6 @@ async def main_cb(u, ctx):
         await q.message.edit_text("🩸 اختر نوع قراءة السكر:" if lang=="ar" else "🩸 Select sugar reading type:", reply_markup=btns)
         return STATE_SUGAR
     elif q.data == "m_bp":
-        pass  # handled by handle_m_bp
         uid = u.effective_user.id
         if not is_premium(uid):
             await q.message.edit_text(tx("not_premium", lang), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
@@ -2148,15 +2147,6 @@ async def sugar_result(u, ctx):
     await u.message.reply_text(msg, reply_markup=kb_back(lang))
     return STATE_MAIN_MENU
 
-
-async def handle_m_bp(u, ctx):
-    q = u.callback_query; await q.answer()
-    lang = get_lang(ctx)
-    await q.message.edit_text(
-        "👤 " + ("كم عمرك بالسنوات؟" if lang=="ar" else "How old are you?"),
-        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
-    return STATE_BP_AGE
-
 async def bp_age(u, ctx):
     track(u, "bp")
     lang = get_lang(ctx)
@@ -2164,14 +2154,10 @@ async def bp_age(u, ctx):
         age = int(u.message.text.strip())
         if not 1 <= age <= 120: raise ValueError
     except:
-        await u.message.reply_text("❌ أدخل عمراً صحيحاً" if lang=="ar" else "❌ Enter valid age")
+    await u.message.reply_text("💉 اكتب قراءة الضغط مثال 120/80", reply_markup=kb_back(lang))
         return STATE_BP_AGE
     ctx.user_data["bp_age"] = age
-    await u.message.reply_text(
-        "💉 " + ("أدخل قراءة الضغط
-مثال: 120/80" if lang=="ar" else "Enter BP
-Example: 120/80"),
-        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
+    await u.message.reply_text("💉 أدخل قراءة الضغط مثال: 120/80" if lang=="ar" else "💉 Enter BP example: 120/80")
     return STATE_BP
 
 async def bp_result(u, ctx):
@@ -4093,7 +4079,6 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, bp_age)],
             STATE_BP: [
-                CallbackQueryHandler(handle_m_bp, pattern="^m_bp$"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, bp_result)],
             STATE_INFECTION_SITE: [
@@ -4111,7 +4096,6 @@ def build_conv():
 
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(reg_handler, pattern="^reg_"),
-                CallbackQueryHandler(handle_m_bp, pattern="^m_bp$"),
                 CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_|sugar_)"),
                 CallbackQueryHandler(manual_drug_input, pattern="^manual_input$")],
             STATE_BMI_WEIGHT: [
