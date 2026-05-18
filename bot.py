@@ -2158,6 +2158,7 @@ async def handle_m_bp(u, ctx):
     return STATE_BP_AGE
 
 async def bp_age(u, ctx):
+    await u.message.reply_text("🔵 bp_age called")
     track(u, "bp")
     lang = get_lang(ctx)
     try:
