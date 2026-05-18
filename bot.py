@@ -1489,7 +1489,6 @@ async def main_cb(u, ctx):
         if not is_premium(uid):
             await q.message.edit_text(tx("not_premium", lang), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
             return STATE_MAIN_MENU
-        ctx.user_data["expecting"] = "bp_age"
         await q.message.edit_text("👤 كم عمرك؟" if lang=="ar" else "👤 How old are you?", reply_markup=kb_back(lang))
         return STATE_BP_AGE
     elif q.data == "m_settings":
@@ -1624,6 +1623,7 @@ async def child_input(u, ctx):
         f = await photo.get_file()
         img = await f.download_as_bytearray()
         name = await analyze_image(bytes(img), lang)
+        await u.message.reply_text("name=" + str(name)[:50])
         if not name:
             btns = InlineKeyboardMarkup([
                 [InlineKeyboardButton("✏️ " + ("أدخل الاسم يدوياً" if lang=="ar" else "Type name manually"), callback_data="manual_input")],
@@ -1633,7 +1633,9 @@ async def child_input(u, ctx):
             msg = "❌ لم أتعرف على الدواء\n\n💡 جرّب صورة أوضح أو أدخل الاسم يدوياً" if lang=="ar" else "❌ Could not identify drug\n\n💡 Try a clearer photo or type the name"
             await u.message.reply_text(msg, reply_markup=kb_image_result(lang))
             return STATE_CHILD_DRUG
+        await u.message.reply_text("🔍 name=" + str(name))
         res = search_drugs(name)
+        await u.message.reply_text("res=" + str(len(res)))
         if not res:
             # نستخدم Claude API مباشرة
             thinking2 = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
@@ -1669,10 +1671,7 @@ async def child_input(u, ctx):
             # نسأل عن العمر للقطرات والكريمات
             ctx.user_data["child_drug"] = res[0]
             await u.message.reply_text("📸 *" + name + "*\n\n📅 " + ("كم عمر الطفل بالسنوات؟" if lang=="ar" else "Child age in years?"),
-                reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
-                    [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
-                ]), parse_mode="Markdown")
+                reply_markup=kb_back(lang), parse_mode="Markdown")
             return STATE_CHILD_WEIGHT
         msg2 = "📸 *" + name + "*\n\n" + tx("weight_prompt", lang)
         await u.message.reply_text(msg2, reply_markup=kb_image_result(lang, name), parse_mode=ParseMode.MARKDOWN)
@@ -2146,89 +2145,6 @@ async def sugar_result(u, ctx):
         msg = "📊 HbA1c: " + str(val) + "%\n" + status + "\n" + ("متوسط السكر: " if lang=="ar" else "Avg Sugar: ") + str(avg) + " mg/dL"
 
     await u.message.reply_text(msg, reply_markup=kb_back(lang))
-    return STATE_MAIN_MENU
-
-
-
-async def handle_m_bp(u, ctx):
-    q = u.callback_query; await q.answer()
-    lang = get_lang(ctx)
-    ctx.user_data["expecting"] = "bp_age"
-    await q.message.edit_text("👤 " + ("كم عمرك؟" if lang=="ar" else "How old are you?"), reply_markup=kb_back(lang))
-    return STATE_BP_AGE
-
-async def handle_m_sugar(u, ctx):
-    q = u.callback_query; await q.answer()
-    lang = get_lang(ctx)
-    btns = InlineKeyboardMarkup([
-        [InlineKeyboardButton("🌅 " + ("صيام" if lang=="ar" else "Fasting"), callback_data="sugar_fasting")],
-        [InlineKeyboardButton("🍽️ " + ("بعد الأكل" if lang=="ar" else "Post-meal"), callback_data="sugar_postmeal")],
-        [InlineKeyboardButton("🎲 " + ("عشوائي" if lang=="ar" else "Random"), callback_data="sugar_random")],
-        [InlineKeyboardButton("📊 HbA1c", callback_data="sugar_hba1c")],
-        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
-    ])
-    await q.message.edit_text("🩸 " + ("اختر نوع قراءة السكر:" if lang=="ar" else "Select sugar reading type:"), reply_markup=btns)
-    return STATE_SUGAR
-
-
-async def handle_m_bp(u, ctx):
-    """شاشة قراءة الضغط"""
-    q = u.callback_query; await q.answer()
-    lang = get_lang(ctx)
-    await q.message.edit_text(
-        "💉 " + ("أدخل قراءة الضغط
-مثال: 120/80" if lang=="ar" else "Enter BP reading
-Example: 120/80"),
-        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
-    return STATE_BP
-
-async def bp_result_new(u, ctx):
-    """نتيجة قراءة الضغط"""
-    lang = get_lang(ctx)
-    try:
-        parts = u.message.text.strip().replace(" ","").split("/")
-        sys = int(parts[0]); dia = int(parts[1])
-    except:
-        await u.message.reply_text("❌ " + ("صيغة خاطئة. مثال: 120/80" if lang=="ar" else "Wrong format. Example: 120/80"))
-        return STATE_BP
-
-    if sys < 90 or dia < 60:
-        status = "⚠️ " + ("انخفاض الضغط" if lang=="ar" else "Low BP")
-        color = "🔵"
-    elif sys < 120 and dia < 80:
-        status = "✅ " + ("ضغط طبيعي ممتاز" if lang=="ar" else "Optimal BP")
-        color = "🟢"
-    elif sys < 130 and dia < 80:
-        status = "✅ " + ("ضغط طبيعي" if lang=="ar" else "Normal BP")
-        color = "🟢"
-    elif sys < 140 or dia < 90:
-        status = "🟡 " + ("ارتفاع بسيط" if lang=="ar" else "Elevated BP")
-        color = "🟡"
-    elif sys < 160 or dia < 100:
-        status = "🔴 " + ("ارتفاع الضغط المرحلة الأولى" if lang=="ar" else "High BP Stage 1")
-        color = "🔴"
-    else:
-        status = "🚨 " + ("ارتفاع شديد — راجع الطبيب فوراً" if lang=="ar" else "Very High BP — See doctor NOW")
-        color = "🚨"
-
-    msg = color + " " + str(sys) + "/" + str(dia) + " mmHg\n" + status
-    
-    btns = InlineKeyboardMarkup([
-        [InlineKeyboardButton("💉 " + ("قراءة أخرى" if lang=="ar" else "Another Reading"), callback_data="m_bp")],
-        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
-    ])
-    await u.message.reply_text(msg, reply_markup=btns)
-    return STATE_MAIN_MENU
-
-async def main_menu_text_router(u, ctx):
-    """يوجه النصوص للدالة الصحيحة حسب السياق"""
-    expected = ctx.user_data.get("expecting","")
-    if expected == "bp_age":
-        return await bp_age(u, ctx)
-    elif expected == "bp":
-        return await bp_result(u, ctx)
-    elif expected == "sugar":
-        return await sugar_result(u, ctx)
     return STATE_MAIN_MENU
 
 async def bp_age(u, ctx):
@@ -4164,8 +4080,7 @@ def build_conv():
                 MessageHandler(filters.TEXT & ~filters.COMMAND, bp_age)],
             STATE_BP: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
-                CallbackQueryHandler(handle_m_bp, pattern="^m_bp$"),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, bp_result_new)],
+                MessageHandler(filters.TEXT & ~filters.COMMAND, bp_result)],
             STATE_INFECTION_SITE: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(infection_site, pattern="^site_")],
@@ -4181,12 +4096,8 @@ def build_conv():
 
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(reg_handler, pattern="^reg_"),
-                CallbackQueryHandler(handle_m_bp, pattern="^m_bp$"),
                 CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_|sugar_)"),
-                CallbackQueryHandler(main_cb, pattern="^m_bp$"),
-                CallbackQueryHandler(main_cb, pattern="^m_sugar$"),
-                CallbackQueryHandler(manual_drug_input, pattern="^manual_input$"),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, main_menu_text_router)],
+                CallbackQueryHandler(manual_drug_input, pattern="^manual_input$")],
             STATE_BMI_WEIGHT: [
                 CallbackQueryHandler(bmi_cb, pattern="^bmi_"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, bmi_text)],
