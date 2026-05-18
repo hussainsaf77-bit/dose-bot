@@ -2147,6 +2147,14 @@ async def sugar_result(u, ctx):
     await u.message.reply_text(msg, reply_markup=kb_back(lang))
     return STATE_MAIN_MENU
 
+
+async def handle_m_bp(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    msg = "💉 " + ("ادخل قراءة الضغط - مثال 120/80" if lang=="ar" else "Enter BP - Example 120/80")
+    await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
+    return STATE_BP
+
 async def bp_age(u, ctx):
     track(u, "bp")
     lang = get_lang(ctx)
@@ -4097,6 +4105,7 @@ def build_conv():
 
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(reg_handler, pattern="^reg_"),
+                CallbackQueryHandler(handle_m_bp, pattern="^m_bp$"),
                 CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_|sugar_)"),
                 CallbackQueryHandler(manual_drug_input, pattern="^manual_input$")],
             STATE_BMI_WEIGHT: [
