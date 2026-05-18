@@ -1485,6 +1485,8 @@ async def main_cb(u, ctx):
         await q.message.edit_text("🩸 اختر نوع قراءة السكر:" if lang=="ar" else "🩸 Select sugar reading type:", reply_markup=btns)
         return STATE_SUGAR
     elif q.data == "m_bp":
+        await q.message.edit_text("🔵 m_bp reached")
+        return STATE_BP_AGE
         uid = u.effective_user.id
         if not is_premium(uid):
             await q.message.edit_text(tx("not_premium", lang), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
