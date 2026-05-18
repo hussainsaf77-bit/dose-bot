@@ -3941,6 +3941,7 @@ async def rem_add_name(u, ctx):
     return STATE_REM_ADD_TIME
 
 async def rem_add_time(u, ctx):
+    await u.message.reply_text("🔵 rem_add_time: " + u.message.text[:10])
     lang = get_lang(ctx)
     t = u.message.text.strip()
     if not re.match(r"^\d{1,2}:\d{2}$", t):
