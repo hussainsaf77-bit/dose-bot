@@ -1780,7 +1780,19 @@ async def child_weight(u, ctx):
     result = calc_child(d, w, lang)
     
     # أزرار التراكيز
+    concs = DRUG_CONCS.get(name_key, [])
+    if result:
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+        ])
+        try:
+            await u.message.reply_text(str(result)[:3000], reply_markup=btns, parse_mode=ParseMode.MARKDOWN)
+        except:
+            await u.message.reply_text(str(result)[:3000].replace("*","").replace("_",""), reply_markup=btns)
+        return STATE_CHILD_CONC
     change_btns = []
+    name_key = d.get("name_en","").lower()
     concs = DRUG_CONCS.get(name_key, [])
     for c in concs[:4]:
         change_btns.append([InlineKeyboardButton(c, callback_data="conc_" + c)])
