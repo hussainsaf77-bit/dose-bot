@@ -1212,7 +1212,7 @@ async def send_alert(ctx):
     ])
 
     try:
-        await ctx.bot.send_message(chat_id, msg, reply_markup=btns, parse_mode=ParseMode.MARKDOWN)
+        await ctx.bot.send_message(chat_id, msg, reply_markup=btns)
     except Exception as e:
         logger.error(f"send_alert error: {e}")
     
