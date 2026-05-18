@@ -2158,7 +2158,6 @@ async def handle_m_bp(u, ctx):
     return STATE_BP_AGE
 
 async def bp_age(u, ctx):
-    await u.message.reply_text("🔵 bp_age called")
     track(u, "bp")
     lang = get_lang(ctx)
     try:
@@ -4090,6 +4089,7 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, bp_age)],
             STATE_BP: [
+                CallbackQueryHandler(handle_m_bp, pattern="^m_bp$"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, bp_result)],
             STATE_INFECTION_SITE: [
