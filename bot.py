@@ -1631,7 +1631,9 @@ async def child_input(u, ctx):
             msg = "❌ لم أتعرف على الدواء\n\n💡 جرّب صورة أوضح أو أدخل الاسم يدوياً" if lang=="ar" else "❌ Could not identify drug\n\n💡 Try a clearer photo or type the name"
             await u.message.reply_text(msg, reply_markup=kb_image_result(lang))
             return STATE_CHILD_DRUG
+        await u.message.reply_text("🔍 name=" + str(name))
         res = search_drugs(name)
+        await u.message.reply_text("res=" + str(len(res)))
         if not res:
             # نستخدم Claude API مباشرة
             thinking2 = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
