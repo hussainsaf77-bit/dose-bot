@@ -4167,9 +4167,9 @@ def build_conv():
             STATE_PAT_ALLERGY: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, pat_allergy)],
             STATE_SUGAR: [
-                CallbackQueryHandler(sugar_get_type, pattern="^sug_"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, sugar_get_value)],
+                CallbackQueryHandler(sugar_handler, pattern="^sugar_"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, sugar_result)],
             STATE_BP_AGE: [
                 CallbackQueryHandler(bp_age_btn, pattern="^bp_age_"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
