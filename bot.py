@@ -1473,16 +1473,9 @@ async def main_cb(u, ctx):
         await q.message.edit_text("👤 " + ("ملف المريض" if lang=="ar" else "Patient File"), reply_markup=kb_patient_menu(lang))
         return STATE_PAT_MENU
     elif q.data == "m_sugar":
-        uid = u.effective_user.id
-        if not is_premium(uid):
-            await q.message.edit_text(tx("not_premium", lang), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
-            return STATE_MAIN_MENU
-        btns = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🌅 سكر الصيام" if lang=="ar" else "🌅 Fasting", callback_data="sugar_fasting")],
-            [InlineKeyboardButton("🍽️ بعد الأكل" if lang=="ar" else "🍽️ Post-meal", callback_data="sugar_postmeal")],
-            [InlineKeyboardButton("📊 HbA1c تراكمي" if lang=="ar" else "📊 HbA1c", callback_data="sugar_hba1c")],
-            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]])
-        await q.message.edit_text("🩸 اختر نوع قراءة السكر:" if lang=="ar" else "🩸 Select sugar reading type:", reply_markup=btns)
+        await q.message.edit_text(
+            "🩸 " + ("أدخل قراءة السكر بالـ mg/dL:" if lang=="ar" else "Enter sugar value mg/dL:"),
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
         return STATE_SUGAR
     elif q.data == "m_bp_skip":  # معطل
         uid = u.effective_user.id
@@ -2179,6 +2172,63 @@ async def dbg(ctx, msg):
     try:
         await ctx.bot.send_message(ADMIN_ID, "🔍 " + str(msg)[:200])
     except: pass
+
+
+async def sugar_get_value(u, ctx):
+    lang = get_lang(ctx)
+    try:
+        val = float(u.message.text.strip().replace(",","."))
+    except:
+        await u.message.reply_text("❌ " + ("أدخل رقماً" if lang=="ar" else "Enter number"))
+        return STATE_SUGAR
+    ctx.user_data["sugar_val"] = val
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🌅 " + ("صيام" if lang=="ar" else "Fasting"), callback_data="sug_fasting"),
+         InlineKeyboardButton("🍽️ " + ("بعد الأكل" if lang=="ar" else "Post-meal"), callback_data="sug_postmeal")],
+        [InlineKeyboardButton("📊 HbA1c", callback_data="sug_hba1c"),
+         InlineKeyboardButton("🎲 " + ("عشوائي" if lang=="ar" else "Random"), callback_data="sug_random")],
+        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+    ])
+    await u.message.reply_text(str(val) + " - " + ("اختر النوع:" if lang=="ar" else "Select type:"), reply_markup=btns)
+    return STATE_SUGAR
+
+async def sugar_get_type(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    val = ctx.user_data.get("sugar_val", 0)
+    stype = q.data.replace("sug_", "")
+    if stype == "hba1c":
+        unit = "%"
+        if val < 5.7: color, st = "🟢", ("طبيعي" if lang=="ar" else "Normal")
+        elif val < 6.5: color, st = "🟡", ("ما قبل السكري" if lang=="ar" else "Pre-diabetic")
+        elif val < 8: color, st = "🔴", ("سكري مضبوط" if lang=="ar" else "Controlled")
+        else: color, st = "🚨", ("غير مضبوط" if lang=="ar" else "Uncontrolled")
+    elif stype == "fasting":
+        unit = "mg/dL"
+        if val < 70: color, st = "⚠️", ("انخفاض" if lang=="ar" else "Low")
+        elif val <= 100: color, st = "🟢", ("طبيعي" if lang=="ar" else "Normal")
+        elif val <= 125: color, st = "🟡", ("ما قبل السكري" if lang=="ar" else "Pre-diabetic")
+        else: color, st = "🔴", ("سكري" if lang=="ar" else "Diabetic")
+    elif stype == "postmeal":
+        unit = "mg/dL"
+        if val < 70: color, st = "⚠️", ("انخفاض" if lang=="ar" else "Low")
+        elif val <= 140: color, st = "🟢", ("طبيعي" if lang=="ar" else "Normal")
+        elif val <= 199: color, st = "🟡", ("ما قبل السكري" if lang=="ar" else "Pre-diabetic")
+        else: color, st = "🔴", ("سكري" if lang=="ar" else "Diabetic")
+    else:
+        unit = "mg/dL"
+        if val < 70: color, st = "⚠️", ("انخفاض" if lang=="ar" else "Low")
+        elif val <= 140: color, st = "🟢", ("طبيعي" if lang=="ar" else "Normal")
+        elif val <= 199: color, st = "🟡", ("مرتفع" if lang=="ar" else "High")
+        else: color, st = "🔴", ("مرتفع جداً" if lang=="ar" else "Very High")
+    names = {"fasting":"🌅 صيام","postmeal":"🍽️ بعد الأكل","hba1c":"📊 تراكمي","random":"🎲 عشوائي"}
+    msg = color + " " + str(val) + " " + unit + chr(10) + names.get(stype,stype) + " - " + st
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🩸 " + ("قراءة أخرى" if lang=="ar" else "Another"), callback_data="m_sugar")],
+        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+    ])
+    await q.message.edit_text(msg, reply_markup=btns)
+    return STATE_MAIN_MENU
 
 async def bp_age(u, ctx):
     track(u, "bp")
