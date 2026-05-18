@@ -1473,16 +1473,9 @@ async def main_cb(u, ctx):
         await q.message.edit_text("👤 " + ("ملف المريض" if lang=="ar" else "Patient File"), reply_markup=kb_patient_menu(lang))
         return STATE_PAT_MENU
     elif q.data == "m_sugar":
-        uid = u.effective_user.id
-        if not is_premium(uid):
-            await q.message.edit_text(tx("not_premium", lang), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
-            return STATE_MAIN_MENU
-        btns = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🌅 سكر الصيام" if lang=="ar" else "🌅 Fasting", callback_data="sugar_fasting")],
-            [InlineKeyboardButton("🍽️ بعد الأكل" if lang=="ar" else "🍽️ Post-meal", callback_data="sugar_postmeal")],
-            [InlineKeyboardButton("📊 HbA1c تراكمي" if lang=="ar" else "📊 HbA1c", callback_data="sugar_hba1c")],
-            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]])
-        await q.message.edit_text("🩸 اختر نوع قراءة السكر:" if lang=="ar" else "🩸 Select sugar reading type:", reply_markup=btns)
+        await q.message.edit_text(
+            "🩸 " + ("أدخل قراءة السكر (رقم فقط):" if lang=="ar" else "Enter sugar value (number only):"),
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
         return STATE_SUGAR
     elif q.data == "m_bp_skip":  # معطل
         uid = u.effective_user.id
@@ -4193,8 +4186,11 @@ def build_conv():
                 MessageHandler(filters.TEXT & ~filters.COMMAND, pat_allergy)],
             STATE_SUGAR: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
-                CallbackQueryHandler(sugar_handler, pattern="^sugar_"),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, sugar_result)],
+                CallbackQueryHandler(sugar_type_received, pattern="^sug2_"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, sugar_value_received)],
+            STATE_SUGAR_TYPE: [
+                CallbackQueryHandler(sugar_type_received, pattern="^sug2_"),
+                CallbackQueryHandler(go_back, pattern="^back$")],
             STATE_BP_AGE: [
                 CallbackQueryHandler(bp_age_btn, pattern="^bp_age_"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
