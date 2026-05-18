@@ -2161,6 +2161,20 @@ async def handle_m_bp(u, ctx):
     return STATE_BP_AGE
 
 
+
+async def sugar_menu(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🌅 " + ("صيام" if lang=="ar" else "Fasting"), callback_data="sugar_fasting")],
+        [InlineKeyboardButton("🍽️ " + ("بعد الأكل" if lang=="ar" else "Post-meal"), callback_data="sugar_postmeal")],
+        [InlineKeyboardButton("📊 HbA1c", callback_data="sugar_hba1c")],
+        [InlineKeyboardButton("🎲 " + ("عشوائي" if lang=="ar" else "Random"), callback_data="sugar_random")],
+        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+    ])
+    await q.message.edit_text("🩸 " + ("اختر نوع القراءة:" if lang=="ar" else "Select reading type:"), reply_markup=btns)
+    return STATE_SUGAR
+
 async def bp_age_btn(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -4134,6 +4148,8 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(reg_handler, pattern="^reg_"),
                 CallbackQueryHandler(handle_m_bp, pattern="^m_bp$"),
+                CallbackQueryHandler(sugar_menu, pattern="^m_sugar$"),
+                CallbackQueryHandler(sugar_handler, pattern="^sugar_"),
                 CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_|sugar_)"),
                 CallbackQueryHandler(manual_drug_input, pattern="^manual_input$")],
             STATE_BMI_WEIGHT: [
