@@ -2172,8 +2172,71 @@ async def sugar_menu(u, ctx):
         [InlineKeyboardButton("🎲 " + ("عشوائي" if lang=="ar" else "Random"), callback_data="sugar_random")],
         [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
     ])
-    await q.message.edit_text("🩸 " + ("اختر نوع القراءة:" if lang=="ar" else "Select reading type:"), reply_markup=btns)
+    await q.message.edit_text("🩸 " + ("أدخل قراءة السكر (رقم فقط):" if lang=="ar" else "Enter sugar value (number only):"), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
     return STATE_SUGAR
+
+
+async def sugar_input_new(u, ctx):
+    """يستقبل الرقم ويعرض أزرار النوع"""
+    lang = get_lang(ctx)
+    try:
+        val = float(u.message.text.strip().replace(",","."))
+    except:
+        await u.message.reply_text("❌ " + ("أدخل رقماً صحيحاً" if lang=="ar" else "Enter valid number"))
+        return STATE_SUGAR
+    ctx.user_data["sugar_val"] = val
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🌅 " + ("صيام" if lang=="ar" else "Fasting"), callback_data="stype_fasting"),
+         InlineKeyboardButton("🍽️ " + ("بعد الأكل" if lang=="ar" else "Post-meal"), callback_data="stype_postmeal")],
+        [InlineKeyboardButton("📊 HbA1c", callback_data="stype_hba1c"),
+         InlineKeyboardButton("🎲 " + ("عشوائي" if lang=="ar" else "Random"), callback_data="stype_random")],
+        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+    ])
+    await u.message.reply_text("✅ " + str(val) + " mg/dL" + chr(10) + ("اختر نوع القراءة:" if lang=="ar" else "Select type:"), reply_markup=btns)
+    return STATE_SUGAR_TYPE
+
+async def sugar_type_select(u, ctx):
+    """يحسب النتيجة بعد اختيار النوع"""
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    val = ctx.user_data.get("sugar_val", 0)
+    stype = q.data.replace("stype_", "")
+
+    type_names = {"fasting":"صيام","postmeal":"بعد الأكل","hba1c":"تراكمي","random":"عشوائي"}
+    type_name = type_names.get(stype, stype) if lang=="ar" else stype
+
+    if stype == "hba1c":
+        if val < 5.7: status = "🟢 " + ("طبيعي" if lang=="ar" else "Normal")
+        elif val < 6.5: status = "🟡 " + ("ما قبل السكري" if lang=="ar" else "Pre-diabetic")
+        elif val < 8: status = "🔴 " + ("سكري مضبوط" if lang=="ar" else "Controlled diabetes")
+        else: status = "🚨 " + ("سكري غير مضبوط" if lang=="ar" else "Uncontrolled diabetes")
+        unit = "%"
+    elif stype == "fasting":
+        if val < 70: status = "⚠️ " + ("انخفاض السكر" if lang=="ar" else "Low sugar")
+        elif val <= 100: status = "🟢 " + ("طبيعي" if lang=="ar" else "Normal")
+        elif val <= 125: status = "🟡 " + ("ما قبل السكري" if lang=="ar" else "Pre-diabetic")
+        else: status = "🔴 " + ("سكري" if lang=="ar" else "Diabetic range")
+        unit = "mg/dL"
+    elif stype == "postmeal":
+        if val < 70: status = "⚠️ " + ("انخفاض السكر" if lang=="ar" else "Low sugar")
+        elif val <= 140: status = "🟢 " + ("طبيعي" if lang=="ar" else "Normal")
+        elif val <= 199: status = "🟡 " + ("ما قبل السكري" if lang=="ar" else "Pre-diabetic")
+        else: status = "🔴 " + ("سكري" if lang=="ar" else "Diabetic range")
+        unit = "mg/dL"
+    else:
+        if val < 70: status = "⚠️ " + ("انخفاض السكر" if lang=="ar" else "Low sugar")
+        elif val <= 140: status = "🟢 " + ("طبيعي" if lang=="ar" else "Normal")
+        elif val <= 199: status = "🟡 " + ("مرتفع" if lang=="ar" else "Elevated")
+        else: status = "🔴 " + ("مرتفع جداً" if lang=="ar" else "Very High")
+        unit = "mg/dL"
+
+    msg = status + chr(10) + ("النوع: " if lang=="ar" else "Type: ") + type_name + chr(10) + ("القراءة: " if lang=="ar" else "Value: ") + str(val) + " " + unit
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🩸 " + ("قراءة أخرى" if lang=="ar" else "Another Reading"), callback_data="m_sugar")],
+        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+    ])
+    await q.message.edit_text(msg, reply_markup=btns)
+    return STATE_MAIN_MENU
 
 async def bp_age_btn(u, ctx):
     q = u.callback_query; await q.answer()
@@ -4123,8 +4186,10 @@ def build_conv():
                 MessageHandler(filters.TEXT & ~filters.COMMAND, pat_allergy)],
             STATE_SUGAR: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
-                CallbackQueryHandler(sugar_handler, pattern="^sugar_"),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, sugar_result)],
+                MessageHandler(filters.TEXT & ~filters.COMMAND, sugar_input_new)],
+            STATE_SUGAR_TYPE: [
+                CallbackQueryHandler(sugar_type_select, pattern="^stype_"),
+                CallbackQueryHandler(go_back, pattern="^back$")],
             STATE_BP_AGE: [
                 CallbackQueryHandler(bp_age_btn, pattern="^bp_age_"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
