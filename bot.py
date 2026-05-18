@@ -2148,26 +2148,6 @@ async def sugar_result(u, ctx):
     return STATE_MAIN_MENU
 
 
-
-async def handle_m_sugar(u, ctx):
-    q = u.callback_query; await q.answer()
-    lang = get_lang(ctx)
-    msg = ("🩸 أدخل قراءة السكر بهذا الشكل:
-
-صيام 95
-بعداكل 140
-تراكمي 7.5
-عشوائي 110" 
-           if lang=="ar" else 
-           "🩸 Enter sugar reading:
-
-fasting 95
-postmeal 140
-hba1c 7.5
-random 110")
-    await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
-    return STATE_SUGAR
-
 async def handle_m_bp(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -4154,8 +4134,6 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(reg_handler, pattern="^reg_"),
                 CallbackQueryHandler(handle_m_bp, pattern="^m_bp$"),
-                CallbackQueryHandler(handle_m_sugar, pattern="^m_sugar$"),
-                CallbackQueryHandler(sugar_handler, pattern="^sugar_"),
                 CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_|sugar_)"),
                 CallbackQueryHandler(manual_drug_input, pattern="^manual_input$")],
             STATE_BMI_WEIGHT: [
