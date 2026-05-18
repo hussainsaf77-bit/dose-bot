@@ -2151,8 +2151,24 @@ async def sugar_result(u, ctx):
 async def handle_m_bp(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
-    msg = "💉 " + ("ادخل قراءة الضغط - مثال 120/80" if lang=="ar" else "Enter BP - Example 120/80")
-    await q.message.edit_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("👶 " + ("أقل من 18" if lang=="ar" else "Under 18"), callback_data="bp_age_child"),
+         InlineKeyboardButton("👨 " + ("18-60" if lang=="ar" else "18-60"), callback_data="bp_age_adult"),
+         InlineKeyboardButton("👴 " + ("فوق 60" if lang=="ar" else "Over 60"), callback_data="bp_age_senior")],
+        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+    ])
+    await q.message.edit_text("👤 " + ("اختر الفئة العمرية:" if lang=="ar" else "Select age group:"), reply_markup=btns)
+    return STATE_BP_AGE
+
+
+async def bp_age_btn(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    age_map = {"bp_age_child": 12, "bp_age_adult": 40, "bp_age_senior": 65}
+    ctx.user_data["bp_age"] = age_map.get(q.data, 40)
+    await q.message.edit_text(
+        "💉 " + ("ادخل قراءة الضغط - مثال 120/80" if lang=="ar" else "Enter BP - Example 120/80"),
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
     return STATE_BP
 
 async def bp_age(u, ctx):
@@ -4086,6 +4102,7 @@ def build_conv():
                 CallbackQueryHandler(sugar_handler, pattern="^sugar_"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, sugar_result)],
             STATE_BP_AGE: [
+                CallbackQueryHandler(bp_age_btn, pattern="^bp_age_"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, bp_age)],
             STATE_BP: [
