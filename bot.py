@@ -2164,7 +2164,7 @@ async def handle_m_bp(u, ctx):
 async def bp_age_btn(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
-    age_map = {"bp_age_child": 12, "bp_age_adult": 40, "bp_age_senior": 65}
+    age_map = {"bp_age_child": 10, "bp_age_adult": 40, "bp_age_senior": 65}
     ctx.user_data["bp_age"] = age_map.get(q.data, 40)
     await q.message.edit_text(
         "💉 " + ("ادخل قراءة الضغط - مثال 120/80" if lang=="ar" else "Enter BP - Example 120/80"),
@@ -2262,7 +2262,11 @@ async def bp_result(u, ctx):
         color = "🆘"
 
     msg = color + " الضغط: " + str(sys) + "/" + str(dia) + " mmHg\n" + status + "\n\n💡 " + advice
-    await u.message.reply_text(msg, reply_markup=kb_back(lang))
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("💉 " + ("قراءة أخرى" if lang=="ar" else "Another Reading"), callback_data="m_bp")],
+        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+    ])
+    await u.message.reply_text(msg, reply_markup=btns)
     return STATE_MAIN_MENU
 
 
