@@ -3935,6 +3935,7 @@ async def rem_menu(u, ctx):
     return STATE_REM_MENU
 
 async def rem_add_name(u, ctx):
+    await u.message.reply_text("🔵 rem_add_name called")
     lang = get_lang(ctx)
     ctx.user_data["nr_drug"] = u.message.text.strip()
     await u.message.reply_text(tx("rem_time", lang), reply_markup=kb_back(lang))
