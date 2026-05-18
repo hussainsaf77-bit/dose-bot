@@ -1140,11 +1140,8 @@ def save_all_reminders(data):
     if supabase_client:
         try:
             supabase_client.table("reminders").upsert({"id": "all", "data": json.dumps(data, ensure_ascii=False)}).execute()
-            logger.warning("✅ Supabase reminders saved")
         except Exception as e:
-            logger.warning(f"❌ Supabase save failed: {e}")
-    else:
-        logger.warning("❌ supabase_client is None")
+            logger.error(f"Supabase save error: {e}")
 
 def get_rems(ctx):
     try:
