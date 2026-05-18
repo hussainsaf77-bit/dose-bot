@@ -967,6 +967,7 @@ async def analyze_image(img_bytes, lang):
         import re as _re
         txt = txt.split("\n")[0].strip()
         logger.info(f"Raw image response: {txt}")
+        await asyncio.sleep(0)
         if not txt or txt == "UNKNOWN":
             return ""
         # بحث في القاموس
@@ -1622,6 +1623,7 @@ async def child_input(u, ctx):
         f = await photo.get_file()
         img = await f.download_as_bytearray()
         name = await analyze_image(bytes(img), lang)
+        await u.message.reply_text("name=" + str(name)[:50])
         if not name:
             btns = InlineKeyboardMarkup([
                 [InlineKeyboardButton("✏️ " + ("أدخل الاسم يدوياً" if lang=="ar" else "Type name manually"), callback_data="manual_input")],
