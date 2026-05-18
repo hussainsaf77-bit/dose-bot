@@ -1668,7 +1668,10 @@ async def child_input(u, ctx):
             # نسأل عن العمر للقطرات والكريمات
             ctx.user_data["child_drug"] = res[0]
             await u.message.reply_text("📸 *" + name + "*\n\n📅 " + ("كم عمر الطفل بالسنوات؟" if lang=="ar" else "Child age in years?"),
-                reply_markup=kb_back(lang), parse_mode="Markdown")
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
+                    [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+                ]), parse_mode="Markdown")
             return STATE_CHILD_WEIGHT
         msg2 = "📸 *" + name + "*\n\n" + tx("weight_prompt", lang)
         await u.message.reply_text(msg2, reply_markup=kb_image_result(lang, name), parse_mode=ParseMode.MARKDOWN)
