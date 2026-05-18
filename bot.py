@@ -2215,9 +2215,10 @@ async def bp_result(u, ctx):
         await u.message.reply_text(msg, reply_markup=kb_back(lang))
         return STATE_MAIN_MENU
 
+    # تصنيف حسب معايير AHA 2023
     if sys < 90 or dia < 60:
-        status = "⚠️ انخفاض الضغط" if lang=="ar" else "⚠️ Low Blood Pressure"
-        advice = "اشرب ماء واستلقِ، راجع الطبيب إذا استمر." if lang=="ar" else "Drink water, lie down. See doctor if it persists."
+        status = "⚠️ انخفاض الضغط" if lang=="ar" else "⚠️ Low BP"
+        advice = "اشرب ماء واستلقِ، راجع الطبيب." if lang=="ar" else "Drink water, lie down. See doctor."
         color = "🔵"
     elif sys < 120 and dia < 80:
         status = "✅ ضغط طبيعي ممتاز" if lang=="ar" else "✅ Optimal BP"
