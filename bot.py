@@ -3959,9 +3959,12 @@ async def rem_add_time(u, ctx):
     return STATE_REM_ADD_FREQ
 
 async def rem_add_freq(u, ctx):
-    await u.message.reply_text("🔵 rem_add_freq: " + u.message.text[:10])
+    await u.message.reply_text("🔵 rem_add_freq start")
     lang = get_lang(ctx)
-    track(u, "reminders")
+    try:
+        track(u, "reminders")
+    except Exception as e:
+        await u.message.reply_text("track error: " + str(e)[:50])
     try:
         f = int(u.message.text.strip())
         if not 1 <= f <= 6: raise ValueError
