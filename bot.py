@@ -2154,7 +2154,8 @@ async def bp_age(u, ctx):
         age = int(u.message.text.strip())
         if not 1 <= age <= 120: raise ValueError
     except:
-    await u.message.reply_text("💉 اكتب قراءة الضغط مثال 120/80", reply_markup=kb_back(lang))
+        await u.message.reply_text("❌ أدخل عمراً صحيحاً")
+        return STATE_BP_AGE
         return STATE_BP_AGE
     ctx.user_data["bp_age"] = age
     await u.message.reply_text("💉 أدخل قراءة الضغط مثال: 120/80" if lang=="ar" else "💉 Enter BP example: 120/80")
