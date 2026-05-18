@@ -2167,7 +2167,11 @@ async def bp_age(u, ctx):
         await u.message.reply_text("❌ أدخل عمراً صحيحاً" if lang=="ar" else "❌ Enter valid age")
         return STATE_BP_AGE
     ctx.user_data["bp_age"] = age
-    await u.message.reply_text("💉 أدخل قراءة الضغط مثال: 120/80" if lang=="ar" else "💉 Enter BP example: 120/80")
+    await u.message.reply_text(
+        "💉 " + ("أدخل قراءة الضغط
+مثال: 120/80" if lang=="ar" else "Enter BP
+Example: 120/80"),
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
     return STATE_BP
 
 async def bp_result(u, ctx):
