@@ -2170,6 +2170,56 @@ async def handle_m_sugar(u, ctx):
     await q.message.edit_text("🩸 " + ("اختر نوع قراءة السكر:" if lang=="ar" else "Select sugar reading type:"), reply_markup=btns)
     return STATE_SUGAR
 
+
+async def handle_m_bp(u, ctx):
+    """شاشة قراءة الضغط"""
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    await q.message.edit_text(
+        "💉 " + ("أدخل قراءة الضغط
+مثال: 120/80" if lang=="ar" else "Enter BP reading
+Example: 120/80"),
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
+    return STATE_BP
+
+async def bp_result_new(u, ctx):
+    """نتيجة قراءة الضغط"""
+    lang = get_lang(ctx)
+    try:
+        parts = u.message.text.strip().replace(" ","").split("/")
+        sys = int(parts[0]); dia = int(parts[1])
+    except:
+        await u.message.reply_text("❌ " + ("صيغة خاطئة. مثال: 120/80" if lang=="ar" else "Wrong format. Example: 120/80"))
+        return STATE_BP
+
+    if sys < 90 or dia < 60:
+        status = "⚠️ " + ("انخفاض الضغط" if lang=="ar" else "Low BP")
+        color = "🔵"
+    elif sys < 120 and dia < 80:
+        status = "✅ " + ("ضغط طبيعي ممتاز" if lang=="ar" else "Optimal BP")
+        color = "🟢"
+    elif sys < 130 and dia < 80:
+        status = "✅ " + ("ضغط طبيعي" if lang=="ar" else "Normal BP")
+        color = "🟢"
+    elif sys < 140 or dia < 90:
+        status = "🟡 " + ("ارتفاع بسيط" if lang=="ar" else "Elevated BP")
+        color = "🟡"
+    elif sys < 160 or dia < 100:
+        status = "🔴 " + ("ارتفاع الضغط المرحلة الأولى" if lang=="ar" else "High BP Stage 1")
+        color = "🔴"
+    else:
+        status = "🚨 " + ("ارتفاع شديد — راجع الطبيب فوراً" if lang=="ar" else "Very High BP — See doctor NOW")
+        color = "🚨"
+
+    msg = color + " " + str(sys) + "/" + str(dia) + " mmHg\n" + status
+    
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("💉 " + ("قراءة أخرى" if lang=="ar" else "Another Reading"), callback_data="m_bp")],
+        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+    ])
+    await u.message.reply_text(msg, reply_markup=btns)
+    return STATE_MAIN_MENU
+
 async def main_menu_text_router(u, ctx):
     """يوجه النصوص للدالة الصحيحة حسب السياق"""
     expected = ctx.user_data.get("expecting","")
@@ -4114,7 +4164,8 @@ def build_conv():
                 MessageHandler(filters.TEXT & ~filters.COMMAND, bp_age)],
             STATE_BP: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, bp_result)],
+                CallbackQueryHandler(handle_m_bp, pattern="^m_bp$"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, bp_result_new)],
             STATE_INFECTION_SITE: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(infection_site, pattern="^site_")],
@@ -4131,7 +4182,6 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(reg_handler, pattern="^reg_"),
                 CallbackQueryHandler(handle_m_bp, pattern="^m_bp$"),
-                CallbackQueryHandler(handle_m_sugar, pattern="^m_sugar$"),
                 CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_|sugar_)"),
                 CallbackQueryHandler(main_cb, pattern="^m_bp$"),
                 CallbackQueryHandler(main_cb, pattern="^m_sugar$"),
