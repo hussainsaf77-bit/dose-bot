@@ -2232,6 +2232,12 @@ async def bp_result(u, ctx):
         return STATE_MAIN_MENU
 
     # تصنيف حسب معايير AHA 2023
+    # للمسنين فوق 60: الحد الطبيعي أعلى قليلاً
+    if age >= 60:
+        normal_limit = 140
+    else:
+        normal_limit = 130
+
     if sys < 90 or dia < 60:
         status = "⚠️ انخفاض الضغط" if lang=="ar" else "⚠️ Low BP"
         advice = "اشرب ماء واستلقِ، راجع الطبيب." if lang=="ar" else "Drink water, lie down. See doctor."
@@ -2240,7 +2246,7 @@ async def bp_result(u, ctx):
         status = "✅ ضغط طبيعي ممتاز" if lang=="ar" else "✅ Optimal BP"
         advice = "ممتاز! حافظ على نمط حياة صحي." if lang=="ar" else "Excellent! Maintain healthy lifestyle."
         color = "🟢"
-    elif sys < 130 and dia < 80:
+    elif sys < normal_limit and dia < 90:
         status = "✅ ضغط طبيعي" if lang=="ar" else "✅ Normal BP"
         advice = "جيد. استمر على النظام الصحي." if lang=="ar" else "Good. Continue healthy habits."
         color = "🟢"
