@@ -3957,6 +3957,7 @@ async def rem_add_time(u, ctx):
     return STATE_REM_ADD_FREQ
 
 async def rem_add_freq(u, ctx):
+    await u.message.reply_text("🔵 rem_add_freq: " + u.message.text[:10])
     lang = get_lang(ctx)
     track(u, "reminders")
     try:
