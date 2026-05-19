@@ -1497,6 +1497,13 @@ async def main_cb(u, ctx):
             return STATE_MAIN_MENU
         await q.message.edit_text("👤 كم عمرك؟" if lang=="ar" else "👤 How old are you?", reply_markup=kb_back(lang))
         return STATE_BP_AGE
+    elif q.data == "m_guide":
+        if lang == "ar":
+            g_txt = "📖 دليل مساعد الطبيب" + chr(10)*2 + "💊 استعلام دواء: اكتب اسم الدواء" + chr(10) + "👶 جرعات الأطفال: اختر الشكل وأدخل الوزن" + chr(10) + "📋 ملف المريض: احفظ بيانات مرضاك" + chr(10) + "💉 الضغط: أدخل القراءة مع الفئة العمرية" + chr(10) + "🩸 السكر: أدخل الرقم واختر النوع" + chr(10) + "⏰ التذكيرات: لا تنسى دواءك" + chr(10) + "📸 الصور: أرسل صورة العبوة"
+        else:
+            g_txt = "📖 Doctor Assistant Guide" + chr(10)*2 + "💊 Drug Info: Enter drug name" + chr(10) + "👶 Child Doses: Select form and weight" + chr(10) + "📋 Patient File: Save patient data" + chr(10) + "💉 BP: Enter reading with age group" + chr(10) + "🩸 Sugar: Enter value and select type" + chr(10) + "⏰ Reminders: Never miss a dose" + chr(10) + "📸 Photos: Send medication photo"
+        await q.message.edit_text(g_txt, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
+        return STATE_MAIN_MENU
     elif q.data == "m_settings":
         kb = InlineKeyboardMarkup([
             [InlineKeyboardButton(tx("change_lang", lang), callback_data="do_lang")],
