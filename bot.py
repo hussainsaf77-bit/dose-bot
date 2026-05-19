@@ -2153,6 +2153,23 @@ async def sugar_result(u, ctx):
     return STATE_MAIN_MENU
 
 
+
+async def handle_m_search(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    await q.message.edit_text(
+        "🔍 " + ("اكتب اسم الدواء:" if lang=="ar" else "Enter drug name:"),
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
+    return STATE_DRUG_SEARCH
+
+async def handle_m_search_new(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    await q.message.edit_text(
+        "🔍 " + ("اكتب اسم الدواء:" if lang=="ar" else "Enter drug name:"),
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
+    return STATE_DRUG_SEARCH
+
 async def handle_m_bp(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -4251,7 +4268,8 @@ def build_conv():
             STATE_DRUG_SEARCH: [
                 CallbackQueryHandler(manual_drug_input, pattern="^manual_input$"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
-                CallbackQueryHandler(main_cb, pattern="^m_search$"),
+                CallbackQueryHandler(handle_m_search, pattern="^m_search$"),
+                CallbackQueryHandler(handle_m_search_new, pattern="^m_search_new$"),
                 CallbackQueryHandler(drug_sel, pattern="^ds_"),
                 MessageHandler(filters.PHOTO, drug_search_image),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, drug_search)],
