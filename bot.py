@@ -4251,6 +4251,7 @@ def build_conv():
             STATE_DRUG_SEARCH: [
                 CallbackQueryHandler(manual_drug_input, pattern="^manual_input$"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
+                CallbackQueryHandler(main_cb, pattern="^m_search$"),
                 CallbackQueryHandler(drug_sel, pattern="^ds_"),
                 MessageHandler(filters.PHOTO, drug_search_image),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, drug_search)],
