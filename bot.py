@@ -630,7 +630,7 @@ def fmt_drug(drug, lang):
             f"💊 *Interactions:* {g('interactions_en','interactions')}\n\n"
             f"🤰 *Pregnancy:* {ar_to_en(g('pregnancy_en') if g('pregnancy_en') != '—' else g('pregnancy'))}\n"
             f"🍼 *Lactation:* {ar_to_en(g('lactation_en') if g('lactation_en') != '—' else g('lactation'))}\n"
-            f"🫘 *Renal:* {g('renal','renal_dose')}\n\n"
+            f"🫘 *Renal:* {g('renal_dose','renal') if not isinstance(drug.get('renal',''), dict) else drug.get('renal',{}).get('status_en', drug.get('renal',{}).get('details','—'))[:80]}\n\n"
             f"🔗 [More Information]({drug_link})")
 
 def calc_child(drug, w, lang):
