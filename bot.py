@@ -1546,6 +1546,15 @@ async def drug_search(u, ctx):
         track(u, "searches")
     except: pass
     query = u.message.text.strip()
+    # نبحث في القاعدة أولاً
+    res = search_drugs(query)
+    if res:
+        d = res[0]
+        msg = fmt_drug(d, lang)
+        if msg and len(msg) > 50:
+            await u.message.reply_text(msg, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+            return STATE_DRUG_SEARCH
+
     
     # Claude API مباشرة
     thinking = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
