@@ -1106,7 +1106,8 @@ def kb_main(lang):
         [InlineKeyboardButton(tx("btn_bp", lang), callback_data="m_bp")],
         [InlineKeyboardButton(tx("btn_remind", lang), callback_data="m_remind")],
         [InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],
-        [InlineKeyboardButton(tx("btn_settings", lang), callback_data="m_settings")]])
+        [InlineKeyboardButton(tx("btn_settings", lang), callback_data="m_settings")],
+        [InlineKeyboardButton("📖 " + ("دليل المستخدم" if lang=="ar" else "User Guide"), callback_data="m_guide")]])
 
 def kb_back(lang):
     return InlineKeyboardMarkup([[
