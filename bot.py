@@ -617,20 +617,29 @@ def fmt_drug(drug, lang):
             f"🔗 [مزيد من المعلومات]({drug_link})")
     else:
         n = g("name_en","name_ar")
-        return (f"💊 *{n}*\n\n"
+        def get_list_en(key, fb="—"):
+            v = drug.get(key, "")
+            if isinstance(v, list): return ", ".join(str(x) for x in v if x)
+            if isinstance(v, dict): return v.get("status_en", v.get("details", fb))[:100]
+            return str(v) if v else fb
+        renal_en = get_list_en("renal")
+        if not renal_en or renal_en == "—":
+            renal_en = get_list_en("renal_dose")
+        return (
+            f"💊 *{n}*\n\n"
             f"🔬 *Drug Class:* {g('drug_class_en','drug_class')}\n"
-            f"🏷️ *Aliases:* {g('aliases','drug_class_en','drug_class')}\n"
+            f"🏷️ *Brand Names:* {g('aliases')}\n"
             f"👶 *Child Dose:* {dose_child()}\n"
-            f"🔁 *Child Frequency:* {ar_to_en(g('pediatric_frequency_en') if g('pediatric_frequency_en') != '—' else g('pediatric_frequency'))}\n"
+            f"🔁 *Child Frequency:* {g('pediatric_frequency_en','pediatric_frequency')}\n"
             f"🧑 *Adult Dose:* {dose_adult()}\n"
-            f"🔁 *Adult Frequency:* {ar_to_en(g('adult_frequency_en') if g('adult_frequency_en') != '—' else g('adult_frequency'))}\n"
-            f"⚠️ *Max Daily:* {g('max_daily')}\n\n"
-            f"🚫 *Contraindications:* {g('contraindications_en','contraindications')}\n"
-            f"⚡ *Side Effects:* {g('side_effects_en','side_effects')}\n"
-            f"💊 *Interactions:* {g('interactions_en','interactions')}\n\n"
-            f"🤰 *Pregnancy:* {ar_to_en(g('pregnancy_en') if g('pregnancy_en') != '—' else g('pregnancy'))}\n"
-            f"🍼 *Lactation:* {ar_to_en(g('lactation_en') if g('lactation_en') != '—' else g('lactation'))}\n"
-            f"🫘 *Renal:* {g('renal_dose','renal') if not isinstance(drug.get('renal',''), dict) else drug.get('renal',{}).get('status_en', drug.get('renal',{}).get('details','—'))[:80]}\n\n"
+            f"🔁 *Adult Frequency:* {g('adult_frequency_en','adult_frequency')}\n"
+            f"⚠️ *Max Daily:* {g('max_daily')} mg\n\n"
+            f"🚫 *Contraindications:* {get_list_en('contraindications_en', get_list_en('contraindications'))}\n"
+            f"⚡ *Side Effects:* {get_list_en('side_effects_en', get_list_en('side_effects'))}\n"
+            f"💊 *Interactions:* {get_list_en('interactions_en', get_list_en('interactions'))}\n\n"
+            f"🤰 *Pregnancy:* {g('pregnancy_en','pregnancy')}\n"
+            f"🍼 *Lactation:* {g('lactation_en','lactation')}\n"
+            f"🫘 *Renal:* {renal_en}\n\n"
             f"🔗 [More Information]({drug_link})")
 
 def calc_child(drug, w, lang):
