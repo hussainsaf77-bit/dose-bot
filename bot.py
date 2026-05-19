@@ -3940,7 +3940,40 @@ async def rem_menu(u, ctx):
 async def rem_add_name(u, ctx):
     lang = get_lang(ctx)
     ctx.user_data["nr_drug"] = u.message.text.strip()
+    
+    # نحاول نجيب المرضى المحفوظين
+    load_patients(ctx)
+    patients = ctx.user_data.get("patients", {})
+    
+    if patients:
+        btns = []
+        for pid, p in list(patients.items())[:8]:
+            name = p.get("name","")
+            if name:
+                btns.append([InlineKeyboardButton("👤 " + name, callback_data="rem_pat_" + pid)])
+        btns.append([InlineKeyboardButton("👤 " + ("شخص آخر" if lang=="ar" else "Other person"), callback_data="rem_pat_none")])
+        btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
+        await u.message.reply_text("👤 " + ("لمن هذا الدواء؟" if lang=="ar" else "Who is this for?"), reply_markup=InlineKeyboardMarkup(btns))
+        return STATE_REM_ADD_TIME
+    
     await u.message.reply_text(tx("rem_time", lang), reply_markup=kb_back(lang))
+    return STATE_REM_ADD_TIME
+
+
+async def rem_pat_select(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    
+    if q.data == "rem_pat_none":
+        ctx.user_data.pop("nr_patient", None)
+    else:
+        pid = q.data.replace("rem_pat_", "")
+        load_patients(ctx)
+        patients = ctx.user_data.get("patients", {})
+        pat_name = patients.get(pid, {}).get("name", "")
+        ctx.user_data["nr_patient"] = pat_name
+    
+    await q.message.edit_text(tx("rem_time", lang), reply_markup=kb_back(lang))
     return STATE_REM_ADD_TIME
 
 async def rem_add_time(u, ctx):
@@ -4239,6 +4272,7 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, rem_add_name)],
             STATE_REM_ADD_TIME: [
+                CallbackQueryHandler(rem_pat_select, pattern="^rem_pat_"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, rem_add_time)],
             STATE_REM_ADD_FREQ: [
