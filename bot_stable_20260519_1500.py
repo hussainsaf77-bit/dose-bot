@@ -619,14 +619,9 @@ def fmt_drug(drug, lang):
         n = g("name_en","name_ar")
         def get_list_en(key, fb="—"):
             v = drug.get(key, "")
-            def is_arabic(s): return any('؀' <= c <= 'ۿ' for c in str(s))
-            if isinstance(v, list):
-                en_items = [str(x) for x in v if x and not is_arabic(str(x))]
-                return ", ".join(en_items) if en_items else ", ".join(str(x) for x in v if x)
-            if isinstance(v, dict):
-                return v.get("status_en", v.get("details", fb))[:100]
-            val = str(v) if v else fb
-            return val
+            if isinstance(v, list): return ", ".join(str(x) for x in v if x)
+            if isinstance(v, dict): return v.get("status_en", v.get("details", fb))[:100]
+            return str(v) if v else fb
         renal_en = get_list_en("renal")
         if not renal_en or renal_en == "—":
             renal_en = get_list_en("renal_dose")
