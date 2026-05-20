@@ -1444,6 +1444,9 @@ async def go_back(u, ctx):
     lang = get_lang(ctx)
     for k in ("results", "child_drug", "edit_id", "edit_field"):
         ctx.user_data.pop(k, None)
+    # نعرض القائمة الرئيسية بدل حذف الرسالة
+    await show_main(q.message, lang, edit=False)
+    return STATE_MAIN_MENU
     await show_main(q.message, lang, edit=True)
     return STATE_MAIN_MENU
 
