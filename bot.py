@@ -639,12 +639,12 @@ def fmt_drug(drug, lang):
             f"🧑 *Adult Dose:* {dose_adult()}\n"
             f"🔁 *Adult Frequency:* {g('adult_frequency_en','adult_frequency')}\n"
             f"⚠️ *Max Daily:* {g('max_daily')} mg\n\n"
-            f"🚫 *Contraindications:* {get_list_en('contraindications_en', get_list_en('contraindications'))}\n"
+            f"🚫 *Contraindications:* {get_list_en('contraindications_en') if drug.get('contraindications_en') else get_list_en('contraindications')}\n"
             f"⚡ *Side Effects:* {get_list_en('side_effects_en', get_list_en('side_effects'))}\n"
             f"💊 *Interactions:* {get_list_en('interactions_en', get_list_en('interactions'))}\n\n"
             f"🤰 *Pregnancy:* {g('pregnancy_en','pregnancy')}\n"
             f"🍼 *Lactation:* {g('lactation_en','lactation')}\n"
-            f"🫘 *Renal:* {renal_en}\n\n"
+            f"🫘 *Renal Dose:* {get_list_en('renal_dose') if drug.get('renal_dose') else renal_en}\n\n"
             f"🔗 [More Information]({drug_link})")
 
 def calc_child(drug, w, lang):
