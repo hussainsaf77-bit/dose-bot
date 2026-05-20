@@ -1444,6 +1444,7 @@ async def go_back(u, ctx):
     lang = get_lang(ctx)
     for k in ("results", "child_drug", "edit_id", "edit_field"):
         ctx.user_data.pop(k, None)
+    # نرسل القائمة الرئيسية كرسالة جديدة
     await show_main(q.message, lang, edit=False)
     return STATE_MAIN_MENU
 
@@ -1582,8 +1583,10 @@ async def drug_search(u, ctx):
                 [InlineKeyboardButton("🔍 " + ("استعلام آخر" if lang=="ar" else "Another Search"), callback_data="m_search")],
                 [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
             ])
-            clean_msg = msg.replace("*","").replace("_","").replace("`","")
-            await u.message.reply_text(clean_msg[:4000], reply_markup=search_btn)
+            try:
+                await u.message.reply_text(msg, reply_markup=search_btn, parse_mode=ParseMode.MARKDOWN)
+            except:
+                await u.message.reply_text(msg.replace("*","").replace("_",""), reply_markup=search_btn)
             return STATE_DRUG_SEARCH
 
     
