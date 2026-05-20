@@ -1627,15 +1627,19 @@ If unknown write: unknown"""
                     "messages": [{"role": "user", "content": prompt}]})
             result = r.json().get("content", [{}])[0].get("text", "").strip()
         await thinking.delete()
-        if "غير معروف" not in result and "unknown" not in result.lower():
+        if result:
+            # نضيف رابط مرجعي
+            drug_link = f"https://www.drugs.com/{query.lower().replace(' ','_')}.html"
+            ar_link = f"https://www.webteb.com/medications/search?q={query}"
+            ref_line = chr(10) + chr(10) + ("🔗 مرجع: " if lang=="ar" else "🔗 Reference: ")
+            ref_line += f"[Drugs.com]({drug_link})"
+            
+            final = result + ref_line
             search_btns = InlineKeyboardMarkup([
                 [InlineKeyboardButton("🔍 " + ("استعلام آخر" if lang=="ar" else "Another Search"), callback_data="m_search")],
                 [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
             ])
-            try:
-                await u.message.reply_text(result, reply_markup=search_btns)
-            except:
-                await u.message.reply_text(result.replace("*","").replace("_",""), reply_markup=search_btns)
+            await u.message.reply_text(final[:4000], reply_markup=search_btns)
             return STATE_DRUG_SEARCH
     except Exception as e:
         logger.error(f"drug_search: {e}")
