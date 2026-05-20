@@ -627,12 +627,16 @@ def fmt_drug(drug, lang):
                 return v.get("status_en", v.get("details", fb))[:100]
             val = str(v) if v else fb
             return val
-        renal_en = get_list_en("renal")
-        if not renal_en or renal_en == "—":
+        renal_raw = drug.get("renal", "")
+        if isinstance(renal_raw, dict):
+            renal_en = renal_raw.get("status_en", renal_raw.get("status","—"))
+        elif renal_raw:
+            renal_en = str(renal_raw)
+        else:
             renal_en = get_list_en("renal_dose")
         return (
             f"💊 *{n}*\n\n"
-            f"🔬 *Drug Class:* {g('drug_class_en','drug_class')}\n"
+            f"🔬 *Drug Class:* {g('drug_class_en') if drug.get('drug_class_en') and not any(chr(c) in g('drug_class_en') for c in range(0x0600,0x06ff)) else g('drug_class_en','drug_class')}\n"
             f"🏷️ *Brand Names:* {g('aliases')}\n"
             f"👶 *Child Dose:* {dose_child()}\n"
             f"🔁 *Child Frequency:* {g('pediatric_frequency_en','pediatric_frequency')}\n"
@@ -1619,7 +1623,14 @@ If unknown write: unknown"""
             result = r.json().get("content", [{}])[0].get("text", "").strip()
         await thinking.delete()
         if "غير معروف" not in result and "unknown" not in result.lower():
-            await u.message.reply_text(result, reply_markup=kb_back(lang))
+            search_btns = InlineKeyboardMarkup([
+                [InlineKeyboardButton("🔍 " + ("استعلام آخر" if lang=="ar" else "Another Search"), callback_data="m_search")],
+                [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+            ])
+            try:
+                await u.message.reply_text(result, reply_markup=search_btns)
+            except:
+                await u.message.reply_text(result.replace("*","").replace("_",""), reply_markup=search_btns)
             return STATE_DRUG_SEARCH
     except Exception as e:
         logger.error(f"drug_search: {e}")
