@@ -283,7 +283,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Loratadine",
       "drugscom": "https://www.drugs.com/loratadine.html"
     },
-    "drug_class_en": "مضادات الهيستامين الجيل الثاني (Non-sedating H1 Antihistamines)",
+    "drug_class_en": "Non-sedating H",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -372,7 +372,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Cetirizine",
       "drugscom": "https://www.drugs.com/cetirizine.html"
     },
-    "drug_class_en": "مضادات الهيستامين الجيل الثاني (Non-sedating H1 Antihistamines)",
+    "drug_class_en": "Non-sedating H",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -464,7 +464,8 @@
       "Anorexia",
       "Metallic taste"
     ],
-    "name_en": "metformin"
+    "name_en": "metformin",
+    "renal_dose": "Contraindicated"
   },
   {
     "name_ar": "لوسارتان",
@@ -533,7 +534,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Losartan",
       "drugscom": "https://www.drugs.com/losartan.html"
     },
-    "drug_class_en": "حاصرات مستقبلات الأنجيوتنسين II — ARBs (Angiotensin II Receptor Blockers)",
+    "drug_class_en": "II",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -629,7 +630,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Furosemide",
       "drugscom": "https://www.drugs.com/furosemide.html"
     },
-    "drug_class_en": "مدرات البول / لوب دايوريتيك (Loop Diuretics)",
+    "drug_class_en": "Loop Diuretics",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2 مرات يوميًا",
@@ -713,7 +714,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Captopril",
       "drugscom": "https://www.drugs.com/captopril.html"
     },
-    "drug_class_en": "مثبطات الإنزيم المحول للأنجيوتنسين — ACEi (ACE Inhibitors)",
+    "drug_class_en": "ACEi",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2 مرات يوميًا",
@@ -797,7 +798,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Prednisolone",
       "drugscom": "https://www.drugs.com/prednisolone.html"
     },
-    "drug_class_en": "كورتيكوستيرويدات (Corticosteroids)",
+    "drug_class_en": "Corticosteroids",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -881,7 +882,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Salbutamol",
       "drugscom": "https://www.drugs.com/salbutamol.html"
     },
-    "drug_class_en": "موسعات الشعب الهوائية / بيتا-2 أجونيست (Beta-2 Agonists — Bronchodilators)",
+    "drug_class_en": "Beta-",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "3-4 times daily",
@@ -964,7 +965,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Aspirin",
       "drugscom": "https://www.drugs.com/aspirin.html"
     },
-    "drug_class_en": "مضادات الالتهاب غير الستيرويدية / مضادات الصفيحات (NSAIDs / Antiplatelet — Salicylates)",
+    "drug_class_en": "NSAIDs / Antiplatelet",
     "pregnancy_en": "Contraindicated in third trimester",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "3-4 times daily",
@@ -1047,7 +1048,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Omeprazole",
       "drugscom": "https://www.drugs.com/omeprazole.html"
     },
-    "drug_class_en": "مثبطات مضخة البروتون (Proton Pump Inhibitors — PPIs)",
+    "drug_class_en": "Proton Pump Inhibitors",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -1142,7 +1143,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Simvastatin",
       "drugscom": "https://www.drugs.com/simvastatin.html"
     },
-    "drug_class_en": "خافضات الكوليسترول / ستاتينات (Statins — HMG-CoA Reductase Inhibitors)",
+    "drug_class_en": "Statins",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -1227,7 +1228,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Amlodipine",
       "drugscom": "https://www.drugs.com/amlodipine.html"
     },
-    "drug_class_en": "حاصرات قنوات الكالسيوم ثنائية هيدروبيريدين (Dihydropyridine CCBs)",
+    "drug_class_en": "Dihydropyridine CCBs",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -1322,7 +1323,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Levothyroxine",
       "drugscom": "https://www.drugs.com/levothyroxine.html"
     },
-    "drug_class_en": "هرمونات الغدة الدرقية (Thyroid Hormones)",
+    "drug_class_en": "Thyroid Hormones",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -1406,7 +1407,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Lisinopril",
       "drugscom": "https://www.drugs.com/lisinopril.html"
     },
-    "drug_class_en": "مثبطات الإنزيم المحول للأنجيوتنسين — ACEi (ACE Inhibitors)",
+    "drug_class_en": "ACEi",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -1490,7 +1491,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Hydrochlorothiazide",
       "drugscom": "https://www.drugs.com/hydrochlorothiazide.html"
     },
-    "drug_class_en": "مدرات البول / ثيازيد (Thiazide Diuretics)",
+    "drug_class_en": "Thiazide Diuretics",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -1574,7 +1575,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Atorvastatin",
       "drugscom": "https://www.drugs.com/atorvastatin.html"
     },
-    "drug_class_en": "خافضات الكوليسترول / ستاتينات (Statins — HMG-CoA Reductase Inhibitors)",
+    "drug_class_en": "Statins",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -1670,7 +1671,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Diazepam",
       "drugscom": "https://www.drugs.com/diazepam.html"
     },
-    "drug_class_en": "بنزوديازيبينات (Benzodiazepines)",
+    "drug_class_en": "Benzodiazepines",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -1754,7 +1755,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Digoxin",
       "drugscom": "https://www.drugs.com/digoxin.html"
     },
-    "drug_class_en": "جليكوسيدات القلب (Cardiac Glycosides)",
+    "drug_class_en": "Cardiac Glycosides",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -1838,7 +1839,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Enalapril",
       "drugscom": "https://www.drugs.com/enalapril.html"
     },
-    "drug_class_en": "مثبطات الإنزيم المحول للأنجيوتنسين — ACEi (ACE Inhibitors)",
+    "drug_class_en": "ACEi",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1-2 مرات يوميًا",
@@ -1922,7 +1923,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Clopidogrel",
       "drugscom": "https://www.drugs.com/clopidogrel.html"
     },
-    "drug_class_en": "مضادات الصفيحات / ثينوبيريدينات (Thienopyridines — Antiplatelet Agents)",
+    "drug_class_en": "Thienopyridines",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -2007,7 +2008,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Warfarin",
       "drugscom": "https://www.drugs.com/warfarin.html"
     },
-    "drug_class_en": "مضادات التخثر / مضادات فيتامين ك (Vitamin K Antagonists — Anticoagulants)",
+    "drug_class_en": "Vitamin K Antagonists",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -2091,7 +2092,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Metronidazole",
       "drugscom": "https://www.drugs.com/metronidazole.html"
     },
-    "drug_class_en": "مضادات حيوية / نيتروإيميدازول (Nitroimidazoles — Antibiotics)",
+    "drug_class_en": "Nitroimidazoles",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "3 times daily",
@@ -2175,7 +2176,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Doxycycline",
       "drugscom": "https://www.drugs.com/doxycycline.html"
     },
-    "drug_class_en": "مضادات حيوية / تتراسايكلينات (Tetracyclines — Antibiotics)",
+    "drug_class_en": "Tetracyclines",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "1-2 مرات يوميًا",
@@ -2258,7 +2259,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Azithromycin",
       "drugscom": "https://www.drugs.com/azithromycin.html"
     },
-    "drug_class_en": "مضادات حيوية / ماكروليدات (Macrolides — Antibiotics)",
+    "drug_class_en": "Macrolides",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا لـ 3 أيام",
@@ -2343,7 +2344,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Ciprofloxacin",
       "drugscom": "https://www.drugs.com/ciprofloxacin.html"
     },
-    "drug_class_en": "مضادات حيوية / فلوروكينولون (Fluoroquinolones — Antibiotics)",
+    "drug_class_en": "Fluoroquinolones",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Allowed with caution",
     "pediatric_frequency_en": "2 مرات يوميًا",
@@ -2427,7 +2428,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Cephalexin",
       "drugscom": "https://www.drugs.com/cephalexin.html"
     },
-    "drug_class_en": "مضادات حيوية / سيفالوسبورينات الجيل الأول (1st Gen Cephalosporins — Beta-lactams)",
+    "drug_class_en": "st Gen Cephalosporins",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -2511,7 +2512,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Fluconazole",
       "drugscom": "https://www.drugs.com/fluconazole.html"
     },
-    "drug_class_en": "مضادات الفطريات / أزول (Azole Antifungals)",
+    "drug_class_en": "Azole Antifungals",
     "pregnancy_en": "ممنوع (جرعات عالية)",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -2593,7 +2594,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Acyclovir",
       "drugscom": "https://www.drugs.com/acyclovir.html"
     },
-    "drug_class_en": "مضادات الفيروسات / نيوكليوزيد أنالوج (Nucleoside Analogues — Antivirals)",
+    "drug_class_en": "Nucleoside Analogues",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "3-4 times daily",
@@ -2674,7 +2675,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Hydrocortisone",
       "drugscom": "https://www.drugs.com/hydrocortisone.html"
     },
-    "drug_class_en": "كورتيكوستيرويدات (Corticosteroids)",
+    "drug_class_en": "Corticosteroids",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -2758,7 +2759,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Insulin+Glargine",
       "drugscom": "https://www.drugs.com/insulin-glargine.html"
     },
-    "drug_class_en": "أنسولين طويل المفعول (Glargine)",
+    "drug_class_en": "Glargine",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "once daily",
@@ -2842,7 +2843,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Spironolactone",
       "drugscom": "https://www.drugs.com/spironolactone.html"
     },
-    "drug_class_en": "مدرات البول / مضادات الألدوستيرون (Potassium-sparing Diuretics — Aldosterone Antagonists)",
+    "drug_class_en": "Potassium-sparing Diuretics",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1-2 مرات يوميًا",
@@ -2927,7 +2928,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Allopurinol",
       "drugscom": "https://www.drugs.com/allopurinol.html"
     },
-    "drug_class_en": "مضادات النقرس / مثبطات أكسيداز الزانثين (Xanthine Oxidase Inhibitors — Antigout)",
+    "drug_class_en": "Xanthine Oxidase Inhibitors",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -3010,7 +3011,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Gabapentin",
       "drugscom": "https://www.drugs.com/gabapentin.html"
     },
-    "drug_class_en": "مضادات الصرع / مثبطات قنوات الكالسيوم (Anticonvulsants — Calcium Channel α2δ Ligands)",
+    "drug_class_en": "Anticonvulsants",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed with caution",
     "pediatric_frequency_en": "3 times daily",
@@ -3092,7 +3093,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Ondansetron",
       "drugscom": "https://www.drugs.com/ondansetron.html"
     },
-    "drug_class_en": "مضادات القيء / حاصرات 5-HT3 (5-HT3 Receptor Antagonists — Antiemetics)",
+    "drug_class_en": "HT",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "every 8 hours",
@@ -3175,7 +3176,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Ranitidine",
       "drugscom": "https://www.drugs.com/ranitidine.html"
     },
-    "drug_class_en": "حاصرات مستقبل H2 (H2 Receptor Antagonists)",
+    "drug_class_en": "Receptor Antagonists",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2 مرات يوميًا",
@@ -3258,7 +3259,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Tramadol",
       "drugscom": "https://www.drugs.com/tramadol.html"
     },
-    "drug_class_en": "مسكنات الألم / أفيونيات مركزية (Centrally-acting Opioid-like Analgesics)",
+    "drug_class_en": "Centrally-acting Opioid-like Analgesics",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "every 6 hours",
@@ -3342,7 +3343,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Morphine",
       "drugscom": "https://www.drugs.com/morphine.html"
     },
-    "drug_class_en": "مسكنات الألم / أفيونيات (Opioid Analgesics)",
+    "drug_class_en": "Opioid Analgesics",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "كل 4 ساعات",
@@ -3426,7 +3427,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Clonazepam",
       "drugscom": "https://www.drugs.com/clonazepam.html"
     },
-    "drug_class_en": "بنزوديازيبينات / مضادات الصرع (Benzodiazepines — Anticonvulsants)",
+    "drug_class_en": "Benzodiazepines",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -3510,7 +3511,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Alprazolam",
       "drugscom": "https://www.drugs.com/alprazolam.html"
     },
-    "drug_class_en": "بنزوديازيبينات (Benzodiazepines)",
+    "drug_class_en": "Benzodiazepines",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -3593,7 +3594,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Fluoxetine",
       "drugscom": "https://www.drugs.com/fluoxetine.html"
     },
-    "drug_class_en": "مضاد اكتئاب / SSRI",
+    "drug_class_en": "SSRI",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed with caution",
     "pediatric_frequency_en": "Not recommended for children",
@@ -3675,7 +3676,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Sertraline",
       "drugscom": "https://www.drugs.com/sertraline.html"
     },
-    "drug_class_en": "مضاد اكتئاب / SSRI",
+    "drug_class_en": "SSRI",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -3757,7 +3758,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Escitalopram",
       "drugscom": "https://www.drugs.com/escitalopram.html"
     },
-    "drug_class_en": "مضاد اكتئاب / SSRI",
+    "drug_class_en": "SSRI",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed with caution",
     "pediatric_frequency_en": "Not recommended for children",
@@ -3839,7 +3840,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Duloxetine",
       "drugscom": "https://www.drugs.com/duloxetine.html"
     },
-    "drug_class_en": "مثبطات استرداد السيروتونين والنورإبينفرين — SNRIs (Serotonin-Norepinephrine Reuptake Inhibitors)",
+    "drug_class_en": "SNRIs",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed with caution",
     "pediatric_frequency_en": "1-2 مرات يوميًا",
@@ -3922,7 +3923,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Carvedilol",
       "drugscom": "https://www.drugs.com/carvedilol.html"
     },
-    "drug_class_en": "حاصرات بيتا غير انتقائية / حاصرات ألفا-1 (Alpha-1 & Non-selective Beta Blockers)",
+    "drug_class_en": "Alpha-",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not specified",
@@ -4014,7 +4015,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Metoprolol",
       "drugscom": "https://www.drugs.com/metoprolol.html"
     },
-    "drug_class_en": "حاصرات بيتا-1 الانتقائية (Cardioselective Beta-1 Blockers)",
+    "drug_class_en": "Cardioselective Beta-",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1-2 مرات يوميًا",
@@ -4098,7 +4099,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Bisoprolol",
       "drugscom": "https://www.drugs.com/bisoprolol.html"
     },
-    "drug_class_en": "حاصرات بيتا-1 الانتقائية (Cardioselective Beta-1 Blockers)",
+    "drug_class_en": "Cardioselective Beta-",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not specified",
@@ -4188,7 +4189,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Atenolol",
       "drugscom": "https://www.drugs.com/atenolol.html"
     },
-    "drug_class_en": "حاصرات بيتا-1 الانتقائية (Cardioselective Beta-1 Blockers)",
+    "drug_class_en": "Cardioselective Beta-",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -4441,7 +4442,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Nifedipine",
       "drugscom": "https://www.drugs.com/nifedipine.html"
     },
-    "drug_class_en": "حاصرات قنوات الكالسيوم ثنائية هيدروبيريدين (Dihydropyridine CCBs)",
+    "drug_class_en": "Dihydropyridine CCBs",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1-2 مرات يوميًا",
@@ -4523,7 +4524,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Hydralazine",
       "drugscom": "https://www.drugs.com/hydralazine.html"
     },
-    "drug_class_en": "موسعات الأوعية الدموية المباشرة (Direct Vasodilators — Antihypertensives)",
+    "drug_class_en": "Direct Vasodilators",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "3-4 times daily",
@@ -4605,7 +4606,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Methyldopa",
       "drugscom": "https://www.drugs.com/methyldopa.html"
     },
-    "drug_class_en": "ناهضات ألفا-2 المركزية (Central Alpha-2 Agonists — Antihypertensives)",
+    "drug_class_en": "Central Alpha-",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -4687,7 +4688,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Clonidine",
       "drugscom": "https://www.drugs.com/clonidine.html"
     },
-    "drug_class_en": "ناهضات ألفا-2 المركزية (Central Alpha-2 Agonists — Antihypertensives)",
+    "drug_class_en": "Central Alpha-",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -4931,7 +4932,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Finasteride",
       "drugscom": "https://www.drugs.com/finasteride.html"
     },
-    "drug_class_en": "مثبطات 5-alpha reductase",
+    "drug_class_en": "alpha reductase",
     "pregnancy_en": "ممنوع للنساء",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -5010,7 +5011,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Sildenafil",
       "drugscom": "https://www.drugs.com/sildenafil.html"
     },
-    "drug_class_en": "مثبطات فوسفوديستيريز-5 (PDE5 Inhibitors)",
+    "drug_class_en": "PDE",
     "pregnancy_en": "لا يستخدم للنساء",
     "lactation_en": "لا يستخدم",
     "pediatric_frequency_en": "عند الحاجة",
@@ -5092,7 +5093,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Tadalafil",
       "drugscom": "https://www.drugs.com/tadalafil.html"
     },
-    "drug_class_en": "مثبطات فوسفوديستيريز-5 (PDE5 Inhibitors)",
+    "drug_class_en": "PDE",
     "pregnancy_en": "لا يستخدم للنساء",
     "lactation_en": "لا يستخدم",
     "pediatric_frequency_en": "عند الحاجة",
@@ -5174,7 +5175,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Methylprednisolone",
       "drugscom": "https://www.drugs.com/methylprednisolone.html"
     },
-    "drug_class_en": "كورتيكوستيرويدات (Corticosteroids)",
+    "drug_class_en": "Corticosteroids",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -5256,7 +5257,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Dexamethasone",
       "drugscom": "https://www.drugs.com/dexamethasone.html"
     },
-    "drug_class_en": "كورتيكوستيرويدات (Corticosteroids)",
+    "drug_class_en": "Corticosteroids",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1-2 مرات يوميًا",
@@ -5338,7 +5339,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Hydroxychloroquine",
       "drugscom": "https://www.drugs.com/hydroxychloroquine.html"
     },
-    "drug_class_en": "مضادات الملاريا / مثبطات المناعة (Antimalarials — Immunomodulators)",
+    "drug_class_en": "Antimalarials",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -5421,7 +5422,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Colchicine",
       "drugscom": "https://www.drugs.com/colchicine.html"
     },
-    "drug_class_en": "مضادات النقرس / مثبطات انقسام الخلايا (Colchicum Alkaloids — Antigout)",
+    "drug_class_en": "Colchicum Alkaloids",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed with caution",
     "pediatric_frequency_en": "1-2 مرات يوميًا",
@@ -5505,7 +5506,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Propranolol",
       "drugscom": "https://www.drugs.com/propranolol.html"
     },
-    "drug_class_en": "حاصرات بيتا غير انتقائية (Non-selective Beta Blockers)",
+    "drug_class_en": "Non-selective Beta Blockers",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -5588,7 +5589,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Nortriptyline",
       "drugscom": "https://www.drugs.com/nortriptyline.html"
     },
-    "drug_class_en": "مضادات الاكتئاب ثلاثية الحلقات — TCAs (Tricyclic Antidepressants)",
+    "drug_class_en": "TCAs",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed with caution",
     "pediatric_frequency_en": "1-3 مرات يوميًا",
@@ -5916,7 +5917,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Carbamazepine",
       "drugscom": "https://www.drugs.com/carbamazepine.html"
     },
-    "drug_class_en": "مضادات الصرع / مثبطات قنوات الصوديوم (Anticonvulsants — Sodium Channel Blockers)",
+    "drug_class_en": "Anticonvulsants",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -5995,7 +5996,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Levetiracetam",
       "drugscom": "https://www.drugs.com/levetiracetam.html"
     },
-    "drug_class_en": "مضادات الصرع / مثبطات SV2A (Anticonvulsants — Synaptic Vesicle Protein 2A Ligands)",
+    "drug_class_en": "SV",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2 مرات يوميًا",
@@ -6154,7 +6155,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Baclofen",
       "drugscom": "https://www.drugs.com/baclofen.html"
     },
-    "drug_class_en": "مرخيات العضلات / ناهضات GABA-B (GABA-B Agonists — Muscle Relaxants)",
+    "drug_class_en": "GABA-B",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -6235,7 +6236,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Epinephrine",
       "drugscom": "https://www.drugs.com/epinephrine.html"
     },
-    "drug_class_en": "كاتيكولامينات / ناهضات أدرينالية (Catecholamines — Adrenergic Agonists)",
+    "drug_class_en": "Catecholamines",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "كل 5-10 دقائق حسب الحاجة",
@@ -6313,7 +6314,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Naloxone",
       "drugscom": "https://www.drugs.com/naloxone.html"
     },
-    "drug_class_en": "مضادات الأفيونيات (Opioid Antagonists)",
+    "drug_class_en": "Opioid Antagonists",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "كل 3 دقائق",
@@ -6391,7 +6392,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Meropenem",
       "drugscom": "https://www.drugs.com/meropenem.html"
     },
-    "drug_class_en": "مضادات حيوية / كاربابينيم (Carbapenems — Beta-lactam Antibiotics)",
+    "drug_class_en": "Carbapenems",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "every 8 hours",
@@ -6525,7 +6526,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Clindamycin",
       "drugscom": "https://www.drugs.com/clindamycin.html"
     },
-    "drug_class_en": "مضادات حيوية / لينكوساميد (Lincosamide Antibiotics)",
+    "drug_class_en": "Lincosamide Antibiotics",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "every 8 hours",
@@ -6606,7 +6607,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Levofloxacin",
       "drugscom": "https://www.drugs.com/levofloxacin.html"
     },
-    "drug_class_en": "مضادات حيوية / فلوروكينولون (Fluoroquinolones — Antibiotics)",
+    "drug_class_en": "Fluoroquinolones",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Allowed with caution",
     "pediatric_frequency_en": "every 12 hours",
@@ -6688,7 +6689,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Diclofenac",
       "drugscom": "https://www.drugs.com/diclofenac.html"
     },
-    "drug_class_en": "مضادات الالتهاب غير الستيرويدية (NSAIDs — Phenylacetic Acid Derivatives)",
+    "drug_class_en": "NSAIDs",
     "pregnancy_en": "Contraindicated in third trimester",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -6771,7 +6772,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Metoclopramide",
       "drugscom": "https://www.drugs.com/metoclopramide.html"
     },
-    "drug_class_en": "مضادات القيء / حاصرات الدوبامين (Dopamine D2 Antagonists — Prokinetics)",
+    "drug_class_en": "Dopamine D",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "every 8 hours",
@@ -6852,7 +6853,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Loperamide",
       "drugscom": "https://www.drugs.com/loperamide.html"
     },
-    "drug_class_en": "مضادات الإسهال / ناهضات أفيونية محيطية (Peripheral Opioid Agonists — Antidiarrheals)",
+    "drug_class_en": "Peripheral Opioid Agonists",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "بعد كل براز رخو",
@@ -6929,7 +6930,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Famotidine",
       "drugscom": "https://www.drugs.com/famotidine.html"
     },
-    "drug_class_en": "حاصرات مستقبل H2 (H2 Receptor Antagonists)",
+    "drug_class_en": "Receptor Antagonists",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1-2 مرات يوميًا",
@@ -7007,7 +7008,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Fexofenadine",
       "drugscom": "https://www.drugs.com/fexofenadine.html"
     },
-    "drug_class_en": "مضادات الهيستامين الجيل الثاني (Non-sedating H1 Antihistamines)",
+    "drug_class_en": "Non-sedating H",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -7087,7 +7088,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Dapagliflozin",
       "drugscom": "https://www.drugs.com/dapagliflozin.html"
     },
-    "drug_class_en": "خافض سكر / SGLT2",
+    "drug_class_en": "SGLT",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -7163,7 +7164,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Linagliptin",
       "drugscom": "https://www.drugs.com/linagliptin.html"
     },
-    "drug_class_en": "مثبطات DPP-4 (Dipeptidyl Peptidase-4 Inhibitors — Antidiabetics)",
+    "drug_class_en": "DPP-",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed with caution",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -7240,7 +7241,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Haloperidol",
       "drugscom": "https://www.drugs.com/haloperidol.html"
     },
-    "drug_class_en": "مضادات الذهان الجيل الأول / بيوتيروفينون (Typical Antipsychotics — Butyrophenones)",
+    "drug_class_en": "Typical Antipsychotics",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "every 8 hours",
@@ -7321,7 +7322,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Midazolam",
       "drugscom": "https://www.drugs.com/midazolam.html"
     },
-    "drug_class_en": "بنزوديازيبينات / مخدرات قصيرة المفعول (Short-acting Benzodiazepines — Sedatives)",
+    "drug_class_en": "Short-acting Benzodiazepines",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "جرعة وحيدة",
@@ -7403,7 +7404,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Amiodarone",
       "drugscom": "https://www.drugs.com/amiodarone.html"
     },
-    "drug_class_en": "مضادات اضطراب النظم الفئة III (Class III Antiarrhythmics)",
+    "drug_class_en": "III",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "جرعة تحميل",
@@ -7483,7 +7484,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Tranexamic+Acid",
       "drugscom": "https://www.drugs.com/tranexamic-acid.html"
     },
-    "drug_class_en": "مضادات النزيف / مثبطات الانحلال الليفي (Antifibrinolytics)",
+    "drug_class_en": "Antifibrinolytics",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "every 8 hours",
@@ -7562,7 +7563,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Enoxaparin",
       "drugscom": "https://www.drugs.com/enoxaparin.html"
     },
-    "drug_class_en": "مضادات التخثر / هيبارين منخفض الوزن الجزيئي — LMWH (Low Molecular Weight Heparin)",
+    "drug_class_en": "LMWH",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "every 12 hours",
@@ -7645,7 +7646,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Rivaroxaban",
       "drugscom": "https://www.drugs.com/rivaroxaban.html"
     },
-    "drug_class_en": "مضادات التخثر / مثبطات العامل Xa المباشرة (Direct Factor Xa Inhibitors — DOACs)",
+    "drug_class_en": "Xa",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "1-2 مرات يوميًا",
@@ -7728,7 +7729,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Apixaban",
       "drugscom": "https://www.drugs.com/apixaban.html"
     },
-    "drug_class_en": "مضادات التخثر / مثبطات العامل Xa المباشرة (Direct Factor Xa Inhibitors — DOACs)",
+    "drug_class_en": "Xa",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "2 مرات يوميًا",
@@ -7810,7 +7811,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Fentanyl",
       "drugscom": "https://www.drugs.com/fentanyl.html"
     },
-    "drug_class_en": "مسكنات الألم / أفيونيات اصطناعية (Synthetic Opioid Analgesics)",
+    "drug_class_en": "Synthetic Opioid Analgesics",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "جرعة تخدير",
@@ -7892,7 +7893,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Ketamine",
       "drugscom": "https://www.drugs.com/ketamine.html"
     },
-    "drug_class_en": "مخدرات تفارقية / مضادات مستقبل NMDA (Dissociative Anesthetics — NMDA Receptor Antagonists)",
+    "drug_class_en": "NMDA",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "جرعة تخدير",
@@ -7974,7 +7975,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Nitroglycerin",
       "drugscom": "https://www.drugs.com/nitroglycerin.html"
     },
-    "drug_class_en": "نترات / موسعات الأوعية (Organic Nitrates — Vasodilators)",
+    "drug_class_en": "Organic Nitrates",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "كل 5 دقائق",
@@ -8055,7 +8056,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Hydromorphone",
       "drugscom": "https://www.drugs.com/hydromorphone.html"
     },
-    "drug_class_en": "مسكنات الألم / أفيونيات شبه اصطناعية (Semi-synthetic Opioid Analgesics)",
+    "drug_class_en": "Semi-synthetic Opioid Analgesics",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "كل 4 ساعات",
@@ -8136,7 +8137,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Oxycodone",
       "drugscom": "https://www.drugs.com/oxycodone.html"
     },
-    "drug_class_en": "مسكنات الألم / أفيونيات شبه اصطناعية (Semi-synthetic Opioid Analgesics)",
+    "drug_class_en": "Semi-synthetic Opioid Analgesics",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "every 6 hours",
@@ -8220,7 +8221,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Celecoxib",
       "drugscom": "https://www.drugs.com/celecoxib.html"
     },
-    "drug_class_en": "NSAID / مثبط COX-2",
+    "drug_class_en": "NSAID /",
     "pregnancy_en": "Contraindicated in third trimester",
     "lactation_en": "Allowed with caution",
     "pediatric_frequency_en": "Not recommended for children",
@@ -8304,7 +8305,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Febuxostat",
       "drugscom": "https://www.drugs.com/febuxostat.html"
     },
-    "drug_class_en": "مضادات النقرس / مثبطات أكسيداز الزانثين (Xanthine Oxidase Inhibitors — Antigout)",
+    "drug_class_en": "Xanthine Oxidase Inhibitors",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "1 مرة يوميًا",
@@ -8386,7 +8387,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Ticagrelor",
       "drugscom": "https://www.drugs.com/ticagrelor.html"
     },
-    "drug_class_en": "مضادات الصفيحات / مثبطات P2Y12 (P2Y12 Receptor Inhibitors — Antiplatelet Agents)",
+    "drug_class_en": "Receptor Inhibitors",
     "pregnancy_en": "Contraindicated",
     "lactation_en": "Contraindicated",
     "pediatric_frequency_en": "2 مرات يوميًا",
@@ -8467,7 +8468,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Acetylcysteine",
       "drugscom": "https://www.drugs.com/acetylcysteine.html"
     },
-    "drug_class_en": "مضادات التأكسد / طارد البلغم / ترياق الباراسيتامول (Mucolytics — Antioxidants — Antidotes)",
+    "drug_class_en": "Mucolytics",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "جرعة تحميل",
@@ -8612,7 +8613,8 @@
     "pediatric_frequency": "غير محدد",
     "side_effects": [],
     "side_effects_en": [],
-    "name_en": "gliclazide"
+    "name_en": "gliclazide",
+    "renal_dose": "تعديل"
   },
   {
     "name_ar": "جليميبيريد",
@@ -8770,7 +8772,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Pioglitazone",
       "drugscom": "https://www.drugs.com/pioglitazone.html"
     },
-    "drug_class_en": "خافض سكر / TZD",
+    "drug_class_en": "TZD",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not specified",
@@ -8857,7 +8859,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Rosiglitazone",
       "drugscom": "https://www.drugs.com/rosiglitazone.html"
     },
-    "drug_class_en": "خافض سكر / TZD",
+    "drug_class_en": "TZD",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -8931,7 +8933,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Sitagliptin",
       "drugscom": "https://www.drugs.com/sitagliptin.html"
     },
-    "drug_class_en": "خافض سكر / DPP4",
+    "drug_class_en": "DPP",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -9002,7 +9004,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Vildagliptin",
       "drugscom": "https://www.drugs.com/vildagliptin.html"
     },
-    "drug_class_en": "خافض سكر / DPP4",
+    "drug_class_en": "DPP",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -9075,7 +9077,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Saxagliptin",
       "drugscom": "https://www.drugs.com/saxagliptin.html"
     },
-    "drug_class_en": "خافض سكر / DPP4",
+    "drug_class_en": "DPP",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -9150,7 +9152,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Empagliflozin",
       "drugscom": "https://www.drugs.com/empagliflozin.html"
     },
-    "drug_class_en": "خافض سكر / SGLT2",
+    "drug_class_en": "SGLT",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -9225,7 +9227,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Canagliflozin",
       "drugscom": "https://www.drugs.com/canagliflozin.html"
     },
-    "drug_class_en": "خافض سكر / SGLT2",
+    "drug_class_en": "SGLT",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -9301,7 +9303,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Exenatide",
       "drugscom": "https://www.drugs.com/exenatide.html"
     },
-    "drug_class_en": "خافض سكر / GLP1",
+    "drug_class_en": "GLP",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -9377,7 +9379,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Liraglutide",
       "drugscom": "https://www.drugs.com/liraglutide.html"
     },
-    "drug_class_en": "خافض سكر / GLP1",
+    "drug_class_en": "GLP",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -9453,7 +9455,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Semaglutide",
       "drugscom": "https://www.drugs.com/semaglutide.html"
     },
-    "drug_class_en": "خافض سكر / GLP1",
+    "drug_class_en": "GLP",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -9529,7 +9531,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Dulaglutide",
       "drugscom": "https://www.drugs.com/dulaglutide.html"
     },
-    "drug_class_en": "خافض سكر / GLP1",
+    "drug_class_en": "GLP",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -9918,7 +9920,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Insulin+Regular",
       "drugscom": "https://www.drugs.com/insulin-regular.html"
     },
-    "drug_class_en": "أنسولين قصير المفعول (Regular)",
+    "drug_class_en": "Regular",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "قبل الوجبات",
@@ -9995,7 +9997,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Insulin+Nph",
       "drugscom": "https://www.drugs.com/insulin-nph.html"
     },
-    "drug_class_en": "أنسولين متوسط المفعول (NPH)",
+    "drug_class_en": "NPH",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "once daily",
@@ -10072,7 +10074,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Insulin+Detemir",
       "drugscom": "https://www.drugs.com/insulin-detemir.html"
     },
-    "drug_class_en": "أنسولين طويل المفعول (Detemir)",
+    "drug_class_en": "Detemir",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "once daily",
@@ -10149,7 +10151,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Insulin+Aspart",
       "drugscom": "https://www.drugs.com/insulin-aspart.html"
     },
-    "drug_class_en": "أنسولين سريع المفعول (Aspart)",
+    "drug_class_en": "Aspart",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "قبل الوجبات",
@@ -10226,7 +10228,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Insulin+Lispro",
       "drugscom": "https://www.drugs.com/insulin-lispro.html"
     },
-    "drug_class_en": "أنسولين سريع المفعول (Lispro)",
+    "drug_class_en": "Lispro",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "قبل الوجبات",
@@ -10292,7 +10294,8 @@
     "pediatric_frequency": "غير محدد",
     "side_effects": [],
     "side_effects_en": [],
-    "name_en": "sumatriptan"
+    "name_en": "sumatriptan",
+    "renal_dose": "Safe"
   },
   {
     "name_ar": "ريزاتريبتان",
@@ -10977,7 +10980,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Venlafaxine",
       "drugscom": "https://www.drugs.com/venlafaxine.html"
     },
-    "drug_class_en": "مضاد اكتئاب / SNRI (وقاية من الشقيقة)",
+    "drug_class_en": "SNRI",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -11053,7 +11056,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Galcanezumab",
       "drugscom": "https://www.drugs.com/galcanezumab.html"
     },
-    "drug_class_en": "مضاد CGRP / بيولوجي للشقيقة",
+    "drug_class_en": "CGRP /",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -11129,7 +11132,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Erenumab",
       "drugscom": "https://www.drugs.com/erenumab.html"
     },
-    "drug_class_en": "مضاد CGRP / بيولوجي للشقيقة",
+    "drug_class_en": "CGRP /",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -11205,7 +11208,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Fremanezumab",
       "drugscom": "https://www.drugs.com/fremanezumab.html"
     },
-    "drug_class_en": "مضاد CGRP / بيولوجي للشقيقة",
+    "drug_class_en": "CGRP /",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -11280,7 +11283,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Ubrogepant",
       "drugscom": "https://www.drugs.com/ubrogepant.html"
     },
-    "drug_class_en": "مضاد CGRP / علاج الشقيقة الحادة",
+    "drug_class_en": "CGRP /",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -11355,7 +11358,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Rimegepant",
       "drugscom": "https://www.drugs.com/rimegepant.html"
     },
-    "drug_class_en": "مضاد CGRP / علاج الشقيقة الحادة والوقاية",
+    "drug_class_en": "CGRP /",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -13751,7 +13754,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Ramipril",
       "drugscom": "https://www.drugs.com/ramipril.html"
     },
-    "drug_class_en": "خافض ضغط / ACEi",
+    "drug_class_en": "ACEi",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "2-3 مرات يوميًا",
@@ -15671,7 +15674,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Bempedoic+Acid",
       "drugscom": "https://www.drugs.com/bempedoic-acid.html"
     },
-    "drug_class_en": "مثبط ACLY / خافض كوليسترول",
+    "drug_class_en": "ACLY /",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -15751,7 +15754,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Evolocumab",
       "drugscom": "https://www.drugs.com/evolocumab.html"
     },
-    "drug_class_en": "مضاد PCSK9 / بيولوجي",
+    "drug_class_en": "PCSK",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -16859,7 +16862,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Omalizumab",
       "drugscom": "https://www.drugs.com/omalizumab.html"
     },
-    "drug_class_en": "مضاد IgE / بيولوجي",
+    "drug_class_en": "IgE /",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -16935,7 +16938,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Mepolizumab",
       "drugscom": "https://www.drugs.com/mepolizumab.html"
     },
-    "drug_class_en": "مضاد IL-5 / بيولوجي",
+    "drug_class_en": "IL-",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -17528,7 +17531,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Vigabatrin",
       "drugscom": "https://www.drugs.com/vigabatrin.html"
     },
-    "drug_class_en": "مضاد صرع / مثبط GABA-T",
+    "drug_class_en": "GABA-T",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -18293,7 +18296,8 @@
     "pediatric_frequency": "غير محدد",
     "side_effects": [],
     "side_effects_en": [],
-    "name_en": "alendronate"
+    "name_en": "alendronate",
+    "renal_dose": "Contraindicated"
   },
   {
     "name_ar": "رايزدرونيت",
@@ -18998,7 +19002,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Denosumab",
       "drugscom": "https://www.drugs.com/denosumab.html"
     },
-    "drug_class_en": "مضاد RANKL / بيولوجي لهشاشة",
+    "drug_class_en": "RANKL /",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -19083,7 +19087,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Teriparatide",
       "drugscom": "https://www.drugs.com/teriparatide.html"
     },
-    "drug_class_en": "نظير PTH / بناء العظام",
+    "drug_class_en": "PTH /",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -19997,7 +20001,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Etanercept",
       "drugscom": "https://www.drugs.com/etanercept.html"
     },
-    "drug_class_en": "مضاد TNF / بيولوجي",
+    "drug_class_en": "TNF /",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -20076,7 +20080,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Adalimumab",
       "drugscom": "https://www.drugs.com/adalimumab.html"
     },
-    "drug_class_en": "مضاد TNF / بيولوجي",
+    "drug_class_en": "TNF /",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -20154,7 +20158,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Infliximab",
       "drugscom": "https://www.drugs.com/infliximab.html"
     },
-    "drug_class_en": "مضاد TNF / بيولوجي",
+    "drug_class_en": "TNF /",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -20232,7 +20236,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Rituximab",
       "drugscom": "https://www.drugs.com/rituximab.html"
     },
-    "drug_class_en": "مضاد CD20 / بيولوجي",
+    "drug_class_en": "CD",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -20310,7 +20314,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Tocilizumab",
       "drugscom": "https://www.drugs.com/tocilizumab.html"
     },
-    "drug_class_en": "مضاد IL-6 / بيولوجي",
+    "drug_class_en": "IL-",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -20387,7 +20391,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Secukinumab",
       "drugscom": "https://www.drugs.com/secukinumab.html"
     },
-    "drug_class_en": "مضاد IL-17 / بيولوجي",
+    "drug_class_en": "IL-",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -20463,7 +20467,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Ustekinumab",
       "drugscom": "https://www.drugs.com/ustekinumab.html"
     },
-    "drug_class_en": "مضاد IL-12/23 / بيولوجي",
+    "drug_class_en": "IL-",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "Not recommended for children",
@@ -20536,7 +20540,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Citalopram",
       "drugscom": "https://www.drugs.com/citalopram.html"
     },
-    "drug_class_en": "مضاد اكتئاب / SSRI",
+    "drug_class_en": "SSRI",
     "pregnancy_en": "Allowed with caution",
     "lactation_en": "Allowed with caution",
     "pediatric_frequency_en": "Not recommended for children",
@@ -20606,7 +20610,8 @@
     ],
     "side_effects": [],
     "side_effects_en": [],
-    "name_en": "metoprolol_succinate"
+    "name_en": "metoprolol_succinate",
+    "renal_dose": "تعديل"
   },
   {
     "name_ar": "هيوسين",
@@ -20734,7 +20739,8 @@
     "contraindications_en": [],
     "interactions_en": [],
     "side_effects_en": [],
-    "name_en": "esomeprazole"
+    "name_en": "esomeprazole",
+    "renal_dose": "Safe"
   },
   {
     "name_ar": "بيساكوديل",
@@ -20770,7 +20776,8 @@
     "contraindications_en": [],
     "interactions_en": [],
     "side_effects_en": [],
-    "name_en": "bisacodyl"
+    "name_en": "bisacodyl",
+    "renal_dose": "Safe"
   },
   {
     "name_ar": "نابروكسين",
