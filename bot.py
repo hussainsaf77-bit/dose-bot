@@ -1568,84 +1568,82 @@ async def drug_search_image(u, ctx):
 
 async def drug_search(u, ctx):
     lang = get_lang(ctx)
-    try:
-        track(u, "searches")
+    try: track(u, "searches")
     except: pass
     query = u.message.text.strip()
-    # نبحث في القاعدة أولاً
-    res = search_drugs(query)
-    if res:
-        d = res[0]
-        msg = fmt_drug(d, lang)
-        if msg and len(msg) > 50:
-            search_btn = InlineKeyboardMarkup([
-                [InlineKeyboardButton("🔍 " + ("استعلام آخر" if lang=="ar" else "Another Search"), callback_data="m_search")],
-                [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
-            ])
-            clean_msg = msg.replace("*","").replace("_","").replace("`","")
-            await u.message.reply_text(clean_msg[:4000], reply_markup=search_btn)
-            return STATE_DRUG_SEARCH
 
-    
-    # Claude API مباشرة
     thinking = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
+
     try:
         if lang == "ar":
-            prompt = f"""أنت صيدلاني خبير. أعطني معلومات شاملة عن دواء: {query}
-أجب بالعربية فقط:
-💊 الاسم العلمي:
-🏷️ الأسماء التجارية:
-📋 الاستخدامات:
-💉 الجرعة للبالغين:
-👶 جرعة الأطفال:
-⚠️ الآثار الجانبية:
-🔴 موانع الاستخدام:
-🤰 الحمل والرضاعة:
-🫘 الكلى والكبد:
-💊 التفاعلات الدوائية:
-❗ تحذيرات خاصة:
-إذا لم تعرف اكتب: غير معروف"""
+            prompt = f"""أنت صيدلاني خبير. أعطني معلومات شاملة ودقيقة عن: {query}
+أجب بالعربية فقط بهذا التنسيق الدقيق ولا تترك أي حقل فارغاً:
+
+💊 الاسم العلمي: 
+🏷️ الأسماء التجارية: 
+🏥 التصنيف الدوائي: 
+📋 الاستخدامات: 
+💉 جرعة البالغين: 
+👶 جرعة الأطفال: 
+⚠️ الآثار الجانبية الشائعة: 
+🚨 الآثار الجانبية الخطيرة: 
+🚫 موانع الاستخدام: 
+💊 التفاعلات الدوائية: 
+🤰 الحمل: 
+🍼 الرضاعة: 
+🫘 القصور الكلوي: 
+🏥 القصور الكبدي: 
+❗ تحذيرات خاصة: 
+
+إذا لم تعرف اكتب: غير متاح. لا تترك أي حقل فارغاً أبداً."""
         else:
-            prompt = f"""You are an expert pharmacist. Give info about: {query}
-Reply in English ONLY:
-💊 Generic Name:
-🏷️ Brand Names:
-📋 Indications:
-💉 Adult Dose:
-👶 Pediatric Dose:
-⚠️ Side Effects:
-🔴 Contraindications:
-🤰 Pregnancy & Lactation:
-🫘 Renal & Hepatic:
-💊 Drug Interactions:
-❗ Special Warnings:
-If unknown write: unknown"""
+            prompt = f"""You are an expert pharmacist. Give complete accurate information about: {query}
+Reply in English ONLY with this exact format, never leave any field empty:
+
+💊 Generic Name: 
+🏷️ Brand Names: 
+🏥 Drug Class: 
+📋 Indications: 
+💉 Adult Dose: 
+👶 Pediatric Dose: 
+⚠️ Common Side Effects: 
+🚨 Serious Side Effects: 
+🚫 Contraindications: 
+💊 Drug Interactions: 
+🤰 Pregnancy: 
+🍼 Lactation: 
+🫘 Renal Impairment: 
+🏥 Hepatic Impairment: 
+❗ Special Warnings: 
+
+Write N/A if unknown. Never leave any field empty."""
+
         async with httpx.AsyncClient(timeout=30) as c:
             r = await c.post("https://api.anthropic.com/v1/messages",
                 headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
-                json={"model": "claude-haiku-4-5-20251001", "max_tokens": 800,
-                    "messages": [{"role": "user", "content": prompt}]})
+                json={"model": "claude-haiku-4-5-20251001", "max_tokens": 1500,
+                      "messages": [{"role": "user", "content": prompt}]})
             result = r.json().get("content", [{}])[0].get("text", "").strip()
+
         await thinking.delete()
+
         if result:
-            # نضيف رابط مرجعي
             drug_link = f"https://www.drugs.com/{query.lower().replace(' ','_')}.html"
-            ar_link = f"https://www.webteb.com/medications/search?q={query}"
-            ref_line = chr(10) + chr(10) + ("🔗 مرجع: " if lang=="ar" else "🔗 Reference: ")
-            ref_line += f"[Drugs.com]({drug_link})"
-            
-            final = result + ref_line
-            search_btns = InlineKeyboardMarkup([
+            ref = chr(10)*2 + ("🔗 مرجع طبي: " if lang=="ar" else "🔗 Reference: ") + f"drugs.com"
+            final = result + ref
+
+            btns = InlineKeyboardMarkup([
                 [InlineKeyboardButton("🔍 " + ("استعلام آخر" if lang=="ar" else "Another Search"), callback_data="m_search")],
                 [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
             ])
-            await u.message.reply_text(final[:4000], reply_markup=search_btns)
+            await u.message.reply_text(final[:4000], reply_markup=btns)
             return STATE_DRUG_SEARCH
+
     except Exception as e:
         logger.error(f"drug_search: {e}")
         try: await thinking.delete()
         except: pass
-    
+
     await u.message.reply_text(tx("not_found", lang), reply_markup=kb_back(lang))
     return STATE_DRUG_SEARCH
 
