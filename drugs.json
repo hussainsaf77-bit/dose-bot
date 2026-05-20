@@ -36,33 +36,7 @@
       "status_en": "تعديل جرعة",
       "details_en": "يمدد الفاصل إلى 6 ساعات إذا GFR < 10، تجنب الجرعات العالية"
     },
-    "renal_dose": {
-      "GFR_60_89": {
-        "dose": "500-1000 mg",
-        "frequency": "كل 6 ساعات",
-        "note": "لا تعديل"
-      },
-      "GFR_30_59": {
-        "dose": "500-1000 mg",
-        "frequency": "كل 6 ساعات",
-        "note": "لا تعديل"
-      },
-      "GFR_10_29": {
-        "dose": "500 mg",
-        "frequency": "كل 6 ساعات",
-        "note": "تجنب الجرعات العالية"
-      },
-      "GFR_lt10": {
-        "dose": "500 mg",
-        "frequency": "كل 8 ساعات",
-        "note": "مدد الفاصل، تجنب الجرعة القصوى"
-      },
-      "dialysis": {
-        "dose": "500 mg",
-        "frequency": "كل 8 ساعات",
-        "note": "يُستأنس باستخدامه"
-      }
-    },
+    "renal_dose": "Extend interval to 6h if GFR<10",
     "reference": "https://www.drugs.com/paracetamol.html",
     "reference_source": "DailyMed (NIH)",
     "links": {
@@ -70,7 +44,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Paracetamol",
       "drugscom": "https://www.drugs.com/paracetamol.html"
     },
-    "drug_class_en": "مسكنات الألم / خافضات الحرارة (Analgesics / Antipyretics)",
+    "drug_class_en": "Analgesics / Antipyretics",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "4 times daily",
@@ -131,33 +105,7 @@
       "status_en": "تعديل جرعة",
       "details_en": "إذا GFR 10-30: كل 12 ساعة، إذا GFR < 10: كل 24 ساعة"
     },
-    "renal_dose": {
-      "GFR_60_89": {
-        "dose": "500-875 mg",
-        "frequency": "كل 8-12 ساعة",
-        "note": "لا تعديل"
-      },
-      "GFR_30_59": {
-        "dose": "500 mg",
-        "frequency": "كل 8-12 ساعة",
-        "note": "لا تعديل"
-      },
-      "GFR_10_29": {
-        "dose": "500 mg",
-        "frequency": "كل 12 ساعة",
-        "note": "تقليل التكرار"
-      },
-      "GFR_lt10": {
-        "dose": "500 mg",
-        "frequency": "كل 24 ساعة",
-        "note": "جرعة يومية واحدة"
-      },
-      "dialysis": {
-        "dose": "500 mg",
-        "frequency": "كل 24 ساعة + جرعة بعد غسيل الكلى",
-        "note": "يُرفع بالغسيل الكلوي"
-      }
-    },
+    "renal_dose": "Extend to q12h if GFR<30",
     "reference": "https://www.drugs.com/amoxicillin.html",
     "reference_source": "DailyMed (NIH)",
     "links": {
@@ -165,7 +113,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Amoxicillin",
       "drugscom": "https://www.drugs.com/amoxicillin.html"
     },
-    "drug_class_en": "مضادات حيوية / بيتا لاكتام — بنسيلينات (Beta-lactam / Penicillins)",
+    "drug_class_en": "Antibiotics / Penicillins",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "3 times daily",
@@ -234,33 +182,7 @@
       "status_en": "يمنع في القصور الحاد",
       "details_en": "يمنع إذا GFR < 30، يزيد خطر الفشل الكلوي الحاد"
     },
-    "renal_dose": {
-      "GFR_60_89": {
-        "dose": "200-400 mg",
-        "frequency": "كل 8 ساعات",
-        "note": "لا تعديل، راقب وظائف الكلى"
-      },
-      "GFR_30_59": {
-        "dose": "200 mg",
-        "frequency": "كل 8 ساعات",
-        "note": "استخدم بحذر شديد وللفترة القصيرة فقط"
-      },
-      "GFR_10_29": {
-        "dose": "—",
-        "frequency": "—",
-        "note": "⛔ ممنوع"
-      },
-      "GFR_lt10": {
-        "dose": "—",
-        "frequency": "—",
-        "note": "⛔ ممنوع"
-      },
-      "dialysis": {
-        "dose": "—",
-        "frequency": "—",
-        "note": "⛔ ممنوع"
-      }
-    },
+    "renal_dose": "Avoid if GFR<30",
     "reference": "https://www.drugs.com/ibuprofen.html",
     "reference_source": "DailyMed (NIH)",
     "links": {
@@ -268,7 +190,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Ibuprofen",
       "drugscom": "https://www.drugs.com/ibuprofen.html"
     },
-    "drug_class_en": "NSAID",
+    "drug_class_en": "NSAIDs",
     "pregnancy_en": "Contraindicated in third trimester",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "3-4 times daily",
@@ -6515,33 +6437,7 @@
       "status_en": "تعديل جرعة",
       "details_en": "يعتمد على GFR، يجب مراقبة المستوى الدموي (TDM)"
     },
-    "renal_dose": {
-      "GFR_60_89": {
-        "dose": "500-1000 mg",
-        "frequency": "كل 12 ساعة",
-        "note": "راقب المستوى الدموي"
-      },
-      "GFR_30_59": {
-        "dose": "500-1000 mg",
-        "frequency": "كل 24-48 ساعة",
-        "note": "⚠ راقب المستوى (TDM)"
-      },
-      "GFR_10_29": {
-        "dose": "500 mg",
-        "frequency": "كل 48-72 ساعة",
-        "note": "⚠ راقب المستوى (TDM)"
-      },
-      "GFR_lt10": {
-        "dose": "500 mg",
-        "frequency": "كل 4-7 أيام",
-        "note": "⚠ مراقبة المستوى أساسية"
-      },
-      "dialysis": {
-        "dose": "500-1000 mg",
-        "frequency": "بعد كل جلسة غسيل",
-        "note": "⚠ يُرفع بالغسيل، راقب المستوى"
-      }
-    },
+    "renal_dose": "Reduce dose based on GFR",
     "reference": "https://www.drugs.com/vancomycin.html",
     "reference_source": "DailyMed (NIH)",
     "links": {
@@ -6549,7 +6445,7 @@
       "medscape_search": "https://reference.medscape.com/search?query=Vancomycin",
       "drugscom": "https://www.drugs.com/vancomycin.html"
     },
-    "drug_class_en": "مضادات حيوية / جليكوببتيدات (Glycopeptide Antibiotics)",
+    "drug_class_en": "Glycopeptide Antibiotics",
     "pregnancy_en": "Allowed",
     "lactation_en": "Allowed",
     "pediatric_frequency_en": "every 6 hours",

@@ -1581,7 +1581,14 @@ async def drug_search(u, ctx):
         d = res[0]
         msg = fmt_drug(d, lang)
         if msg and len(msg) > 50:
-            await u.message.reply_text(msg, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+            search_btn = InlineKeyboardMarkup([
+                [InlineKeyboardButton("🔍 " + ("استعلام آخر" if lang=="ar" else "Another Search"), callback_data="m_search")],
+                [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+            ])
+            try:
+                await u.message.reply_text(msg, reply_markup=search_btn, parse_mode=ParseMode.MARKDOWN)
+            except:
+                await u.message.reply_text(msg.replace("*","").replace("_",""), reply_markup=search_btn)
             return STATE_DRUG_SEARCH
 
     
