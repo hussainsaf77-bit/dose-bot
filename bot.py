@@ -3991,7 +3991,17 @@ async def rem_menu(u, ctx):
         rems = get_rems(ctx)
         ok = False
         for i, r in enumerate(rems):
-            if r["id"] == rid: rems.pop(i); ok = True; break
+            if r["id"] == rid:
+                rems.pop(i)
+                ok = True
+                # نلغي الـ job من job_queue
+                try:
+                    drug_name = r.get("drug","")
+                    for job in ctx.application.job_queue.jobs():
+                        if str(uid) in job.name and drug_name in job.name:
+                            job.schedule_removal()
+                except: pass
+                break
         if ok: save_rems(ctx)
         await q.message.edit_text(tx("rem_deleted" if ok else "rem_not_found", lang), reply_markup=kb_remind(lang))
         return STATE_REM_MENU
