@@ -1420,6 +1420,32 @@ async def pick_lang(u, ctx):
     ctx.user_data["lang"] = "ar" if q.data == "lang_ar" else "en"
     lang = get_lang(ctx)
     
+    # نحفظ المستخدم في Supabase مع شهر مجاني
+    uid = str(u.effective_user.id)
+    if supabase_client:
+        try:
+            from datetime import datetime, timedelta
+            existing = supabase_client.table("users").select("uid").eq("uid", uid).execute()
+            if not existing.data:
+                expiry = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
+                supabase_client.table("users").upsert({
+                    "uid": uid,
+                    "name": u.effective_user.first_name or "",
+                    "lang": lang,
+                    "level": "registered",
+                    "trial_expiry": expiry,
+                }).execute()
+                # رسالة الترحيب مع الشهر المجاني
+                welcome = ("🎉 مرحباً! تم تفعيل شهر مجاني كامل!
+
+✅ جميع الميزات متاحة حتى: " + expiry if lang=="ar" 
+                          else "🎉 Welcome! Your free month is activated!
+
+✅ All features available until: " + expiry)
+                await q.message.reply_text(welcome)
+        except Exception as e:
+            logger.error(f"user register: {e}")
+    
     await show_main(q.message, lang, edit=True)
     return STATE_MAIN_MENU
 
