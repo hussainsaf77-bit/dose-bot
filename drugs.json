@@ -668,9 +668,9 @@
       "albuterol",
       "سالبوتامول"
     ],
-    "pediatric_mg_per_kg": 10,
-    "pediatric_min_mg_per_kg": 5,
-    "pediatric_max_mg_per_kg": 15,
+    "pediatric_mg_per_kg": "",
+    "pediatric_min_mg_per_kg": "",
+    "pediatric_max_mg_per_kg": "",
     "pediatric_frequency": "3-4 مرات يوميًا",
     "adult_dose_min": 100,
     "adult_dose_max": 400,
@@ -714,7 +714,18 @@
     "side_effects": [],
     "side_effects_en": [],
     "name_en": "salbutamol",
-    "concentration": "2mg/5ml"
+    "concentration": "2mg/5ml",
+    "fixed_dose": true,
+    "age_doses": {
+      "أقل من سنتين": "❌ غير موصى به",
+      "2-6 سنوات": "1-2 مغ (2.5-5 مل) 3 مرات يومياً",
+      "أكبر من 6 سنوات": "2 مغ (5 مل) 3-4 مرات يومياً"
+    },
+    "age_doses_en": {
+      "Under 2 years": "❌ Not recommended",
+      "2-6 years": "1-2 mg (2.5-5 mL) 3 times daily",
+      "Over 6 years": "2 mg (5 mL) 3-4 times daily"
+    }
   },
   {
     "name_ar": "أسبرين",
