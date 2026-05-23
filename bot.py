@@ -1423,6 +1423,7 @@ async def pick_lang(u, ctx):
     await show_main(q.message, lang, edit=True)
     # شهر مجاني للمستخدمين الجدد
     uid = str(u.effective_user.id)
+    await q.message.reply_text("🔵 debug: uid=" + uid + " supabase=" + str(bool(supabase_client)))
     if supabase_client:
         try:
             from datetime import datetime, timedelta
