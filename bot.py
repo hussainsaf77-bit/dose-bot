@@ -1421,6 +1421,18 @@ async def pick_lang(u, ctx):
     lang = get_lang(ctx)
     
     await show_main(q.message, lang, edit=True)
+    # شهر مجاني للمستخدمين الجدد
+    uid = str(u.effective_user.id)
+    if supabase_client:
+        try:
+            from datetime import datetime, timedelta
+            ex = supabase_client.table("users").select("uid").eq("uid", uid).execute()
+            if not ex.data:
+                expiry = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
+                supabase_client.table("users").upsert({"uid": uid, "name": u.effective_user.first_name or "", "lang": lang, "level": "registered", "trial_expiry": expiry}).execute()
+                trial_msg = ("🎉 تم تفعيل شهر مجاني كامل!\n✅ جميع الميزات متاحة حتى: " + expiry) if lang=="ar" else ("🎉 Free month activated!\n✅ All features until: " + expiry)
+                await q.message.reply_text(trial_msg)
+        except: pass
     return STATE_MAIN_MENU
 
 async def set_country(u, ctx):
