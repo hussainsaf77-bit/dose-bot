@@ -1422,8 +1422,13 @@ async def pick_lang(u, ctx):
     
     await show_main(q.message, lang, edit=True)
     # شهر مجاني للمستخدمين الجدد
+    if not ctx.user_data.get("trial_shown"):
+        ctx.user_data["trial_shown"] = True
+        from datetime import datetime, timedelta
+        expiry = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
+        trial_msg = ("🎉 مرحباً! تم تفعيل شهر مجاني كامل!" + chr(10) + "✅ جميع الميزات متاحة حتى: " + expiry) if lang=="ar" else ("🎉 Welcome! Free month activated!" + chr(10) + "✅ All features until: " + expiry)
+        await q.message.reply_text(trial_msg)
     uid = str(u.effective_user.id)
-    await q.message.reply_text("🔵 debug: uid=" + uid + " supabase=" + str(bool(supabase_client)))
     if supabase_client:
         try:
             from datetime import datetime, timedelta
