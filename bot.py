@@ -1770,8 +1770,9 @@ async def child_weight(u, ctx):
         drug_name = d.get("name_ar","") if lang=="ar" else d.get("name_en","")
         if not drug_name: drug_name = d.get("name_en","") or d.get("name_ar","")
         if d.get("fixed_dose") and d.get("age_doses"):
+            age_dict = d.get("age_doses_en", d["age_doses"]) if lang=="en" else d["age_doses"]
             lines_d = ["💊 " + drug_name, ""]
-            for age_range, dose in d["age_doses"].items():
+            for age_range, dose in age_dict.items():
                 lines_d.append("  • " + age_range + ": " + dose)
             lines_d.append("")
             lines_d.append("⚠️ " + ("استشر الطبيب دائماً" if lang=="ar" else "Always consult doctor"))
