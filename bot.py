@@ -695,7 +695,7 @@ def calc_child(drug, w, lang):
 
     # معالجة الأدوية ذات الجرعة الثابتة حسب العمر
     if drug.get("fixed_dose") and drug.get("age_doses"):
-        age_doses = drug.get("age_doses_en", drug["age_doses"]) if lang=="en" else drug["age_doses"]
+        age_doses = drug["age_doses"]
         dose_lines = ["📋 " + ("جرعة الأطفال:" if lang=="ar" else "Pediatric Doses:")]
         for age_range, dose in age_doses.items():
             dose_lines.append("  • " + age_range + ": " + dose if lang=="ar" else "  • " + age_range + ": " + dose)
@@ -1420,32 +1420,6 @@ async def pick_lang(u, ctx):
     ctx.user_data["lang"] = "ar" if q.data == "lang_ar" else "en"
     lang = get_lang(ctx)
     
-    # نحفظ المستخدم في Supabase مع شهر مجاني
-    uid = str(u.effective_user.id)
-    if supabase_client:
-        try:
-            from datetime import datetime, timedelta
-            existing = supabase_client.table("users").select("uid").eq("uid", uid).execute()
-            if not existing.data:
-                expiry = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
-                supabase_client.table("users").upsert({
-                    "uid": uid,
-                    "name": u.effective_user.first_name or "",
-                    "lang": lang,
-                    "level": "registered",
-                    "trial_expiry": expiry,
-                }).execute()
-                # رسالة الترحيب مع الشهر المجاني
-                welcome = ("🎉 مرحباً! تم تفعيل شهر مجاني كامل!
-
-✅ جميع الميزات متاحة حتى: " + expiry if lang=="ar" 
-                          else "🎉 Welcome! Your free month is activated!
-
-✅ All features available until: " + expiry)
-                await q.message.reply_text(welcome)
-        except Exception as e:
-            logger.error(f"user register: {e}")
-    
     await show_main(q.message, lang, edit=True)
     return STATE_MAIN_MENU
 
@@ -1796,9 +1770,8 @@ async def child_weight(u, ctx):
         drug_name = d.get("name_ar","") if lang=="ar" else d.get("name_en","")
         if not drug_name: drug_name = d.get("name_en","") or d.get("name_ar","")
         if d.get("fixed_dose") and d.get("age_doses"):
-            age_dict = d.get("age_doses_en", d["age_doses"]) if lang=="en" else d["age_doses"]
             lines_d = ["💊 " + drug_name, ""]
-            for age_range, dose in age_dict.items():
+            for age_range, dose in d["age_doses"].items():
                 lines_d.append("  • " + age_range + ": " + dose)
             lines_d.append("")
             lines_d.append("⚠️ " + ("استشر الطبيب دائماً" if lang=="ar" else "Always consult doctor"))
