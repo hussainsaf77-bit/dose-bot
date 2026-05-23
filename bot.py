@@ -4305,7 +4305,8 @@ def build_conv():
                 CallbackQueryHandler(reg_handler, pattern="^reg_"),
                 CallbackQueryHandler(handle_m_bp, pattern="^m_bp$"),
                 CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_|sugar_)"),
-                CallbackQueryHandler(manual_drug_input, pattern="^manual_input$")],
+                CallbackQueryHandler(manual_drug_input, pattern="^manual_input$"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, lambda u,c: show_main(u.message, get_lang(c), edit=False) or STATE_MAIN_MENU)],
             STATE_BMI_WEIGHT: [
                 CallbackQueryHandler(bmi_cb, pattern="^bmi_"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, bmi_text)],
