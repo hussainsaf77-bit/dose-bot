@@ -1234,7 +1234,11 @@ async def send_alert(ctx):
     ])
 
     try:
-        await ctx.bot.send_message(chat_id, msg, reply_markup=btns)
+        photo_id = d.get("photo")
+        if photo_id:
+            await ctx.bot.send_photo(chat_id, photo=photo_id, caption=msg, reply_markup=btns)
+        else:
+            await ctx.bot.send_message(chat_id, msg, reply_markup=btns)
     except Exception as e:
         logger.error(f"send_alert error: {e}")
     
@@ -1284,7 +1288,7 @@ async def rem_later(update, ctx):
         name="snooze_" + str(chat_id) + "_" + str(drug)
     )
 
-def sched(app, chat_id, drug, time_str, freq, lang, tz_str="Asia/Riyadh"):
+def sched(app, chat_id, drug, time_str, freq, lang, tz_str="Asia/Riyadh", photo=None):
     try:
         h, m = map(int, time_str.split(":"))
         try:
@@ -4117,7 +4121,7 @@ async def rem_add_freq(u, ctx):
         rem_entry["patient"] = pat_name_rem
     rems.append(rem_entry)
     save_rems(ctx)
-    sched(ctx.application, u.effective_chat.id, drug, time_s, f, lang, ctx.user_data.get("timezone", "Asia/Riyadh"))
+    sched(ctx.application, u.effective_chat.id, drug, time_s, f, lang, ctx.user_data.get("timezone", "Asia/Riyadh"), photo=ctx.user_data.get("nr_photo"))
     msg = "✅ " + drug + " - " + time_s + " - " + str(f) + ("x/يوم" if lang=="ar" else "x/day")
     await u.message.reply_text(msg, reply_markup=kb_remind(lang))
     return STATE_REM_MENU
