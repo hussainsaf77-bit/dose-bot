@@ -4028,6 +4028,22 @@ async def rem_menu(u, ctx):
         return STATE_REM_MENU
     return STATE_REM_MENU
 
+
+async def _rem_show_patients(msg_obj, ctx, lang):
+    load_patients(ctx)
+    patients = ctx.user_data.get("patients", {})
+    if patients:
+        btns = []
+        for pid, p in list(patients.items())[:8]:
+            name = p.get("name","")
+            if name:
+                btns.append([InlineKeyboardButton("👤 " + name, callback_data="rem_pat_" + pid)])
+        btns.append([InlineKeyboardButton("👤 " + ("شخص آخر" if lang=="ar" else "Other"), callback_data="rem_pat_none")])
+        btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
+        await msg_obj.reply_text("👤 " + ("لمن هذا الدواء؟" if lang=="ar" else "Who is this for?"), reply_markup=InlineKeyboardMarkup(btns))
+    else:
+        await msg_obj.reply_text(tx("rem_time", lang), reply_markup=kb_back(lang))
+
 async def rem_add_name(u, ctx):
     lang = get_lang(ctx)
     ctx.user_data["nr_drug"] = u.message.text.strip()
@@ -4363,6 +4379,7 @@ def build_conv():
                 CallbackQueryHandler(rem_menu)],
             STATE_REM_ADD_NAME: [
                 CallbackQueryHandler(go_back, pattern="^back$"),
+                MessageHandler(filters.PHOTO, rem_photo_receive),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, rem_add_name)],
             STATE_REM_ADD_TIME: [
                 CallbackQueryHandler(rem_pat_select, pattern="^rem_pat_"),
