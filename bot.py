@@ -1261,19 +1261,19 @@ async def send_alert(ctx):
 
 async def rem_show_photo(update, ctx):
     q = update.callback_query; await q.answer()
-    job_id = q.data.replace("rem_showphoto_", "")
-    lang = "ar"
-    # نبحث عن الصورة في التذكيرات
+    lang = get_lang(ctx)
+    # نبحث عن الصورة في التذكيرات المحفوظة
     rems = ctx.user_data.get("reminders", [])
     photo_id = None
     for r in rems:
-        if str(r.get("photo")):
-            photo_id = r.get("photo")
+        if r.get("photo"):
+            photo_id = r["photo"]
             break
     if photo_id:
-        await ctx.bot.send_photo(q.message.chat_id, photo=photo_id, caption="💊 " + ("صورة الدواء" if lang=="ar" else "Medication Photo"))
+        await ctx.bot.send_photo(q.message.chat_id, photo=photo_id, 
+            caption="💊 " + ("صورة الدواء" if lang=="ar" else "Medication Photo"))
     else:
-        await q.answer("❌ " + ("لا توجد صورة" if lang=="ar" else "No photo available"), show_alert=True)
+        await q.answer("❌ " + ("لا توجد صورة محفوظة" if lang=="ar" else "No photo saved"), show_alert=True)
 
 async def rem_done(update, ctx):
     """المستخدم ضغط تم"""
