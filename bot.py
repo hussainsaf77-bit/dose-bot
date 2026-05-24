@@ -4044,6 +4044,17 @@ async def _rem_show_patients(msg_obj, ctx, lang):
     else:
         await msg_obj.reply_text(tx("rem_time", lang), reply_markup=kb_back(lang))
 
+
+async def rem_photo_receive(u, ctx):
+    lang = get_lang(ctx)
+    if u.message.photo:
+        file_id = u.message.photo[-1].file_id
+        ctx.user_data["nr_photo"] = file_id
+        ctx.user_data["nr_drug"] = ("دواء من صورة" if lang=="ar" else "Medication from photo")
+        await u.message.reply_text("✅ " + ("تم حفظ الصورة!" if lang=="ar" else "Photo saved!"))
+    await _rem_show_patients(u.message, ctx, lang)
+    return STATE_REM_ADD_TIME
+
 async def rem_add_name(u, ctx):
     lang = get_lang(ctx)
     ctx.user_data["nr_drug"] = u.message.text.strip()
