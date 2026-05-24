@@ -14983,9 +14983,9 @@
     },
     "warning": "⚠️ يُحتفظ به في الفم قدر الإمكان قبل البلع",
     "age_doses_en": {
-      "0-12 شهر": "1 mL (100,000 IU) × 4 times daily — يُوضع في الفم",
-      "1-5 سنوات": "2.5 mL (250,000 IU) × 4 times daily",
-      "5-12 سنة": "5 mL (500,000 IU) × 4 times daily"
+      "0-12 month": "1 mL (100,000 IU) × 4 times daily — placed in mouth",
+      "1-5 years": "2.5 mL (250,000 IU) × 4 times daily",
+      "5-12 year": "5 mL (500,000 IU) × 4 times daily"
     },
     "pediatric_frequency_en": "4 times daily"
   },
@@ -16258,9 +16258,9 @@
     },
     "warning": "⚠️ يُعطى مع الطعام",
     "age_doses_en": {
-      "1-3 سنوات": "100mg (5ml) twice daily لمدة 3 أيام",
-      "4-11 years": "200mg (10ml) twice daily لمدة 3 أيام",
-      "12+ سنة": "500mg twice daily لمدة 3 أيام"
+      "1-3 years": "100mg (5ml) twice daily for 3 days",
+      "4-11 years": "200mg (10ml) twice daily for 3 days",
+      "12+ year": "500mg twice daily for 3 days"
     }
   },
   {
@@ -16385,8 +16385,8 @@
     },
     "warning": "⚠️ لا تستخدم أكثر من 5 أيام",
     "age_doses_en": {
-      "2-6 years": "قطرة 0.05% in each nostril 2-3 times daily",
-      "6+ سنوات": "قطرة 0.1% in each nostril 2-3 times daily"
+      "2-6 years": "drop 0.05% in each nostril 2-3 times daily",
+      "6+ years": "drop 0.1% in each nostril 2-3 times daily"
     }
   },
   {
@@ -16466,7 +16466,7 @@
     "concentration": "33.3mg/5ml",
     "age_doses_en": {
       "6-12 years": "5 mL (33.3mg) × 4 times daily",
-      "12+ سنة": "10 mL (66.6mg) × 4 times daily"
+      "12+ year": "10 mL (66.6mg) × 4 times daily"
     }
   },
   {
@@ -17191,7 +17191,7 @@
     },
     "warning": "⚠️ استشر طبيب العيون",
     "age_doses_en": {
-      "All ages": "1 drop in affected eye مساءً"
+      "All ages": "1 drop in affected eye in the evening"
     }
   },
   {
@@ -17257,7 +17257,7 @@
     },
     "warning": "⚠️ لا يُستخدم لفترات طويلة",
     "age_doses_en": {
-      "All ages": "يوضع بكمية صغيرة once daily"
+      "All ages": "apply small amount once daily"
     }
   },
   {
@@ -17385,10 +17385,10 @@
     },
     "warning": "⚠️ يُعطى على معدة فارغة — يلوّن البراز داكناً",
     "age_doses_en": {
-      "0-6 أشهر": "1 mL × once daily",
-      "6-12 شهر": "2.5 mL × once daily",
-      "1-5 سنوات": "5 mL × once daily",
-      "5-12 سنة": "5-10 mL × once daily"
+      "0-6 أmonth": "1 mL × once daily",
+      "6-12 month": "2.5 mL × once daily",
+      "1-5 years": "5 mL × once daily",
+      "5-12 year": "5-10 mL × once daily"
     }
   },
   {
@@ -17428,10 +17428,10 @@
       "5-12 سنة": "10 مل (20mg) × مرة يومياً"
     },
     "age_doses_en": {
-      "0-6 أشهر": "1 mL (2mg) × once daily",
-      "6-12 شهر": "2.5 mL (5mg) × once daily",
-      "1-5 سنوات": "5 mL (10mg) × once daily",
-      "5-12 سنة": "10 mL (20mg) × once daily"
+      "0-6 أmonth": "1 mL (2mg) × once daily",
+      "6-12 month": "2.5 mL (5mg) × once daily",
+      "1-5 years": "5 mL (10mg) × once daily",
+      "5-12 year": "10 mL (20mg) × once daily"
     }
   },
   {
@@ -18282,7 +18282,7 @@
     },
     "warning": "⚠️ لا تستخدم العدسات اللاصقة أثناء العلاج",
     "age_doses_en": {
-      "Over 3 years": "1 drop في كل عين twice daily",
+      "Over 3 years": "1 drop in each eye twice daily",
       "Under 3 years": "❌ Not recommended"
     }
   },
@@ -18526,9 +18526,9 @@
     },
     "warning": "⚠️ يُحتفظ به في الفم قدر الإمكان قبل البلع",
     "age_doses_en": {
-      "0-12 شهر": "1 mL (100,000 IU) × 4 times daily — يُوضع في الفم",
-      "1-5 سنوات": "2.5 mL (250,000 IU) × 4 times daily",
-      "5-12 سنة": "5 mL (500,000 IU) × 4 times daily"
+      "0-12 month": "1 mL (100,000 IU) × 4 times daily — placed in mouth",
+      "1-5 years": "2.5 mL (250,000 IU) × 4 times daily",
+      "5-12 year": "5 mL (500,000 IU) × 4 times daily"
     }
   },
   {
@@ -18596,7 +18596,7 @@
     "warning": "⚠️ ممنوع تحت 4 سنوات",
     "age_doses_en": {
       "4-11 years": "1 spray in each nostril once daily",
-      "12 years and above": "بخة-2 sprays in each nostril once daily"
+      "12+ years": "spray-2 sprays in each nostril once daily"
     }
   },
   {
@@ -19847,8 +19847,8 @@
     },
     "warning": "⚠️ يسبب نعاساً — ممنوع تحت 5 سنوات",
     "age_doses_en": {
-      "5-12 سنة": "15mg twice daily",
-      "12+ سنة": "25-30mg 3 times daily"
+      "5-12 year": "15mg twice daily",
+      "12+ year": "25-30mg 3 times daily"
     }
   },
   {
@@ -21860,7 +21860,7 @@
     },
     "warning": "⚠️ ممنوع تحت 12 سنة",
     "age_doses_en": {
-      "12+ سنة": "200mg 3 times daily لمدة 3 أيام"
+      "12+ year": "200mg 3 times daily for 3 days"
     }
   },
   {
@@ -21978,7 +21978,7 @@
     },
     "age_doses_en": {
       "6-12 years": "5 mL (2mg) × 3-4 times daily",
-      "12+ سنة": "10 mL (4mg) × 3-4 times daily"
+      "12+ year": "10 mL (4mg) × 3-4 times daily"
     },
     "pediatric_frequency_en": "3-4 times daily"
   },
@@ -22019,7 +22019,7 @@
     "warning": "⚠️ ممنوع تحت سن 6 سنوات",
     "age_doses_en": {
       "6-12 years": "5 mL × 3 times daily",
-      "12+ سنة": "10 mL × 3 times daily"
+      "12+ year": "10 mL × 3 times daily"
     }
   },
   {
@@ -22100,9 +22100,9 @@
     },
     "warning": "⚠️ الجرعة بالقطرات تعتمد على التركيز — اقرأ التعليمات",
     "age_doses_en": {
-      "0-12 شهر": "400 IU يومياً",
-      "1-5 سنوات": "600-800 IU يومياً",
-      "5-12 سنة": "600-1000 IU يومياً"
+      "0-12 month": "400 IU daily",
+      "1-5 years": "600-800 IU daily",
+      "5-12 year": "600-1000 IU daily"
     },
     "pediatric_frequency_en": "Once daily"
   },
@@ -22122,9 +22122,9 @@
     },
     "warning": "✅ آمن — يُعطى بعد الأكل",
     "age_doses_en": {
-      "0-12 شهر": "1 mL يومياً",
-      "1-3 سنوات": "2.5 mL يومياً",
-      "3-12 سنة": "5 mL يومياً"
+      "0-12 month": "1 mL daily",
+      "1-3 years": "2.5 mL daily",
+      "3-12 year": "5 mL daily"
     },
     "pediatric_frequency_en": "Once daily"
   },
@@ -22144,7 +22144,7 @@
     "warning": "⚠️ ممنوع تحت سن 6 سنوات",
     "age_doses_en": {
       "6-12 years": "5 mL × 3-4 times daily",
-      "12+ سنة": "10 mL × 3-4 times daily"
+      "12+ year": "10 mL × 3-4 times daily"
     },
     "pediatric_frequency_en": "3-4 times daily"
   },
@@ -22164,9 +22164,9 @@
     },
     "warning": "✅ شراب عشبي طبيعي — آمن من عمر سنة",
     "age_doses_en": {
-      "1-5 سنوات": "2.5 mL × 3 times daily",
+      "1-5 years": "2.5 mL × 3 times daily",
       "6-12 years": "5 mL × 3 times daily",
-      "12+ سنة": "10 mL × 3 times daily"
+      "12+ year": "10 mL × 3 times daily"
     },
     "pediatric_frequency_en": "3 times daily"
   },
@@ -22186,9 +22186,9 @@
     },
     "warning": "⚠️ لا تتجاوز 4 جرعات يومياً",
     "age_doses_en": {
-      "3-12 شهر": "تحميلة 125mg كل 6-8 ساعات",
-      "1-5 سنوات": "تحميلة 250mg كل 6-8 ساعات",
-      "6-12 years": "تحميلة 500mg كل 6-8 ساعات"
+      "3-12 month": "suppository 125mg every 6-8 hours",
+      "1-5 years": "suppository 250mg every 6-8 hours",
+      "6-12 years": "suppository 500mg every 6-8 hours"
     }
   },
   {
@@ -22207,9 +22207,9 @@
     },
     "warning": "⚠️ ممنوع تحت سنة — لا تستخدم أكثر من 3 أيام بدون وصفة",
     "age_doses_en": {
-      "1-4 سنوات": "تحميلة 12.5mg twice daily",
-      "4-8 سنوات": "تحميلة 25mg twice daily",
-      "8-12 سنة": "تحميلة 50mg twice daily"
+      "1-4 years": "suppository 12.5mg twice daily",
+      "4-8 years": "suppository 25mg twice daily",
+      "8-12 year": "suppository 50mg twice daily"
     },
     "pediatric_frequency_en": "Twice daily"
   },
@@ -22251,7 +22251,7 @@
     },
     "warning": "⚠️ لا تتجاوز أسبوعين",
     "age_doses_en": {
-      "All ages": "1-2 drops in affected eye كل 4 ساعات"
+      "All ages": "1-2 drops in affected eye every 4 hours"
     }
   },
   {
@@ -22295,7 +22295,7 @@
     },
     "warning": "⚠️ ممنوع عند ثقب طبلة الأذن — لا تتجاوز 7 أيام",
     "age_doses_en": {
-      "All ages": "1-2 drops في المنطقة المصابة every 4-6 hours"
+      "All ages": "1-2 drops to affected area every 4-6 hours"
     }
   },
   {
@@ -22324,7 +22324,7 @@
     },
     "warning": "⚠️ لا تستخدم العدسات اللاصقة أثناء العلاج",
     "age_doses_en": {
-      "Over 3 years": "1 drop في كل عين twice daily",
+      "Over 3 years": "1 drop in each eye twice daily",
       "Under 3 years": "❌ Not recommended"
     }
   },
@@ -22340,7 +22340,7 @@
     },
     "warning": "⚠️ ممنوع عند ثقب طبلة الأذن",
     "age_doses_en": {
-      "Over 2 years": "3 قطرات في الأذن 3-4 times daily",
+      "Over 2 years": "3 drops in the ear 3-4 times daily",
       "Under 2 years": "❌ Consult doctor"
     }
   },
@@ -22356,7 +22356,7 @@
     },
     "warning": "⚠️ ممنوع عند ثقب طبلة الأذن إلا بوصفة",
     "age_doses_en": {
-      "أكثر من 6 أشهر": "3-4 قطرات في الأذن twice daily",
+      "Over 6 أmonth": "3-4 drops in the ear twice daily",
       "Under 6 months": "❌ Consult doctor"
     }
   },
@@ -22373,8 +22373,8 @@
     },
     "warning": "⚠️ ممنوع تحت 6 سنوات",
     "age_doses_en": {
-      "6-12 years": "1 spray في كل فتحة twice daily",
-      "Over 12 years": "2 sprays في كل فتحة twice daily",
+      "6-12 years": "1 spray in each nostril twice daily",
+      "Over 12 years": "2 sprays in each nostril twice daily",
       "Under 6 years": "❌ Not recommended"
     }
   },
@@ -22389,7 +22389,7 @@
     },
     "warning": "⚠️ تجنب ملامسة العيون — لا تستخدم تحت الحفاضات لفترة طويلة",
     "age_doses_en": {
-      "All ages": "يوضع طبقة رقيقة على المنطقة المصابة مرة أو twice daily"
+      "All ages": "apply thin layer to affected area time أو twice daily"
     }
   },
   {
@@ -22403,7 +22403,7 @@
     },
     "warning": "⚠️ آمن للرضع والأطفال",
     "age_doses_en": {
-      "All ages": "Apply to affected area عند كل تغيير للحفاض"
+      "All ages": "Apply to affected area at each diaper change"
     }
   },
   {
@@ -22417,7 +22417,7 @@
     },
     "warning": "⚠️ لا يستخدم أكثر من 10 أيام",
     "age_doses_en": {
-      "All ages": "Apply to affected area 3 times daily لمدة 5-10 أيام"
+      "All ages": "Apply to affected area 3 times daily for 5-10 days"
     }
   }
 ]
