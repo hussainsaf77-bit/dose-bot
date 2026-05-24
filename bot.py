@@ -695,7 +695,7 @@ def calc_child(drug, w, lang):
 
     # معالجة الأدوية ذات الجرعة الثابتة حسب العمر
     if drug.get("fixed_dose") and drug.get("age_doses"):
-        age_doses = drug["age_doses"]
+        age_doses = drug.get("age_doses_en", drug["age_doses"]) if lang=="en" else drug["age_doses"]
         dose_lines = ["📋 " + ("جرعة الأطفال:" if lang=="ar" else "Pediatric Doses:")]
         for age_range, dose in age_doses.items():
             dose_lines.append("  • " + age_range + ": " + dose if lang=="ar" else "  • " + age_range + ": " + dose)
