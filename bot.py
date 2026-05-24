@@ -1457,7 +1457,9 @@ async def pick_lang(u, ctx):
                 supabase_client.table("users").upsert({"uid": uid, "name": u.effective_user.first_name or "", "lang": lang, "level": "registered", "trial_expiry": expiry}).execute()
                 trial_msg = ("🎉 تم تفعيل شهر مجاني كامل!\n✅ جميع الميزات متاحة حتى: " + expiry) if lang=="ar" else ("🎉 Free month activated!\n✅ All features until: " + expiry)
                 await q.message.reply_text(trial_msg)
-        except: pass
+        except Exception as e:
+            logger.warning(f"trial error: {e}")
+            await q.message.reply_text("debug: " + str(e)[:80])
     return STATE_MAIN_MENU
 
 async def set_country(u, ctx):
