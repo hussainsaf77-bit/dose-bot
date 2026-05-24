@@ -4398,6 +4398,7 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(rem_menu)],
             STATE_REM_ADD_NAME: [
+                CallbackQueryHandler(rem_pat_select, pattern="^rem_pat_"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.PHOTO, rem_photo_receive),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, rem_add_name)],
