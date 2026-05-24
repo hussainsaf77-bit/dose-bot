@@ -1330,7 +1330,7 @@ def sched(app, chat_id, drug, time_str, freq, lang, tz_str="Asia/Riyadh", photo=
             app.job_queue.run_daily(
                 send_alert,
                 time=t,
-                data={"chat_id": chat_id, "drug": drug, "lang": lang},
+                    data={"chat_id": chat_id, "drug": drug, "lang": lang, "photo": photo},
                 name="rem_" + str(chat_id) + "_" + str(drug) + "_" + str(i))
         logger.info("sched: " + str(drug) + " x" + str(freq) + " times=" + str([str(t) for t in times]))
     except Exception as e:
@@ -4133,7 +4133,7 @@ async def rem_add_freq(u, ctx):
     f = ctx.user_data.get("nr_freq", 1)
     rems = get_rems(ctx)
     pat_name_rem = ctx.user_data.pop("nr_patient", "")
-    rem_entry = {"id": len(rems)+1, "drug": drug, "time": time_s, "freq": f}
+    rem_entry = {"id": len(rems)+1, "drug": drug, "time": time_s, "freq": f, "photo": ctx.user_data.get("nr_photo")}
     if pat_name_rem:
         rem_entry["patient"] = pat_name_rem
     rems.append(rem_entry)
