@@ -4058,25 +4058,9 @@ async def rem_photo_receive(u, ctx):
 async def rem_add_name(u, ctx):
     lang = get_lang(ctx)
     ctx.user_data["nr_drug"] = u.message.text.strip()
-    
-    # نحاول نجيب المرضى المحفوظين
-    load_patients(ctx)
-    patients = ctx.user_data.get("patients", {})
-    
-    if patients:
-        btns = []
-        for pid, p in list(patients.items())[:8]:
-            name = p.get("name","")
-            if name:
-                btns.append([InlineKeyboardButton("👤 " + name, callback_data="rem_pat_" + pid)])
-        btns.append([InlineKeyboardButton("👤 " + ("شخص آخر" if lang=="ar" else "Other person"), callback_data="rem_pat_none")])
-        btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
-        await u.message.reply_text("👤 " + ("لمن هذا الدواء؟" if lang=="ar" else "Who is this for?"), reply_markup=InlineKeyboardMarkup(btns))
-        return STATE_REM_ADD_TIME
-    
-    await u.message.reply_text(tx("rem_time", lang), reply_markup=kb_back(lang))
+    ctx.user_data.pop("nr_photo", None)
+    await _rem_show_patients(u.message, ctx, lang)
     return STATE_REM_ADD_TIME
-
 
 async def rem_pat_select(u, ctx):
     q = u.callback_query; await q.answer()
