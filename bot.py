@@ -3986,7 +3986,7 @@ async def rem_menu(u, ctx):
     lang = get_lang(ctx)
     if q.data == "back": return await go_back(u, ctx)
     if q.data == "r_add":
-        await q.message.edit_text(tx("rem_name", lang), reply_markup=kb_back(lang))
+        await q.message.edit_text("📸 " + ("أرسل صورة الدواء أو اكتب اسمه:" if lang=="ar" else "Send medication photo or type its name:"), reply_markup=kb_back(lang))
         return STATE_REM_ADD_NAME
     if q.data == "r_list":
         await q.message.edit_text(fmt_rems(get_rems(ctx), lang),
