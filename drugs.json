@@ -17385,10 +17385,10 @@
     },
     "warning": "⚠️ يُعطى على معدة فارغة — يلوّن البراز داكناً",
     "age_doses_en": {
-      "0-6 أmonth": "1 mL × once daily",
-      "6-12 month": "2.5 mL × once daily",
+      "0-6 months": "1 mL × once daily",
+      "6-12 months": "2.5 mL × once daily",
       "1-5 years": "5 mL × once daily",
-      "5-12 year": "5-10 mL × once daily"
+      "5-12 years": "5-10 mL × once daily"
     }
   },
   {
@@ -17428,10 +17428,10 @@
       "5-12 سنة": "10 مل (20mg) × مرة يومياً"
     },
     "age_doses_en": {
-      "0-6 أmonth": "1 mL (2mg) × once daily",
-      "6-12 month": "2.5 mL (5mg) × once daily",
+      "0-6 months": "1 mL (2mg) × once daily",
+      "6-12 months": "2.5 mL (5mg) × once daily",
       "1-5 years": "5 mL (10mg) × once daily",
-      "5-12 year": "10 mL (20mg) × once daily"
+      "5-12 years": "10 mL (20mg) × once daily"
     }
   },
   {
@@ -22356,8 +22356,7 @@
     },
     "warning": "⚠️ ممنوع عند ثقب طبلة الأذن إلا بوصفة",
     "age_doses_en": {
-      "Over 6 أmonth": "3-4 drops in the ear twice daily",
-      "Under 6 months": "❌ Consult doctor"
+      "Over 6 months": "3-4 drops in the ear twice daily"
     }
   },
   {
@@ -22389,7 +22388,7 @@
     },
     "warning": "⚠️ تجنب ملامسة العيون — لا تستخدم تحت الحفاضات لفترة طويلة",
     "age_doses_en": {
-      "All ages": "apply thin layer to affected area time أو twice daily"
+      "All ages": "Apply thin layer to affected area once or twice daily"
     }
   },
   {
