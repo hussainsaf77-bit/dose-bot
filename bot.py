@@ -1228,10 +1228,14 @@ async def send_alert(ctx):
         btn_done = "✅ Done"
         btn_later = "⏳ Remind in 15 min"
     job_id = str(chat_id)
-    btns = InlineKeyboardMarkup([
+    btn_rows = [
         [InlineKeyboardButton(btn_done, callback_data="rem_done_" + job_id)],
         [InlineKeyboardButton(btn_later, callback_data="rem_snooze_" + job_id + "_" + str(drug))],
-    ])
+    ]
+    photo_id = d.get("photo")
+    if photo_id:
+        btn_rows.insert(1, [InlineKeyboardButton("📸 " + ("عرض الدواء" if lang=="ar" else "Show Medication"), callback_data="rem_showphoto_" + job_id)])
+    btns = InlineKeyboardMarkup(btn_rows)
 
     try:
         photo_id = d.get("photo")
@@ -1253,6 +1257,23 @@ async def send_alert(ctx):
             when=next_time,
             data=new_data,
             name="alert_" + str(chat_id) + "_" + str(drug) + "_retry" + str(attempt)        )
+
+
+async def rem_show_photo(update, ctx):
+    q = update.callback_query; await q.answer()
+    job_id = q.data.replace("rem_showphoto_", "")
+    lang = "ar"
+    # نبحث عن الصورة في التذكيرات
+    rems = ctx.user_data.get("reminders", [])
+    photo_id = None
+    for r in rems:
+        if str(r.get("photo")):
+            photo_id = r.get("photo")
+            break
+    if photo_id:
+        await ctx.bot.send_photo(q.message.chat_id, photo=photo_id, caption="💊 " + ("صورة الدواء" if lang=="ar" else "Medication Photo"))
+    else:
+        await q.answer("❌ " + ("لا توجد صورة" if lang=="ar" else "No photo available"), show_alert=True)
 
 async def rem_done(update, ctx):
     """المستخدم ضغط تم"""
@@ -4805,6 +4826,7 @@ def main():
     app = Application.builder().token(BOT_TOKEN).persistence(persistence).build()
     app.add_handler(build_conv())
     app.add_handler(CallbackQueryHandler(rem_done, pattern="^rem_done_"))
+    app.add_handler(CallbackQueryHandler(rem_show_photo, pattern="^rem_showphoto_"))
     app.add_handler(CallbackQueryHandler(rem_later, pattern="^rem_snooze_"))
     app.add_handler(CommandHandler("stats", stats_cmd))
     app.add_handler(CommandHandler("fixdose", fix_doses_cmd))
