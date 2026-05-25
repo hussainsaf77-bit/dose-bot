@@ -2446,21 +2446,15 @@ def get_patients(ctx):
     uid = ctx.user_data.get("uid", "0")
     return ctx.user_data.setdefault("patients", {})
 
-def get_uid(ctx):
-    uid = ctx.user_data.get("uid", "")
-    if not uid:
-        uid = str(ctx._user_id) if hasattr(ctx, "_user_id") else "0"
-    return uid
-
 def save_patients(ctx):
-    uid = get_uid(ctx)
+    uid = ctx.user_data.get("uid", "0")
     all_rems = load_all_reminders()
     patients = ctx.user_data.get("patients", {})
     all_rems[uid + "_patients"] = patients
     save_all_reminders(all_rems)
 
 def load_patients(ctx):
-    uid = get_uid(ctx)
+    uid = ctx.user_data.get("uid", "0")
     all_data = load_all_reminders()
     patients = all_data.get(uid + "_patients", {})
     ctx.user_data["patients"] = patients
