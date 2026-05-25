@@ -1119,8 +1119,10 @@ def kb_main(lang):
         [InlineKeyboardButton("📖 " + ("دليل المستخدم" if lang=="ar" else "User Guide"), callback_data="m_guide")]])
 
 def kb_back(lang):
-    return InlineKeyboardMarkup([[
-        InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]])
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")],
+        [InlineKeyboardButton("🏠 " + ("القائمة الرئيسية" if lang=="ar" else "Main Menu"), callback_data="main_menu_now")]
+    ])
 
 def kb_remind(lang):
     return InlineKeyboardMarkup([
@@ -1476,6 +1478,13 @@ async def set_country(u, ctx):
         await u.message.reply_text(msg)
         ctx.user_data["timezone"] = "Asia/Riyadh"
     await show_main(u.message, lang)
+    return STATE_MAIN_MENU
+
+
+async def go_main_menu(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    await show_main(q.message, lang, edit=False)
     return STATE_MAIN_MENU
 
 async def go_back(u, ctx):
@@ -4367,6 +4376,7 @@ def build_conv():
                 CallbackQueryHandler(rem_later, pattern="^rem_snooze_"),
 
                 CallbackQueryHandler(go_back, pattern="^back$"),
+                CallbackQueryHandler(go_main_menu, pattern="^main_menu_now$"),
                 CallbackQueryHandler(reg_handler, pattern="^reg_"),
                 CallbackQueryHandler(handle_m_bp, pattern="^m_bp$"),
                 CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_|sugar_)"),
