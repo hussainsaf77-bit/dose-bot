@@ -1279,6 +1279,7 @@ async def rem_done(update, ctx):
     """المستخدم ضغط تم"""
     q = update.callback_query
     await q.answer("✅ تم تسجيل الجرعة", show_alert=True)
+    await q.message.reply_text("🔵 rem_done called")
     lang = "ar" if "ar" in str(q.data) else "en"
     msg = "✅ تم! الجرعة التالية ستُذكّرك في وقتها." if lang=="ar" else "✅ Done! Next dose reminder is set."
     await q.message.edit_text(msg)
