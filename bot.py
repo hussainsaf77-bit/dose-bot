@@ -2450,18 +2450,26 @@ def get_patients(ctx):
 def get_uid(ctx):
     uid = ctx.user_data.get("uid", "")
     if not uid:
-        uid = str(ctx._user_id) if hasattr(ctx, "_user_id") else "0"
+        try:
+            uid = str(ctx._user_id)
+        except:
+            uid = "0"
+    return uid
+
+def get_uid_from_update(u, ctx):
+    uid = str(u.effective_user.id) if u.effective_user else get_uid(ctx)
+    ctx.user_data["uid"] = uid
     return uid
 
 def save_patients(ctx):
-    uid = get_uid(ctx)
+    uid = ctx.user_data.get("uid", get_uid(ctx))
     all_rems = load_all_reminders()
     patients = ctx.user_data.get("patients", {})
     all_rems[uid + "_patients"] = patients
     save_all_reminders(all_rems)
 
 def load_patients(ctx):
-    uid = get_uid(ctx)
+    uid = ctx.user_data.get("uid", get_uid(ctx))
     all_data = load_all_reminders()
     patients = all_data.get(uid + "_patients", {})
     ctx.user_data["patients"] = patients
@@ -4085,6 +4093,7 @@ async def rem_photo_receive(u, ctx):
 
 async def rem_add_name(u, ctx):
     lang = get_lang(ctx)
+    ctx.user_data["uid"] = str(u.effective_user.id)
     ctx.user_data["nr_drug"] = u.message.text.strip()
     ctx.user_data.pop("nr_photo", None)
     await _rem_show_patients(u.message, ctx, lang)
