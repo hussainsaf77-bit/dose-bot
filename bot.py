@@ -1119,10 +1119,8 @@ def kb_main(lang):
         [InlineKeyboardButton("📖 " + ("دليل المستخدم" if lang=="ar" else "User Guide"), callback_data="m_guide")]])
 
 def kb_back(lang):
-    return InlineKeyboardMarkup([
-        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")],
-        [InlineKeyboardButton("🏠 " + ("القائمة الرئيسية" if lang=="ar" else "Main Menu"), callback_data="main_menu_now")]
-    ])
+    return InlineKeyboardMarkup([[
+        InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]])
 
 def kb_remind(lang):
     return InlineKeyboardMarkup([
@@ -1478,13 +1476,6 @@ async def set_country(u, ctx):
         await u.message.reply_text(msg)
         ctx.user_data["timezone"] = "Asia/Riyadh"
     await show_main(u.message, lang)
-    return STATE_MAIN_MENU
-
-
-async def go_main_menu(u, ctx):
-    q = u.callback_query; await q.answer()
-    lang = get_lang(ctx)
-    await show_main(q.message, lang, edit=False)
     return STATE_MAIN_MENU
 
 async def go_back(u, ctx):
@@ -2458,47 +2449,18 @@ def get_patients(ctx):
 def get_uid(ctx):
     uid = ctx.user_data.get("uid", "")
     if not uid:
-        try:
-            uid = str(ctx._user_id)
-        except:
-            uid = "0"
-    return uid
-
-def get_uid_from_update(u, ctx):
-    uid = str(u.effective_user.id) if u.effective_user else get_uid(ctx)
-    ctx.user_data["uid"] = uid
+        uid = str(ctx._user_id) if hasattr(ctx, "_user_id") else "0"
     return uid
 
 def save_patients(ctx):
-    uid = ctx.user_data.get("uid", get_uid(ctx))
-    patients = ctx.user_data.get("patients", {})
-    if supabase_client and uid and uid != "0":
-        try:
-            for pid, pdata in patients.items():
-                supabase_client.table("patients").upsert({
-                    "uid": uid, "pid": pid, "data": json.dumps(pdata, ensure_ascii=False)
-                }).execute()
-        except Exception as e:
-            logger.error(f"save_patients error: {e}")
-    # احتياطي في all_reminders
+    uid = get_uid(ctx)
     all_rems = load_all_reminders()
+    patients = ctx.user_data.get("patients", {})
     all_rems[uid + "_patients"] = patients
     save_all_reminders(all_rems)
 
 def load_patients(ctx):
-    uid = ctx.user_data.get("uid", get_uid(ctx))
-    patients = {}
-    if supabase_client and uid and uid != "0":
-        try:
-            res = supabase_client.table("patients").select("pid,data").eq("uid", uid).execute()
-            if res.data:
-                for row in res.data:
-                    patients[row["pid"]] = json.loads(row["data"])
-                ctx.user_data["patients"] = patients
-                return patients
-        except Exception as e:
-            logger.error(f"load_patients error: {e}")
-    # احتياطي من all_reminders
+    uid = get_uid(ctx)
     all_data = load_all_reminders()
     patients = all_data.get(uid + "_patients", {})
     ctx.user_data["patients"] = patients
@@ -4122,7 +4084,6 @@ async def rem_photo_receive(u, ctx):
 
 async def rem_add_name(u, ctx):
     lang = get_lang(ctx)
-    ctx.user_data["uid"] = str(u.effective_user.id)
     ctx.user_data["nr_drug"] = u.message.text.strip()
     ctx.user_data.pop("nr_photo", None)
     await _rem_show_patients(u.message, ctx, lang)
@@ -4397,7 +4358,6 @@ def build_conv():
                 CallbackQueryHandler(rem_later, pattern="^rem_snooze_"),
 
                 CallbackQueryHandler(go_back, pattern="^back$"),
-                CallbackQueryHandler(go_main_menu, pattern="^main_menu_now$"),
                 CallbackQueryHandler(reg_handler, pattern="^reg_"),
                 CallbackQueryHandler(handle_m_bp, pattern="^m_bp$"),
                 CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_|sugar_)"),
