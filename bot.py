@@ -2471,13 +2471,34 @@ def get_uid_from_update(u, ctx):
 
 def save_patients(ctx):
     uid = ctx.user_data.get("uid", get_uid(ctx))
-    all_rems = load_all_reminders()
     patients = ctx.user_data.get("patients", {})
+    if supabase_client and uid and uid != "0":
+        try:
+            for pid, pdata in patients.items():
+                supabase_client.table("patients").upsert({
+                    "uid": uid, "pid": pid, "data": json.dumps(pdata, ensure_ascii=False)
+                }).execute()
+        except Exception as e:
+            logger.error(f"save_patients error: {e}")
+    # احتياطي في all_reminders
+    all_rems = load_all_reminders()
     all_rems[uid + "_patients"] = patients
     save_all_reminders(all_rems)
 
 def load_patients(ctx):
     uid = ctx.user_data.get("uid", get_uid(ctx))
+    patients = {}
+    if supabase_client and uid and uid != "0":
+        try:
+            res = supabase_client.table("patients").select("pid,data").eq("uid", uid).execute()
+            if res.data:
+                for row in res.data:
+                    patients[row["pid"]] = json.loads(row["data"])
+                ctx.user_data["patients"] = patients
+                return patients
+        except Exception as e:
+            logger.error(f"load_patients error: {e}")
+    # احتياطي من all_reminders
     all_data = load_all_reminders()
     patients = all_data.get(uid + "_patients", {})
     ctx.user_data["patients"] = patients
