@@ -4844,7 +4844,8 @@ async def successful_payment(update, ctx):
 
 def main():
     print(f"✅ تم تحميل {len(DRUGS_DB)} دواء")
-    app = Application.builder().token(BOT_TOKEN).build()
+    persistence = PicklePersistence(filepath="bot_data.pkl")
+    app = Application.builder().token(BOT_TOKEN).persistence(persistence).build()
     app.add_handler(build_conv())
     app.add_handler(CallbackQueryHandler(rem_done, pattern="^rem_done_"), group=2)
     app.add_handler(CallbackQueryHandler(rem_show_photo, pattern="^rem_showphoto_"), group=2)
