@@ -4845,6 +4845,13 @@ async def successful_payment(update, ctx):
 
 def main():
     print(f"✅ تم تحميل {len(DRUGS_DB)} دواء")
+    print(f"✅ Supabase: {bool(supabase_client)}")
+    if supabase_client:
+        try:
+            supabase_client.table("users").select("uid").limit(1).execute()
+            print("✅ Supabase connection OK")
+        except Exception as e:
+            print(f"❌ Supabase error: {e}")
     persistence = PicklePersistence(filepath="bot_data.pkl")
     app = Application.builder().token(BOT_TOKEN).persistence(persistence).build()
     app.add_handler(build_conv())
