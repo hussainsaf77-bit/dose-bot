@@ -4223,6 +4223,22 @@ async def rem_edit_val(u, ctx):
                     return STATE_REM_EDIT_VAL
             break
     save_rems(ctx)
+    # نعيد جدولة التذكير بالوقت الجديد
+    for r in get_rems(ctx):
+        if r["id"] == rid:
+            try:
+                # نحذف الجدولة القديمة
+                drug_name = r.get("drug","")
+                uid = str(u.effective_user.id)
+                for job in ctx.application.job_queue.jobs():
+                    if uid in job.name and drug_name in job.name:
+                        job.schedule_removal()
+                # نضيف جدولة جديدة
+                sched(ctx.application, u.effective_chat.id, r["drug"], r["time"], r["freq"], lang, 
+                      ctx.user_data.get("timezone","Asia/Riyadh"), photo=r.get("photo"))
+            except Exception as e:
+                logger.error(f"resched error: {e}")
+            break
     await u.message.reply_text(tx("rem_updated", lang), reply_markup=kb_remind(lang))
     return STATE_REM_MENU
 
