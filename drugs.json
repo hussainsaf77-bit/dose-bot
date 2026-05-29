@@ -81,8 +81,8 @@
       "اموكسيسلين"
     ],
     "pediatric_mg_per_kg": 20,
-    "pediatric_min_mg_per_kg": 6.7,
-    "pediatric_max_mg_per_kg": 13.3,
+    "pediatric_min_mg_per_kg": 15,
+    "pediatric_max_mg_per_kg": 30,
     "pediatric_frequency": "3 مرات يومياً",
     "adult_dose_min": 500,
     "adult_dose_max": 875,

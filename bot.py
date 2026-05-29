@@ -2320,7 +2320,7 @@ async def sugar_get_type(u, ctx):
         else: color, st = "🚨", ("غير مضبوط" if lang=="ar" else "Uncontrolled")
     elif stype == "fasting":
         unit = "mg/dL"
-        if val < 70: color, st = "⚠️", ("انخفاض" if lang=="ar" else "Low")
+        if val <= 70: color, st = "⚠️", ("انخفاض" if lang=="ar" else "Low")
         elif val <= 100: color, st = "🟢", ("طبيعي" if lang=="ar" else "Normal")
         elif val <= 125: color, st = "🟡", ("ما قبل السكري" if lang=="ar" else "Pre-diabetic")
         else: color, st = "🔴", ("سكري" if lang=="ar" else "Diabetic")
