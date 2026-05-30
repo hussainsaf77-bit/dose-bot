@@ -6,7 +6,7 @@ import pytz
 try:
     from supabase import create_client
     SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://finwslipvvasokmuxdla.supabase.co")
-    SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "sb_publishable_7g9H8VEBGrgGcF9CEfLrNg_Bu6xlorY")
+    SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "sb_publishable_7g9H8VEBGrgGcF9CEfLrNg_Bu6xlorY")  # dose_bot key
     supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_URL and SUPABASE_KEY else None
 except Exception as e:
     supabase_client = None
