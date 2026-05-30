@@ -2085,7 +2085,11 @@ async def food_search(u, ctx):
         msg += "Protein: " + str(round(prot,1)) + "g\n"
         msg += "Carbs: " + str(round(carbs,1)) + "g\n"
         msg += "Fat: " + str(round(fat,1)) + "g\n"
-    await u.message.reply_text(msg, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+    food_btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🍎 " + ("طعام آخر" if lang=="ar" else "Another Food"), callback_data="m_food")],
+        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+    ])
+    await u.message.reply_text(msg, reply_markup=food_btns)
     return STATE_FOOD_SEARCH
 
 async def infection_site(u, ctx):
@@ -4332,6 +4336,7 @@ def build_conv():
             STATE_CAL_DISEASE: [
                 CallbackQueryHandler(cal_disease, pattern="^dis_")],
             STATE_FOOD_SEARCH: [
+                CallbackQueryHandler(main_cb, pattern="^m_food$"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, food_search)],
             STATE_INTERACTION: [
