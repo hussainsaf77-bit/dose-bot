@@ -702,7 +702,13 @@ def calc_child(drug, w, lang):
         dose_lines.append("")
         dose_lines.append("🔁 " + freq)
         dose_lines.append("⚠️ " + ("استشر الطبيب أو الصيدلاني." if lang=="ar" else "Consult doctor or pharmacist."))
-        return chr(10).join(dose_lines)
+        ctx.user_data["last_child_drug"] = drug
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+        ])
+        await u.message.reply_text(chr(10).join(dose_lines), reply_markup=btns)
+        return STATE_CHILD_DRUG
 
     try:
         # تركيزات الشراب الشائعة لحساب المل
@@ -1798,7 +1804,6 @@ async def child_sel(u, ctx):
     return STATE_CHILD_WEIGHT
 
 async def child_weight(u, ctx):
-    await u.message.reply_text("🔵 child_weight: " + u.message.text[:10])
     lang = get_lang(ctx)
     try:
         track(u, "child_doses")
@@ -1881,6 +1886,11 @@ async def child_weight(u, ctx):
         change_btns.append([InlineKeyboardButton(c, callback_data="conc_" + c)])
     change_btns.append([InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")])
     change_btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
+    # نضيف زر جرعة أخرى دائماً
+    if not change_btns or not any("m_child" in str(b) for row in change_btns for b in row):
+        change_btns.append([InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")])
+    if not any("back" in str(b) for row in change_btns for b in row):
+        change_btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
     try:
         await u.message.reply_text(result, reply_markup=InlineKeyboardMarkup(change_btns), parse_mode=ParseMode.MARKDOWN)
     except:
