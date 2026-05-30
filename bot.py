@@ -1917,18 +1917,31 @@ async def child_conc(u, ctx):
             d_copy = dict(d)
             d_copy["concentration"] = conc_str
             result = calc_child(d_copy, w, lang)
-            await q.message.edit_text(result, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
-            return STATE_CHILD_WEIGHT
+            btns = InlineKeyboardMarkup([
+                [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
+                [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+            ])
+            try:
+                await q.message.edit_text(result, reply_markup=btns)
+            except:
+                await q.message.edit_text(result.replace("*","").replace("_",""), reply_markup=btns)
+            return STATE_CHILD_CONC
     else:
-        # إدخال نصي للتركيز
         txt = u.message.text.strip()
         d = ctx.user_data.get("child_drug")
         w = ctx.user_data.get("child_weight", 0)
         d_copy = dict(d)
         d_copy["concentration"] = txt
         result = calc_child(d_copy, w, lang)
-        await u.message.reply_text(result, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
-        return STATE_CHILD_WEIGHT
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+        ])
+        try:
+            await u.message.reply_text(result, reply_markup=btns)
+        except:
+            await u.message.reply_text(result.replace("*","").replace("_",""), reply_markup=btns)
+        return STATE_CHILD_CONC
 
 
 async def cal_gender(u, ctx):
