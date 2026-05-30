@@ -702,13 +702,7 @@ def calc_child(drug, w, lang):
         dose_lines.append("")
         dose_lines.append("🔁 " + freq)
         dose_lines.append("⚠️ " + ("استشر الطبيب أو الصيدلاني." if lang=="ar" else "Consult doctor or pharmacist."))
-        ctx.user_data["last_child_drug"] = drug
-        btns = InlineKeyboardMarkup([
-            [InlineKeyboardButton("💊 " + ("جرعة دواء آخر" if lang=="ar" else "Another Drug"), callback_data="m_child")],
-            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
-        ])
-        await u.message.reply_text(chr(10).join(dose_lines), reply_markup=btns)
-        return STATE_CHILD_DRUG
+        return chr(10).join(dose_lines)
 
     try:
         # تركيزات الشراب الشائعة لحساب المل
