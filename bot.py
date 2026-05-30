@@ -1554,6 +1554,9 @@ async def main_cb(u, ctx):
             return STATE_MAIN_MENU
         await q.message.edit_text("👤 كم عمرك؟" if lang=="ar" else "👤 How old are you?", reply_markup=kb_back(lang))
         return STATE_BP_AGE
+    elif q.data == "m_food":
+        await q.message.edit_text("🍎 " + ("أدخل اسم الطعام والكمية بالغرام:" if lang=="ar" else "Enter food name and grams:"), reply_markup=kb_back(lang))
+        return STATE_FOOD_SEARCH
     elif q.data == "m_guide":
         if lang == "ar":
             g_txt = "📖 دليل مساعد الطبيب" + chr(10)*2 + "💊 استعلام دواء: اكتب اسم الدواء" + chr(10) + "👶 جرعات الأطفال: اختر الشكل وأدخل الوزن" + chr(10) + "📋 ملف المريض: احفظ بيانات مرضاك" + chr(10) + "💉 الضغط: أدخل القراءة مع الفئة العمرية" + chr(10) + "🩸 السكر: أدخل الرقم واختر النوع" + chr(10) + "⏰ التذكيرات: لا تنسى دواءك" + chr(10) + "📸 الصور: أرسل صورة العبوة"
