@@ -4423,6 +4423,7 @@ def build_conv():
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(drug_form_selected, pattern="^form_")],
             STATE_CHILD_DRUG: [
+                CallbackQueryHandler(main_cb, pattern="^m_child$"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(manual_drug_input, pattern="^manual_input$"),
                 CallbackQueryHandler(child_sel, pattern="^cs_"),
