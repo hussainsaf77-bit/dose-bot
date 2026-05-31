@@ -1242,7 +1242,8 @@ async def send_alert(ctx):
     try:
         photo_id = d.get("photo")
         if photo_id:
-            await ctx.bot.send_photo(chat_id, photo=photo_id, caption=msg, reply_markup=btns)
+            await ctx.bot.send_photo(chat_id, photo=photo_id)
+            await ctx.bot.send_message(chat_id, msg, reply_markup=btns)
         else:
             await ctx.bot.send_message(chat_id, msg, reply_markup=btns)
     except Exception as e:
