@@ -1294,6 +1294,8 @@ async def rem_later(update, ctx):
     """المستخدم ضغط لاحقاً - يجدول تذكيراً بعد 15 دقيقة"""
     q = update.callback_query
     await q.answer("⏳ سيتم تذكيرك بعد 15 دقيقة", show_alert=True)
+    rems_debug = ctx.user_data.get("reminders", [])
+    await q.message.reply_text("🔵 rems=" + str(len(rems_debug)) + " photos=" + str([r.get("photo","") and "yes" or "no" for r in rems_debug]))
     raw = q.data.replace("rem_snooze_", "")
     parts = raw.split("_", 1)
     chat_id = int(parts[0]) if parts[0].isdigit() else q.message.chat_id
