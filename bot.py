@@ -1301,7 +1301,10 @@ async def rem_later(update, ctx):
     drug = parts[1] if len(parts) > 1 else "دواء"
     lang = "ar"
     msg = "⏳ سيُذكّرك البوت بعد 15 دقيقة." if lang=="ar" else "⏳ Reminder set for 15 minutes."
-    await q.message.edit_text(msg)
+    btns_later = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🏠 " + ("القائمة الرئيسية" if lang=="ar" else "Main Menu"), callback_data="main_menu_now")]
+    ])
+    await q.message.edit_text(msg, reply_markup=btns_later)
     # نبحث عن صورة الدواء من Supabase
     photo_id = None
     try:
