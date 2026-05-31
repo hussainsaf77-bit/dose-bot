@@ -1301,13 +1301,25 @@ async def rem_later(update, ctx):
     lang = "ar"
     msg = "⏳ سيُذكّرك البوت بعد 15 دقيقة." if lang=="ar" else "⏳ Reminder set for 15 minutes."
     await q.message.edit_text(msg)
-    # نجدول تذكيراً بعد 15 دقيقة
+    # نبحث عن صورة الدواء في التذكيرات
+    photo_id = None
+    rems = ctx.user_data.get("reminders", [])
+    for r in rems:
+        if r.get("drug") == drug and r.get("photo"):
+            photo_id = r["photo"]
+            break
+    if not photo_id:
+        for r in rems:
+            if r.get("photo"):
+                photo_id = r["photo"]
+                break
+    # نجدول تذكيراً بعد 15 دقيقة مع الصورة
     from datetime import timedelta
     next_time = datetime.now(TIMEZONE) + timedelta(minutes=15)
     ctx.application.job_queue.run_once(
         send_alert,
         when=next_time,
-        data={"chat_id": chat_id, "drug": drug, "lang": lang, "attempt": 1, "is_retry": True},
+        data={"chat_id": chat_id, "drug": drug, "lang": lang, "attempt": 1, "is_retry": True, "photo": photo_id},
         name="snooze_" + str(chat_id) + "_" + str(drug)
     )
 
