@@ -1294,8 +1294,6 @@ async def rem_later(update, ctx):
     """المستخدم ضغط لاحقاً - يجدول تذكيراً بعد 15 دقيقة"""
     q = update.callback_query
     await q.answer("⏳ سيتم تذكيرك بعد 15 دقيقة", show_alert=True)
-    rems_debug = ctx.user_data.get("reminders", [])
-    await q.message.reply_text("🔵 rems=" + str(len(rems_debug)) + " photos=" + str([r.get("photo","") and "yes" or "no" for r in rems_debug]))
     raw = q.data.replace("rem_snooze_", "")
     parts = raw.split("_", 1)
     chat_id = int(parts[0]) if parts[0].isdigit() else q.message.chat_id
@@ -1303,18 +1301,22 @@ async def rem_later(update, ctx):
     lang = "ar"
     msg = "⏳ سيُذكّرك البوت بعد 15 دقيقة." if lang=="ar" else "⏳ Reminder set for 15 minutes."
     await q.message.edit_text(msg)
-    # نبحث عن صورة الدواء في التذكيرات
+    # نبحث عن صورة الدواء من Supabase
     photo_id = None
-    rems = ctx.user_data.get("reminders", [])
-    for r in rems:
-        if r.get("drug") == drug and r.get("photo"):
-            photo_id = r["photo"]
-            break
-    if not photo_id:
+    try:
+        all_data = load_all_reminders()
+        uid = str(chat_id)
+        rems = all_data.get(uid, [])
         for r in rems:
-            if r.get("photo"):
+            if r.get("drug") == drug and r.get("photo"):
                 photo_id = r["photo"]
                 break
+        if not photo_id:
+            for r in rems:
+                if r.get("photo"):
+                    photo_id = r["photo"]
+                    break
+    except: pass
     # نجدول تذكيراً بعد 15 دقيقة مع الصورة
     from datetime import timedelta
     next_time = datetime.now(TIMEZONE) + timedelta(minutes=15)
