@@ -4596,7 +4596,7 @@ async def restore_reminders(app):
             try:
                 lang = "ar"
                 tz = r.get("tz", "Asia/Riyadh")
-                sched(app, int(uid), r["drug"], r["time"], r["freq"], lang, tz)
+                sched(app, int(uid), r["drug"], r["time"], r["freq"], lang, tz, photo=r.get("photo"))
                 count += 1
             except Exception as e:
                 logger.error(f"restore reminder error: {e}")
