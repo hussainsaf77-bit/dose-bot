@@ -1315,11 +1315,6 @@ async def rem_later(update, ctx):
             if r.get("drug") == drug and r.get("photo"):
                 photo_id = r["photo"]
                 break
-        if not photo_id:
-            for r in rems:
-                if r.get("photo"):
-                    photo_id = r["photo"]
-                    break
     except: pass
     # نجدول تذكيراً بعد 15 دقيقة مع الصورة
     from datetime import timedelta
