@@ -1502,6 +1502,40 @@ async def go_main_menu(u, ctx):
     await show_main(q.message, lang, edit=False)
     return STATE_MAIN_MENU
 
+
+async def show_subscription(u, ctx, lang):
+    """يعرض خيارات الاشتراك"""
+    if lang == "ar":
+        msg = (
+            "⏰ انتهت تجربتك المجانية!" + chr(10)*2 +
+            "💎 اشترك الآن للاستمرار بكل الميزات:" + chr(10)*2 +
+            "🥉 شهر واحد: $1.99" + chr(10) +
+            "🥈 3 أشهر: $2.99 (وفر 50%)" + chr(10) +
+            "🥇 6 أشهر: $4.99 (وفر 58%)" + chr(10) +
+            "👑 سنة كاملة: $7.99 (وفر 67%)" + chr(10)*2 +
+            "للاشتراك تواصل مع المطور @DrHusseinBot"
+        )
+    else:
+        msg = (
+            "⏰ Your free trial has ended!" + chr(10)*2 +
+            "💎 Subscribe now to continue:" + chr(10)*2 +
+            "🥉 1 Month: $1.99" + chr(10) +
+            "🥈 3 Months: $2.99 (save 50%)" + chr(10) +
+            "🥇 6 Months: $4.99 (save 58%)" + chr(10) +
+            "👑 1 Year: $7.99 (save 67%)" + chr(10)*2 +
+            "To subscribe contact @DrHusseinBot"
+        )
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🥉 $1.99 " + ("شهر" if lang=="ar" else "Month"), callback_data="sub_1m")],
+        [InlineKeyboardButton("🥈 $2.99 " + ("3 أشهر" if lang=="ar" else "3 Months"), callback_data="sub_3m")],
+        [InlineKeyboardButton("🥇 $4.99 " + ("6 أشهر" if lang=="ar" else "6 Months"), callback_data="sub_6m")],
+        [InlineKeyboardButton("👑 $7.99 " + ("سنة" if lang=="ar" else "Year"), callback_data="sub_1y")],
+    ])
+    if hasattr(u, 'message') and u.message:
+        await u.message.reply_text(msg, reply_markup=btns)
+    elif hasattr(u, 'callback_query') and u.callback_query:
+        await u.callback_query.message.edit_text(msg, reply_markup=btns)
+
 async def go_back(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -1565,7 +1599,7 @@ async def main_cb(u, ctx):
     elif q.data == "m_bp_skip":  # معطل
         uid = u.effective_user.id
         if not is_premium(uid):
-            await q.message.edit_text(tx("not_premium", lang), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],[InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]]))
+            await show_subscription(u, ctx, lang)
             return STATE_MAIN_MENU
         await q.message.edit_text("👤 كم عمرك؟" if lang=="ar" else "👤 How old are you?", reply_markup=kb_back(lang))
         return STATE_BP_AGE
