@@ -1536,6 +1536,47 @@ async def show_subscription(u, ctx, lang):
     elif hasattr(u, 'callback_query') and u.callback_query:
         await u.callback_query.message.edit_text(msg, reply_markup=btns)
 
+
+async def sub_select(u, ctx):
+    q = u.callback_query; await q.answer()
+    lang = get_lang(ctx)
+    uid = str(u.effective_user.id)
+    
+    plans = {
+        "sub_1m": ("$1.99", "شهر واحد", "1 Month"),
+        "sub_3m": ("$2.99", "3 أشهر", "3 Months"),
+        "sub_6m": ("$4.99", "6 أشهر", "6 Months"),
+        "sub_1y": ("$7.99", "سنة كاملة", "1 Year"),
+    }
+    
+    plan = plans.get(q.data, ("$1.99", "شهر", "Month"))
+    price = plan[0]
+    period = plan[1] if lang=="ar" else plan[2]
+    
+    if lang == "ar":
+        msg = (
+            "💳 لتفعيل باقة " + period + " - " + price + chr(10)*2 +
+            "1️⃣ اضغط رابط PayPal أدناه" + chr(10) +
+            "2️⃣ أرسل " + price + " كـ Friends & Family" + chr(10) +
+            "3️⃣ أرسل screenshot التأكيد مع رقمك: " + uid + chr(10)*2 +
+            "سيتم تفعيل اشتراكك خلال ساعة ✅"
+        )
+    else:
+        msg = (
+            "💳 To activate " + period + " plan - " + price + chr(10)*2 +
+            "1️⃣ Click PayPal link below" + chr(10) +
+            "2️⃣ Send " + price + " as Friends & Family" + chr(10) +
+            "3️⃣ Send screenshot with your ID: " + uid + chr(10)*2 +
+            "Your subscription will be activated within 1 hour ✅"
+        )
+    
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("💳 PayPal - " + price, url="https://www.paypal.me/HusainAlsaffouri/" + price.replace("$",""))],
+        [InlineKeyboardButton("🔙 " + ("رجوع" if lang=="ar" else "Back"), callback_data="m_premium")]
+    ])
+    await q.message.edit_text(msg, reply_markup=btns)
+    return STATE_MAIN_MENU
+
 async def go_back(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -4322,6 +4363,37 @@ async def fallback(u, ctx):
     # لا نتدخل في النصوص - نتركها للـ handlers
     return None
 
+
+async def activate_cmd(u, ctx):
+    """أمر الأدمن لتفعيل الاشتراك"""
+    if u.effective_user.id != 6298206492:
+        return
+    try:
+        args = ctx.args
+        if len(args) < 2:
+            await u.message.reply_text("استخدم: /activate uid plan\nمثال: /activate 123456 1m")
+            return
+        uid = args[0]
+        plan = args[1]
+        from datetime import datetime, timedelta
+        days = {"1m": 30, "3m": 90, "6m": 180, "1y": 365}
+        prices = {"1m": 1.99, "3m": 2.99, "6m": 4.99, "1y": 7.99}
+        d = days.get(plan, 30)
+        price = prices.get(plan, 1.99)
+        end_date = (datetime.now() + timedelta(days=d)).strftime("%Y-%m-%d")
+        if supabase_client:
+            supabase_client.table("subscriptions").upsert({
+                "uid": uid, "plan": plan, "start_date": datetime.now().strftime("%Y-%m-%d"),
+                "end_date": end_date, "amount": price, "status": "active"
+            }).execute()
+        await u.message.reply_text(f"✅ تم تفعيل اشتراك {plan} للمستخدم {uid} حتى {end_date}")
+        # نُبلغ المستخدم
+        try:
+            await ctx.bot.send_message(int(uid), "🎉 تم تفعيل اشتراكك! شكراً لك 💊")
+        except: pass
+    except Exception as e:
+        await u.message.reply_text(f"❌ خطأ: {e}")
+
 async def stats_cmd(u, ctx):
     stats = load_stats()
     users_dict = stats.get("users", {})
@@ -4467,6 +4539,7 @@ def build_conv():
 
                 CallbackQueryHandler(go_back, pattern="^back$"),
                 CallbackQueryHandler(go_main_menu, pattern="^main_menu_now$"),
+                CallbackQueryHandler(sub_select, pattern="^sub_"),
                 CallbackQueryHandler(reg_handler, pattern="^reg_"),
                 CallbackQueryHandler(handle_m_bp, pattern="^m_bp$"),
                 CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_|sugar_)"),
@@ -4985,6 +5058,7 @@ def main():
     app.add_handler(CallbackQueryHandler(rem_show_photo, pattern="^rem_showphoto_"), group=2)
     app.add_handler(CallbackQueryHandler(rem_later, pattern="^rem_snooze_"), group=2)
     app.add_handler(CommandHandler("stats", stats_cmd))
+    app.add_handler(CommandHandler("activate", activate_cmd))
     app.add_handler(CommandHandler("fixdose", fix_doses_cmd))
     app.add_handler(PreCheckoutQueryHandler(pre_checkout))
     app.add_handler(MessageHandler(filters.SUCCESSFUL_PAYMENT, successful_payment))
