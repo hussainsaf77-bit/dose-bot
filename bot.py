@@ -4802,7 +4802,27 @@ def save_subs(data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 def is_premium(user_id):
-    return True  # مجاني مؤقتاً حتى 1000 مستخدم
+    uid = str(user_id)
+    from datetime import datetime
+    today = datetime.now().strftime("%Y-%m-%d")
+    if supabase_client:
+        try:
+            # نتحقق من الاشتراك الفعال
+            res = supabase_client.table("subscriptions").select("end_date,status").eq("uid", uid).execute()
+            if res.data:
+                sub = res.data[0]
+                if sub.get("status") == "active" and sub.get("end_date","") >= today:
+                    return True
+            # نتحقق من التجربة المجانية
+            res2 = supabase_client.table("users").select("trial_expiry").eq("uid", uid).execute()
+            if res2.data:
+                trial = res2.data[0].get("trial_expiry","")
+                if trial and trial >= today:
+                    return True
+            return False
+        except:
+            return True
+    return True
 
 def get_expiry(user_id):
     subs = load_subs()
