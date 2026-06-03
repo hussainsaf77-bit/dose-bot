@@ -4197,7 +4197,8 @@ async def rem_add_freq(u, ctx):
     f = ctx.user_data.get("nr_freq", 1)
     rems = get_rems(ctx)
     pat_name_rem = ctx.user_data.pop("nr_patient", "")
-    rem_entry = {"id": len(rems)+1, "drug": drug, "time": time_s, "freq": f, "photo": ctx.user_data.get("nr_photo")}
+    import time as _time
+    rem_entry = {"id": int(_time.time()), "drug": drug, "time": time_s, "freq": f, "photo": ctx.user_data.get("nr_photo")}
     if pat_name_rem:
         rem_entry["patient"] = pat_name_rem
     rems.append(rem_entry)
