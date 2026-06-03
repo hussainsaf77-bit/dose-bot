@@ -4899,6 +4899,22 @@ async def successful_payment(update, ctx):
     msg = tx("payment_success", lang).format(date=expiry)
     await update.message.reply_text(msg, parse_mode=ParseMode.MARKDOWN)
 
+
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+class PingHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"OK")
+    def log_message(self, *args): pass
+
+def run_web():
+    server = HTTPServer(("0.0.0.0", 8080), PingHandler)
+    server.serve_forever()
+
+threading.Thread(target=run_web, daemon=True).start()
 def main():
     print(f"✅ تم تحميل {len(DRUGS_DB)} دواء")
     print(f"✅ Supabase: {bool(supabase_client)}")
