@@ -1509,24 +1509,24 @@ async def show_subscription(u, ctx, lang):
         msg = (
             "⏰ انتهت تجربتك المجانية!" + chr(10)*2 +
             "💎 اشترك الآن للاستمرار بكل الميزات:" + chr(10)*2 +
-            "🥉 شهر واحد: $1.99" + chr(10) +
-            "🥈 3 أشهر: $2.99 (وفر 50%)" + chr(10) +
-            "🥇 6 أشهر: $4.99 (وفر 58%)" + chr(10) +
-            "👑 سنة كاملة: $7.99 (وفر 67%)" + chr(10)*2 +
+            "🥉 شهر واحد: $6.99" + chr(10) +
+            "🥈 3 أشهر: $6.99 (وفر 50%)" + chr(10) +
+            "🥇 6 أشهر: $11.99 (وفر 58%)" + chr(10) +
+            "👑 سنة كاملة: $17.99 (وفر 67%)" + chr(10)*2 +
             "للاشتراك تواصل مع المطور @DrHusseinBot"
         )
     else:
         msg = (
             "⏰ Your free trial has ended!" + chr(10)*2 +
             "💎 Subscribe now to continue:" + chr(10)*2 +
-            "🥉 1 Month: $1.99" + chr(10) +
-            "🥈 3 Months: $2.99 (save 50%)" + chr(10) +
-            "🥇 6 Months: $4.99 (save 58%)" + chr(10) +
-            "👑 1 Year: $7.99 (save 67%)" + chr(10)*2 +
+            "🥉 1 Month: $6.99" + chr(10) +
+            "🥈 3 Months: $6.99 (save 50%)" + chr(10) +
+            "🥇 6 Months: $11.99 (save 58%)" + chr(10) +
+            "👑 1 Year: $17.99 (save 67%)" + chr(10)*2 +
             "To subscribe contact @DrHusseinBot"
         )
     btns = InlineKeyboardMarkup([
-        [InlineKeyboardButton("🥉 $1.99 " + ("شهر" if lang=="ar" else "Month"), callback_data="sub_1m")],
+        [InlineKeyboardButton("🥉 $2.99 " + ("شهر" if lang=="ar" else "Month"), callback_data="sub_1m")],
         [InlineKeyboardButton("🥈 $2.99 " + ("3 أشهر" if lang=="ar" else "3 Months"), callback_data="sub_3m")],
         [InlineKeyboardButton("🥇 $4.99 " + ("6 أشهر" if lang=="ar" else "6 Months"), callback_data="sub_6m")],
         [InlineKeyboardButton("👑 $7.99 " + ("سنة" if lang=="ar" else "Year"), callback_data="sub_1y")],
@@ -1543,13 +1543,13 @@ async def sub_select(u, ctx):
     uid = str(u.effective_user.id)
     
     plans = {
-        "sub_1m": ("$1.99", "شهر واحد", "1 Month"),
-        "sub_3m": ("$2.99", "3 أشهر", "3 Months"),
-        "sub_6m": ("$4.99", "6 أشهر", "6 Months"),
-        "sub_1y": ("$7.99", "سنة كاملة", "1 Year"),
+        "sub_1m": ("$6.99", "شهر واحد", "1 Month"),
+        "sub_3m": ("$6.99", "3 أشهر", "3 Months"),
+        "sub_6m": ("$11.99", "6 أشهر", "6 Months"),
+        "sub_1y": ("$17.99", "سنة كاملة", "1 Year"),
     }
     
-    plan = plans.get(q.data, ("$1.99", "شهر", "Month"))
+    plan = plans.get(q.data, ("$6.99", "شهر", "Month"))
     price = plan[0]
     period = plan[1] if lang=="ar" else plan[2]
     
@@ -4377,7 +4377,7 @@ async def activate_cmd(u, ctx):
         plan = args[1]
         from datetime import datetime, timedelta
         days = {"1m": 30, "3m": 90, "6m": 180, "1y": 365}
-        prices = {"1m": 1.99, "3m": 2.99, "6m": 4.99, "1y": 7.99}
+        prices = {"1m": 6.99, "3m": 6.99, "6m": 11.99, "1y": 7.99}
         d = days.get(plan, 30)
         price = prices.get(plan, 1.99)
         end_date = (datetime.now() + timedelta(days=d)).strftime("%Y-%m-%d")
