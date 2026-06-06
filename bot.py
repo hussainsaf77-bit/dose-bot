@@ -5064,8 +5064,7 @@ def main():
     app.add_handler(MessageHandler(filters.SUCCESSFUL_PAYMENT, successful_payment))
     # استعادة التذكيرات
     import asyncio
-    asyncio.get_event_loop().run_until_complete(restore_reminders(app)) if False else None
-    # app.post_init = restore_reminders  # موقوف مؤقتاً
+    app.post_init = restore_reminders
     print("🚀 البوت يعمل!")
     app.run_polling(drop_pending_updates=True)
 
