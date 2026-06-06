@@ -1319,12 +1319,13 @@ async def rem_later(update, ctx):
     # نجدول تذكيراً بعد 15 دقيقة مع الصورة
     from datetime import timedelta
     next_time = datetime.now(TIMEZONE) + timedelta(minutes=15)
-    ctx.application.job_queue.run_once(
+    job = ctx.application.job_queue.run_once(
         send_alert,
         when=next_time,
         data={"chat_id": chat_id, "drug": drug, "lang": lang, "attempt": 1, "is_retry": True, "photo": photo_id},
         name="snooze_" + str(chat_id) + "_" + str(drug)
     )
+    logger.warning(f"✅ Snooze scheduled: {drug} at {next_time} job={job}")
 
 def sched(app, chat_id, drug, time_str, freq, lang, tz_str="Asia/Riyadh", photo=None):
     try:
