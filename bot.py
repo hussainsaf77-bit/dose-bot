@@ -1527,9 +1527,9 @@ async def show_subscription(u, ctx, lang):
         )
     btns = InlineKeyboardMarkup([
         [InlineKeyboardButton("🥉 $2.99 " + ("شهر" if lang=="ar" else "Month"), callback_data="sub_1m")],
-        [InlineKeyboardButton("🥈 $2.99 " + ("3 أشهر" if lang=="ar" else "3 Months"), callback_data="sub_3m")],
-        [InlineKeyboardButton("🥇 $4.99 " + ("6 أشهر" if lang=="ar" else "6 Months"), callback_data="sub_6m")],
-        [InlineKeyboardButton("👑 $7.99 " + ("سنة" if lang=="ar" else "Year"), callback_data="sub_1y")],
+        [InlineKeyboardButton("🥈 $6.99 " + ("3 أشهر" if lang=="ar" else "3 Months"), callback_data="sub_3m")],
+        [InlineKeyboardButton("🥇 $11.99 " + ("6 أشهر" if lang=="ar" else "6 Months"), callback_data="sub_6m")],
+        [InlineKeyboardButton("👑 $17.99 " + ("سنة" if lang=="ar" else "Year"), callback_data="sub_1y")],
     ])
     if hasattr(u, 'message') and u.message:
         await u.message.reply_text(msg, reply_markup=btns)
@@ -1543,7 +1543,7 @@ async def sub_select(u, ctx):
     uid = str(u.effective_user.id)
     
     plans = {
-        "sub_1m": ("$6.99", "شهر واحد", "1 Month"),
+        "sub_1m": ("$2.99", "شهر واحد", "1 Month"),
         "sub_3m": ("$6.99", "3 أشهر", "3 Months"),
         "sub_6m": ("$11.99", "6 أشهر", "6 Months"),
         "sub_1y": ("$17.99", "سنة كاملة", "1 Year"),
