@@ -1509,8 +1509,8 @@ async def show_subscription(u, ctx, lang):
         msg = (
             "⏰ انتهت تجربتك المجانية!" + chr(10)*2 +
             "💎 اشترك الآن للاستمرار بكل الميزات:" + chr(10)*2 +
-            "🥉 شهر واحد: $6.99" + chr(10) +
-            "🥈 3 أشهر: $6.99 (وفر 50%)" + chr(10) +
+            "🥉 شهر واحد: $2.99" + chr(10) +
+            "🥈 3 أشهر: $6.99 (وفر 22%)" + chr(10) +
             "🥇 6 أشهر: $11.99 (وفر 58%)" + chr(10) +
             "👑 سنة كاملة: $17.99 (وفر 67%)" + chr(10)*2 +
             "للاشتراك تواصل مع المطور @DrHusseinBot"
@@ -1519,8 +1519,8 @@ async def show_subscription(u, ctx, lang):
         msg = (
             "⏰ Your free trial has ended!" + chr(10)*2 +
             "💎 Subscribe now to continue:" + chr(10)*2 +
-            "🥉 1 Month: $6.99" + chr(10) +
-            "🥈 3 Months: $6.99 (save 50%)" + chr(10) +
+            "🥉 1 Month: $2.99" + chr(10) +
+            "🥈 3 Months: $6.99 (save 22%)" + chr(10) +
             "🥇 6 Months: $11.99 (save 58%)" + chr(10) +
             "👑 1 Year: $17.99 (save 67%)" + chr(10)*2 +
             "To subscribe contact @DrHusseinBot"
