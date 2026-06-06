@@ -4342,12 +4342,13 @@ async def rem_edit_val(u, ctx):
     for r in get_rems(ctx):
         if r["id"] == rid:
             try:
-                # نحذف الجدولة القديمة
+                # نحذف كل jobs المرتبطة بهذا التذكير
                 drug_name = r.get("drug","")
                 uid = str(u.effective_user.id)
                 for job in ctx.application.job_queue.jobs():
-                    if uid in job.name and drug_name in job.name:
+                    if ("rem_" + uid in job.name or "snooze_" + uid in job.name) and drug_name in job.name:
                         job.schedule_removal()
+                        logger.warning(f"🗑️ Removed job: {job.name}")
                 # نضيف جدولة جديدة
                 sched(ctx.application, u.effective_chat.id, r["drug"], r["time"], r["freq"], lang, 
                       ctx.user_data.get("timezone","Asia/Riyadh"), photo=r.get("photo"))
