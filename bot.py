@@ -1345,11 +1345,16 @@ def sched(app, chat_id, drug, time_str, freq, lang, tz_str="Asia/Riyadh", photo=
             times.append(dtime(new_h, new_m, tzinfo=user_tz))
         # نجدول run_daily لكل وقت
         for i, t in enumerate(times):
+            job_name = "rem_" + str(chat_id) + "_" + str(drug) + "_" + str(i)
+            # نتحقق أن الـ job غير موجود مسبقاً
+            existing = [j for j in app.job_queue.jobs() if j.name == job_name]
+            for j in existing:
+                j.schedule_removal()
             app.job_queue.run_daily(
                 send_alert,
                 time=t,
-                    data={"chat_id": chat_id, "drug": drug, "lang": lang, "photo": photo},
-                name="rem_" + str(chat_id) + "_" + str(drug) + "_" + str(i))
+                data={"chat_id": chat_id, "drug": drug, "lang": lang, "photo": photo},
+                name=job_name)
         logger.info("sched: " + str(drug) + " x" + str(freq) + " times=" + str([str(t) for t in times]))
     except Exception as e:
         logger.error(f"sched error: {e}")
