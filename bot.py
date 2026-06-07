@@ -4692,6 +4692,11 @@ If not available as syrup write: NOT_SYRUP"""
 
 async def restore_reminders(app):
     """إعادة جدولة التذكيرات عند بدء التشغيل"""
+    # نحذف كل jobs القديمة أولاً
+    for job in app.job_queue.jobs():
+        if job.name and job.name.startswith("rem_"):
+            job.schedule_removal()
+    
     all_rems = load_all_reminders()
     count = 0
     for uid, rems in all_rems.items():

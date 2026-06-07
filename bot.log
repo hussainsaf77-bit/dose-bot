@@ -1,8 +1,8 @@
-2026-06-06 03:35:34,382 - INFO - API Key loaded: 108 chars
-/data/data/com.termux/files/home/dose-bot/bot.py:4453: PTBUserWarning: If 'per_message=False', 'CallbackQueryHandler' will not be tracked for every message. Read this FAQ entry to learn more about the per_* settings: https://github.com/python-telegram-bot/python-telegram-bot/wiki/Frequently-Asked-Questions#what-do-the-per_-settings-in-conversationhandler-do.
+2026-06-07 15:24:32,385 - INFO - API Key loaded: 108 chars
+/data/data/com.termux/files/home/dose-bot/bot.py:4455: PTBUserWarning: If 'per_message=False', 'CallbackQueryHandler' will not be tracked for every message. Read this FAQ entry to learn more about the per_* settings: https://github.com/python-telegram-bot/python-telegram-bot/wiki/Frequently-Asked-Questions#what-do-the-per_-settings-in-conversationhandler-do.
   return ConversationHandler(
-2026-06-06 03:35:36,841 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAFYx4C08Aqq9YB89uJqdhbkjiO5KB1R6CY/getMe "HTTP/1.1 401 Unauthorized"
-2026-06-06 03:35:36,845 - ERROR - Network Retry Loop (Bootstrap Initialize Application): Invalid token. Aborting retry loop.
+2026-06-07 15:24:35,694 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAFYx4C08Aqq9YB89uJqdhbkjiO5KB1R6CY/getMe "HTTP/1.1 401 Unauthorized"
+2026-06-07 15:24:35,700 - ERROR - Network Retry Loop (Bootstrap Initialize Application): Invalid token. Aborting retry loop.
 Traceback (most recent call last):
   File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 857, in initialize
     await self.get_me()
@@ -109,10 +109,10 @@ telegram.error.InvalidToken: Unauthorized
 The above exception was the direct cause of the following exception:
 
 Traceback (most recent call last):
-  File "/data/data/com.termux/files/home/dose-bot/bot.py", line 5073, in <module>
+  File "/data/data/com.termux/files/home/dose-bot/bot.py", line 5074, in <module>
     main()
     ~~~~^^
-  File "/data/data/com.termux/files/home/dose-bot/bot.py", line 5070, in main
+  File "/data/data/com.termux/files/home/dose-bot/bot.py", line 5071, in main
     app.run_polling(drop_pending_updates=True)
     ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_application.py", line 839, in run_polling
