@@ -1678,7 +1678,6 @@ async def main_cb(u, ctx):
 
 async def drug_search_image(u, ctx):
     """البحث عن دواء عبر الصورة"""
-    await u.message.reply_text("🔵 drug_search_image called")
     lang = get_lang(ctx)
     if not ANTHROPIC_API_KEY:
         await u.message.reply_text(tx("no_api", lang), reply_markup=kb_back(lang))
@@ -1688,6 +1687,7 @@ async def drug_search_image(u, ctx):
     f = await photo.get_file()
     img = await f.download_as_bytearray()
     name = await analyze_image(bytes(img), lang)
+    await u.message.reply_text("🔵 name=" + str(name)[:30])
     await msg.delete()
     if not name:
         btns = InlineKeyboardMarkup([
