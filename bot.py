@@ -1687,7 +1687,6 @@ async def drug_search_image(u, ctx):
     f = await photo.get_file()
     img = await f.download_as_bytearray()
     name = await analyze_image(bytes(img), lang)
-    await u.message.reply_text("🔵 name=" + str(name)[:30])
     await msg.delete()
     if not name:
         btns = InlineKeyboardMarkup([
@@ -1698,15 +1697,65 @@ async def drug_search_image(u, ctx):
         msg = "❌ لم أتعرف على الدواء\n\n💡 جرّب صورة أوضح أو أدخل الاسم يدوياً" if lang=="ar" else "❌ Could not identify drug\n\n💡 Try a clearer photo or type the name"
         await u.message.reply_text(msg, reply_markup=kb_image_result(lang))
         return STATE_DRUG_SEARCH
-    res = search_drugs(name)
-    if not res:
-        await u.message.reply_text("📸 " + name + "\n\n" + ("❌ لم يُعثر على الدواء" if lang=="ar" else "❌ Drug not found"), reply_markup=kb_image_result(lang, name), parse_mode=ParseMode.MARKDOWN)
-        return STATE_DRUG_SEARCH
     track(u, "searches")
-    if len(res) == 1:
-        ctx.user_data["img_drug"] = name
-        await u.message.reply_text("📸 " + name + "\n\n" + fmt_drug(res[0], lang), reply_markup=kb_image_result(lang, name), parse_mode=ParseMode.MARKDOWN)
+    ctx.user_data["img_drug"] = name
+    # نستخدم Claude للمعلومات الكاملة
+    thinking2 = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
+    try:
+        if lang == "ar":
+            prompt = f"""أنت صيدلاني خبير. أعطني معلومات شاملة ودقيقة عن: {name}
+أجب بالعربية فقط بهذا التنسيق الدقيق ولا تترك أي حقل فارغاً:
+💊 الاسم العلمي: 
+🏷️ الأسماء التجارية: 
+🏥 التصنيف الدوائي: 
+📋 الاستخدامات: 
+💉 جرعة البالغين: 
+👶 جرعة الأطفال: 
+⚠️ الآثار الجانبية الشائعة: 
+🚨 الآثار الجانبية الخطيرة: 
+🚫 موانع الاستخدام: 
+💊 التفاعلات الدوائية: 
+🤰 الحمل: 
+🍼 الرضاعة: 
+🫘 القصور الكلوي: 
+❗ تحذيرات خاصة:"""
+        else:
+            prompt = f"""You are an expert pharmacist. Give complete accurate information about: {name}
+Reply in English ONLY with this exact format:
+💊 Generic Name: 
+🏷️ Brand Names: 
+🏥 Drug Class: 
+📋 Indications: 
+💉 Adult Dose: 
+👶 Pediatric Dose: 
+⚠️ Common Side Effects: 
+🚨 Serious Side Effects: 
+🚫 Contraindications: 
+💊 Drug Interactions: 
+🤰 Pregnancy: 
+🍼 Lactation: 
+🫘 Renal Impairment: 
+❗ Special Warnings:"""
+        async with httpx.AsyncClient(timeout=30) as c:
+            r = await c.post("https://api.anthropic.com/v1/messages",
+                headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                json={"model": "claude-haiku-4-5-20251001", "max_tokens": 1500,
+                      "messages": [{"role": "user", "content": prompt}]})
+            result = r.json().get("content", [{}])[0].get("text", "").strip()
+        await thinking2.delete()
+        drug_link = f"https://www.drugs.com/{name.lower().replace(' ','_')}.html"
+        ref = chr(10)*2 + ("🔗 مرجع: " if lang=="ar" else "🔗 Reference: ") + "drugs.com"
+        final = "📸 " + name + chr(10)*2 + result + ref
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🔍 " + ("استعلام آخر" if lang=="ar" else "Another Search"), callback_data="m_search")],
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+        ])
+        await u.message.reply_text(final[:4000], reply_markup=btns)
         return STATE_DRUG_SEARCH
+    except Exception as e:
+        try: await thinking2.delete()
+        except: pass
+        logger.error(f"drug_search_image claude: {e}")
     btns = [[InlineKeyboardButton(
         str(d.get("name_ar" if lang=="ar" else "name_en", "?")),
         callback_data=f"ds_{i}")] for i, d in enumerate(res)]
