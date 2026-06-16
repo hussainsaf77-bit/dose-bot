@@ -109,7 +109,7 @@ except ImportError:
 logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8755290007:AAEE86vBAy5GvvX5YNUT9goAmDPNs7NaRV0")
+BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8755290007:AAEi2PSFYg9AGRtOGVGTRjaEp9ifuXXwF9A")
 
 # قراءة .env مبكراً
 _env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
