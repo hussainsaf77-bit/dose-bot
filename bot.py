@@ -146,7 +146,7 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_CHILD_CONC, STATE_PREMIUM,
  STATE_COUNTRY, STATE_REM_DURATION, STATE_INFECTION_SITE,
  STATE_CAL_GENDER, STATE_CAL_AGE, STATE_CAL_WEIGHT, STATE_CAL_HEIGHT, STATE_CAL_ACTIVITY, STATE_CAL_DISEASE,
- STATE_FOOD_SEARCH, STATE_SUGAR, STATE_BP, STATE_BP_AGE,
+ STATE_FOOD_SEARCH, STATE_SUGAR, STATE_DIET, STATE_BP, STATE_BP_AGE,
  STATE_PAT_MENU, STATE_PAT_NAME, STATE_PAT_AGE, STATE_PAT_WEIGHT,
  STATE_PAT_GENDER, STATE_PAT_DISEASE, STATE_PAT_MEDS, STATE_PAT_ALLERGY,
  STATE_INTERACTION, STATE_DRUG_FORM, STATE_PAT_NOTE, STATE_PAT_LOG) = range(43)
@@ -1583,6 +1583,68 @@ async def sub_select(u, ctx):
     await q.message.edit_text(msg, reply_markup=btns)
     return STATE_MAIN_MENU
 
+
+async def diet_search(u, ctx):
+    lang = get_lang(ctx)
+    query = u.message.text.strip()
+    thinking = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
+    try:
+        if lang == "ar":
+            prompt = f"""أنت أخصائي تغذية علاجية. أعطني خطة غذائية لمريض: {query}
+أجب بالعربية فقط بهذا التنسيق:
+
+✅ الأطعمة المسموحة:
+[قائمة مفصلة]
+
+❌ الأطعمة الممنوعة:
+[قائمة مفصلة]
+
+⭐ الأطعمة المفيدة جداً:
+[قائمة مع السبب]
+
+💡 نصائح غذائية مهمة:
+[نصائح مختصرة]
+
+⚠️ تحذيرات:
+[تحذيرات مهمة]"""
+        else:
+            prompt = f"""You are a clinical nutritionist. Give dietary plan for: {query}
+Reply in English ONLY with this format:
+
+✅ Allowed Foods:
+[detailed list]
+
+❌ Forbidden Foods:
+[detailed list]
+
+⭐ Most Beneficial Foods:
+[list with reasons]
+
+💡 Important Dietary Tips:
+[brief tips]
+
+⚠️ Warnings:
+[important warnings]"""
+
+        async with httpx.AsyncClient(timeout=30) as c:
+            r = await c.post("https://api.anthropic.com/v1/messages",
+                headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                json={"model": "claude-haiku-4-5-20251001", "max_tokens": 1500,
+                      "messages": [{"role": "user", "content": prompt}]})
+            result = r.json().get("content", [{}])[0].get("text", "").strip()
+        await thinking.delete()
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🥗 " + ("بحث آخر" if lang=="ar" else "Another Search"), callback_data="m_diet")],
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+        ])
+        await u.message.reply_text(result[:4000], reply_markup=btns)
+        return STATE_DIET
+    except Exception as e:
+        try: await thinking.delete()
+        except: pass
+        await u.message.reply_text(tx("not_found", lang), reply_markup=kb_back(lang))
+        return STATE_DIET
+
 async def go_back(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -1653,6 +1715,9 @@ async def main_cb(u, ctx):
     elif q.data == "m_food":
         await q.message.edit_text("🍎 " + ("أدخل اسم الطعام والكمية بالغرام:" if lang=="ar" else "Enter food name and grams:"), reply_markup=kb_back(lang))
         return STATE_FOOD_SEARCH
+    elif q.data == "m_diet":
+        await q.message.edit_text("🥗 " + ("اكتب اسم المرض للحصول على خطة غذائية:" if lang=="ar" else "Enter disease name for dietary plan:") + chr(10) + ("مثال: سكري، ضغط، كوليسترول، قلب، كلى..." if lang=="ar" else "Example: diabetes, hypertension, cholesterol..."), reply_markup=kb_back(lang))
+        return STATE_DIET
     elif q.data == "m_guide":
         if lang == "ar":
             g_txt = "📖 دليل مساعد الطبيب" + chr(10)*2 + "💊 استعلام دواء: اكتب اسم الدواء" + chr(10) + "👶 جرعات الأطفال: اختر الشكل وأدخل الوزن" + chr(10) + "📋 ملف المريض: احفظ بيانات مرضاك" + chr(10) + "💉 الضغط: أدخل القراءة مع الفئة العمرية" + chr(10) + "🩸 السكر: أدخل الرقم واختر النوع" + chr(10) + "⏰ التذكيرات: لا تنسى دواءك" + chr(10) + "📸 الصور: أرسل صورة العبوة"
@@ -4525,6 +4590,10 @@ def build_conv():
                 CallbackQueryHandler(cal_activity, pattern="^act_")],
             STATE_CAL_DISEASE: [
                 CallbackQueryHandler(cal_disease, pattern="^dis_")],
+            STATE_DIET: [
+                CallbackQueryHandler(go_back, pattern="^back$"),
+                CallbackQueryHandler(main_cb, pattern="^m_diet$"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, diet_search)],
             STATE_FOOD_SEARCH: [
                 CallbackQueryHandler(main_cb, pattern="^m_food$"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
