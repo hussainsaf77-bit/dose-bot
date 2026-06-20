@@ -1762,7 +1762,6 @@ async def drug_search_image(u, ctx):
     if not name:
         await u.message.reply_text("❌ لم يتعرف")
         return STATE_DRUG_SEARCH
-    await u.message.reply_text("🔵 " + str(name)[:20])
     if not name:
         btns = InlineKeyboardMarkup([
             [InlineKeyboardButton("✏️ " + ("أدخل الاسم يدوياً" if lang=="ar" else "Type name manually"), callback_data="manual_input")],
@@ -1812,7 +1811,7 @@ Reply in English ONLY with this exact format:
 🍼 Lactation: 
 🫘 Renal Impairment: 
 ❗ Special Warnings:"""
-        async with httpx.AsyncClient(timeout=30) as c:
+        async with httpx.AsyncClient(timeout=60) as c:
             r = await c.post("https://api.anthropic.com/v1/messages",
                 headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
                 json={"model": "claude-haiku-4-5-20251001", "max_tokens": 1500,
@@ -1831,6 +1830,7 @@ Reply in English ONLY with this exact format:
     except Exception as e:
         try: await thinking2.delete()
         except: pass
+        await u.message.reply_text("❌ خطأ في Claude: " + str(e)[:80])
         logger.error(f"drug_search_image claude: {e}")
     btns = [[InlineKeyboardButton(
         str(d.get("name_ar" if lang=="ar" else "name_en", "?")),
