@@ -1759,7 +1759,10 @@ async def drug_search_image(u, ctx):
         await u.message.reply_text("❌ خطأ: " + str(e)[:50])
         return STATE_DRUG_SEARCH
     await msg.delete()
-    await u.message.reply_text("🔵 name=" + str(name)[:30] + " - starting claude")
+    if not name:
+        await u.message.reply_text("❌ لم يتعرف")
+        return STATE_DRUG_SEARCH
+    await u.message.reply_text("🔵 " + str(name)[:20])
     if not name:
         btns = InlineKeyboardMarkup([
             [InlineKeyboardButton("✏️ " + ("أدخل الاسم يدوياً" if lang=="ar" else "Type name manually"), callback_data="manual_input")],
