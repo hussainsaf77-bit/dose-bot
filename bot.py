@@ -1830,13 +1830,8 @@ Reply in English ONLY with this exact format:
     except Exception as e:
         try: await thinking2.delete()
         except: pass
-        await u.message.reply_text("❌ خطأ في Claude: " + str(e)[:80])
+        await u.message.reply_text("❌ خطأ: " + str(e)[:80])
         logger.error(f"drug_search_image claude: {e}")
-    btns = [[InlineKeyboardButton(
-        str(d.get("name_ar" if lang=="ar" else "name_en", "?")),
-        callback_data=f"ds_{i}")] for i, d in enumerate(res)]
-    btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
-    await u.message.reply_text("📸 " + name + chr(10) + chr(10) + tx("multi_results", lang), reply_markup=InlineKeyboardMarkup(btns), parse_mode=ParseMode.MARKDOWN)
     return STATE_DRUG_SEARCH
 
 async def drug_search(u, ctx):
