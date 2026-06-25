@@ -1818,8 +1818,8 @@ Reply in English ONLY with this exact format:
                       "messages": [{"role": "user", "content": prompt}]})
             result = r.json().get("content", [{}])[0].get("text", "").strip()
         await thinking2.delete()
-        drug_link = f"https://www.drugs.com/{name.lower().replace(' ','_')}.html"
-        ref = chr(10)*2 + ("🔗 مرجع: " if lang=="ar" else "🔗 Reference: ") + "drugs.com"
+        drug_link = f"https://www.drugs.com/search.php?searchterm={name.lower().replace(' ','+')}"
+        ref = chr(10)*2 + ("🔗 مرجع: " if lang=="ar" else "🔗 Reference: ") + "drugs.com" + (chr(10)*2 + "⚠️ للاسترشاد فقط — استشر طبيبك أو صيدلانيك" if lang=="ar" else chr(10)*2 + "⚠️ For informational purposes only — consult your doctor")
         final = "📸 " + name + chr(10)*2 + result + ref
         btns = InlineKeyboardMarkup([
             [InlineKeyboardButton("🔍 " + ("استعلام آخر" if lang=="ar" else "Another Search"), callback_data="m_search")],
@@ -1896,7 +1896,7 @@ Write N/A if unknown. Never leave any field empty."""
         await thinking.delete()
 
         if result:
-            drug_link = f"https://www.drugs.com/{query.lower().replace(' ','_')}.html"
+            drug_link = f"https://www.drugs.com/search.php?searchterm={query.lower().replace(' ','+')}"
             ref = chr(10)*2 + ("🔗 مرجع طبي: " if lang=="ar" else "🔗 Reference: ") + f"drugs.com"
             final = result + ref
 
