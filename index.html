@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>جرعة — حاسبة الجرعات الطبية</title>
+<meta name="description" content="حاسبة جرعات الأدوية للأطفال والكبار، تذكيرات الدواء، ملف المريض، فحص التفاعلات الدوائية">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💊</text></svg>">
+<style>
+/* ── TOKENS ── */
+:root {
+  --teal:    #0d9488;
+  --teal-d:  #0f766e;
+  --teal-l:  #ccfbf1;
+  --teal-xl: #f0fdfa;
+  --navy:    #0f172a;
+  --slate:   #334155;
+  --muted:   #64748b;
+  --line:    #e2e8f0;
+  --bg:      #f8fafc;
+  --white:   #ffffff;
+  --warn-bg: #fffbeb;
+  --warn-b:  #fde68a;
+  --warn-t:  #92400e;
+  --err-bg:  #fef2f2;
+  --err-b:   #fecaca;
+  --err-t:   #991b1b;
+  --ok-bg:   #f0fdf4;
+  --ok-b:    #bbf7d0;
+  --ok-t:    #15803d;
+  --r:       14px;
+  --sh:      0 4px 24px rgba(13,148,136,.10);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:var(--bg);color:var(--navy);min-height:100vh;direction:rtl;}
+
+/* ── DISCLAIMER BANNER ── */
+.disclaimer-bar{
+  background:#7c3aed;color:white;text-align:center;
+  padding:8px 16px;font-size:.82rem;font-weight:600;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+
+/* ── HEADER ── */
+header{
+  background:var(--navy);color:white;padding:0 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:60px;position:sticky;top:0;z-index:200;
+  box-shadow:0 2px 16px rgba(0,0,0,.3);
+}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.1rem;}
+.logo-pill{background:var(--teal);padding:5px 10px;border-radius:8px;font-size:.85rem;letter-spacing:1px;}
+.header-actions{display:flex;align-items:center;gap:8px;}
+.btn-tg{background:rgba(255,255,255,.12);border:none;color:white;padding:7px 13px;border-radius:20px;cursor:pointer;font-size:.82rem;display:flex;align-items:center;gap:5px;transition:background .2s;}
+.btn-tg:hover{background:rgba(255,255,255,.22);}
+
+/* ── NAV ── */
+.nav-wrap{background:var(--white);border-bottom:1px solid var(--line);position:sticky;top:60px;z-index:100;}
+.nav-tabs{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;padding:0 12px;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.tab{display:flex;align-items:center;gap:5px;padding:12px 14px;border:none;background:none;border-bottom:3px solid transparent;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--muted);white-space:nowrap;transition:color .2s,border-color .2s;}
+.tab.active{color:var(--teal);border-color:var(--teal);}
+.tab:hover:not(.active){color:var(--slate);}
+
+/* ── MAIN ── */
+main{max-width:780px;margin:0 auto;padding:24px 16px 80px;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* ── CARDS ── */
+.card{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);padding:24px;margin-bottom:18px;border:1px solid var(--line);}
+.card-title{font-size:1rem;font-weight:800;color:var(--navy);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+
+/* ── FORMS ── */
+label{display:block;font-weight:700;font-size:.85rem;color:var(--slate);margin-bottom:5px;}
+input,select,textarea{
+  width:100%;padding:10px 13px;border:1.5px solid var(--line);
+  border-radius:10px;font-size:.93rem;color:var(--navy);
+  background:var(--white);transition:border-color .2s,box-shadow .2s;
+  outline:none;direction:rtl;font-family:inherit;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.1);}
+.field{margin-bottom:14px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:500px){.grid2{grid-template-columns:1fr;}}
+
+/* ── BUTTONS ── */
+.btn{padding:11px 22px;border:none;border-radius:10px;font-size:.92rem;font-weight:700;cursor:pointer;transition:transform .15s,opacity .2s;display:inline-flex;align-items:center;gap:7px;font-family:inherit;}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:var(--teal);color:white;box-shadow:0 4px 14px rgba(13,148,136,.3);}
+.btn-primary:hover{background:var(--teal-d);}
+.btn-outline{background:white;color:var(--teal);border:2px solid var(--teal);}
+.btn-outline:hover{background:var(--teal-xl);}
+.btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--line);}
+.btn-ghost:hover{background:var(--bg);}
+.btn-sm{padding:7px 14px;font-size:.82rem;}
+.btn-danger{background:#fee2e2;color:#b91c1c;border:none;}
+.btn-danger:hover{background:#fecaca;}
+
+/* ── ALERTS ── */
+.alert{padding:12px 15px;border-radius:10px;font-size:.88rem;margin-bottom:14px;display:flex;gap:9px;align-items:flex-start;line-height:1.5;}
+.alert-info{background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;}
+.alert-warn{background:var(--warn-bg);color:var(--warn-t);border:1px solid var(--warn-b);}
+.alert-err{background:var(--err-bg);color:var(--err-t);border:1px solid var(--err-b);}
+.alert-ok{background:var(--ok-bg);color:var(--ok-t);border:1px solid var(--ok-b);}
+
+/* ── MEDICAL DISCLAIMER ── */
+.med-disclaimer{
+  background:linear-gradient(135deg,#7c3aed 0%,#6d28d9 100%);
+  color:white;border-radius:var(--r);padding:18px;margin-bottom:18px;
+  font-size:.85rem;line-height:1.7;
+}
+.med-disclaimer strong{display:block;font-size:.95rem;margin-bottom:6px;}
+
+/* ── SEARCH ── */
+.search-wrap{position:relative;}
+.search-wrap input{padding-right:42px;}
+.s-icon{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
+.drug-list{margin-top:10px;display:flex;flex-direction:column;gap:7px;}
+.drug-item{border:1.5px solid var(--line);border-radius:10px;padding:14px;cursor:pointer;transition:border-color .2s,background .2s;}
+.drug-item:hover{border-color:var(--teal);background:var(--teal-xl);}
+.drug-item h4{font-size:.93rem;font-weight:700;}
+.drug-item p{font-size:.8rem;color:var(--muted);margin-top:3px;}
+
+/* ── DRUG DETAIL ── */
+.detail-section{margin-top:20px;}
+.detail-header{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+.detail-header h3{font-size:1.15rem;font-weight:800;}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.78rem;font-weight:700;}
+.badge-teal{background:var(--teal-l);color:var(--teal-d);}
+.badge-blue{background:#dbeafe;color:#1e40af;}
+.badge-ok{background:#dcfce7;color:#15803d;}
+.badge-warn{background:#fef9c3;color:#92400e;}
+.badge-err{background:#fee2e2;color:#b91c1c;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:500px){.info-grid{grid-template-columns:1fr;}}
+.info-box{background:var(--bg);border-radius:10px;padding:13px;}
+.info-box .ib-label{font-size:.75rem;color:var(--muted);font-weight:600;margin-bottom:3px;}
+.info-box .ib-val{font-size:.9rem;font-weight:700;line-height:1.4;}
+.info-box.full{grid-column:1/-1;}
+
+/* ── DOSE BOX ── */
+.dose-result{
+  background:linear-gradient(135deg,var(--teal) 0%,var(--teal-d) 100%);
+  border-radius:var(--r);padding:22px;color:white;text-align:center;margin-top:14px;
+}
+.dose-result .big{font-size:2.2rem;font-weight:900;letter-spacing:-1px;}
+.dose-result .unit{font-size:.9rem;opacity:.8;margin-top:3px;}
+.dose-result .ml-box{background:rgba(255,255,255,.15);border-radius:8px;padding:8px 18px;display:inline-block;margin-top:10px;font-size:1.1rem;font-weight:700;}
+.dose-result .freq{margin-top:10px;font-size:.88rem;opacity:.85;}
+
+/* ── BMI METER ── */
+.bmi-wrap{margin:18px 0 0;}
+.bmi-number{font-size:3rem;font-weight:900;text-align:center;margin-bottom:4px;}
+.bmi-cat{text-align:center;font-size:1rem;font-weight:700;margin-bottom:14px;}
+.bmi-bar{width:100%;height:18px;border-radius:9px;background:linear-gradient(90deg,#3b82f6 0%,#22c55e 30%,#f59e0b 60%,#ef4444 100%);position:relative;}
+.bmi-ptr{position:absolute;top:-6px;width:4px;height:30px;background:var(--navy);border-radius:2px;transform:translateX(-50%);transition:left .6s ease;}
+.bmi-scale{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-top:5px;}
+
+/* ── CALORIE RING ── */
+.cal-ring-wrap{text-align:center;margin-bottom:18px;}
+.cal-ring{position:relative;width:130px;height:130px;margin:0 auto;}
+.cal-ring svg{transform:rotate(-90deg);}
+.cal-ring .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.cal-ring .ring-num{font-size:1.6rem;font-weight:900;color:var(--teal);}
+.cal-ring .ring-lbl{font-size:.72rem;color:var(--muted);}
+.macro-row{display:grid;grid-template-columns:80px 1fr 44px;gap:10px;align-items:center;font-size:.86rem;margin-bottom:9px;}
+.macro-bar-bg{background:var(--line);border-radius:4px;height:7px;}
+.macro-bar-fill{height:100%;border-radius:4px;transition:width .6s ease;}
+
+/* ── REMINDER ── */
+.rem-item{display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid var(--line);border-radius:10px;margin-bottom:9px;transition:border-color .2s;}
+.rem-item:hover{border-color:var(--teal);}
+.rem-icon{width:42px;height:42px;border-radius:10px;background:var(--teal-l);color:var(--teal);display:grid;place-items:center;font-size:1.2rem;flex-shrink:0;}
+.rem-info{flex:1;}
+.rem-info h4{font-size:.93rem;font-weight:700;}
+.rem-info p{font-size:.8rem;color:var(--muted);margin-top:2px;}
+.rem-del{background:none;border:none;cursor:pointer;color:#dc2626;font-size:1rem;padding:7px;border-radius:7px;transition:background .2s;}
+.rem-del:hover{background:#fee2e2;}
+
+/* ── PATIENT ── */
+.reading-item{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--line);border-radius:9px;margin-bottom:8px;}
+.reading-val{font-size:1rem;font-weight:800;color:var(--teal);min-width:80px;font-family:monospace;}
+.reading-info{flex:1;}
+.reading-date{font-size:.78rem;color:var(--muted);}
+.reading-note{font-size:.85rem;}
+.attachment-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--line);border-radius:9px;margin-bottom:8px;cursor:pointer;}
+.attachment-item:hover{background:var(--bg);}
+.att-icon{font-size:1.4rem;}
+.att-info h5{font-size:.88rem;font-weight:700;}
+.att-info p{font-size:.78rem;color:var(--muted);}
+
+/* ── INTERACTION TAGS ── */
+.tags-area{min-height:46px;border:1.5px dashed var(--line);border-radius:10px;padding:8px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;}
+.drug-tag{display:inline-flex;align-items:center;gap:5px;background:var(--teal-l);color:var(--teal-d);padding:4px 11px;border-radius:20px;font-size:.83rem;font-weight:600;}
+.drug-tag button{background:none;border:none;cursor:pointer;color:var(--teal-d);font-size:1rem;line-height:1;padding:0;}
+
+/* ── WAITLIST ── */
+.waitlist-hero{text-align:center;padding:32px 16px;}
+.waitlist-hero h2{font-size:1.6rem;font-weight:900;margin-bottom:8px;}
+.waitlist-hero p{color:var(--muted);font-size:.95rem;margin-bottom:22px;}
+.plan-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+@media(max-width:480px){.plan-cards{grid-template-columns:1fr;}}
+.plan-card{border:2px solid var(--line);border-radius:var(--r);padding:18px;text-align:center;cursor:pointer;transition:border-color .2s,transform .2s;}
+.plan-card:hover,.plan-card.selected{border-color:var(--teal);background:var(--teal-xl);transform:scale(1.02);}
+.plan-card .plan-name{font-weight:800;font-size:1rem;margin-bottom:4px;}
+.plan-card .plan-price{color:var(--teal);font-size:.9rem;font-weight:700;}
+.plan-card .plan-desc{font-size:.78rem;color:var(--muted);margin-top:4px;}
+.feature-list{text-align:right;margin-bottom:18px;}
+.feature-list li{list-style:none;padding:5px 0;font-size:.88rem;display:flex;align-items:center;gap:8px;}
+.feature-list li::before{content:"✅";font-size:.85rem;}
+
+/* ── AI CHAT ── */
+.chat-box{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;}
+.chat-msgs{height:380px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:11px;scroll-behavior:smooth;}
+.msg{max-width:84%;padding:11px 15px;border-radius:14px;font-size:.9rem;line-height:1.6;}
+.msg-user{align-self:flex-end;background:var(--teal);color:white;border-bottom-right-radius:4px;}
+.msg-bot{align-self:flex-start;background:var(--white);border:1.5px solid var(--line);border-bottom-left-radius:4px;}
+.chat-footer{display:flex;gap:8px;padding:11px 14px;border-top:1px solid var(--line);background:var(--bg);}
+.chat-footer input{flex:1;}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:40px 20px;color:var(--muted);}
+.empty-icon{font-size:2.8rem;margin-bottom:10px;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--navy);color:white;padding:11px 22px;border-radius:25px;font-size:.88rem;font-weight:600;z-index:9999;opacity:0;pointer-events:none;transition:opacity .3s;}
+.toast.show{opacity:1;}
+
+/* ── BOTTOM DISCLAIMER ── */
+.bottom-disclaimer{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(15,23,42,.95);backdrop-filter:blur(8px);
+  padding:10px 16px;text-align:center;
+  font-size:.78rem;color:rgba(255,255,255,.7);
+  border-top:1px solid rgba(255,255,255,.08);z-index:150;
+}
+.bottom-disclaimer strong{color:#f59e0b;}
+
+/* ── SPINNER ── */
+.spin{display:inline-block;width:18px;height:18px;border:2.5px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── READING CHART ── */
+.mini-chart{display:flex;align-items:flex-end;gap:4px;height:60px;margin-top:10px;}
+.mini-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.mini-bar{width:100%;background:var(--teal);border-radius:3px 3px 0 0;min-height:4px;transition:height .4s ease;}
+.mini-bar-label{font-size:.65rem;color:var(--muted);}
+
+@media(max-width:600px){main{padding:18px 12px 80px;}.card{padding:18px;}}
+</style>
+</head>
+<body>
+
+<!-- ── DISCLAIMER BAR ── -->
+<div class="disclaimer-bar">
+  ⚕️ <strong>للأغراض التعليمية فقط — دائماً استشر طبيبك أو صيدلانيك</strong>
+</div>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="logo">
+    <div class="logo-pill">💊 جرعة</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn-tg" onclick="openTelegram()">
+      <span>✈️</span> بوت تيليغرام
+    </button>
+  </div>
+</header>
+
+<!-- ── NAV TABS ── -->
+<div class="nav-wrap">
+  <div class="nav-tabs">
+    <button class="tab active" onclick="showTab('search',this)">🔍 بحث دواء</button>
+    <button class="tab" onclick="showTab('child',this)">🍼 جرعات الأطفال</button>
+    <button class="tab" onclick="showTab('bmi',this)">📊 BMI</button>
+    <button class="tab" onclick="showTab('calories',this)">🔥 السعرات</button>
+    <button class="tab" onclick="showTab('interaction',this)">⚠️ التفاعلات</button>
+    <button class="tab" onclick="showTab('reminders',this)">⏰ التذكيرات</button>
+    <button class="tab" onclick="showTab('patient',this)">👤 ملف المريض</button>
+    <button class="tab" onclick="showTab('ai',this)">🤖 مساعد AI</button>
+    <button class="tab" onclick="showTab('waitlist',this)">⭐ الاشتراك</button>
+  </div>
+</div>
+
+<main>
+
+<!-- ════════════════ DRUG SEARCH ════════════════ -->
+<div id="tab-search" class="section active">
+  <div class="med-disclaimer">
+    <strong>⚕️ تنبيه طبي مهم</strong>
+    المعلومات الواردة هنا للأغراض التعليمية والمرجعية فقط. لا تستخدم هذه المعلومات لتشخيص أو علاج أي حالة طبية دون استشارة طبيب أو صيدلاني مؤهل. الجرعات تختلف حسب الحالة الصحية وعوامل أخرى.
+  </div>
+  <div class="card">
+    <div class="card-title">🔍 ابحث عن دواء</div>
+    <div class="field">
+      <div class="search-wrap">
+        <input type="text" id="drugInput" placeholder="مثال: بنادول، حبة صفراء، مسكن، paracetamol..." oninput="handleDrugSearch(this.value)" autocomplete="off">
+        <span class="s-icon">🔍</span>
+      </div>
+      <div style="margin-top:6px;font-size:.78rem;color:var(--muted);">
+        يمكنك الكتابة بالعربي أو الإنجليزي أو الاسم التجاري
+      </div>
+    </div>
+    <div id="drugResults"></div>
+    <div id="drugDetail"></div>
+  </div>
+</div>
+
+<!-- ════════════════ CHILD DOSES ════════════════ -->
+<div id="tab-child" class="section">
+  <div class="med-disclaimer">
+    <strong>⚕️ جرعات الأطفال — تحذير مهم</strong>
+    احسب الجرعة بناءً على وزن الطفل الحالي. راجع الطبيب أو الصيدلاني قبل إعطاء أي دواء لطفل أقل من 2 سنة.
+  </div>
+  <div class="card">
+    <div class="card-title">🍼 حاسبة جرعة الطفل</div>
+    <div class="field">
+      <label>اسم الدواء</label>
+      <div class="search-wrap">
+        <input type="text" id="childDrug" placeholder="ابحث: بنادول، أموكسيل، نيوروفين..." oninput="childSearch(this.value)" autocomplete="off">
+        <span class="s-icon">💊</span>
+      </div>
+      <div id="childList" class="drug-list"></div>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label>وزن الطفل (كغ)</label>
+        <input type="number" id="childWt" min="1" max="100" step="0.1" placeholder="مثال: 12.5">
+      </div>
+      <div class="field">
+        <label>تركيز الشراب</label>
+        <select id="childConc">
+          <option value="">تلقائي من قاعدة البيانات</option>
+          <option value="100">100 mg/5ml</option>
+          <option value="120">120 mg/5ml</option>
+          <option value="125">125 mg/5ml</option>
+          <option value="200">200 mg/5ml</option>
+          <option value="250">250 mg/5ml</option>
+          <option value="400">400 mg/5ml</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>موقع الالتهاب (للمضادات الحيوية)</label>
+      <select id="childSite">
+        <option value="">غير محدد / دواء عام</option>
+        <option value="ear">👂 أذن / حلق / جيوب</option>
+        <option value="lung">🫁 رئة / صدر</option>
+        <option value="urinary">🫘 مسالك بولية</option>
+        <option value="skin">🩹 جلد / جروح</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="calcChild()">⚖️ احسب الجرعة</button>
+    <div id="childResult"></div>
+  </div>
+</div>
+
+<!-- ════════════════ BMI ════════════════ -->
+<div id="tab-bmi" class="section">
+  <div class="card">
+    <div class="card-title">📊 حاسبة الوزن المثالي (BMI)</div>
+    <div class="grid2">
+      <div class="field"><label>الوزن (كغ)</label><input type="number" id="bmiW" placeholder="70"></div>
+      <div class="field"><label>الطول (سم)</label><input type="number" id="bmiH" placeholder="170"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>العمر</label><input type="number" id="bmiA" placeholder="30"></div>
+      <div class="field"><label>الجنس</label>
+        <select id="bmiG"><option value="m">ذكر</option><option value="f">أنثى</option></select>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="calcBMI()">📊 احسب</button>
+    <div id="bmiRes"></div>
+  </div>
+</div>
+
+<!-- ════════════════ CALORIES ════════════════ -->
+<div id="tab-calories" class="section">
+  <div class="card">
+    <div class="card-title">🔥 حاسبة السعرات الحرارية اليومية</div>
+    <div class="grid2">
+      <div class="field"><label>الوزن (كغ)</label><input type="number" id="calW" placeholder="70"></div>
+      <div class="field"><label>الطول (سم)</label><input type="number" id="calH" placeholder="170"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>العمر</label><input type="number" id="calA" placeholder="30"></div>
+      <div class="field"><label>الجنس</label>
+        <select id="calG"><option value="m">ذكر</option><option value="f">أنثى</option></select>
+      </div>
+    </div>
+    <div class="field"><label>مستوى النشاط</label>
+      <select id="calAct">
+        <option value="1.2">خامل — لا رياضة</option>
+        <option value="1.375">خفيف — 1-3 أيام/أسبوع</option>
+        <option value="1.55" selected>متوسط — 3-5 أيام/أسبوع</option>
+        <option value="1.725">نشيط — 6-7 أيام/أسبوع</option>
+        <option value="1.9">رياضي محترف</option>
+      </select>
+    </div>
+    <div class="field"><label>الهدف</label>
+      <select id="calGoal">
+        <option value="maintain">الحفاظ على الوزن</option>
+        <option value="lose">خسارة الوزن</option>
+        <option value="gain">اكتساب عضلات</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="calcCal()">🔥 احسب</button>
+    <div id="calRes"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🍽️ سعرات الأطعمة</div>
+    <div class="field">
+      <div class="search-wrap">
+        <input type="text" id="foodIn" placeholder="مثال: دجاج، أرز، تمر..." oninput="searchFood(this.value)">
+        <span class="s-icon">🍽️</span>
+      </div>
+    </div>
+    <div id="foodRes"></div>
+  </div>
+</div>
+
+<!-- ════════════════ INTERACTIONS ════════════════ -->
+<div id="tab-interaction" class="section">
+  <div class="card">
+    <div class="card-title">⚠️ فحص التفاعلات الدوائية</div>
+    <div class="med-disclaimer" style="margin-bottom:14px;">
+      <strong>⚠️ ملاحظة</strong>
+      هذا الفحص مرجعي فقط. استشر الصيدلاني دائماً للتأكد من سلامة الجمع بين أدويتك.
+    </div>
+    <div class="field">
+      <label>أضف الأدوية التي تتناولها</label>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="intIn" placeholder="اسم الدواء..." style="flex:1;" onkeydown="if(event.key==='Enter')addIntDrug()">
+        <button class="btn btn-outline btn-sm" onclick="addIntDrug()">+ أضف</button>
+      </div>
+    </div>
+    <div class="tags-area" id="intTags"></div>
+    <button class="btn btn-primary" onclick="checkInt()">🔍 فحص التفاعلات</button>
+    <div id="intRes" style="margin-top:14px;"></div>
+  </div>
+</div>
+
+<!-- ════════════════ REMINDERS ════════════════ -->
+<div id="tab-reminders" class="section">
+  <div class="card">
+    <div class="card-title">➕ إضافة تذكير</div>
+    <div class="grid2">
+      <div class="field"><label>اسم الدواء</label><input type="text" id="remDrug" placeholder="مثال: Augmentin"></div>
+      <div class="field"><label>وقت الجرعة الأولى</label><input type="time" id="remTime"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>عدد مرات يومياً</label>
+        <select id="remFreq">
+          <option value="1">مرة واحدة</option>
+          <option value="2">مرتان</option>
+          <option value="3">3 مرات</option>
+          <option value="4">4 مرات</option>
+        </select>
+      </div>
+      <div class="field"><label>المدة (أيام)</label>
+        <input type="number" id="remDur" min="1" max="365" placeholder="مثال: 7">
+      </div>
+    </div>
+    <div class="field"><label>ملاحظة (اختياري)</label>
+      <input type="text" id="remNote" placeholder="مثال: بعد الأكل، مع ماء كافٍ">
+    </div>
+    <button class="btn btn-primary" onclick="addReminder()">⏰ إضافة التذكير</button>
+    <div id="remMsg" style="margin-top:10px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📋 تذكيراتي النشطة</div>
+    <div id="remList"></div>
+  </div>
+</div>
+
+<!-- ════════════════ PATIENT FILE ════════════════ -->
+<div id="tab-patient" class="section">
+  <!-- Patient Info -->
+  <div class="card">
+    <div class="card-title">👤 البيانات الأساسية</div>
+    <div class="grid2">
+      <div class="field"><label>اسم المريض</label><input type="text" id="pName" placeholder="الاسم الكامل"></div>
+      <div class="field"><label>رقم الملف / ID</label><input type="text" id="pId" placeholder="اختياري"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>العمر</label><input type="number" id="pAge" placeholder="سنة"></div>
+      <div class="field"><label>الوزن (كغ)</label><input type="number" id="pWt" placeholder="كغ"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>الجنس</label>
+        <select id="pGender"><option value="m">ذكر</option><option value="f">أنثى</option></select>
+      </div>
+      <div class="field"><label>فصيلة الدم</label>
+        <select id="pBlood">
+          <option value="">غير محدد</option>
+          <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+          <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>الأمراض المزمنة</label>
+      <textarea id="pDis" rows="2" placeholder="مثال: السكري النوع الثاني، ضغط الدم، الربو"></textarea>
+    </div>
+    <div class="field"><label>الأدوية الحالية</label>
+      <textarea id="pMeds" rows="2" placeholder="مثال: Metformin 500mg مرتان، Amlodipine 5mg"></textarea>
+    </div>
+    <div class="field"><label>🚨 الحساسية (مهم جداً)</label>
+      <input type="text" id="pAllergy" placeholder="مثال: البنسلين، السلفا، المكسرات">
+    </div>
+    <div class="field"><label>ملاحظات إضافية</label>
+      <textarea id="pNotes" rows="2" placeholder="أي معلومات مهمة أخرى"></textarea>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="savePatient()">💾 حفظ الملف</button>
+      <button class="btn btn-outline" onclick="showPatient()">👁️ عرض الملف</button>
+      <button class="btn btn-ghost btn-sm" onclick="exportPatient()">📤 تصدير PDF</button>
+    </div>
+    <div id="patMsg" style="margin-top:10px;"></div>
+  </div>
+
+  <!-- Readings -->
+  <div class="card">
+    <div class="card-title">📈 تسجيل القراءات</div>
+    <div class="grid2">
+      <div class="field"><label>نوع القراءة</label>
+        <select id="readType">
+          <option value="sugar_fasting">🩸 سكر صائم</option>
+          <option value="sugar_after">🩸 سكر بعد الأكل</option>
+          <option value="bp_sys">💉 ضغط (انقباضي)</option>
+          <option value="bp_dia">💉 ضغط (انبساطي)</option>
+          <option value="pulse">❤️ نبض</option>
+          <option value="temp">🌡️ حرارة</option>
+          <option value="weight">⚖️ وزن</option>
+          <option value="o2">🫁 أكسجين</option>
+        </select>
+      </div>
+      <div class="field"><label>القيمة</label>
+        <input type="number" id="readVal" step="0.1" placeholder="القيمة">
+      </div>
+    </div>
+    <div class="field"><label>ملاحظة (اختياري)</label>
+      <input type="text" id="readNote" placeholder="مثال: قبل الدواء، بعد المشي">
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="addReading()">➕ تسجيل القراءة</button>
+    <div id="readingsList" style="margin-top:14px;"></div>
+  </div>
+
+  <!-- Attachments -->
+  <div class="card">
+    <div class="card-title">📎 المرفقات والتقارير</div>
+    <div class="alert alert-info">
+      <span>ℹ️</span>
+      <span>رفع التقارير والنتائج المخبرية والصور الطبية — تُحفظ على جهازك فقط ولا ترسل لأي خادم</span>
+    </div>
+    <div class="field">
+      <label>رفع ملف (صورة / PDF)</label>
+      <input type="file" id="attachFile" accept="image/*,.pdf" onchange="addAttachment(this)">
+    </div>
+    <div id="attachList" style="margin-top:12px;"></div>
+  </div>
+</div>
+
+<!-- ════════════════ AI ASSISTANT ════════════════ -->
+<div id="tab-ai" class="section">
+  <div class="med-disclaimer">
+    <strong>🤖 مساعد AI الطبي</strong>
+    هذا المساعد يقدم معلومات تعليمية عامة. لا يُغني عن استشارة الطبيب أو الصيدلاني لأي قرار علاجي.
+  </div>
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div style="padding:16px 20px 12px;border-bottom:1px solid var(--line);">
+      <div class="card-title" style="margin-bottom:4px;">🤖 اسأل عن أي دواء</div>
+      <p style="font-size:.8rem;color:var(--muted);">جرعات، تفاعلات، آثار جانبية، استخدامات...</p>
+    </div>
+    <div class="chat-msgs" id="chatMsgs">
+      <div class="msg msg-bot">مرحباً! أنا مساعدك الطبي. يمكنك سؤالي عن:<br>• جرعة أي دواء<br>• التفاعلات الدوائية<br>• الآثار الجانبية<br>• استخدام دواء أثناء الحمل أو الرضاعة<br><br>اكتب سؤالك وسأجيبك 💊</div>
+    </div>
+    <div class="chat-footer">
+      <input type="text" id="chatIn" placeholder="اكتب سؤالك..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="btn btn-primary btn-sm" onclick="sendChat()">➤ إرسال</button>
+    </div>
+  </div>
+  <div class="alert alert-warn" style="margin-top:12px;">
+    <span>⚕️</span>
+    <span>المعلومات للأغراض التعليمية فقط. استشر طبيبك أو صيدلانيك قبل أي قرار علاجي.</span>
+  </div>
+</div>
+
+<!-- ════════════════ WAITLIST ════════════════ -->
+<div id="tab-waitlist" class="section">
+  <div class="card">
+    <div class="waitlist-hero">
+      <div style="font-size:2.5rem;margin-bottom:10px;">⭐</div>
+      <h2>جرعة Pro</h2>
+      <p>انضم لقائمة الانتظار للحصول على وصول مبكر مجاني</p>
+    </div>
+
+    <div class="plan-cards">
+      <div class="plan-card" onclick="selectPlan(this,'basic')" id="plan-basic">
+        <div class="plan-name">🌿 أساسي</div>
+        <div class="plan-price">مجاني دائماً</div>
+        <div class="plan-desc">للاستخدام الشخصي</div>
+      </div>
+      <div class="plan-card selected" onclick="selectPlan(this,'pro')" id="plan-pro">
+        <div class="plan-name">⭐ Pro</div>
+        <div class="plan-price">$4 / شهرياً</div>
+        <div class="plan-desc">للمهنيين الصحيين</div>
+      </div>
+    </div>
+
+    <ul class="feature-list">
+      <li>بحث في 500+ دواء بقاعدة بيانات موسعة</li>
+      <li>تحليل صور العبوات الدوائية</li>
+      <li>تذكيرات غير محدودة لعائلتك</li>
+      <li>تقارير طبية PDF قابلة للطباعة</li>
+      <li>ملف المريض مع سجل تاريخي كامل</li>
+      <li>وصول للمساعد AI بدون حدود</li>
+      <li>فحص التفاعلات الدوائية المتقدم</li>
+    </ul>
+
+    <div class="field"><label>اسمك الكريم</label>
+      <input type="text" id="wlName" placeholder="الاسم الكامل">
+    </div>
+    <div class="field"><label>البريد الإلكتروني</label>
+      <input type="email" id="wlEmail" placeholder="your@email.com" dir="ltr">
+    </div>
+    <div class="field"><label>المهنة (اختياري)</label>
+      <select id="wlProf">
+        <option value="">اختر</option>
+        <option>طبيب</option>
+        <option>صيدلاني</option>
+        <option>ممرض/ة</option>
+        <option>طالب طب</option>
+        <option>مريض / عائلة مريض</option>
+        <option>أخرى</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;" onclick="joinWaitlist()">
+      ⭐ انضم لقائمة الانتظار مجاناً
+    </button>
+    <div id="wlMsg" style="margin-top:12px;"></div>
+    <div id="wlCount" style="text-align:center;margin-top:12px;font-size:.85rem;color:var(--muted);"></div>
+  </div>
+</div>
+
+</main>
+
+<!-- ── BOTTOM DISCLAIMER ── -->
+<div class="bottom-disclaimer">
+  ⚕️ <strong>تحذير طبي:</strong> هذا التطبيق للأغراض التعليمية فقط — دائماً استشر طبيبك أو صيدلانيك المؤهل
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════ DATA ════════════════
+const DB = [
+  {id:"paracetamol",name_ar:"باراسيتامول",name_en:"Paracetamol",
+   aliases:["panadol","بنادول","بانادول","adol","أدول","calpol","tylenol","بنادول","acetaminophen","خافض حرارة","مسكن","الم","حرارة","acamol"],
+   class_ar:"مسكن ألم وخافض حرارة",class_en:"Analgesic / Antipyretic",
+   mpk_min:10,mpk_max:15,freq_ar:"كل 4-6 ساعات",freq_en:"Every 4-6 hours",
+   adult_min:500,adult_max:1000,adult_freq:"كل 4-6 ساعات (أقصى 4 مرات/يوم)",
+   max_daily:"4000 mg للكبار / 75 mg/kg/يوم للأطفال",
+   conc:120,
+   contra_ar:"فشل كبدي حاد، حساسية للمادة",
+   side_ar:"نادرة الحدوث بالجرعات العلاجية. بجرعات عالية: تلف كبدي خطير",
+   preg:"آمن — الخيار الأول للحامل",preg_badge:"ok",
+   lact:"آمن — يُفضّل تعديل توقيت الرضاعة",
+   renal:"لا يحتاج تعديل بجرعات معتادة",
+   note:"الأكثر أماناً من مسكنات الألم. تجنب الجمع مع أدوية أخرى تحتوي باراسيتامول (احترس من مستحضرات البرد).",
+   interactions:["warfarin","كومادين","وارفارين"]
+  },
+  {id:"ibuprofen",name_ar:"إيبوبروفين",name_en:"Ibuprofen",
+   aliases:["nurofen","نيوروفين","نيورفين","brufen","بروفين","advil","motrin","profen","بروفن","مضاد التهاب","مفاصل"],
+   class_ar:"مضاد التهاب لاستيرويدي (NSAID)",class_en:"NSAID",
+   mpk_min:5,mpk_max:10,freq_ar:"كل 6-8 ساعات",freq_en:"Every 6-8 hours",
+   adult_min:400,adult_max:800,adult_freq:"كل 6-8 ساعات مع الطعام",
+   max_daily:"2400 mg للكبار / 40 mg/kg/يوم للأطفال",
+   conc:100,
+   contra_ar:"قرحة معدة نشطة، فشل كلوي، الثلث الثالث من الحمل، حساسية NSAIDs",
+   side_ar:"اضطراب معدة، ارتفاع ضغط، احتباس سوائل، نزيف معدي (نادر)",
+   preg:"تجنب خاصة الثلث الثالث — خطر على الجنين",preg_badge:"err",
+   lact:"بحذر — تناول أقل جرعة فعّالة",
+   renal:"تجنب إذا كان معدل الترشح الكبيبي GFR < 30",
+   note:"تناوله دائماً مع الطعام أو الحليب. لا تجمعه مع الأسبرين أو مضادات التجلط.",
+   interactions:["warfarin","aspirin","أسبرين","وارفارين","كومادين","ليثيوم"]
+  },
+  {id:"amoxicillin",name_ar:"أموكسيسيلين",name_en:"Amoxicillin",
+   aliases:["amoxil","أموكسيل","flumox","فلوموكس","amoxen","trimox","حبوب مضاد","مضاد حيوي","penicillin","بنسلين"],
+   class_ar:"مضاد حيوي بيتا-لاكتام (البنسلينات)",class_en:"Beta-lactam Antibiotic",
+   mpk_min:25,mpk_max:45,freq_ar:"كل 8 ساعات",freq_en:"Every 8 hours",
+   adult_min:250,adult_max:500,adult_freq:"3 مرات يومياً (كل 8 ساعات)",
+   max_daily:"3000 mg للكبار / 90 mg/kg/يوم للأطفال",
+   conc:125,
+   ab_doses:{ear:[40,45,3],lung:[45,90,3],urinary:[20,40,3],skin:[25,50,3]},
+   contra_ar:"حساسية البنسلين أو السيفالوسبورين (قد تكون متقاطعة)",
+   side_ar:"إسهال، غثيان، طفح جلدي، حساسية (نادر لكن خطير)",
+   preg:"آمن — فئة B",preg_badge:"ok",
+   lact:"آمن",
+   renal:"خفّض الجرعة إذا GFR < 30",
+   note:"أكمل الدورة الكاملة حتى لو تحسنت. الإسهال الشديد أثناء العلاج قد يستدعي تغيير الدواء.",
+   interactions:["methotrexate","warfarin","وارفارين"]
+  },
+  {id:"amoxicillin_clavulanate",name_ar:"أموكسيسيلين + حمض كلافيولانيك",name_en:"Amoxicillin-Clavulanate",
+   aliases:["augmentin","أوجمنتين","اوجمنتين","clavox","كلافوكس","co-amoxiclav","كوأموكسيكلاف","clavamox","كلافاموكس"],
+   class_ar:"مضاد حيوي مشترك مع مثبط بيتالاكتاماز",class_en:"Beta-lactam + Beta-lactamase inhibitor",
+   mpk_min:25,mpk_max:45,freq_ar:"مرتان يومياً",freq_en:"Twice daily",
+   adult_min:375,adult_max:625,adult_freq:"مرتان يومياً مع الطعام",
+   max_daily:"2000 mg/يوم",
+   conc:125,
+   ab_doses:{ear:[40,45,2],lung:[45,90,2],urinary:[25,45,2],skin:[25,45,2]},
+   contra_ar:"حساسية البنسلين، تاريخ من اليرقان جراء أموكسيسيلين-كلافيولانيك",
+   side_ar:"إسهال أكثر من أموكسيسيلين وحده، غثيان، ارتفاع إنزيمات الكبد",
+   preg:"بحذر — استخدم إذا كانت الفائدة تفوق الخطر",preg_badge:"warn",
+   lact:"آمن",
+   renal:"تعديل الجرعة مطلوب",
+   note:"تناوله مع بداية الوجبة لتقليل آثاره الجانبية المعدية.",
+   interactions:["methotrexate","warfarin","وارفارين"]
+  },
+  {id:"azithromycin",name_ar:"أزيثروميسين",name_en:"Azithromycin",
+   aliases:["zithromax","زيثروماكس","azithrocin","azycin","أزيسين","ماكروليد"],
+   class_ar:"مضاد حيوي ماكروليد",class_en:"Macrolide Antibiotic",
+   mpk_min:10,mpk_max:10,freq_ar:"مرة واحدة يومياً × 3-5 أيام",freq_en:"Once daily × 3-5 days",
+   adult_min:250,adult_max:500,adult_freq:"مرة يومياً (أول يوم 500mg ثم 250mg)",
+   max_daily:"500 mg",conc:200,
+   contra_ar:"اضطرابات نظم القلب (تمديد QT)، فشل كبدي حاد",
+   side_ar:"غثيان، ألم بطن، إسهال، نادراً: اضطراب نظم قلب",
+   preg:"بحذر",preg_badge:"warn",lact:"بحذر",
+   renal:"لا يحتاج تعديل",
+   note:"لا تتناوله مع مضادات الحموضة التي تحتوي ألومنيوم أو مغنيسيوم في نفس الوقت.",
+   interactions:["warfarin","digoxin","ديجوكسين","antacid"]
+  },
+  {id:"cetirizine",name_ar:"سيتيريزين",name_en:"Cetirizine",
+   aliases:["zyrtec","زيرتيك","reactine","cetirizin","مضاد حساسية","حساسية","رشح"],
+   class_ar:"مضاد هيستامين الجيل الثاني",class_en:"2nd Generation Antihistamine",
+   mpk_min:0.25,mpk_max:0.5,freq_ar:"مرة أو مرتان يومياً",freq_en:"Once or twice daily",
+   adult_min:5,adult_max:10,adult_freq:"مرة يومياً (مساءً)",
+   max_daily:"10 mg",conc:5,
+   contra_ar:"فشل كلوي شديد (تعديل الجرعة)، حساسية للدواء",
+   side_ar:"نعاس خفيف، جفاف الفم (أقل من الجيل الأول)",
+   preg:"بحذر",preg_badge:"warn",lact:"يُفضّل تجنبه",
+   renal:"خفّض الجرعة إذا GFR < 30",
+   note:"أقل مُنوِّماً من كلور-فينيرامين. مناسب للاستخدام النهاري.",interactions:[]
+  },
+  {id:"loratadine",name_ar:"لوراتادين",name_en:"Loratadine",
+   aliases:["claritin","claritine","كلاريتين","كلاريتاين","claritin","لوراتادين"],
+   class_ar:"مضاد هيستامين غير مُنوِّم",class_en:"Non-sedating Antihistamine",
+   mpk_min:0.2,mpk_max:0.2,freq_ar:"مرة يومياً",freq_en:"Once daily",
+   adult_min:10,adult_max:10,adult_freq:"مرة يومياً",
+   max_daily:"10 mg",conc:5,
+   contra_ar:"—",side_ar:"نادراً: صداع خفيف",
+   preg:"بحذر",preg_badge:"warn",lact:"يُفضّل تجنبه",renal:"جرعة يوم بعد يوم",
+   note:"لا يسبب نعاساً تقريباً — الأنسب للاستخدام النهاري وقيادة السيارة.",interactions:[]
+  },
+  {id:"metronidazole",name_ar:"ميترونيدازول",name_en:"Metronidazole",
+   aliases:["flagyl","فلاجيل","metrogyl","ميترونيدازول","trichomonide"],
+   class_ar:"مضاد بكتيري ومضاد طفيلي (نيتروإيميدازول)",class_en:"Antibacterial / Antiparasitic",
+   mpk_min:7.5,mpk_max:10,freq_ar:"كل 8 ساعات",freq_en:"Every 8 hours",
+   adult_min:250,adult_max:500,adult_freq:"3 مرات يومياً (أو 2× للجرعة الموسعة)",
+   max_daily:"2000 mg",conc:200,
+   contra_ar:"الثلث الأول من الحمل، اضطرابات الجهاز العصبي الحادة",
+   side_ar:"طعم معدني في الفم، غثيان، اضطراب معدة، اصفرار البول",
+   preg:"تجنب الثلث الأول — بحذر بعده",preg_badge:"err",lact:"يُفضّل التوقف عن الرضاعة أثناء العلاج",
+   renal:"تجنب في الفشل الكلوي الشديد",
+   note:"ممنوع منعاً باتاً مع الكحول — يسبب تفاعلاً خطيراً (احمرار، قيء، انخفاض ضغط).",
+   interactions:["alcohol","كحول","warfarin","وارفارين","lithium"]
+  },
+  {id:"omeprazole",name_ar:"أومبيرازول",name_en:"Omeprazole",
+   aliases:["losec","prilosec","لوسك","omez","أوميز","مثبط مضخة","حموضة","ارتجاع","معدة"],
+   class_ar:"مثبط مضخة البروتون (PPI)",class_en:"Proton Pump Inhibitor",
+   mpk_min:0.7,mpk_max:1.5,freq_ar:"مرة يومياً قبل الفطور",freq_en:"Once daily before breakfast",
+   adult_min:20,adult_max:40,adult_freq:"مرة أو مرتان يومياً قبل الأكل",
+   max_daily:"80 mg",conc:20,
+   contra_ar:"—",side_ar:"صداع، إسهال، غثيان (نادرة). الاستخدام طويل الأمد: نقص ماغنيسيوم وB12",
+   preg:"بحذر",preg_badge:"warn",lact:"يُفضّل تجنبه",renal:"لا يحتاج تعديل",
+   note:"تناوله قبل 30-60 دقيقة من الأكل للفعالية القصوى. لا تمضغ الكبسولة.",
+   interactions:["clopidogrel","كلوبيدوجريل","plavix","بلافيكس","methotrexate"]
+  },
+  {id:"metformin",name_ar:"ميتفورمين",name_en:"Metformin",
+   aliases:["glucophage","جلوكوفاج","دياباكتا","diabeta","diabex","سكري","سكر"],
+   class_ar:"خافض سكر الدم — بيغوانيد",class_en:"Biguanide Antidiabetic",
+   adult_min:500,adult_max:1000,adult_freq:"مرتان مع الطعام (ابدأ بـ 500mg وزد تدريجياً)",
+   max_daily:"2550 mg",
+   contra_ar:"فشل كلوي (GFR<30)، فشل كبدي، فشل قلبي حاد، تصوير بالصبغة",
+   side_ar:"غثيان، إسهال، ألم معدة (تتحسن بمرور الوقت). نادراً: حماض لاكتيكي خطير",
+   preg:"يُستخدم أحياناً لسكري الحمل بإشراف طبي",preg_badge:"warn",
+   lact:"بحذر",renal:"يُمنع إذا GFR < 30 — خطر حماض لاكتيكي",
+   note:"أوقفه قبل 48 ساعة من التصوير بالصبغة (CT contrast). أحسن النتائج عند تناوله مع الطعام.",
+   interactions:["alcohol","كحول","contrast","صبغة"]
+  },
+  {id:"salbutamol",name_ar:"سالبيوتامول",name_en:"Salbutamol",
+   aliases:["ventolin","فنتولين","albuterol","ألبيوترول","بخاخ","ربو","كحة","تقلصات"],
+   class_ar:"موسع قصبي — أگونيست بيتا-2 قصير المفعول",class_en:"Short-acting Beta-2 Agonist",
+   mpk_min:0.1,mpk_max:0.15,freq_ar:"كل 4-6 ساعات عند الحاجة",freq_en:"Every 4-6 hours as needed",
+   adult_min:2,adult_max:4,adult_freq:"2-4 mg كل 6-8 ساعات (الشراب) أو 2 بخّات عند الحاجة",
+   max_daily:"16 mg شراب / 8 بخّات",conc:2,
+   contra_ar:"فرط حساسية للدواء",
+   side_ar:"رعشة يد، تسارع قلب، انخفاض بوتاسيوم بالجرعات العالية، أرق",
+   preg:"بحذر — يُستخدم عند الضرورة",preg_badge:"warn",lact:"آمن",
+   renal:"لا يحتاج تعديل",
+   note:"يُستخدم عند الحاجة وليس بصفة منتظمة. إذا احتجت لأكثر من 3 مرات/أسبوع = راجع الطبيب.",
+   interactions:["beta_blockers","حاصرات بيتا"]
+  },
+  {id:"clarithromycin",name_ar:"كلاريثروميسين",name_en:"Clarithromycin",
+   aliases:["klacid","كلاسيد","biaxin","كلاريثرومايسين"],
+   class_ar:"مضاد حيوي ماكروليد",class_en:"Macrolide Antibiotic",
+   mpk_min:7.5,mpk_max:15,freq_ar:"مرتان يومياً",freq_en:"Twice daily",
+   adult_min:250,adult_max:500,adult_freq:"مرتان يومياً",
+   max_daily:"1000 mg",conc:125,
+   contra_ar:"اضطراب نظم القلب (QT prolongation)، حساسية الماكروليدات",
+   side_ar:"غثيان، إسهال، تغير الطعم، صداع",
+   preg:"تجنب خاصة الثلث الأول",preg_badge:"err",lact:"بحذر",
+   renal:"خفّض الجرعة إذا GFR < 30",
+   note:"من أقوى مضادات الحيوية ضد الميكروبات غير النمطية. يرفع مستوى عدة أدوية في الدم.",
+   interactions:["warfarin","statins","colchicine","carbamazepine"]
+  },
+];
+
+const FOODS = {
+  "دجاج":{c:165,p:31,k:0,f:3.6},"chicken":{c:165,p:31,k:0,f:3.6},
+  "دجاج مشوي":{c:165,p:31,k:0,f:3.6},
+  "أرز":{c:130,p:2.7,k:28,f:0.3},"rice":{c:130,p:2.7,k:28,f:0.3},
+  "خبز":{c:265,p:9,k:49,f:3.2},"bread":{c:265,p:9,k:49,f:3.2},
+  "بيض":{c:155,p:13,k:1.1,f:11},"egg":{c:155,p:13,k:1.1,f:11},
+  "بيض مقلي":{c:185,p:14,k:0.6,f:14},
+  "تمر":{c:282,p:2.5,k:75,f:0.4},"dates":{c:282,p:2.5,k:75,f:0.4},
+  "موز":{c:89,p:1.1,k:23,f:0.3},"banana":{c:89,p:1.1,k:23,f:0.3},
+  "تفاح":{c:52,p:0.3,k:14,f:0.2},"apple":{c:52,p:0.3,k:14,f:0.2},
+  "سمك":{c:136,p:23,k:0,f:4.8},"fish":{c:136,p:23,k:0,f:4.8},
+  "سلمون":{c:208,p:20,k:0,f:13},"salmon":{c:208,p:20,k:0,f:13},
+  "حليب":{c:61,p:3.2,k:4.8,f:3.3},"milk":{c:61,p:3.2,k:4.8,f:3.3},
+  "جبنة":{c:402,p:25,k:1.3,f:33},"cheese":{c:402,p:25,k:1.3,f:33},
+  "زبادي":{c:59,p:10,k:3.6,f:0.4},"yogurt":{c:59,p:10,k:3.6,f:0.4},
+  "برغر":{c:295,p:17,k:24,f:14},"burger":{c:295,p:17,k:24,f:14},
+  "بيتزا":{c:266,p:11,k:33,f:10},"pizza":{c:266,p:11,k:33,f:10},
+  "بطاطس مقلية":{c:312,p:3.4,k:41,f:15},"fries":{c:312,p:3.4,k:41,f:15},
+  "شاورما":{c:245,p:18,k:20,f:10},"shawarma":{c:245,p:18,k:20,f:10},
+  "فلافل":{c:333,p:13,k:32,f:18},"falafel":{c:333,p:13,k:32,f:18},
+  "عدس":{c:116,p:9,k:20,f:0.4},"lentils":{c:116,p:9,k:20,f:0.4},
+  "شوكولاتة":{c:546,p:5,k:60,f:31},"chocolate":{c:546,p:5,k:60,f:31},
+  "قهوة":{c:2,p:0.3,k:0,f:0},"coffee":{c:2,p:0.3,k:0,f:0},
+  "معكرونة":{c:131,p:5,k:25,f:1.1},"pasta":{c:131,p:5,k:25,f:1.1},
+  "بطاطا":{c:77,p:2,k:17,f:0.1},"potato":{c:77,p:2,k:17,f:0.1},
+  "عسل":{c:304,p:0.3,k:82,f:0},"honey":{c:304,p:0.3,k:82,f:0},
+  "مكرونة":{c:131,p:5,k:25,f:1.1},
+  "تونا":{c:144,p:30,k:0,f:2.5},"tuna":{c:144,p:30,k:0,f:2.5},
+  "حمص":{c:164,p:9,k:27,f:2.6},"chickpeas":{c:164,p:9,k:27,f:2.6},
+  "بازلاء":{c:81,p:5,k:14,f:0.4},"لحم":{c:250,p:26,k:0,f:15},"meat":{c:250,p:26,k:0,f:15},
+};
+
+const INTERACTIONS_DB = [
+  {drugs:["warfarin","كومادين","وارفارين"],level:"danger",
+   msg:"⚠️ يزيد خطر النزيف بشكل كبير — راجع طبيبك فوراً"},
+  {drugs:["metronidazole","alcohol","كحول"],level:"danger",
+   msg:"🚨 تفاعل خطير مع الكحول: احمرار، قيء، انخفاض ضغط حاد"},
+  {drugs:["ssri","tramadol","ترامادول"],level:"danger",
+   msg:"🚨 خطر متلازمة السيروتونين — لا تجمع"},
+  {drugs:["ibuprofen","warfarin"],level:"danger",
+   msg:"🚨 خطر نزيف معدي خطير"},
+  {drugs:["ibuprofen","aspirin","أسبرين"],level:"warn",
+   msg:"⚠️ إيبوبروفين يقلل أثر الأسبرين الوقائي على القلب — خذ الأسبرين قبل الإيبوبروفين بساعتين"},
+  {drugs:["omeprazole","clopidogrel","بلافيكس","كلوبيدوجريل"],level:"warn",
+   msg:"⚠️ أومبيرازول يقلل فعالية بلافيكس — البديل: بانتوبرازول"},
+  {drugs:["clarithromycin","statin","ستاتين","ليبيتور","كريستور"],level:"warn",
+   msg:"⚠️ يرفع مستوى الستاتينات — خطر تأذي العضلات"},
+  {drugs:["metformin","alcohol","كحول"],level:"danger",
+   msg:"🚨 خطر حماض لاكتيكي حاد"},
+  {drugs:["antacid","antibiotic","مضاد حيوي"],level:"info",
+   msg:"ℹ️ مضادات الحموضة تقلل امتصاص المضادات الحيوية — فصل ساعتين بينهما"},
+];
+
+// ════════════════ STATE ════════════════
+let selChildDrug = null;
+let intDrugs = [];
+let reminders = [];
+let readings = [];
+let attachments = [];
+let patient = {};
+let waitlist = [];
+let remTimers = [];
+
+// ════════════════ INIT ════════════════
+function init() {
+  try { reminders = JSON.parse(localStorage.getItem("rem_v2") || "[]"); } catch(e) { reminders = []; }
+  try { readings = JSON.parse(localStorage.getItem("readings") || "[]"); } catch(e) { readings = []; }
+  try { patient = JSON.parse(localStorage.getItem("patient_v2") || "{}"); } catch(e) { patient = {}; }
+  try { waitlist = JSON.parse(localStorage.getItem("waitlist") || "[]"); } catch(e) { waitlist = []; }
+  loadPatientForm();
+  renderReminders();
+  renderReadings();
+  renderAttachments();
+  scheduleAllReminders();
+  updateWaitlistCount();
+  if (Notification && Notification.permission === "default") {
+    setTimeout(() => Notification.requestPermission(), 3000);
+  }
+}
+
+// ════════════════ TABS ════════════════
+function showTab(name, btn) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  document.getElementById("tab-" + name).classList.add("active");
+  btn.classList.add("active");
+  if (name === "reminders") renderReminders();
+  if (name === "patient") { renderReadings(); renderAttachments(); }
+}
+
+// ════════════════ DRUG SEARCH ════════════════
+function scoreDrug(d, q) {
+  const fields = [
+    ...(d.aliases || []),
+    d.name_ar, d.name_en, d.id,
+    d.class_ar, d.class_en
+  ].map(s => (s || "").toLowerCase());
+  let score = 0;
+  for (const f of fields) {
+    if (f === q) score += 10;
+    else if (f.startsWith(q)) score += 7;
+    else if (f.includes(q)) score += 4;
+  }
+  return score;
+}
+
+function searchDB(q) {
+  if (!q || q.length < 2) return [];
+  q = q.toLowerCase().trim();
+  return DB
+    .map(d => ({ d, s: scoreDrug(d, q) }))
+    .filter(x => x.s > 0)
+    .sort((a, b) => b.s - a.s)
+    .map(x => x.d);
+}
+
+function handleDrugSearch(val) {
+  const res = searchDB(val);
+  const el = document.getElementById("drugResults");
+  const det = document.getElementById("drugDetail");
+  det.innerHTML = "";
+  if (!val || val.length < 2) { el.innerHTML = ""; return; }
+  if (!res.length) {
+    el.innerHTML = `<div class="alert alert-warn">❌ لم يُعثر على الدواء. جرّب الاسم التجاري أو العلمي.</div>`;
+    return;
+  }
+  el.innerHTML = `<div class="drug-list">${res.slice(0, 6).map((d, i) => `
+    <div class="drug-item" onclick="showDrug('${d.id}')">
+      <h4>💊 ${d.name_ar} — <span style="font-weight:400;color:var(--muted)">${d.name_en}</span></h4>
+      <p>${d.class_ar} • ${(d.aliases || []).slice(0, 3).join(", ")}</p>
+    </div>`).join("")}</div>`;
+}
+
+function showDrug(id) {
+  const d = DB.find(x => x.id === id);
+  if (!d) return;
+  document.getElementById("drugResults").innerHTML = "";
+  document.getElementById("drugInput").value = d.name_ar;
+
+  const adultDose = d.adult_min ? `${d.adult_min}–${d.adult_max || d.adult_min} mg` : "—";
+  const childDose = d.mpk_min ? `${d.mpk_min}–${d.mpk_max || d.mpk_min} mg/kg` : "—";
+  const pregColor = { ok: "badge-ok", warn: "badge-warn", err: "badge-err" }[d.preg_badge] || "badge-warn";
+
+  document.getElementById("drugDetail").innerHTML = `
+    <div class="detail-section">
+      <div class="detail-header">
+        <div style="font-size:2rem;">💊</div>
+        <div>
+          <h3>${d.name_ar}</h3>
+          <div style="color:var(--muted);font-size:.85rem;">${d.name_en}</div>
+        </div>
+      </div>
+      <div class="badges">
+        <span class="badge badge-teal">${d.class_ar}</span>
+        <span class="badge badge-blue">${(d.aliases || []).slice(0, 3).join(" / ")}</span>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-box">
+          <div class="ib-label">👶 جرعة الأطفال</div>
+          <div class="ib-val">${childDose}</div>
+        </div>
+        <div class="info-box">
+          <div class="ib-label">🔁 تكرار الأطفال</div>
+          <div class="ib-val">${d.freq_ar || "—"}</div>
+        </div>
+        <div class="info-box">
+          <div class="ib-label">🧑 جرعة الكبار</div>
+          <div class="ib-val">${adultDose}</div>
+        </div>
+        <div class="info-box">
+          <div class="ib-label">🔁 تكرار الكبار</div>
+          <div class="ib-val">${d.adult_freq || "—"}</div>
+        </div>
+        <div class="info-box">
+          <div class="ib-label">⚠️ الحد الأقصى اليومي</div>
+          <div class="ib-val">${d.max_daily || "—"}</div>
+        </div>
+        <div class="info-box">
+          <div class="ib-label">🤰 الحمل</div>
+          <div class="ib-val"><span class="badge ${pregColor}">${d.preg || "—"}</span></div>
+        </div>
+        <div class="info-box">
+          <div class="ib-label">🍼 الرضاعة</div>
+          <div class="ib-val">${d.lact || "—"}</div>
+        </div>
+        <div class="info-box">
+          <div class="ib-label">🫘 الكلى</div>
+          <div class="ib-val">${d.renal || "—"}</div>
+        </div>
+        <div class="info-box full">
+          <div class="ib-label">🚫 موانع الاستخدام</div>
+          <div class="ib-val">${d.contra_ar || "—"}</div>
+        </div>
+        <div class="info-box full">
+          <div class="ib-label">⚡ الآثار الجانبية</div>
+          <div class="ib-val">${d.side_ar || "—"}</div>
+        </div>
+        ${d.note ? `<div class="info-box full" style="background:#fffbeb;border:1px solid #fde68a;">
+          <div class="ib-label">💡 نصيحة الصيدلاني</div>
+          <div class="ib-val">${d.note}</div>
+        </div>` : ""}
+      </div>
+      <div class="alert alert-warn" style="margin-top:14px;">
+        <span>⚕️</span>
+        <span>هذه معلومات مرجعية. استشر طبيبك أو صيدلانيك للحصول على الجرعة المناسبة لحالتك.</span>
+      </div>
+    </div>`;
+}
+
+// ════════════════ CHILD DOSE ════════════════
+function childSearch(val) {
+  const res = searchDB(val);
+  const el = document.getElementById("childList");
+  if (!val || val.length < 2 || !res.length) { el.innerHTML = ""; return; }
+  el.innerHTML = res.slice(0, 5).map(d => `
+    <div class="drug-item" onclick="pickChildDrug('${d.id}')">
+      <h4>${d.name_ar} — ${d.name_en}</h4>
+      <p>${(d.aliases || []).slice(0, 3).join(", ")}</p>
+    </div>`).join("");
+}
+
+function pickChildDrug(id) {
+  selChildDrug = DB.find(x => x.id === id);
+  document.getElementById("childDrug").value = selChildDrug.name_ar;
+  document.getElementById("childList").innerHTML = "";
+}
+
+function calcChild() {
+  const wt = parseFloat(document.getElementById("childWt").value);
+  const site = document.getElementById("childSite").value;
+  const concSel = parseFloat(document.getElementById("childConc").value) || 0;
+  const res = document.getElementById("childResult");
+
+  if (!selChildDrug) {
+    res.innerHTML = `<div class="alert alert-warn">⚠️ اختر الدواء أولاً من قائمة البحث</div>`;
+    return;
+  }
+  if (!wt || wt < 1 || wt > 100) {
+    res.innerHTML = `<div class="alert alert-warn">⚠️ أدخل وزناً صحيحاً بين 1 و 100 كغ</div>`;
+    return;
+  }
+
+  const d = selChildDrug;
+  let mpk_min = d.mpk_min || 0;
+  let mpk_max = d.mpk_max || mpk_min;
+
+  // Adjust for infection site if antibiotic
+  if (site && d.ab_doses && d.ab_doses[site]) {
+    [mpk_min, mpk_max] = d.ab_doses[site];
+  }
+
+  if (!mpk_min) {
+    res.innerHTML = `<div class="alert alert-warn">⚠️ لا تتوفر بيانات جرعة الأطفال لهذا الدواء. راجع الصيدلاني.</div>`;
+    return;
+  }
+
+  const dose_min = (mpk_min * wt).toFixed(1);
+  const dose_max = (mpk_max * wt).toFixed(1);
+  const conc = concSel || d.conc || 0;
+  const ml_min = conc ? ((mpk_min * wt) / conc * 5).toFixed(1) : null;
+  const ml_max = conc ? ((mpk_max * wt) / conc * 5).toFixed(1) : null;
+  const siteLabel = { ear: "👂 أذن/حلق", lung: "🫁 رئة/صدر", urinary: "🫘 مسالك بولية", skin: "🩹 جلد" }[site] || "";
+
+  res.innerHTML = `
+    <div class="dose-result">
+      <div class="unit">🍼 ${d.name_ar} — ${d.name_en} ${siteLabel ? "· " + siteLabel : ""}</div>
+      <div class="big">${dose_min === dose_max ? dose_min : dose_min + "–" + dose_max}</div>
+      <div class="unit">مغ / mg</div>
+      ${ml_min ? `<div class="ml-box">🥄 ${ml_min === ml_max ? ml_min : ml_min + "–" + ml_max} مل (${conc}مغ/5مل)</div>` : ""}
+      <div class="freq">🔁 ${d.freq_ar || "—"} · ⚖️ ${wt} كغ × ${mpk_min}${mpk_max !== mpk_min ? "–" + mpk_max : ""} مغ/كغ</div>
+      ${d.max_daily ? `<div class="freq">⚠️ الحد الأقصى: ${d.max_daily}</div>` : ""}
+    </div>
+    <div class="alert alert-warn" style="margin-top:12px;">
+      <span>⚕️</span>
+      <span>احسب الجرعة بناءً على وزن الطفل الحالي. استشر طبيبك أو صيدلانيك قبل إعطاء الدواء. <strong>لا تُعطِ دواءً لطفل أقل من 2 سنة دون استشارة طبية.</strong></span>
+    </div>`;
+}
+
+// ════════════════ BMI ════════════════
+function calcBMI() {
+  const w = parseFloat(document.getElementById("bmiW").value);
+  const h = parseFloat(document.getElementById("bmiH").value) / 100;
+  const a = parseInt(document.getElementById("bmiA").value);
+  const g = document.getElementById("bmiG").value;
+  if (!w || !h || !a) { document.getElementById("bmiRes").innerHTML = `<div class="alert alert-warn">⚠️ أدخل جميع البيانات</div>`; return; }
+
+  const bmi = w / (h * h);
+  let cat, color;
+  if (bmi < 16) { cat = "🔵 نقص وزن حاد"; color = "#1d4ed8"; }
+  else if (bmi < 18.5) { cat = "🔵 نقص وزن"; color = "#2563eb"; }
+  else if (bmi < 25) { cat = "🟢 وزن مثالي"; color = "#16a34a"; }
+  else if (bmi < 30) { cat = "🟡 زيادة وزن"; color = "#d97706"; }
+  else if (bmi < 35) { cat = "🔴 سمنة درجة 1"; color = "#dc2626"; }
+  else { cat = "🔴 سمنة مرضية"; color = "#991b1b"; }
+
+  const pct = Math.min(Math.max((bmi - 10) / 30 * 100, 0), 100);
+  const idealMin = (18.5 * h * h).toFixed(1);
+  const idealMax = (24.9 * h * h).toFixed(1);
+  let bmr = g === "m" ? 10 * w + 6.25 * (h * 100) - 5 * a + 5 : 10 * w + 6.25 * (h * 100) - 5 * a - 161;
+
+  document.getElementById("bmiRes").innerHTML = `
+    <div class="bmi-wrap">
+      <div class="bmi-number" style="color:${color};">${bmi.toFixed(1)}</div>
+      <div class="bmi-cat" style="color:${color};">${cat}</div>
+      <div class="bmi-bar"><div class="bmi-ptr" style="left:${pct}%"></div></div>
+      <div class="bmi-scale"><span>نقص حاد<br>16</span><span>نقص<br>18.5</span><span>مثالي<br>25</span><span>زيادة<br>30</span><span>سمنة<br>35+</span></div>
+    </div>
+    <div class="info-grid" style="margin-top:18px;">
+      <div class="info-box"><div class="ib-label">⚖️ نطاق الوزن المثالي</div><div class="ib-val">${idealMin} – ${idealMax} كغ</div></div>
+      <div class="info-box"><div class="ib-label">🔥 معدل الأيض الأساسي</div><div class="ib-val">${Math.round(bmr)} سعرة/يوم</div></div>
+      <div class="info-box"><div class="ib-label">📏 الطول</div><div class="ib-val">${(h * 100).toFixed(0)} سم</div></div>
+      <div class="info-box"><div class="ib-label">⚖️ الوزن الحالي</div><div class="ib-val">${w} كغ</div></div>
+    </div>`;
+}
+
+// ════════════════ CALORIES ════════════════
+function calcCal() {
+  const w = parseFloat(document.getElementById("calW").value);
+  const h = parseFloat(document.getElementById("calH").value);
+  const a = parseInt(document.getElementById("calA").value);
+  const g = document.getElementById("calG").value;
+  const act = parseFloat(document.getElementById("calAct").value);
+  const goal = document.getElementById("calGoal").value;
+  if (!w || !h || !a) { document.getElementById("calRes").innerHTML = `<div class="alert alert-warn">⚠️ أدخل جميع البيانات</div>`; return; }
+
+  let bmr = g === "m" ? 10 * w + 6.25 * h - 5 * a + 5 : 10 * w + 6.25 * h - 5 * a - 161;
+  const tdee = Math.round(bmr * act);
+  const target = goal === "lose" ? tdee - 500 : goal === "gain" ? tdee + 300 : tdee;
+  const protein = Math.round(w * 1.6);
+  const fat = Math.round(target * 0.25 / 9);
+  const carbs = Math.round((target - protein * 4 - fat * 9) / 4);
+  const pct = Math.min(target / 4000 * 100, 100);
+
+  document.getElementById("calRes").innerHTML = `
+    <div class="cal-ring-wrap">
+      <div class="cal-ring">
+        <svg width="130" height="130" viewBox="0 0 130 130">
+          <circle cx="65" cy="65" r="52" fill="none" stroke="#e2e8f0" stroke-width="13"/>
+          <circle cx="65" cy="65" r="52" fill="none" stroke="#0d9488" stroke-width="13"
+            stroke-dasharray="${pct / 100 * 326.7} 326.7" stroke-linecap="round"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-num">${target}</div>
+          <div class="ring-lbl">سعرة / يوم</div>
+        </div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div class="info-box"><div class="ib-label">🎯 للحفاظ على الوزن</div><div class="ib-val">${tdee} kcal</div></div>
+      <div class="info-box"><div class="ib-label">📉 هدفك اليومي</div><div class="ib-val">${target} kcal</div></div>
+    </div>
+    <div style="margin-top:16px;">
+      <div style="font-weight:700;font-size:.9rem;margin-bottom:10px;">🥗 توزيع المغذيات المقترح</div>
+      ${macroBar("🥩 بروتين", protein + "g", Math.min(protein*4/target*100,100), "#0d9488")}
+      ${macroBar("🌾 كربوهيدرات", carbs + "g", Math.min(carbs*4/target*100,100), "#f59e0b")}
+      ${macroBar("🫒 دهون", fat + "g", Math.min(fat*9/target*100,100), "#ef4444")}
+    </div>`;
+}
+
+function macroBar(label, val, pct, color) {
+  return `<div class="macro-row">
+    <span style="font-weight:600;">${label}</span>
+    <div class="macro-bar-bg"><div class="macro-bar-fill" style="width:${pct.toFixed(0)}%;background:${color};"></div></div>
+    <span style="font-family:monospace;font-size:.9rem;">${val}</span>
+  </div>`;
+}
+
+function searchFood(val) {
+  const res = document.getElementById("foodRes");
+  if (!val || val.length < 2) { res.innerHTML = ""; return; }
+  const q = val.toLowerCase();
+  const found = Object.entries(FOODS).find(([k]) => k.toLowerCase().includes(q) || q.includes(k.toLowerCase()));
+  if (!found) { res.innerHTML = `<div class="alert alert-warn">❌ لم يُعثر على الطعام</div>`; return; }
+  const [name, d] = found;
+  const tot = d.c;
+  res.innerHTML = `
+    <div style="background:var(--bg);border-radius:10px;padding:16px;margin-top:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div style="font-weight:700;font-size:1rem;">${name}</div>
+        <div style="font-size:1.3rem;font-weight:900;color:var(--teal);">${d.c} kcal</div>
+      </div>
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:12px;">لكل 100 غرام</div>
+      ${macroBar("🥩 بروتين", d.p + "g", d.p*4/tot*100, "#0d9488")}
+      ${macroBar("🌾 كربوهيدرات", d.k + "g", d.k*4/tot*100, "#f59e0b")}
+      ${macroBar("🫒 دهون", d.f + "g", d.f*9/tot*100, "#ef4444")}
+    </div>`;
+}
+
+// ════════════════ INTERACTIONS ════════════════
+function addIntDrug() {
+  const v = document.getElementById("intIn").value.trim();
+  if (!v || intDrugs.includes(v.toLowerCase())) return;
+  intDrugs.push(v.toLowerCase());
+  document.getElementById("intIn").value = "";
+  renderIntTags();
+  document.getElementById("intRes").innerHTML = "";
+}
+
+function renderIntTags() {
+  document.getElementById("intTags").innerHTML = intDrugs.map((d, i) =>
+    `<span class="drug-tag">${d}<button onclick="removeInt(${i})">×</button></span>`).join("");
+}
+
+function removeInt(i) { intDrugs.splice(i, 1); renderIntTags(); document.getElementById("intRes").innerHTML = ""; }
+
+function checkInt() {
+  if (intDrugs.length < 2) {
+    document.getElementById("intRes").innerHTML = `<div class="alert alert-warn">⚠️ أضف دواءين على الأقل</div>`;
+    return;
+  }
+  let found = [];
+  for (const row of INTERACTIONS_DB) {
+    const matchCount = row.drugs.filter(d => intDrugs.some(u => u.includes(d) || d.includes(u))).length;
+    if (matchCount >= 2) found.push(row);
+  }
+  if (!found.length) {
+    document.getElementById("intRes").innerHTML = `
+      <div class="alert alert-ok">✅ لم نجد تفاعلات معروفة في قاعدة بياناتنا. تحقق مع صيدلانيك للتأكيد الكامل.</div>`;
+    return;
+  }
+  document.getElementById("intRes").innerHTML = found.map(r =>
+    `<div class="alert ${r.level === "danger" ? "alert-err" : r.level === "warn" ? "alert-warn" : "alert-info"}">${r.msg}</div>`
+  ).join("") + `<div class="alert alert-warn"><span>⚕️</span> هذا الفحص مرجعي. راجع صيدلانيك للتأكيد.</div>`;
+}
+
+// ════════════════ REMINDERS ════════════════
+function addReminder() {
+  const drug = document.getElementById("remDrug").value.trim();
+  const time = document.getElementById("remTime").value;
+  const freq = parseInt(document.getElementById("remFreq").value);
+  const dur = parseInt(document.getElementById("remDur").value) || 0;
+  const note = document.getElementById("remNote").value.trim();
+  const msg = document.getElementById("remMsg");
+
+  if (!drug || !time) { msg.innerHTML = `<div class="alert alert-warn">⚠️ أدخل اسم الدواء والوقت</div>`; return; }
+
+  const rem = { id: Date.now(), drug, time, freq, dur, note, active: true, created: new Date().toISOString() };
+  reminders.push(rem);
+  saveReminders();
+  scheduleReminder(rem);
+  renderReminders();
+  msg.innerHTML = `<div class="alert alert-ok">✅ تم إضافة التذكير — ستتلقى إشعاراً عند وقت الدواء</div>`;
+  document.getElementById("remDrug").value = "";
+  document.getElementById("remTime").value = "";
+  document.getElementById("remNote").value = "";
+  setTimeout(() => msg.innerHTML = "", 3000);
+}
+
+function saveReminders() { try { localStorage.setItem("rem_v2", JSON.stringify(reminders)); } catch(e) {} }
+
+function deleteReminder(id) {
+  reminders = reminders.filter(r => r.id !== id);
+  saveReminders();
+  renderReminders();
+  toast("🗑️ تم حذف التذكير");
+}
+
+function renderReminders() {
+  const el = document.getElementById("remList");
+  const active = reminders.filter(r => r.active !== false);
+  if (!active.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><p>لا توجد تذكيرات نشطة</p></div>`;
+    return;
+  }
+  el.innerHTML = active.map(r => {
+    const times = buildTimes(r.time, r.freq);
+    return `<div class="rem-item">
+      <div class="rem-icon">💊</div>
+      <div class="rem-info">
+        <h4>${r.drug}</h4>
+        <p>🕐 ${times.join(" · ")} (${r.freq}× يومياً)${r.dur ? " · " + r.dur + " يوم" : ""}${r.note ? " · " + r.note : ""}</p>
+      </div>
+      <button class="rem-del" onclick="deleteReminder(${r.id})" title="حذف">🗑️</button>
+    </div>`;
+  }).join("");
+}
+
+function buildTimes(start, freq) {
+  const [h, m] = start.split(":").map(Number);
+  const interval = Math.floor(24 / freq);
+  return Array.from({ length: freq }, (_, i) => {
+    const totalMin = h * 60 + m + i * interval * 60;
+    const hh = Math.floor(totalMin / 60) % 24;
+    const mm = totalMin % 60;
+    return `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
+  });
+}
+
+function scheduleReminder(rem) {
+  const times = buildTimes(rem.time, rem.freq);
+  times.forEach(t => {
+    const tid = setInterval(() => {
+      const now = new Date();
+      const cur = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+      if (cur === t) {
+        if (Notification.permission === "granted") {
+          new Notification("💊 تذكير دواء", {
+            body: `حان وقت: ${rem.drug}${rem.note ? " — " + rem.note : ""}`,
+            icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💊</text></svg>"
+          });
+        }
+        toast(`💊 حان وقت: ${rem.drug}`);
+      }
+    }, 30000);
+    remTimers.push(tid);
+  });
+}
+
+function scheduleAllReminders() { reminders.filter(r => r.active !== false).forEach(scheduleReminder); }
+
+// ════════════════ PATIENT ════════════════
+function savePatient() {
+  patient = {
+    name: document.getElementById("pName").value,
+    id: document.getElementById("pId").value,
+    age: document.getElementById("pAge").value,
+    weight: document.getElementById("pWt").value,
+    gender: document.getElementById("pGender").value,
+    blood: document.getElementById("pBlood").value,
+    diseases: document.getElementById("pDis").value,
+    meds: document.getElementById("pMeds").value,
+    allergy: document.getElementById("pAllergy").value,
+    notes: document.getElementById("pNotes").value,
+    updated: new Date().toISOString()
+  };
+  try { localStorage.setItem("patient_v2", JSON.stringify(patient)); } catch(e) {}
+  document.getElementById("patMsg").innerHTML = `<div class="alert alert-ok">✅ تم حفظ الملف على جهازك</div>`;
+  setTimeout(() => document.getElementById("patMsg").innerHTML = "", 2500);
+  toast("✅ تم حفظ ملف المريض");
+}
+
+function loadPatientForm() {
+  if (!patient.name) return;
+  ["pName","pId","pAge","pWt","pGender","pBlood","pDis","pMeds","pAllergy","pNotes"].forEach(id => {
+    const key = id.replace("p", "").toLowerCase();
+    const maps = { name:"name",id:"id",age:"age",wt:"weight",gender:"gender",blood:"blood",dis:"diseases",meds:"meds",allergy:"allergy",notes:"notes" };
+    const el = document.getElementById(id);
+    if (el && patient[maps[key.replace("p","")]]) el.value = patient[maps[key.replace("p","")]] || "";
+  });
+  // manual map
+  const fm = {pName:"name",pId:"id",pAge:"age",pWt:"weight",pGender:"gender",pBlood:"blood",pDis:"diseases",pMeds:"meds",pAllergy:"allergy",pNotes:"notes"};
+  Object.entries(fm).forEach(([id, key]) => { const el = document.getElementById(id); if (el && patient[key]) el.value = patient[key]; });
+}
+
+function showPatient() {
+  if (!patient.name) { toast("⚠️ لا يوجد ملف محفوظ بعد"); return; }
+  const gLabel = patient.gender === "m" ? "ذكر" : "أنثى";
+  alert(`ملف المريض:\n\nالاسم: ${patient.name}\nالعمر: ${patient.age} سنة\nالوزن: ${patient.weight} كغ\nالجنس: ${gLabel}\nفصيلة الدم: ${patient.blood || "—"}\nالأمراض: ${patient.diseases || "—"}\nالأدوية: ${patient.meds || "—"}\nالحساسية: ${patient.allergy || "—"}\nملاحظات: ${patient.notes || "—"}`);
+}
+
+function exportPatient() {
+  if (!patient.name) { toast("⚠️ لا يوجد ملف محفوظ"); return; }
+  const w = window.open("", "_blank");
+  w.document.write(`<html dir="rtl"><head><title>ملف المريض</title><style>body{font-family:Arial;padding:30px;direction:rtl} h1{color:#0d9488} table{width:100%;border-collapse:collapse} td,th{padding:10px;border:1px solid #ccc} th{background:#f0fdfa;text-align:right}</style></head><body>
+    <h1>💊 ملف المريض — جرعة</h1>
+    <p style="color:#999;font-size:12px;">⚕️ هذا الملف للأغراض الطبية المرجعية فقط</p>
+    <table><tr><th>البيان</th><th>القيمة</th></tr>
+    <tr><td>الاسم</td><td>${patient.name}</td></tr>
+    <tr><td>العمر</td><td>${patient.age} سنة</td></tr>
+    <tr><td>الوزن</td><td>${patient.weight} كغ</td></tr>
+    <tr><td>فصيلة الدم</td><td>${patient.blood || "—"}</td></tr>
+    <tr><td>الأمراض</td><td>${patient.diseases || "—"}</td></tr>
+    <tr><td>الأدوية</td><td>${patient.meds || "—"}</td></tr>
+    <tr><td style="color:red;font-weight:bold">⚠️ الحساسية</td><td style="color:red;font-weight:bold">${patient.allergy || "لا توجد"}</td></tr>
+    <tr><td>ملاحظات</td><td>${patient.notes || "—"}</td></tr>
+    <tr><td>آخر تحديث</td><td>${new Date(patient.updated || Date.now()).toLocaleString("ar")}</td></tr>
+    </table>
+    <h2 style="margin-top:20px">📈 القراءات الأخيرة</h2>
+    ${readings.slice(-10).map(r => `<p>• ${r.type_label} — ${r.val} — ${r.date}${r.note ? " — " + r.note : ""}</p>`).join("") || "<p>لا توجد قراءات</p>"}
+    <hr><p style="color:#999;font-size:11px;">تاريخ الطباعة: ${new Date().toLocaleString("ar")} · جرعة — للأغراض التعليمية فقط</p>
+  </body></html>`);
+  w.document.close();
+  w.print();
+}
+
+// ── READINGS ──
+const READ_TYPES = {
+  sugar_fasting:{label:"🩸 سكر صائم",unit:"mg/dL",normal:[70,100]},
+  sugar_after:{label:"🩸 سكر بعد الأكل",unit:"mg/dL",normal:[70,140]},
+  bp_sys:{label:"💉 ضغط انقباضي",unit:"mmHg",normal:[90,120]},
+  bp_dia:{label:"💉 ضغط انبساطي",unit:"mmHg",normal:[60,80]},
+  pulse:{label:"❤️ نبض",unit:"bpm",normal:[60,100]},
+  temp:{label:"🌡️ حرارة",unit:"°C",normal:[36,37.5]},
+  weight:{label:"⚖️ وزن",unit:"كغ",normal:[null,null]},
+  o2:{label:"🫁 أكسجين",unit:"%",normal:[95,100]},
+};
+
+function addReading() {
+  const type = document.getElementById("readType").value;
+  const val = parseFloat(document.getElementById("readVal").value);
+  const note = document.getElementById("readNote").value.trim();
+  if (!val) { toast("⚠️ أدخل القيمة"); return; }
+  const info = READ_TYPES[type];
+  const reading = {
+    id: Date.now(), type, type_label: info.label, val, unit: info.unit, note,
+    date: new Date().toLocaleString("ar-SA"),
+    status: info.normal[0] ? (val < info.normal[0] ? "low" : val > info.normal[1] ? "high" : "ok") : "ok"
+  };
+  readings.unshift(reading);
+  if (readings.length > 200) readings.pop();
+  try { localStorage.setItem("readings", JSON.stringify(readings)); } catch(e) {}
+  document.getElementById("readVal").value = "";
+  document.getElementById("readNote").value = "";
+  renderReadings();
+  toast("✅ تم تسجيل القراءة");
+}
+
+function deleteReading(id) {
+  readings = readings.filter(r => r.id !== id);
+  try { localStorage.setItem("readings", JSON.stringify(readings)); } catch(e) {}
+  renderReadings();
+}
+
+function renderReadings() {
+  const el = document.getElementById("readingsList");
+  if (!readings.length) { el.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><p>لم تُسجَّل قراءات بعد</p></div>`; return; }
+  const byType = {};
+  readings.slice(0, 50).forEach(r => {
+    if (!byType[r.type]) byType[r.type] = [];
+    byType[r.type].push(r);
+  });
+  el.innerHTML = Object.entries(byType).map(([type, recs]) => {
+    const info = READ_TYPES[type];
+    const vals = recs.slice(0, 7).reverse();
+    const max = Math.max(...vals.map(r => r.val));
+    return `<div style="margin-bottom:16px;">
+      <div style="font-weight:700;font-size:.88rem;margin-bottom:8px;">${info.label}</div>
+      <div class="mini-chart">${vals.map(r => {
+        const h = max > 0 ? Math.max((r.val / max * 50), 4) : 4;
+        const c = r.status === "high" ? "#ef4444" : r.status === "low" ? "#3b82f6" : "#0d9488";
+        return `<div class="mini-bar-wrap"><div class="mini-bar" style="height:${h}px;background:${c};" title="${r.val}${r.unit}"></div><div class="mini-bar-label">${r.val}</div></div>`;
+      }).join("")}</div>
+      ${recs.slice(0, 5).map(r => `
+        <div class="reading-item">
+          <div class="reading-val">${r.val} <span style="font-size:.7rem;font-weight:400;">${r.unit}</span></div>
+          <div class="reading-info">
+            <div class="reading-note">${r.note || "—"}</div>
+            <div class="reading-date">${r.date}</div>
+          </div>
+          <span class="badge ${r.status==="ok"?"badge-ok":r.status==="high"?"badge-err":"badge-blue"}">${r.status==="ok"?"طبيعي":r.status==="high"?"مرتفع":"منخفض"}</span>
+          <button onclick="deleteReading(${r.id})" style="background:none;border:none;cursor:pointer;color:#dc2626;padding:4px;font-size:.9rem;">🗑️</button>
+        </div>`).join("")}
+    </div>`;
+  }).join("");
+}
+
+// ── ATTACHMENTS ──
+function addAttachment(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    attachments.push({
+      id: Date.now(), name: file.name, size: (file.size / 1024).toFixed(0) + " KB",
+      type: file.type, data: e.target.result, date: new Date().toLocaleString("ar-SA")
+    });
+    try { localStorage.setItem("attachments", JSON.stringify(attachments.map(a => ({...a,data:null})))); } catch(e) {}
+    renderAttachments();
+    toast("✅ تم رفع الملف: " + file.name);
+  };
+  reader.readAsDataURL(file);
+  input.value = "";
+}
+
+function deleteAttachment(id) { attachments = attachments.filter(a => a.id !== id); renderAttachments(); }
+
+function renderAttachments() {
+  const el = document.getElementById("attachList");
+  if (!attachments.length) { el.innerHTML = `<div class="empty"><div class="empty-icon">📎</div><p>لا توجد مرفقات</p></div>`; return; }
+  el.innerHTML = attachments.map(a => `
+    <div class="attachment-item" onclick="viewAttachment(${a.id})">
+      <div class="att-icon">${a.type && a.type.includes("pdf") ? "📄" : "🖼️"}</div>
+      <div class="att-info">
+        <h5>${a.name}</h5>
+        <p>${a.size} · ${a.date}</p>
+      </div>
+      <button onclick="event.stopPropagation();deleteAttachment(${a.id})" style="background:none;border:none;cursor:pointer;color:#dc2626;padding:6px;">🗑️</button>
+    </div>`).join("");
+}
+
+function viewAttachment(id) {
+  const a = attachments.find(x => x.id === id);
+  if (!a || !a.data) { toast("⚠️ الملف غير متاح للعرض"); return; }
+  const w = window.open(""); w.document.write(`<img src="${a.data}" style="max-width:100%">`); w.document.close();
+}
+
+// ════════════════ AI CHAT ════════════════
+async function sendChat() {
+  const inp = document.getElementById("chatIn");
+  const msgs = document.getElementById("chatMsgs");
+  const q = inp.value.trim();
+  if (!q) return;
+  inp.value = "";
+  msgs.innerHTML += `<div class="msg msg-user">${q}</div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+  const lid = "l" + Date.now();
+  msgs.innerHTML += `<div class="msg msg-bot" id="${lid}" style="color:var(--muted)"><div class="spin" style="border-top-color:var(--teal);border-color:var(--line);"></div></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+
+  try {
+    const patCtx = patient.name ? `بيانات المريض: الاسم: ${patient.name}, العمر: ${patient.age}, الوزن: ${patient.weight}كغ, الأمراض: ${patient.diseases || "لا يوجد"}, الحساسية: ${patient.allergy || "لا يوجد"}.` : "";
+    const r = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6", max_tokens: 1000,
+        system: `أنت صيدلاني طبي متخصص تقدم معلومات دوائية دقيقة باللغة العربية. ردودك مفيدة وواضحة وتشمل: الجرعة، الاستخدام، الآثار الجانبية، التحذيرات. دائماً أنهِ بنصيحة مراجعة الطبيب. لا تتجاوز 300 كلمة. ${patCtx}`,
+        messages: [{ role: "user", content: q }]
+      })
+    });
+    const data = await r.json();
+    const text = data.content?.map(b => b.text || "").join("") || "عذراً، تعذّر الحصول على رد.";
+    document.getElementById(lid).innerHTML = text.replace(/\n/g, "<br>");
+  } catch (e) {
+    document.getElementById(lid).innerHTML = "⚠️ تعذّر الاتصال. تأكد من الإنترنت.";
+  }
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ════════════════ WAITLIST ════════════════
+let selectedPlan = "pro";
+function selectPlan(el, plan) {
+  document.querySelectorAll(".plan-card").forEach(c => c.classList.remove("selected"));
+  el.classList.add("selected");
+  selectedPlan = plan;
+}
+
+function joinWaitlist() {
+  const name = document.getElementById("wlName").value.trim();
+  const email = document.getElementById("wlEmail").value.trim();
+  const prof = document.getElementById("wlProf").value;
+  const msg = document.getElementById("wlMsg");
+
+  if (!name || !email || !email.includes("@")) {
+    msg.innerHTML = `<div class="alert alert-warn">⚠️ أدخل الاسم والبريد الإلكتروني</div>`;
+    return;
+  }
+
+  const entry = { name, email, prof, plan: selectedPlan, date: new Date().toISOString() };
+  waitlist.push(entry);
+  try { localStorage.setItem("waitlist", JSON.stringify(waitlist)); } catch(e) {}
+
+  msg.innerHTML = `<div class="alert alert-ok">
+    🎉 <strong>شكراً ${name}!</strong><br>
+    تم تسجيلك في قائمة الانتظار للخطة ${selectedPlan === "pro" ? "⭐ Pro" : "🌿 الأساسية"}.<br>
+    سنتواصل معك على ${email} عند الإطلاق.
+  </div>`;
+  document.getElementById("wlName").value = "";
+  document.getElementById("wlEmail").value = "";
+  updateWaitlistCount();
+}
+
+function updateWaitlistCount() {
+  const count = waitlist.length + 47; // seed number
+  const el = document.getElementById("wlCount");
+  if (el) el.textContent = `👥 ${count} شخص سجّلوا في قائمة الانتظار حتى الآن`;
+}
+
+// ════════════════ UTILS ════════════════
+function openTelegram() {
+  window.open("https://t.me/DoseCalculatorBot", "_blank");
+}
+
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 3000);
+}
+
+// ════════════════ START ════════════════
+init();
+</script>
+</body>
+</html>
