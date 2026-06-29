@@ -532,7 +532,8 @@ def search_drugs(q):
     for d in DRUGS_DB:
         ar = str(d.get("name_ar", "")).lower()
         en = str(d.get("name_en", "")).lower()
-        aliases = str(d.get("aliases", "")).lower()
+        aliases_raw = d.get("aliases", [])
+        aliases = " ".join(aliases_raw).lower() if isinstance(aliases_raw, list) else str(aliases_raw).lower()
         key = en or ar
         if key in seen: continue
         if (q in ar or q in en or q in aliases or
