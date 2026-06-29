@@ -109,7 +109,7 @@ except ImportError:
 logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8755290007:AAEE86vBAy5GvvX5YNUT9goAmDPNs7NaRV0")
+BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8755290007:AAFYx4C08Aqq9YB89uJqdhbkjiO5KB1R6CY")
 
 # قراءة .env مبكراً
 _env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
@@ -146,10 +146,10 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_CHILD_CONC, STATE_PREMIUM,
  STATE_COUNTRY, STATE_REM_DURATION, STATE_INFECTION_SITE,
  STATE_CAL_GENDER, STATE_CAL_AGE, STATE_CAL_WEIGHT, STATE_CAL_HEIGHT, STATE_CAL_ACTIVITY, STATE_CAL_DISEASE,
- STATE_FOOD_SEARCH, STATE_SUGAR, STATE_BP, STATE_BP_AGE,
+ STATE_FOOD_SEARCH, STATE_SUGAR, STATE_DIET, STATE_BP, STATE_BP_AGE,
  STATE_PAT_MENU, STATE_PAT_NAME, STATE_PAT_AGE, STATE_PAT_WEIGHT,
  STATE_PAT_GENDER, STATE_PAT_DISEASE, STATE_PAT_MEDS, STATE_PAT_ALLERGY,
- STATE_INTERACTION, STATE_DRUG_FORM, STATE_PAT_NOTE, STATE_PAT_LOG) = range(43)
+ STATE_INTERACTION, STATE_DRUG_FORM, STATE_PAT_NOTE, STATE_PAT_LOG, STATE_DIET) = range(45)
 
 TEXTS = {
 "ar": {
@@ -532,7 +532,8 @@ def search_drugs(q):
     for d in DRUGS_DB:
         ar = str(d.get("name_ar", "")).lower()
         en = str(d.get("name_en", "")).lower()
-        aliases = str(d.get("aliases", "")).lower()
+        aliases_raw = d.get("aliases", [])
+        aliases = " ".join(aliases_raw).lower() if isinstance(aliases_raw, list) else str(aliases_raw).lower()
         key = en or ar
         if key in seen: continue
         if (q in ar or q in en or q in aliases or
@@ -1116,7 +1117,10 @@ def kb_main(lang):
         [InlineKeyboardButton(tx("btn_remind", lang), callback_data="m_remind")],
         [InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],
         [InlineKeyboardButton(tx("btn_settings", lang), callback_data="m_settings")],
-        [InlineKeyboardButton("📖 " + ("دليل المستخدم" if lang=="ar" else "User Guide"), callback_data="m_guide")]])
+        [InlineKeyboardButton("📖 " + ("دليل المستخدم" if lang=="ar" else "User Guide"), callback_data="m_guide")],
+        [InlineKeyboardButton("🥗 " + ("التغذية العلاجية" if lang=="ar" else "Therapeutic Diet"), callback_data="m_diet")],
+        [InlineKeyboardButton("🌐 " + ("تطبيق الويب" if lang=="ar" else "Web App"), url="https://tangerine-douhua-f161bf.netlify.app")]])
+
 
 def kb_back(lang):
     return InlineKeyboardMarkup([
@@ -1319,12 +1323,13 @@ async def rem_later(update, ctx):
     # نجدول تذكيراً بعد 15 دقيقة مع الصورة
     from datetime import timedelta
     next_time = datetime.now(TIMEZONE) + timedelta(minutes=15)
-    ctx.application.job_queue.run_once(
+    job = ctx.application.job_queue.run_once(
         send_alert,
         when=next_time,
         data={"chat_id": chat_id, "drug": drug, "lang": lang, "attempt": 1, "is_retry": True, "photo": photo_id},
         name="snooze_" + str(chat_id) + "_" + str(drug)
     )
+    logger.warning(f"✅ Snooze scheduled: {drug} at {next_time} job={job}")
 
 def sched(app, chat_id, drug, time_str, freq, lang, tz_str="Asia/Riyadh", photo=None):
     try:
@@ -1344,11 +1349,16 @@ def sched(app, chat_id, drug, time_str, freq, lang, tz_str="Asia/Riyadh", photo=
             times.append(dtime(new_h, new_m, tzinfo=user_tz))
         # نجدول run_daily لكل وقت
         for i, t in enumerate(times):
+            job_name = "rem_" + str(chat_id) + "_" + str(drug) + "_" + str(i)
+            # نتحقق أن الـ job غير موجود مسبقاً
+            existing = [j for j in app.job_queue.jobs() if j.name == job_name]
+            for j in existing:
+                j.schedule_removal()
             app.job_queue.run_daily(
                 send_alert,
                 time=t,
-                    data={"chat_id": chat_id, "drug": drug, "lang": lang, "photo": photo},
-                name="rem_" + str(chat_id) + "_" + str(drug) + "_" + str(i))
+                data={"chat_id": chat_id, "drug": drug, "lang": lang, "photo": photo},
+                name=job_name)
         logger.info("sched: " + str(drug) + " x" + str(freq) + " times=" + str([str(t) for t in times]))
     except Exception as e:
         logger.error(f"sched error: {e}")
@@ -1577,6 +1587,68 @@ async def sub_select(u, ctx):
     await q.message.edit_text(msg, reply_markup=btns)
     return STATE_MAIN_MENU
 
+
+async def diet_search(u, ctx):
+    lang = get_lang(ctx)
+    query = u.message.text.strip()
+    thinking = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
+    try:
+        if lang == "ar":
+            prompt = f"""أنت أخصائي تغذية علاجية. أعطني خطة غذائية لمريض: {query}
+أجب بالعربية فقط بهذا التنسيق:
+
+✅ الأطعمة المسموحة:
+[قائمة مفصلة]
+
+❌ الأطعمة الممنوعة:
+[قائمة مفصلة]
+
+⭐ الأطعمة المفيدة جداً:
+[قائمة مع السبب]
+
+💡 نصائح غذائية مهمة:
+[نصائح مختصرة]
+
+⚠️ تحذيرات:
+[تحذيرات مهمة]"""
+        else:
+            prompt = f"""You are a clinical nutritionist. Give dietary plan for: {query}
+Reply in English ONLY with this format:
+
+✅ Allowed Foods:
+[detailed list]
+
+❌ Forbidden Foods:
+[detailed list]
+
+⭐ Most Beneficial Foods:
+[list with reasons]
+
+💡 Important Dietary Tips:
+[brief tips]
+
+⚠️ Warnings:
+[important warnings]"""
+
+        async with httpx.AsyncClient(timeout=30) as c:
+            r = await c.post("https://api.anthropic.com/v1/messages",
+                headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                json={"model": "claude-haiku-4-5-20251001", "max_tokens": 1500,
+                      "messages": [{"role": "user", "content": prompt}]})
+            result = r.json().get("content", [{}])[0].get("text", "").strip()
+        await thinking.delete()
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🥗 " + ("بحث آخر" if lang=="ar" else "Another Search"), callback_data="m_diet")],
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+        ])
+        await u.message.reply_text(result[:4000], reply_markup=btns)
+        return STATE_DIET
+    except Exception as e:
+        try: await thinking.delete()
+        except: pass
+        await u.message.reply_text(tx("not_found", lang), reply_markup=kb_back(lang))
+        return STATE_DIET
+
 async def go_back(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
@@ -1647,6 +1719,9 @@ async def main_cb(u, ctx):
     elif q.data == "m_food":
         await q.message.edit_text("🍎 " + ("أدخل اسم الطعام والكمية بالغرام:" if lang=="ar" else "Enter food name and grams:"), reply_markup=kb_back(lang))
         return STATE_FOOD_SEARCH
+    elif q.data == "m_diet":
+        await q.message.edit_text("🥗 " + ("اكتب اسم المرض للحصول على خطة غذائية:" if lang=="ar" else "Enter disease name for dietary plan:") + chr(10) + ("مثال: سكري، ضغط، كوليسترول، قلب، كلى..." if lang=="ar" else "Example: diabetes, hypertension, cholesterol..."), reply_markup=kb_back(lang))
+        return STATE_DIET
     elif q.data == "m_guide":
         if lang == "ar":
             g_txt = "📖 دليل مساعد الطبيب" + chr(10)*2 + "💊 استعلام دواء: اكتب اسم الدواء" + chr(10) + "👶 جرعات الأطفال: اختر الشكل وأدخل الوزن" + chr(10) + "📋 ملف المريض: احفظ بيانات مرضاك" + chr(10) + "💉 الضغط: أدخل القراءة مع الفئة العمرية" + chr(10) + "🩸 السكر: أدخل الرقم واختر النوع" + chr(10) + "⏰ التذكيرات: لا تنسى دواءك" + chr(10) + "📸 الصور: أرسل صورة العبوة"
@@ -1680,8 +1755,15 @@ async def drug_search_image(u, ctx):
     photo = u.message.photo[-1]
     f = await photo.get_file()
     img = await f.download_as_bytearray()
-    name = await analyze_image(bytes(img), lang)
+    try:
+        name = await analyze_image(bytes(img), lang)
+    except Exception as e:
+        await u.message.reply_text("❌ خطأ: " + str(e)[:50])
+        return STATE_DRUG_SEARCH
     await msg.delete()
+    if not name:
+        await u.message.reply_text("❌ لم يتعرف")
+        return STATE_DRUG_SEARCH
     if not name:
         btns = InlineKeyboardMarkup([
             [InlineKeyboardButton("✏️ " + ("أدخل الاسم يدوياً" if lang=="ar" else "Type name manually"), callback_data="manual_input")],
@@ -1691,20 +1773,67 @@ async def drug_search_image(u, ctx):
         msg = "❌ لم أتعرف على الدواء\n\n💡 جرّب صورة أوضح أو أدخل الاسم يدوياً" if lang=="ar" else "❌ Could not identify drug\n\n💡 Try a clearer photo or type the name"
         await u.message.reply_text(msg, reply_markup=kb_image_result(lang))
         return STATE_DRUG_SEARCH
-    res = search_drugs(name)
-    if not res:
-        await u.message.reply_text("📸 " + name + "\n\n" + ("❌ لم يُعثر على الدواء" if lang=="ar" else "❌ Drug not found"), reply_markup=kb_image_result(lang, name), parse_mode=ParseMode.MARKDOWN)
-        return STATE_DRUG_SEARCH
     track(u, "searches")
-    if len(res) == 1:
-        ctx.user_data["img_drug"] = name
-        await u.message.reply_text("📸 " + name + "\n\n" + fmt_drug(res[0], lang), reply_markup=kb_image_result(lang, name), parse_mode=ParseMode.MARKDOWN)
+    ctx.user_data["img_drug"] = name
+    await u.message.reply_text("🔵 starting claude for: " + str(name)[:20])
+    # نستخدم Claude للمعلومات الكاملة
+    thinking2 = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
+    try:
+        if lang == "ar":
+            prompt = f"""أنت صيدلاني خبير. أعطني معلومات شاملة ودقيقة عن: {name}
+أجب بالعربية فقط بهذا التنسيق الدقيق ولا تترك أي حقل فارغاً:
+💊 الاسم العلمي: 
+🏷️ الأسماء التجارية: 
+🏥 التصنيف الدوائي: 
+📋 الاستخدامات: 
+💉 جرعة البالغين: 
+👶 جرعة الأطفال: 
+⚠️ الآثار الجانبية الشائعة: 
+🚨 الآثار الجانبية الخطيرة: 
+🚫 موانع الاستخدام: 
+💊 التفاعلات الدوائية: 
+🤰 الحمل: 
+🍼 الرضاعة: 
+🫘 القصور الكلوي: 
+❗ تحذيرات خاصة:"""
+        else:
+            prompt = f"""You are an expert pharmacist. Give complete accurate information about: {name}
+Reply in English ONLY with this exact format:
+💊 Generic Name: 
+🏷️ Brand Names: 
+🏥 Drug Class: 
+📋 Indications: 
+💉 Adult Dose: 
+👶 Pediatric Dose: 
+⚠️ Common Side Effects: 
+🚨 Serious Side Effects: 
+🚫 Contraindications: 
+💊 Drug Interactions: 
+🤰 Pregnancy: 
+🍼 Lactation: 
+🫘 Renal Impairment: 
+❗ Special Warnings:"""
+        async with httpx.AsyncClient(timeout=60) as c:
+            r = await c.post("https://api.anthropic.com/v1/messages",
+                headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                json={"model": "claude-haiku-4-5-20251001", "max_tokens": 1500,
+                      "messages": [{"role": "user", "content": prompt}]})
+            result = r.json().get("content", [{}])[0].get("text", "").strip()
+        await thinking2.delete()
+        drug_link = f"https://www.drugs.com/search.php?searchterm={name.lower().replace(' ','+')}"
+        ref = chr(10)*2 + ("🔗 مرجع: " if lang=="ar" else "🔗 Reference: ") + "drugs.com" + (chr(10)*2 + "⚠️ للاسترشاد فقط — استشر طبيبك أو صيدلانيك" if lang=="ar" else chr(10)*2 + "⚠️ For informational purposes only — consult your doctor")
+        final = "📸 " + name + chr(10)*2 + result + ref
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🔍 " + ("استعلام آخر" if lang=="ar" else "Another Search"), callback_data="m_search")],
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+        ])
+        await u.message.reply_text(final[:4000], reply_markup=btns)
         return STATE_DRUG_SEARCH
-    btns = [[InlineKeyboardButton(
-        str(d.get("name_ar" if lang=="ar" else "name_en", "?")),
-        callback_data=f"ds_{i}")] for i, d in enumerate(res)]
-    btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
-    await u.message.reply_text("📸 " + name + chr(10) + chr(10) + tx("multi_results", lang), reply_markup=InlineKeyboardMarkup(btns), parse_mode=ParseMode.MARKDOWN)
+    except Exception as e:
+        try: await thinking2.delete()
+        except: pass
+        await u.message.reply_text("❌ خطأ: " + str(e)[:80])
+        logger.error(f"drug_search_image claude: {e}")
     return STATE_DRUG_SEARCH
 
 async def drug_search(u, ctx):
@@ -1769,7 +1898,7 @@ Write N/A if unknown. Never leave any field empty."""
         await thinking.delete()
 
         if result:
-            drug_link = f"https://www.drugs.com/{query.lower().replace(' ','_')}.html"
+            drug_link = f"https://www.drugs.com/search.php?searchterm={query.lower().replace(' ','+')}"
             ref = chr(10)*2 + ("🔗 مرجع طبي: " if lang=="ar" else "🔗 Reference: ") + f"drugs.com"
             final = result + ref
 
@@ -4341,12 +4470,13 @@ async def rem_edit_val(u, ctx):
     for r in get_rems(ctx):
         if r["id"] == rid:
             try:
-                # نحذف الجدولة القديمة
+                # نحذف كل jobs المرتبطة بهذا التذكير
                 drug_name = r.get("drug","")
                 uid = str(u.effective_user.id)
                 for job in ctx.application.job_queue.jobs():
-                    if uid in job.name and drug_name in job.name:
+                    if ("rem_" + uid in job.name or "snooze_" + uid in job.name) and drug_name in job.name:
                         job.schedule_removal()
+                        logger.warning(f"🗑️ Removed job: {job.name}")
                 # نضيف جدولة جديدة
                 sched(ctx.application, u.effective_chat.id, r["drug"], r["time"], r["freq"], lang, 
                       ctx.user_data.get("timezone","Asia/Riyadh"), photo=r.get("photo"))
@@ -4467,6 +4597,10 @@ def build_conv():
                 CallbackQueryHandler(cal_activity, pattern="^act_")],
             STATE_CAL_DISEASE: [
                 CallbackQueryHandler(cal_disease, pattern="^dis_")],
+            STATE_DIET: [
+                CallbackQueryHandler(go_back, pattern="^back$"),
+                CallbackQueryHandler(main_cb, pattern="^m_diet$"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, diet_search)],
             STATE_FOOD_SEARCH: [
                 CallbackQueryHandler(main_cb, pattern="^m_food$"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
@@ -4690,6 +4824,11 @@ If not available as syrup write: NOT_SYRUP"""
 
 async def restore_reminders(app):
     """إعادة جدولة التذكيرات عند بدء التشغيل"""
+    # نحذف كل jobs القديمة أولاً
+    for job in app.job_queue.jobs():
+        if job.name and job.name.startswith("rem_"):
+            job.schedule_removal()
+    
     all_rems = load_all_reminders()
     count = 0
     for uid, rems in all_rems.items():
