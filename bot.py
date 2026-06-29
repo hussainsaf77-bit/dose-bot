@@ -1117,8 +1117,7 @@ def kb_main(lang):
         [InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],
         [InlineKeyboardButton(tx("btn_settings", lang), callback_data="m_settings")],
         [InlineKeyboardButton("📖 " + ("دليل المستخدم" if lang=="ar" else "User Guide"), callback_data="m_guide")],
-        [InlineKeyboardButton("🥗 " + ("التغذية العلاجية" if lang=="ar" else "Therapeutic Diet"), callback_data="m_diet")],
-        [InlineKeyboardButton("🌐 " + ("تطبيق الويب" if lang=="ar" else "Web App"), url="https://tangerine-douhua-f161bf.netlify.app")]])
+        [InlineKeyboardButton("🥗 " + ("التغذية العلاجية" if lang=="ar" else "Therapeutic Diet"), callback_data="m_diet")]])
 
 
 def kb_back(lang):
@@ -1754,15 +1753,8 @@ async def drug_search_image(u, ctx):
     photo = u.message.photo[-1]
     f = await photo.get_file()
     img = await f.download_as_bytearray()
-    try:
-        name = await analyze_image(bytes(img), lang)
-    except Exception as e:
-        await u.message.reply_text("❌ خطأ: " + str(e)[:50])
-        return STATE_DRUG_SEARCH
+    name = await analyze_image(bytes(img), lang)
     await msg.delete()
-    if not name:
-        await u.message.reply_text("❌ لم يتعرف")
-        return STATE_DRUG_SEARCH
     if not name:
         btns = InlineKeyboardMarkup([
             [InlineKeyboardButton("✏️ " + ("أدخل الاسم يدوياً" if lang=="ar" else "Type name manually"), callback_data="manual_input")],
@@ -1812,15 +1804,15 @@ Reply in English ONLY with this exact format:
 🍼 Lactation: 
 🫘 Renal Impairment: 
 ❗ Special Warnings:"""
-        async with httpx.AsyncClient(timeout=60) as c:
+        async with httpx.AsyncClient(timeout=30) as c:
             r = await c.post("https://api.anthropic.com/v1/messages",
                 headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
                 json={"model": "claude-haiku-4-5-20251001", "max_tokens": 1500,
                       "messages": [{"role": "user", "content": prompt}]})
             result = r.json().get("content", [{}])[0].get("text", "").strip()
         await thinking2.delete()
-        drug_link = f"https://www.drugs.com/search.php?searchterm={name.lower().replace(' ','+')}"
-        ref = chr(10)*2 + ("🔗 مرجع: " if lang=="ar" else "🔗 Reference: ") + "drugs.com" + (chr(10)*2 + "⚠️ للاسترشاد فقط — استشر طبيبك أو صيدلانيك" if lang=="ar" else chr(10)*2 + "⚠️ For informational purposes only — consult your doctor")
+        drug_link = f"https://www.drugs.com/{name.lower().replace(' ','_')}.html"
+        ref = chr(10)*2 + ("🔗 مرجع: " if lang=="ar" else "🔗 Reference: ") + "drugs.com"
         final = "📸 " + name + chr(10)*2 + result + ref
         btns = InlineKeyboardMarkup([
             [InlineKeyboardButton("🔍 " + ("استعلام آخر" if lang=="ar" else "Another Search"), callback_data="m_search")],
@@ -1831,8 +1823,12 @@ Reply in English ONLY with this exact format:
     except Exception as e:
         try: await thinking2.delete()
         except: pass
-        await u.message.reply_text("❌ خطأ: " + str(e)[:80])
         logger.error(f"drug_search_image claude: {e}")
+    btns = [[InlineKeyboardButton(
+        str(d.get("name_ar" if lang=="ar" else "name_en", "?")),
+        callback_data=f"ds_{i}")] for i, d in enumerate(res)]
+    btns.append([InlineKeyboardButton(tx("btn_back", lang), callback_data="back")])
+    await u.message.reply_text("📸 " + name + chr(10) + chr(10) + tx("multi_results", lang), reply_markup=InlineKeyboardMarkup(btns), parse_mode=ParseMode.MARKDOWN)
     return STATE_DRUG_SEARCH
 
 async def drug_search(u, ctx):
@@ -1897,7 +1893,7 @@ Write N/A if unknown. Never leave any field empty."""
         await thinking.delete()
 
         if result:
-            drug_link = f"https://www.drugs.com/search.php?searchterm={query.lower().replace(' ','+')}"
+            drug_link = f"https://www.drugs.com/{query.lower().replace(' ','_')}.html"
             ref = chr(10)*2 + ("🔗 مرجع طبي: " if lang=="ar" else "🔗 Reference: ") + f"drugs.com"
             final = result + ref
 
