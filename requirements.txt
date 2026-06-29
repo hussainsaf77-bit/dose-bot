@@ -2,3 +2,4 @@ python-telegram-bot[job-queue]==22.*
 httpx
 pytz
 supabase
+tzdata>=2024.1

@@ -108,9 +108,7 @@ except ImportError:
 
 logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8755290007:AAFYx4C08Aqq9YB89uJqdhbkjiO5KB1R6CY")
-
+BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 # قراءة .env مبكراً
 _env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
 if os.path.exists(_env_file):
@@ -131,7 +129,7 @@ if os.path.exists(_env_path):
                 _ek, _ev = _el.split("=", 1)
                 os.environ[_ek.strip()] = _ev.strip()
 
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 logger.info(f"API Key loaded: {len(ANTHROPIC_API_KEY)} chars")
 DRUGS_FILE = "drugs.json"
 REMINDER_SOUND = "reminder.mp3"
@@ -959,7 +957,7 @@ INFECTION_SITES = {
 async def analyze_image(img_bytes, lang):
     try:
         import telegram as _tg
-        bot = _tg.Bot(token=os.environ.get("TELEGRAM_BOT_TOKEN",""))
+        bot = _tg.Bot(token=BOT_TOKEN)
     except: pass
     if not HTTPX_OK or not ANTHROPIC_API_KEY:
         logger.warning("No API key")
