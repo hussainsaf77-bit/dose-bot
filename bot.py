@@ -1819,7 +1819,7 @@ Reply in English ONLY with this exact format:
             result = r.json().get("content", [{}])[0].get("text", "").strip()
         await thinking2.delete()
         drug_link = f"https://www.drugs.com/search.php?searchterm={name.lower().replace(' ','+')}"
-        ref = chr(10)*2 + ("🔗 مرجع: " if lang=="ar" else "🔗 Reference: ") + "drugs.com" + (chr(10)*2 + "⚠️ للاسترشاد فقط — استشر طبيبك أو صيدلانيك" if lang=="ar" else chr(10)*2 + "⚠️ For informational purposes only — consult your doctor")
+        ref = chr(10)*2 + ("⚠️ للاسترشاد فقط — استشر طبيبك أو صيدلانيك\n\n🔗 مرجع: " if lang=="ar" else "⚠️ For reference only — consult your doctor\n\n🔗 Reference: ") + drug_link
         final = "📸 " + name + chr(10)*2 + result + ref
         btns = InlineKeyboardMarkup([
             [InlineKeyboardButton("🔍 " + ("استعلام آخر" if lang=="ar" else "Another Search"), callback_data="m_search")],
@@ -1897,7 +1897,7 @@ Write N/A if unknown. Never leave any field empty."""
 
         if result:
             drug_link = f"https://www.drugs.com/search.php?searchterm={query.lower().replace(' ','+')}"
-            ref = chr(10)*2 + ("🔗 مرجع طبي: " if lang=="ar" else "🔗 Reference: ") + f"drugs.com"
+            ref = chr(10)*2 + ("⚠️ للاسترشاد فقط — استشر طبيبك أو صيدلانيك\n\n🔗 مرجع طبي: " if lang=="ar" else "⚠️ For reference only — consult your doctor\n\n🔗 Reference: ") + drug_link
             final = result + ref
 
             btns = InlineKeyboardMarkup([
