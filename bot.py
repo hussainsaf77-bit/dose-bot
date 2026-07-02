@@ -1818,7 +1818,8 @@ Reply in English ONLY with this exact format:
                       "messages": [{"role": "user", "content": prompt}]})
             result = r.json().get("content", [{}])[0].get("text", "").strip()
         await thinking2.delete()
-        drug_link = f"https://www.drugs.com/search.php?searchterm={name.lower().replace(' ','+')}"
+        en_name = name if not any(ord(c) > 127 for c in name) else (result.split("Generic Name:")[-1].split("\n")[0].strip() if "Generic Name:" in result else name)
+        drug_link = f"https://www.drugs.com/search.php?searchterm={en_name.lower().replace(' ','+')}"
         ref = chr(10)*2 + ("⚠️ للاسترشاد فقط — استشر طبيبك أو صيدلانيك\n\n🔗 مرجع: " if lang=="ar" else "⚠️ For reference only — consult your doctor\n\n🔗 Reference: ") + drug_link
         final = "📸 " + name + chr(10)*2 + result + ref
         btns = InlineKeyboardMarkup([
@@ -1896,7 +1897,7 @@ Write N/A if unknown. Never leave any field empty."""
         await thinking.delete()
 
         if result:
-            drug_link = f"https://www.drugs.com/search.php?searchterm={query.lower().replace(' ','+')}"
+            drug_link = f"https://www.drugs.com/search.php?searchterm={en_name.lower().replace(' ','+')}"
             ref = chr(10)*2 + ("⚠️ للاسترشاد فقط — استشر طبيبك أو صيدلانيك\n\n🔗 مرجع طبي: " if lang=="ar" else "⚠️ For reference only — consult your doctor\n\n🔗 Reference: ") + drug_link
             final = result + ref
 
