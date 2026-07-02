@@ -151,7 +151,7 @@ REMINDER_SOUND = "reminder.mp3"
 
 TEXTS = {
 "ar": {
-"welcome": "🏥 *مرحباً في بوت حاسبة الجرعات*\n🏥 *Welcome to Dose Calculator Bot*\n\nاختر لغتك | Choose your language:",
+"welcome": "🌟 *أهلاً بك في بوت الدواء!*\n\n⚠️ *إخلاء مسؤولية:*\nهذا البوت أداة توعوية فقط \n• لا يُعدّ بديلاً عن استشارة طبيب أو صيدلاني \n• لا يتحمل القائمون مسؤولية أي قرار علاجي \n• في الطوارئ، تواصل مع طبيبك فوراً \n\n━━━━━━━━━━━━━━━━━━━━\n\n🌟 *Welcome to the Medicine Bot!*\n\n⚠️ *Disclaimer:*\nThis bot is for educational purposes only \n• Not a substitute for medical consultation \n• Not responsible for any medical decision \n• In emergencies, contact your doctor immediately \n\nاختر لغتك | Choose your language:",
 "main_menu": "📋 *القائمة الرئيسية*\n\nاختر:",
 "btn_search": "🔍 استعلام عن دواء",
 "btn_child": "🍼 جرعات الأطفال",
@@ -230,7 +230,7 @@ TEXTS = {
 "bad_freq": "❌ أدخل رقماً من 1 إلى 6.",
 },
 "en": {
-"welcome": "🏥 *مرحباً في بوت حاسبة الجرعات*\n🏥 *Welcome to Dose Calculator Bot*\n\nاختر لغتك | Choose your language:",
+"welcome": "🌟 *أهلاً بك في بوت الدواء!*\n\n⚠️ *إخلاء مسؤولية:*\nهذا البوت أداة توعوية تثقيفية فقط \n• لا يُعدّ بديلاً عن استشارة طبيب أو صيدلاني \n• لا يتحمل القائمون على البوت أي مسؤولية عن أي قرار علاجي \n• في حالات الطوارئ، تواصل مع طبيبك فوراً \n\n━━━━━━━━━━━━━━━━━━━━\n\n🌟 *Welcome to the Medicine Bot!*\n\n⚠️ *Disclaimer:*\nThis bot is for educational purposes only \n• Not a substitute for medical consultation \n• Operators are not responsible for any medical decision \n• In emergencies, contact your doctor immediately \n\nاختر لغتك | Choose your language:",
 "main_menu": "📋 *Main Menu*\n\nChoose:",
 "btn_search": "🔍 Drug Search",
 "btn_child": "🍼 Child Doses",
@@ -1074,7 +1074,7 @@ async def analyze_image(img_bytes, lang):
                     logger.info(f"Concentration found: {concentration}")
 
         # تنظيف اسم الدواء
-        drug_name = _re.sub(r"[#*\.,:;]", "", drug_name).strip().lower()
+        drug_name = _re.sub(r"[#* ,:;]", "", drug_name).strip().lower()
 
         if not drug_name or drug_name == "unknown":
             return ""
