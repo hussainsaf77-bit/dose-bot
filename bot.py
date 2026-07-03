@@ -1864,7 +1864,7 @@ async def drug_search(u, ctx):
 🏥 القصور الكبدي: 
 ❗ تحذيرات خاصة: 
 
-إذا لم تعرف اكتب: غير متاح. لا تترك أي حقل فارغاً أبداً."""
+إذا لم تعرف اكتب: غير متاح. لا تترك أي حقل فارغاً.\n🔤 English Name: [اكتب الاسم الإنجليزي للدواء فقط بدون أي إضافة]"""
         else:
             prompt = f"""You are an expert pharmacist. Give complete accurate information about: {query}
 Reply in English ONLY with this exact format, never leave any field empty:
@@ -1897,7 +1897,7 @@ Write N/A if unknown. Never leave any field empty."""
         await thinking.delete()
 
         if result:
-            en_name = query if not any(ord(c) > 127 for c in query) else (result.split("Generic Name:")[-1].split("\n")[0].strip() if "Generic Name:" in result else query)
+            en_name = query if not any(ord(c) > 127 for c in query) else (result.split("English Name:")[-1].split("\n")[0].strip().strip("[]") if "English Name:" in result else query)
             drug_link = f"https://www.drugs.com/search.php?searchterm={en_name.lower().replace(' ','+')}"
             ref = chr(10)*2 + ("⚠️ للاسترشاد فقط — استشر طبيبك أو صيدلانيك\n\n🔗 مرجع طبي: " if lang=="ar" else "⚠️ For reference only — consult your doctor\n\n🔗 Reference: ") + drug_link
             final = result + ref
