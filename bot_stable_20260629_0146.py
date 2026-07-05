@@ -108,7 +108,9 @@ except ImportError:
 
 logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
-BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+
+BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8755290007:AAEi2PSFYg9AGRtOGVGTRjaEp9ifuXXwF9A")
+
 # قراءة .env مبكراً
 _env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
 if os.path.exists(_env_file):
@@ -129,7 +131,7 @@ if os.path.exists(_env_path):
                 _ek, _ev = _el.split("=", 1)
                 os.environ[_ek.strip()] = _ev.strip()
 
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 logger.info(f"API Key loaded: {len(ANTHROPIC_API_KEY)} chars")
 DRUGS_FILE = "drugs.json"
 REMINDER_SOUND = "reminder.mp3"
@@ -151,7 +153,7 @@ REMINDER_SOUND = "reminder.mp3"
 
 TEXTS = {
 "ar": {
-"welcome": "🌟 *أهلاً بك في بوت الدواء!*\n\n⚠️ *إخلاء مسؤولية:*\nهذا البوت أداة توعوية فقط \n• لا يُعدّ بديلاً عن استشارة طبيب أو صيدلاني \n• لا يتحمل القائمون مسؤولية أي قرار علاجي \n• في الطوارئ، تواصل مع طبيبك فوراً \n\n━━━━━━━━━━━━━━━━━━━━\n\n🌟 *Welcome to the Medicine Bot!*\n\n⚠️ *Disclaimer:*\nThis bot is for educational purposes only \n• Not a substitute for medical consultation \n• Not responsible for any medical decision \n• In emergencies, contact your doctor immediately \n\nاختر لغتك | Choose your language:",
+"welcome": "🏥 *مرحباً في بوت حاسبة الجرعات*\n🏥 *Welcome to Dose Calculator Bot*\n\nاختر لغتك | Choose your language:",
 "main_menu": "📋 *القائمة الرئيسية*\n\nاختر:",
 "btn_search": "🔍 استعلام عن دواء",
 "btn_child": "🍼 جرعات الأطفال",
@@ -230,7 +232,7 @@ TEXTS = {
 "bad_freq": "❌ أدخل رقماً من 1 إلى 6.",
 },
 "en": {
-"welcome": "🌟 *أهلاً بك في بوت الدواء!*\n\n⚠️ *إخلاء مسؤولية:*\nهذا البوت أداة توعوية تثقيفية فقط \n• لا يُعدّ بديلاً عن استشارة طبيب أو صيدلاني \n• لا يتحمل القائمون على البوت أي مسؤولية عن أي قرار علاجي \n• في حالات الطوارئ، تواصل مع طبيبك فوراً \n\n━━━━━━━━━━━━━━━━━━━━\n\n🌟 *Welcome to the Medicine Bot!*\n\n⚠️ *Disclaimer:*\nThis bot is for educational purposes only \n• Not a substitute for medical consultation \n• Operators are not responsible for any medical decision \n• In emergencies, contact your doctor immediately \n\nاختر لغتك | Choose your language:",
+"welcome": "🏥 *مرحباً في بوت حاسبة الجرعات*\n🏥 *Welcome to Dose Calculator Bot*\n\nاختر لغتك | Choose your language:",
 "main_menu": "📋 *Main Menu*\n\nChoose:",
 "btn_search": "🔍 Drug Search",
 "btn_child": "🍼 Child Doses",
@@ -530,8 +532,7 @@ def search_drugs(q):
     for d in DRUGS_DB:
         ar = str(d.get("name_ar", "")).lower()
         en = str(d.get("name_en", "")).lower()
-        aliases_raw = d.get("aliases", [])
-        aliases = " ".join(aliases_raw).lower() if isinstance(aliases_raw, list) else str(aliases_raw).lower()
+        aliases = str(d.get("aliases", "")).lower()
         key = en or ar
         if key in seen: continue
         if (q in ar or q in en or q in aliases or
@@ -957,7 +958,7 @@ INFECTION_SITES = {
 async def analyze_image(img_bytes, lang):
     try:
         import telegram as _tg
-        bot = _tg.Bot(token=BOT_TOKEN)
+        bot = _tg.Bot(token=os.environ.get("TELEGRAM_BOT_TOKEN",""))
     except: pass
     if not HTTPX_OK or not ANTHROPIC_API_KEY:
         logger.warning("No API key")
@@ -1074,7 +1075,7 @@ async def analyze_image(img_bytes, lang):
                     logger.info(f"Concentration found: {concentration}")
 
         # تنظيف اسم الدواء
-        drug_name = _re.sub(r"[#* ,:;]", "", drug_name).strip().lower()
+        drug_name = _re.sub(r"[#*\.,:;]", "", drug_name).strip().lower()
 
         if not drug_name or drug_name == "unknown":
             return ""
@@ -1818,9 +1819,8 @@ Reply in English ONLY with this exact format:
                       "messages": [{"role": "user", "content": prompt}]})
             result = r.json().get("content", [{}])[0].get("text", "").strip()
         await thinking2.delete()
-        en_name = name if not any(ord(c) > 127 for c in name) else (result.split("Generic Name:")[-1].split("\n")[0].strip() if "Generic Name:" in result else name)
-        drug_link = f"https://www.drugs.com/search.php?searchterm={en_name.lower().replace(' ','+')}"
-        ref = chr(10)*2 + ("⚠️ للاسترشاد فقط — استشر طبيبك أو صيدلانيك\n\n🔗 مرجع: " if lang=="ar" else "⚠️ For reference only — consult your doctor\n\n🔗 Reference: ") + drug_link
+        drug_link = f"https://www.drugs.com/search.php?searchterm={name.lower().replace(' ','+')}"
+        ref = chr(10)*2 + ("🔗 مرجع: " if lang=="ar" else "🔗 Reference: ") + "drugs.com" + (chr(10)*2 + "⚠️ للاسترشاد فقط — استشر طبيبك أو صيدلانيك" if lang=="ar" else chr(10)*2 + "⚠️ For informational purposes only — consult your doctor")
         final = "📸 " + name + chr(10)*2 + result + ref
         btns = InlineKeyboardMarkup([
             [InlineKeyboardButton("🔍 " + ("استعلام آخر" if lang=="ar" else "Another Search"), callback_data="m_search")],
@@ -1864,7 +1864,7 @@ async def drug_search(u, ctx):
 🏥 القصور الكبدي: 
 ❗ تحذيرات خاصة: 
 
-إذا لم تعرف اكتب: غير متاح. لا تترك أي حقل فارغاً.\n🔤 English Name: [اكتب الاسم الإنجليزي للدواء فقط بدون أي إضافة]"""
+إذا لم تعرف اكتب: غير متاح. لا تترك أي حقل فارغاً أبداً."""
         else:
             prompt = f"""You are an expert pharmacist. Give complete accurate information about: {query}
 Reply in English ONLY with this exact format, never leave any field empty:
@@ -1885,8 +1885,7 @@ Reply in English ONLY with this exact format, never leave any field empty:
 🏥 Hepatic Impairment: 
 ❗ Special Warnings: 
 
-Write N/A if unknown. Never leave any field empty.
-🔤 English Name: [write the English drug name only]"""
+Write N/A if unknown. Never leave any field empty."""
 
         async with httpx.AsyncClient(timeout=30) as c:
             r = await c.post("https://api.anthropic.com/v1/messages",
@@ -1898,9 +1897,8 @@ Write N/A if unknown. Never leave any field empty.
         await thinking.delete()
 
         if result:
-            en_name = query if not any(ord(c) > 127 for c in query) else (result.split("English Name:")[-1].split("\n")[0].strip().strip("[]") if "English Name:" in result else query)
-            drug_link = f"https://www.drugs.com/search.php?searchterm={en_name.lower().replace(' ','+')}"
-            ref = chr(10)*2 + ("⚠️ للاسترشاد فقط — استشر طبيبك أو صيدلانيك\n\n🔗 مرجع طبي: " if lang=="ar" else "⚠️ For reference only — consult your doctor\n\n🔗 Reference: ") + drug_link
+            drug_link = f"https://www.drugs.com/search.php?searchterm={query.lower().replace(' ','+')}"
+            ref = chr(10)*2 + ("🔗 مرجع طبي: " if lang=="ar" else "🔗 Reference: ") + f"drugs.com"
             final = result + ref
 
             btns = InlineKeyboardMarkup([
