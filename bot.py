@@ -1773,8 +1773,7 @@ async def drug_search_image(u, ctx):
         return STATE_DRUG_SEARCH
     track(u, "searches")
     ctx.user_data["img_drug"] = name
-    await u.message.reply_text("🔵 starting claude for: " + str(name)[:20])
-    # نستخدم Claude للمعلومات الكاملة
+        # نستخدم Claude للمعلومات الكاملة
     thinking2 = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
     try:
         if lang == "ar":
