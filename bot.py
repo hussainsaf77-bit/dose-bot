@@ -1818,8 +1818,8 @@ Reply in English ONLY with this exact format:
             result = r.json().get("content", [{}])[0].get("text", "").strip()
         await thinking2.delete()
         en_name = name if not any(ord(c) > 127 for c in name) else (result.split("Generic Name:")[-1].split("\n")[0].strip() if "Generic Name:" in result else name)
-        drug_link = f"https://www.drugs.com/search.php?searchterm={en_name.lower().replace(' ','+')}"
-        ref = chr(10)*2 + ("⚠️ للاسترشاد فقط — استشر طبيبك أو صيدلانيك\n\n🔗 مرجع: " if lang=="ar" else "⚠️ For reference only — consult your doctor\n\n🔗 Reference: ") + drug_link
+        ref = chr(10)*2 + ("⚠️ للاسترشاد فقط — استشر طبيبك أو صيدلانيك" if lang=="ar" else "⚠️ For reference only — consult your doctor")
+        
         final = "📸 " + name + chr(10)*2 + result + ref
         btns = InlineKeyboardMarkup([
             [InlineKeyboardButton("🔍 " + ("استعلام آخر" if lang=="ar" else "Another Search"), callback_data="m_search")],
