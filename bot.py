@@ -383,7 +383,7 @@ def save_stats(stats):
 def track(ctx, action="search"):
     stats = load_stats()
     uid = str(ctx.effective_user.id) if hasattr(ctx, "effective_user") and ctx.effective_user else "unknown"
-    stats["users"][uid] = stats["users"].get(uid, 0) + 1
+    existing = stats["users"].get(uid, 0); stats["users"][uid] = (existing + 1) if isinstance(existing, int) else 1
     stats[action] = stats.get(action, 0) + 1
     stats["total_requests"] = stats.get("total_requests", 0) + 1
     save_stats(stats)
