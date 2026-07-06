@@ -1074,8 +1074,7 @@ async def analyze_image(img_bytes, lang):
                     logger.info(f"Concentration found: {concentration}")
 
         # تنظيف اسم الدواء
-        # استخراج الاسم فقط قبل |
-if "|" in drug_name:
+        if "|" in drug_name:
             drug_name = drug_name.split("|")[0]
         drug_name = _re.sub(r"[#* ,:;|]", "", drug_name).strip().lower()
 
