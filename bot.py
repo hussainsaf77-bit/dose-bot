@@ -1887,6 +1887,7 @@ Reply in English ONLY with this exact format, never leave any field empty:
 ❗ Special Warnings: 
 
 Write N/A if unknown. Never leave any field empty.
+🔤 English Name: [write the English drug name only]
 🔤 English Name: [write the English drug name only]"""
 
         async with httpx.AsyncClient(timeout=30) as c:
