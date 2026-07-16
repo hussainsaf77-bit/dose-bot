@@ -151,7 +151,7 @@ REMINDER_SOUND = "reminder.mp3"
 
 TEXTS = {
 "ar": {
-"welcome": "🌟 *أهلاً بك في بوت جرعة الطبي!*\n\n━━━━━━━━━━━━━━━━━━━━\n\n⚕️ *إخلاء مسؤولية مهم:*\n\nهذا البوت أداة مرجعية تعليمية فقط ولا يُغني عن الاجتهاد السريري.\n\n• للكادر الصحي: المعلومات للاسترشاد فقط — القرار العلاجي يعود لك وحدك بناءً على تقييمك للمريض\n• للمرضى: لا تعتمد على البوت لتشخيص أو علاج أي حالة دون استشارة طبيبك\n• الجرعات تختلف حسب حالة كل مريض وعوامل أخرى لا يعلمها البوت\n• لا يتحمل القائمون على البوت أي مسؤولية قانونية أو طبية\n\n🚨 في الطوارئ: اتصل بالإسعاف فوراً\n\n━━━━━━━━━━━━━━━━━━━━\n\n🌟 *Welcome to Dose Medical Bot!*\n\n⚕️ *Important Disclaimer:*\n\nThis bot is a reference tool only and does not replace clinical judgment.\n\n• Healthcare professionals: Information is for reference only — clinical decisions are solely yours based on patient assessment\n• Patients: Never rely on this bot for diagnosis or treatment without consulting your doctor\n• Doses vary based on individual patient factors unknown to this bot\n• The bot operators bear no legal or medical responsibility\n\n🚨 Emergency: Call ambulance immediately\n\n━━━━━━━━━━━━━━━━━━━━\n\nاختر لغتك | Choose your language:",
+"welcome": "🌟 *أهلاً بك في بوت جرعة الطبي!*\n\n━━━━━━━━━━━━━━━━━━━━\n\n⚕️ *إخلاء مسؤولية مهم:*\n\nهذا البوت أداة مرجعية تعليمية فقط ولا يُغني عن الاجتهاد السريري.\n\n• للكادر الصحي: المعلومات للاسترشاد فقط — القرار العلاجي يعود لك وحدك بناءً على تقييمك للمريض\n• للمرضى: لا تعتمد على البوت لتشخيص أو علاج أي حالة دون استشارة طبيبك\n• الجرعات تختلف حسب حالة كل مريض وعوامل أخرى لا يعلمها البوت\n• لا يتحمل القائمون على البوت أي مسؤولية قانونية أو طبية\n\n🚨 في الطوارئ: اتصل بالإسعاف فوراً\n\n━━━━━━━━━━━━━━━━━━━━\n\n🌟 *Welcome to Dose Medical Bot!*\n\n⚕️ *Important Disclaimer:*\n\nThis bot is a reference tool only and does not replace clinical judgment.\n\n• Healthcare professionals: Information is for reference only — clinical decisions are solely yours based on patient assessment\n• Patients: Never rely on this bot for diagnosis or treatment without consulting your doctor\n• Doses vary based on individual patient factors unknown to this bot\n• The bot operators bear no legal or medical responsibility\n\n🚨 Emergency: Call ambulance immediately\n\n━━━━━━━━━━━━━━━━━━━━\n\nاختر لغتك | Choose your language:\n\n🌐 [تطبيق الويب | Web App](https://hussainsaf77-bit.github.io/Dose-web/)",
 "main_menu": "📋 *القائمة الرئيسية*\n\nاختر:",
 "btn_search": "🔍 استعلام عن دواء",
 "btn_child": "🍼 جرعات الأطفال",
@@ -1119,7 +1119,7 @@ def kb_main(lang):
         [InlineKeyboardButton(tx("btn_settings", lang), callback_data="m_settings")],
         [InlineKeyboardButton("📖 " + ("دليل المستخدم" if lang=="ar" else "User Guide"), callback_data="m_guide")],
         [InlineKeyboardButton("🥗 " + ("التغذية العلاجية" if lang=="ar" else "Therapeutic Diet"), callback_data="m_diet")],
-        [InlineKeyboardButton("🌐 " + ("تطبيق الويب" if lang=="ar" else "Web App"), url="https://tangerine-douhua-f161bf.netlify.app")]])
+        [InlineKeyboardButton("🌐 " + ("تطبيق الويب" if lang=="ar" else "Web App"), url="https://hussainsaf77-bit.github.io/Dose-web/")]])
 
 
 def kb_back(lang):
