@@ -387,6 +387,36 @@ def track(ctx, action="search"):
     stats[action] = stats.get(action, 0) + 1
     stats["total_requests"] = stats.get("total_requests", 0) + 1
     save_stats(stats)
+    # تسجيل في Supabase
+    try:
+        if supabase_client and uid != "unknown":
+            tid = int(uid)
+            # تحديث أو إنشاء مستخدم
+            existing_user = supabase_client.table("users").select("id,usage_count").eq("telegram_id", tid).execute()
+            if existing_user.data:
+                new_count = existing_user.data[0]["usage_count"] + 1
+                supabase_client.table("users").update({"usage_count": new_count}).eq("telegram_id", tid).execute()
+            else:
+                user_obj = ctx.effective_user if hasattr(ctx, "effective_user") and ctx.effective_user else None
+                name = user_obj.full_name if user_obj else "Unknown"
+                supabase_client.table("users").insert({"telegram_id": tid, "name": name, "usage_count": 1}).execute()
+            # تسجيل العملية
+            supabase_client.table("usage_logs").insert({"telegram_id": tid, "action": action}).execute()
+    except Exception as e:
+        pass
+
+def get_user_plan(telegram_id):
+    """الحصول على خطة المستخدم من Supabase"""
+    try:
+        if supabase_client:
+            result = supabase_client.table("users").select("plan,usage_count,plan_expires_at").eq("telegram_id", telegram_id).execute()
+            if result.data:
+                return result.data[0]
+    except:
+        pass
+    return {"plan": "free", "usage_count": 0, "plan_expires_at": None}
+
+FREE_LIMIT = 20  # حد الاستخدام المجاني
 
 def search_drugs(q):
     q = q.strip().lower()
