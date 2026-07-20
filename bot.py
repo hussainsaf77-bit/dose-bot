@@ -160,7 +160,7 @@ TEXTS = {
 "btn_interaction": "⚠️ التفاعلات الدوائية",
 "btn_settings": "⚙️ الإعدادات",
 "btn_premium": "⭐ الاشتراك المميز",
-"premium_menu": "⭐ *الاشتراك المميز*\n\nاختر خطتك:",
+"premium_menu": "⭐ *الاشتراك المميز*\n\nاختر خطتك:\n\n🆓 المجاني: 3 استعلامات لكل ميزة\n📅 أسبوعي: $0.99\n📆 شهري: $2.99\n📦 3 أشهر: $6.99 + شهر مجاني\n📦 6 أشهر: $11.99 + شهرين مجاناً\n🏆 سنوي: $19.99 + 6 أشهر مجاناً",
 "btn_month": "🗓️ شهري — 200 ⭐ (~$4)",
 "btn_3month": "📅 3 أشهر — 500 ⭐ (~$10) وفّر 17%",
 "btn_6month": "📆 6 أشهر — 900 ⭐ (~$18) وفّر 25%",
@@ -416,7 +416,52 @@ def get_user_plan(telegram_id):
         pass
     return {"plan": "free", "usage_count": 0, "plan_expires_at": None}
 
-FREE_LIMIT = 20  # حد الاستخدام المجاني
+FREE_LIMIT = 3  # حد الاستخدام المجاني لكل ميزة
+
+# حدود كل ميزة
+
+async def check_limit(update, ctx, action="default"):
+    """التحقق من حد الاستخدام المجاني"""
+    try:
+        if not supabase_client:
+            return True
+        tid = update.effective_user.id
+        lang = get_lang(ctx)
+        result = supabase_client.table("users").select("plan,usage_count,plan_expires_at").eq("telegram_id", tid).execute()
+        if result.data:
+            user = result.data[0]
+            plan = user.get("plan", "free")
+            # لو مشترك يمر
+            if plan != "free":
+                from datetime import datetime, timezone
+                expires = user.get("plan_expires_at")
+                if expires:
+                    exp_dt = datetime.fromisoformat(expires.replace("Z", "+00:00"))
+                    if exp_dt > datetime.now(timezone.utc):
+                        return True
+            # فحص العدد حسب الميزة
+            limit = FREE_LIMITS.get(action, FREE_LIMITS["default"])
+            # نحسب استخدامات هذه الميزة تحديداً
+            logs = supabase_client.table("usage_logs").select("id").eq("telegram_id", tid).eq("action", action).execute()
+            count = len(logs.data) if logs.data else 0
+            if count >= limit:
+                msg = f"⭐ *{'وصلت للحد المجاني' if lang=='ar' else 'Free limit reached'}*\n\n{'لقد استخدمت هذه الميزة' if lang=='ar' else 'You have used this feature'} {count} {'مرات' if lang=='ar' else 'times'}.\n\n{'اشترك للاستمرار بدون حدود!' if lang=='ar' else 'Subscribe to continue without limits!'}"
+                kb = InlineKeyboardMarkup([[InlineKeyboardButton("⭐ " + ("اشترك الآن" if lang=="ar" else "Subscribe Now"), callback_data="m_premium")]])
+                await update.message.reply_text(msg, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+                return False
+        return True
+    except Exception as e:
+        logger.error(f"check_limit error: {e}")
+        return True  # في حال الخطأ نسمح بالمرور
+
+FREE_LIMITS = {
+    "search": 3,
+    "child": 3,
+    "interaction": 3,
+    "diet": 3,
+    "image": 2,
+    "default": 3
+}
 
 def search_drugs(q):
     q = q.strip().lower()
