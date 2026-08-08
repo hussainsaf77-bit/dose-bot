@@ -9,6 +9,7 @@ try:
     SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "sb_publishable_7g9H8VEBGrgGcF9CEfLrNg_Bu6xlorY")  # dose_bot key
     supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_URL and SUPABASE_KEY else None
 except Exception as e:
+    print(f"❌ Supabase init error: {e}")
     supabase_client = None
 TIMEZONE = pytz.timezone("Asia/Riyadh")
 
@@ -95,6 +96,7 @@ if os.path.exists(_env_file):
                 _k, _v = _line.split("=", 1)
                 os.environ.setdefault(_k.strip(), _v.strip())
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.request import HTTPXRequest
 from telegram.ext import PicklePersistence
 from telegram.ext import (Application, CommandHandler, CallbackQueryHandler,
     MessageHandler, ConversationHandler, ContextTypes, filters, JobQueue,
@@ -147,7 +149,7 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_FOOD_SEARCH, STATE_SUGAR, STATE_DIET, STATE_BP, STATE_BP_AGE,
  STATE_PAT_MENU, STATE_PAT_NAME, STATE_PAT_AGE, STATE_PAT_WEIGHT,
  STATE_PAT_GENDER, STATE_PAT_DISEASE, STATE_PAT_MEDS, STATE_PAT_ALLERGY,
- STATE_INTERACTION, STATE_DRUG_FORM, STATE_PAT_NOTE, STATE_PAT_LOG, STATE_DIET) = range(45)
+ STATE_INTERACTION, STATE_DRUG_FORM, STATE_PAT_NOTE, STATE_PAT_LOG) = range(44)
 
 TEXTS = {
 "ar": {
@@ -239,7 +241,7 @@ TEXTS = {
 "btn_interaction": "⚠️ Drug Interactions",
 "btn_settings": "⚙️ Settings",
 "btn_premium": "⭐ Premium Subscription",
-"premium_menu": "⭐ *Premium Subscription*\n\nChoose your plan:",
+"premium_menu": "⭐ *Premium Subscription*\n\nChoose your plan:\n\n🆓 Free: 3 queries per feature\n📅 Weekly: $0.99\n📆 Monthly: $2.99\n📦 3 Months: $6.99 + 1 month free\n📦 6 Months: $11.99 + 2 months free\n🏆 Annual: $19.99 + 6 months free",
 "btn_month": "🗓️ Monthly — 200 ⭐ (~$4)",
 "btn_3month": "📅 3 Months — 500 ⭐ (~$10) Save 17%",
 "btn_6month": "📆 6 Months — 900 ⭐ (~$18) Save 25%",
@@ -1041,7 +1043,7 @@ async def analyze_image(img_bytes, lang):
     concentration = None
     try:
         key = ANTHROPIC_API_KEY.encode("ascii", errors="ignore").decode("ascii").strip()
-        async with httpx.AsyncClient(timeout=30) as c:
+        async with httpx.AsyncClient(timeout=30, http2=False) as c:
             r = await c.post("https://api.anthropic.com/v1/messages",
                 headers={"x-api-key": key,
                          "anthropic-version": "2023-06-01",
@@ -1543,11 +1545,18 @@ async def reg_name_country(u, ctx):
     return STATE_LANGUAGE
 
 async def pick_lang(u, ctx):
-    q = u.callback_query; await q.answer()
+    q = u.callback_query
+    try:
+        await q.answer()
+    except:
+        pass
+    logger.warning(f"MAIN_CB: {q.data}")
     ctx.user_data["lang"] = "ar" if q.data == "lang_ar" else "en"
     lang = get_lang(ctx)
     
     await show_main(q.message, lang, edit=True)
+    print("PICK_LANG_OK")
+    logger.info("PICK_LANG_OK")
     # شهر مجاني للمستخدمين الجدد
     uid = str(u.effective_user.id)
     if supabase_client:
@@ -1705,7 +1714,7 @@ Reply in English ONLY with this format:
 ⚠️ Warnings:
 [important warnings]"""
 
-        async with httpx.AsyncClient(timeout=30) as c:
+        async with httpx.AsyncClient(timeout=30, http2=False) as c:
             r = await c.post("https://api.anthropic.com/v1/messages",
                 headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
                 json={"model": "claude-haiku-4-5-20251001", "max_tokens": 1500,
@@ -1887,7 +1896,7 @@ Reply in English ONLY with this exact format:
 🍼 Lactation: 
 🫘 Renal Impairment: 
 ❗ Special Warnings:"""
-        async with httpx.AsyncClient(timeout=60) as c:
+        async with httpx.AsyncClient(timeout=60, http2=False) as c:
             r = await c.post("https://api.anthropic.com/v1/messages",
                 headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
                 json={"model": "claude-haiku-4-5-20251001", "max_tokens": 1500,
@@ -1916,6 +1925,20 @@ async def drug_search(u, ctx):
     try: track(u, "searches")
     except: pass
     query = u.message.text.strip()
+
+    # Local search first
+    res = search_drugs(query)
+    if res:
+        btns = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🔍 " + ("استعلام آخر" if lang=="ar" else "Another Search"), callback_data="m_search")],
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+        ])
+        await u.message.reply_text(
+            fmt_drug(res[0], lang),
+            reply_markup=btns,
+            parse_mode=ParseMode.MARKDOWN
+        )
+        return STATE_DRUG_SEARCH
 
     thinking = await u.message.reply_text("🔍 " + ("جارٍ البحث..." if lang=="ar" else "Searching..."))
 
@@ -1965,7 +1988,7 @@ Write N/A if unknown. Never leave any field empty.
 🔤 English Name: [write the English drug name only]
 🔤 English Name: [write the English drug name only]"""
 
-        async with httpx.AsyncClient(timeout=30) as c:
+        async with httpx.AsyncClient(timeout=30, http2=False) as c:
             r = await c.post("https://api.anthropic.com/v1/messages",
                 headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
                 json={"model": "claude-haiku-4-5-20251001", "max_tokens": 1500,
@@ -2037,7 +2060,7 @@ async def child_input(u, ctx):
                     p = f"أنت صيدلاني. الدواء: {name} ({form_ar}). أعطني جرعة الأطفال بهذا الشكل فقط:\n💊 الدواء: {name}\n📋 النوع: {form_ar}\n💉 الجرعة حسب العمر:\n• 0-2 سنة: ...\n• 2-6 سنة: ...\n• 6-12 سنة: ...\n🔁 التكرار:\n⚠️ تحذير:"
                 else:
                     p = f"You are a pharmacist. Drug: {name} ({form_en}). Give pediatric dose only:\n💊 Drug: {name}\n📋 Form: {form_en}\n💉 Dose by age:\n• 0-2 years: ...\n• 2-6 years: ...\n• 6-12 years: ...\n🔁 Frequency:\n⚠️ Warning:"
-                async with httpx.AsyncClient(timeout=30) as hc:
+                async with httpx.AsyncClient(timeout=30, http2=False) as hc:
                     r2 = await hc.post("https://api.anthropic.com/v1/messages",
                         headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
                         json={"model": "claude-haiku-4-5-20251001", "max_tokens": 300,
@@ -3725,7 +3748,7 @@ async def interaction_input(u, ctx):
 
 أجب {"بالعربية" if lang=="ar" else "in English"} فقط."""
 
-                async with httpx.AsyncClient(timeout=30) as c:
+                async with httpx.AsyncClient(timeout=30, http2=False) as c:
                     r = await c.post("https://api.anthropic.com/v1/messages",
                         headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
                         json={"model": "claude-haiku-4-5-20251001", "max_tokens": 300,
@@ -3843,7 +3866,7 @@ Reply in this format only:
 Important: Calculate dose for {weight} kg only. Do not mention syrup dose."""
 
     try:
-        async with httpx.AsyncClient(timeout=30) as c:
+        async with httpx.AsyncClient(timeout=30, http2=False) as c:
             r = await c.post("https://api.anthropic.com/v1/messages",
                 headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
                 json={"model": "claude-haiku-4-5-20251001", "max_tokens": 400,
@@ -4372,6 +4395,7 @@ async def rem_menu(u, ctx):
         return STATE_REM_EDIT_SEL if q.data == "r_edit" else STATE_REM_MENU
     if q.data.startswith("dr_"):
         rid = int(q.data[3:])
+        uid = u.effective_user.id
         rems = get_rems(ctx)
         ok = False
         for i, r in enumerate(rems):
@@ -4754,7 +4778,7 @@ def build_conv():
                 CallbackQueryHandler(sub_select, pattern="^sub_"),
                 CallbackQueryHandler(reg_handler, pattern="^reg_"),
                 CallbackQueryHandler(handle_m_bp, pattern="^m_bp$"),
-                CallbackQueryHandler(main_cb, pattern="^(m_|do_lang|do_country|change_lang|pay_|cal_|act_|dis_|sugar_)"),
+                CallbackQueryHandler(main_cb, pattern="^.*$"),
                 CallbackQueryHandler(manual_drug_input, pattern="^manual_input$")],
             STATE_BMI_WEIGHT: [
                 CallbackQueryHandler(bmi_cb, pattern="^bmi_"),
@@ -4852,7 +4876,7 @@ async def fix_doses_cmd(u, ctx):
         
         # نطلب الجرعة الصحيحة من Claude
         try:
-            async with httpx.AsyncClient(timeout=20) as hc:
+            async with httpx.AsyncClient(timeout=20, http2=False) as hc:
                 prompt = f"""What is the correct pediatric oral syrup dose for {name_en}?
 Reply ONLY in this format:
 min_mg_per_kg: [number]
@@ -4903,6 +4927,10 @@ If not available as syrup write: NOT_SYRUP"""
 async def restore_reminders(app):
     """إعادة جدولة التذكيرات عند بدء التشغيل"""
     # نحذف كل jobs القديمة أولاً
+    if app.job_queue is None:
+        logger.warning("JobQueue غير مفعلة، تم تجاوز استعادة التذكيرات.")
+        return
+
     for job in app.job_queue.jobs():
         if job.name and job.name.startswith("rem_"):
             job.schedule_removal()
@@ -5171,12 +5199,24 @@ def activate_premium(user_id, days):
     save_subs(subs)
     return expiry.strftime("%Y-%m-%d")
 
+# Paddle Price IDs
+PADDLE_PRICES = {
+    "weekly":    "pri_01kyf5s78t52cze4nf2bp45t7e",
+    "monthly":   "pri_01kyf5t6qes6s4bwdt4111j3vp",
+    "quarterly": "pri_01kyf5v6mvqmjwzzd97cjbkt6v",
+    "biannual":  "pri_01kyf5w0g2fhw82p6554dt6m45",
+    "annual":    "pri_01kyf5wszwtsneevhbqwqmwbj2",
+}
+PADDLE_CHECKOUT = "https://bit.ly/dose-web"
+
 def kb_premium(lang):
+    ar = lang == "ar"
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton(tx("btn_month", lang), callback_data="pay_month")],
-        [InlineKeyboardButton(tx("btn_3month", lang), callback_data="pay_3month")],
-        [InlineKeyboardButton(tx("btn_6month", lang), callback_data="pay_6month")],
-        [InlineKeyboardButton(tx("btn_year", lang), callback_data="pay_year")],
+        [InlineKeyboardButton("📅 " + ("أسبوعي — $0.99" if ar else "Weekly — $0.99"), url=PADDLE_CHECKOUT+"?plan=weekly")],
+        [InlineKeyboardButton("📆 " + ("شهري — $2.99" if ar else "Monthly — $2.99"), url=PADDLE_CHECKOUT+"?plan=monthly")],
+        [InlineKeyboardButton("📦 " + ("3 أشهر — $6.99 🎁" if ar else "3 Months — $6.99 🎁"), url=PADDLE_CHECKOUT+"?plan=quarterly")],
+        [InlineKeyboardButton("📦 " + ("6 أشهر — $11.99 🎁" if ar else "6 Months — $11.99 🎁"), url=PADDLE_CHECKOUT+"?plan=biannual")],
+        [InlineKeyboardButton("🏆 " + ("سنوي — $19.99 🎁" if ar else "Annual — $19.99 🎁"), url=PADDLE_CHECKOUT+"?plan=annual")],
         [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")],
     ])
 
@@ -5269,7 +5309,8 @@ def main():
         except Exception as e:
             print(f"❌ Supabase error: {e}")
     persistence = PicklePersistence(filepath="bot_data.pkl")
-    app = Application.builder().token(BOT_TOKEN).persistence(persistence).build()
+    request = HTTPXRequest(http_version="1.1")
+    app = Application.builder().token(BOT_TOKEN).request(request).persistence(persistence).build()
     app.add_handler(build_conv())
     app.add_handler(CallbackQueryHandler(rem_done, pattern="^rem_done_"), group=2)
     app.add_handler(CallbackQueryHandler(rem_show_photo, pattern="^rem_showphoto_"), group=2)
