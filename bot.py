@@ -128,6 +128,17 @@ def run_ping_server():
 
 threading.Thread(target=run_ping_server, daemon=True).start()
 
+# Self-ping كل 10 دقائق لمنع النوم
+import urllib.request
+def self_ping():
+    import time
+    url = os.environ.get("RENDER_EXTERNAL_URL", "https://dose-bot.onrender.com")
+    while True:
+        time.sleep(600)
+        try: urllib.request.urlopen(url, timeout=10)
+        except: pass
+threading.Thread(target=self_ping, daemon=True).start()
+
 BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 # قراءة .env مبكراً
 _env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
