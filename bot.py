@@ -13,6 +13,49 @@ except Exception as e:
     supabase_client = None
 TIMEZONE = pytz.timezone("Asia/Riyadh")
 
+# ══════════════════════════════════════
+# ربط البوت بـ API الموقع
+# ══════════════════════════════════════
+import urllib.request as _ur
+import json as _json
+
+API_BASE = os.environ.get("API_BASE", "https://dose-web-api.onrender.com")
+BOT_SECRET = os.environ.get("BOT_SECRET", "bot-secret-key-123")
+
+def api_check_sub(telegram_id: str) -> dict:
+    """تحقق من اشتراك المستخدم عبر API الموقع"""
+    try:
+        req = _ur.Request(
+            f"{API_BASE}/bot/verify/{telegram_id}",
+            headers={"x-bot-secret": BOT_SECRET}
+        )
+        with _ur.urlopen(req, timeout=5) as r:
+            return _json.loads(r.read())
+    except:
+        return {"linked": False, "has_sub": False, "plan": "Free",
+                "search_limit": 5, "reminder_limit": 0,
+                "register_url": "https://hussainsaf77-bit.github.io/Dose-web/auth.html"}
+
+def api_track_usage(telegram_id: str, action: str = "search") -> dict:
+    """يسجّل استخدام ويعيد هل مسموح أم لا"""
+    try:
+        req = _ur.Request(
+            f"{API_BASE}/bot/track/{telegram_id}?action={action}",
+            method="POST",
+            headers={"x-bot-secret": BOT_SECRET, "Content-Length": "0"}
+        )
+        with _ur.urlopen(req, timeout=5) as r:
+            return _json.loads(r.read())
+    except:
+        return {"allowed": True, "used": 0, "limit": -1}
+
+LINK_MSG = {
+    "ar": "🔗 *ربط حساب الموقع*\n\nبربط حسابك ستحصل على:\n✅ اشتراك موحد للموقع والبوت\n✅ لوحة تحكم كاملة\n✅ تاريخ بحث محفوظ\n\n👇 سجّل من هنا:",
+    "en": "🔗 *Link Website Account*\n\nBy linking you get:\n✅ Unified subscription\n✅ Full dashboard\n✅ Saved history\n\n👇 Register here:"
+}
+LINK_URL = "https://hussainsaf77-bit.github.io/Dose-web/auth.html"
+
+
 # قاموس الدول والمناطق الزمنية
 COUNTRY_TIMEZONES = {
     # العربية
