@@ -254,6 +254,339 @@ input:focus,select:focus,textarea:focus{border-color:var(--teal);box-shadow:0 0 
 </style>
 </head>
 <body>
+<!-- DOSE ACCOUNT BAR -->
+<div id="doseAccountBar" style="
+position:sticky;top:0;z-index:9999;
+background:#ffffff;border-bottom:1px solid #e5e7eb;
+padding:10px 16px;display:flex;justify-content:space-between;
+align-items:center;gap:10px;font-family:Arial,sans-serif;
+direction:rtl;">
+  <div>
+    <strong style="color:#0d9488;">💊 جرعة</strong>
+    <span id="doseAccountStatus" style="margin-right:10px;color:#64748b;font-size:14px;">
+      غير مسجل الدخول
+    </span>
+  </div>
+
+  <div style="display:flex;gap:8px;">
+    <button onclick="doseOpenLogin()" style="
+      border:1px solid #0d9488;background:white;color:#0d9488;
+      border-radius:8px;padding:7px 13px;cursor:pointer;">
+      تسجيل الدخول
+    </button>
+
+    <button onclick="doseOpenRegister()" style="
+      border:0;background:#0d9488;color:white;
+      border-radius:8px;padding:7px 13px;cursor:pointer;">
+      إنشاء حساب
+    </button>
+  </div>
+</div>
+
+<div id="doseAccountModal" style="
+display:none;position:fixed;inset:0;z-index:10000;
+background:rgba(0,0,0,.45);align-items:center;
+justify-content:center;direction:rtl;font-family:Arial,sans-serif;">
+
+  <div style="
+  background:white;width:min(420px,92vw);border-radius:16px;
+  padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.2);">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h2 id="doseModalTitle" style="margin:0;color:#0f172a;">تسجيل الدخول</h2>
+      <button onclick="doseCloseAccount()" style="
+        border:0;background:none;font-size:24px;cursor:pointer;">×</button>
+    </div>
+
+    <div style="margin-top:20px;">
+      <label style="display:block;margin-bottom:6px;">البريد الإلكتروني</label>
+      <input id="doseEmail" type="email" placeholder="example@email.com"
+        style="width:100%;box-sizing:border-box;padding:11px;border:1px solid #d1d5db;border-radius:8px;">
+
+      <label id="dosePasswordLabel" style="display:block;margin:14px 0 6px;">كلمة المرور</label>
+      <input id="dosePassword" type="password" placeholder="كلمة المرور"
+        style="width:100%;box-sizing:border-box;padding:11px;border:1px solid #d1d5db;border-radius:8px;">
+
+      <div id="doseNameWrap" style="display:none;">
+        <label style="display:block;margin:14px 0 6px;">الاسم</label>
+        <input id="doseName" type="text" placeholder="اسمك"
+          style="width:100%;box-sizing:border-box;padding:11px;border:1px solid #d1d5db;border-radius:8px;">
+      </div>
+
+      <button id="doseAccountSubmit" onclick="doseSubmitAccount()" style="
+        width:100%;margin-top:18px;border:0;background:#0d9488;color:white;
+        border-radius:9px;padding:12px;font-size:16px;cursor:pointer;">
+        دخول
+      </button>
+
+      <div id="doseAccountMsg" style="margin-top:12px;font-size:14px;"></div>
+
+      <button id="doseSwitchMode" onclick="doseSwitchAccountMode()" style="
+        width:100%;margin-top:12px;border:0;background:none;
+        color:#0d9488;cursor:pointer;">
+        ليس لديك حساب؟ إنشاء حساب
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+let doseAccountMode = "login";
+const DOSE_API_BASE = "https://dose-web-api.onrender.com";
+
+function doseOpenLogin() {
+  doseAccountMode = "login";
+  doseRenderAccount();
+  document.getElementById("doseAccountModal").style.display = "flex";
+}
+
+function doseOpenRegister() {
+  doseAccountMode = "register";
+  doseRenderAccount();
+  document.getElementById("doseAccountModal").style.display = "flex";
+}
+
+function doseCloseAccount() {
+  document.getElementById("doseAccountModal").style.display = "none";
+}
+
+function doseSwitchAccountMode() {
+  doseAccountMode = doseAccountMode === "login" ? "register" : "login";
+  doseRenderAccount();
+}
+
+function doseRenderAccount() {
+  const register = doseAccountMode === "register";
+
+  document.getElementById("doseModalTitle").textContent =
+    register ? "إنشاء حساب" : "تسجيل الدخول";
+
+  document.getElementById("doseNameWrap").style.display =
+    register ? "block" : "none";
+
+  document.getElementById("doseAccountSubmit").textContent =
+    register ? "إنشاء الحساب" : "دخول";
+
+  document.getElementById("doseSwitchMode").textContent =
+    register ? "لديك حساب؟ تسجيل الدخول" : "ليس لديك حساب؟ إنشاء حساب";
+
+  document.getElementById("doseAccountMsg").innerHTML = "";
+}
+
+function doseSetLoggedIn(user) {
+  const status = document.getElementById("doseAccountStatus");
+  const bar = document.getElementById("doseAccountBar");
+
+  if (status) {
+    status.innerHTML = `مرحباً ${user?.name || user?.email || "بك"} 👋`;
+    status.style.color = "#0d9488";
+    status.style.fontWeight = "700";
+  }
+
+  const buttons = bar ? bar.querySelector("div:last-child") : null;
+
+  if (buttons) {
+    buttons.innerHTML = `
+      <button onclick="doseShowAccount()" style="
+        border:1px solid #0d9488;background:white;color:#0d9488;
+        border-radius:8px;padding:7px 13px;cursor:pointer;">
+        حسابي
+      </button>
+      <button onclick="doseLogout()" style="
+        border:0;background:#fee2e2;color:#b91c1c;
+        border-radius:8px;padding:7px 13px;cursor:pointer;">
+        خروج
+      </button>
+    `;
+  }
+}
+
+function doseSetLoggedOut() {
+  const status = document.getElementById("doseAccountStatus");
+  const bar = document.getElementById("doseAccountBar");
+
+  if (status) {
+    status.textContent = "غير مسجل الدخول";
+    status.style.color = "#64748b";
+    status.style.fontWeight = "400";
+  }
+
+  const buttons = bar ? bar.querySelector("div:last-child") : null;
+
+  if (buttons) {
+    buttons.innerHTML = `
+      <button onclick="doseOpenLogin()" style="
+        border:1px solid #0d9488;background:white;color:#0d9488;
+        border-radius:8px;padding:7px 13px;cursor:pointer;">
+        تسجيل الدخول
+      </button>
+
+      <button onclick="doseOpenRegister()" style="
+        border:0;background:#0d9488;color:white;
+        border-radius:8px;padding:7px 13px;cursor:pointer;">
+        إنشاء حساب
+      </button>
+    `;
+  }
+}
+
+async function doseSubmitAccount() {
+  const email = document.getElementById("doseEmail").value.trim();
+  const password = document.getElementById("dosePassword").value;
+  const name = document.getElementById("doseName").value.trim();
+  const msg = document.getElementById("doseAccountMsg");
+  const register = doseAccountMode === "register";
+
+  if (!email || !password) {
+    msg.innerHTML =
+      '<span style="color:#dc2626;">⚠️ أدخل البريد الإلكتروني وكلمة المرور</span>';
+    return;
+  }
+
+  if (register && !name) {
+    msg.innerHTML =
+      '<span style="color:#dc2626;">⚠️ أدخل الاسم</span>';
+    return;
+  }
+
+  if (register && password.length < 8) {
+    msg.innerHTML =
+      '<span style="color:#dc2626;">⚠️ كلمة المرور يجب أن تكون 8 أحرف على الأقل</span>';
+    return;
+  }
+
+  const endpoint = register ? "/auth/register" : "/auth/login";
+
+  msg.innerHTML =
+    '<span style="color:#0d9488;">⏳ جاري الاتصال بالخادم...</span>';
+
+  try {
+    const body = register
+      ? { email, password, name }
+      : { email, password };
+
+    const response = await fetch(DOSE_API_BASE + endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+
+    let data = {};
+    try {
+      data = await response.json();
+    } catch (_) {}
+
+    if (!response.ok) {
+      throw new Error(
+        data.detail ||
+        data.message ||
+        "تعذر تنفيذ العملية"
+      );
+    }
+
+    if (!data.token) {
+      throw new Error("الخادم لم يُرجع رمز الدخول");
+    }
+
+    localStorage.setItem("dose_token", data.token);
+    localStorage.setItem("dose_user", JSON.stringify(data.user || {}));
+
+    doseSetLoggedIn(data.user || {});
+
+    msg.innerHTML =
+      `<span style="color:#059669;">✅ ${register ? "تم إنشاء الحساب بنجاح" : "تم تسجيل الدخول بنجاح"}</span>`;
+
+    setTimeout(() => {
+      doseCloseAccount();
+    }, 700);
+
+  } catch (e) {
+    console.error("Dose account error:", e);
+
+    msg.innerHTML =
+      `<span style="color:#dc2626;">⚠️ ${e.message || "حدث خطأ أثناء الاتصال بالخادم"}</span>`;
+  }
+}
+
+async function doseLoadAccount() {
+  const token = localStorage.getItem("dose_token");
+
+  if (!token) {
+    doseSetLoggedOut();
+    return;
+  }
+
+  try {
+    const response = await fetch(DOSE_API_BASE + "/auth/me", {
+      method: "GET",
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("الجلسة غير صالحة");
+    }
+
+    const user = await response.json();
+
+    localStorage.setItem("dose_user", JSON.stringify(user));
+    doseSetLoggedIn(user);
+
+  } catch (e) {
+    console.warn("Dose session expired:", e);
+    localStorage.removeItem("dose_token");
+    localStorage.removeItem("dose_user");
+    doseSetLoggedOut();
+  }
+}
+
+function doseLogout() {
+  localStorage.removeItem("dose_token");
+  localStorage.removeItem("dose_user");
+  doseSetLoggedOut();
+  toast("تم تسجيل الخروج");
+}
+
+async function doseShowAccount() {
+  const token = localStorage.getItem("dose_token");
+
+  if (!token) {
+    doseOpenLogin();
+    return;
+  }
+
+  try {
+    const response = await fetch(DOSE_API_BASE + "/auth/me", {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    if (!response.ok) throw new Error();
+
+    const u = await response.json();
+
+    alert(
+      `💊 حساب جرعة\n\n` +
+      `الاسم: ${u.name || "—"}\n` +
+      `البريد: ${u.email || "—"}\n\n` +
+      `الخطة: ${u.plan?.name_ar || u.plan?.name || "مجانية"}\n` +
+      `البحث اليوم: ${u.usage_today?.searches ?? 0} / ${u.usage_today?.search_limit ?? 5}\n` +
+      `الاشتراك: ${u.subscription?.status || "free"}`
+    );
+
+  } catch (e) {
+    doseLogout();
+    doseOpenLogin();
+  }
+}
+
+doseLoadAccount();
+</script>
+
 
 <!-- ── DISCLAIMER BAR ── -->
 <div class="disclaimer-bar">
