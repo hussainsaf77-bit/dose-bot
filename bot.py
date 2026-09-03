@@ -5371,6 +5371,61 @@ def run_web():
     server.serve_forever()
 
 threading.Thread(target=run_web, daemon=True).start()
+
+async def link_account_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """أمر /link لربط حساب الموقع"""
+    uid = str(update.effective_user.id)
+    lang = get_lang(context)
+    
+    sub = api_check_sub(uid)
+    
+    if sub.get("linked"):
+        email = sub.get("email","")
+        plan = sub.get("plan_ar", sub.get("plan","Free"))
+        if lang == "ar":
+            msg = f"✅ *حسابك مرتبط*\n\n📧 البريد: {email}\n💳 الخطة: {plan}\n\n[🌐 فتح لوحة التحكم](https://hussainsaf77-bit.github.io/Dose-web/dashboard.html)"
+        else:
+            msg = f"✅ *Account Linked*\n\n📧 Email: {email}\n💳 Plan: {plan}\n\n[🌐 Open Dashboard](https://hussainsaf77-bit.github.io/Dose-web/dashboard.html)"
+    else:
+        if lang == "ar":
+            msg = f"🔗 *ربط حساب الموقع*\n\nاربط حسابك للحصول على:\n✅ اشتراك موحد للموقع والبوت\n✅ لوحة تحكم كاملة\n✅ تاريخ بحث محفوظ\n✅ تذكيرات متقدمة\n\n👇 سجّل أو ادخل من هنا:"
+        else:
+            msg = f"🔗 *Link Website Account*\n\nGet unified subscription for website & bot\n\n👇 Register or login here:"
+        
+    keyboard = [[InlineKeyboardButton(
+        "🌐 تسجيل / دخول" if lang=="ar" else "🌐 Register / Login",
+        url="https://hussainsaf77-bit.github.io/Dose-web/auth.html"
+    )]]
+    
+    await update.message.reply_text(
+        msg, parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
+
+async def upgrade_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """أمر /upgrade لترقية الاشتراك"""
+    uid = str(update.effective_user.id)
+    lang = get_lang(context)
+    sub = api_check_sub(uid)
+    plan = sub.get("plan_ar", sub.get("plan","Free"))
+    
+    if lang == "ar":
+        msg = f"💳 *خطتك الحالية: {plan}*\n\nللترقية والحصول على:\n🔍 بحث غير محدود\n⏰ تذكيرات غير محدودة\n📄 تصدير PDF\n\n👇 اختر خطتك:"
+    else:
+        msg = f"💳 *Your plan: {plan}*\n\nUpgrade for:\n🔍 Unlimited search\n⏰ Unlimited reminders\n📄 PDF export\n\n👇 Choose your plan:"
+    
+    keyboard = [[InlineKeyboardButton(
+        "⭐ الترقية الآن" if lang=="ar" else "⭐ Upgrade Now",
+        url="https://hussainsaf77-bit.github.io/Dose-web/pricing.html"
+    )]]
+    
+    await update.message.reply_text(
+        msg, parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
+
 def main():
     print(f"✅ تم تحميل {len(DRUGS_DB)} دواء")
     print(f"✅ Supabase: {bool(supabase_client)}")
@@ -5387,6 +5442,8 @@ def main():
     app.add_handler(CallbackQueryHandler(rem_done, pattern="^rem_done_"), group=2)
     app.add_handler(CallbackQueryHandler(rem_show_photo, pattern="^rem_showphoto_"), group=2)
     app.add_handler(CallbackQueryHandler(rem_later, pattern="^rem_snooze_"), group=2)
+    app.add_handler(CommandHandler("link", link_account_cmd))
+    app.add_handler(CommandHandler("upgrade", upgrade_cmd))
     app.add_handler(CommandHandler("stats", stats_cmd))
     app.add_handler(CommandHandler("activate", activate_cmd))
     app.add_handler(CommandHandler("fixdose", fix_doses_cmd))
