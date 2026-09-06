@@ -251,6 +251,56 @@ input:focus,select:focus,textarea:focus{border-color:var(--teal);box-shadow:0 0 
 .mini-bar-label{font-size:.65rem;color:var(--muted);}
 
 @media(max-width:600px){main{padding:18px 12px 80px;}.card{padding:18px;}}
+
+/* DOSE HORIZONTAL NAV */
+.nav-wrap{
+  width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  direction:rtl;
+  white-space:nowrap;
+  position:relative;
+  z-index:20;
+}
+
+.nav-wrap::-webkit-scrollbar{
+  display:none;
+}
+
+.nav-tabs{
+  display:flex;
+  flex-wrap:nowrap;
+  gap:8px;
+  width:max-content;
+  min-width:100%;
+  padding:8px 12px;
+  box-sizing:border-box;
+}
+
+.nav-tabs .tab{
+  flex:0 0 auto;
+  white-space:nowrap;
+  min-height:42px;
+  padding:8px 14px;
+  border-radius:12px;
+  cursor:pointer;
+}
+
+@media (max-width:600px){
+  .nav-tabs{
+    gap:6px;
+    padding:7px 8px;
+  }
+
+  .nav-tabs .tab{
+    min-height:40px;
+    padding:7px 11px;
+    font-size:13px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -608,14 +658,16 @@ doseLoadAccount();
 <!-- ── NAV TABS ── -->
 <div class="nav-wrap">
   <div class="nav-tabs">
-    <button class="tab active" onclick="showTab('search',this)">🔍 بحث دواء</button>
-    <button class="tab" onclick="showTab('child',this)">🍼 جرعات الأطفال</button>
+    <button class="tab active" onclick="showTab('search',this)">🏠 الرئيسية</button>
+    <button class="tab" onclick="showTab('search',this)">💊 الأدوية</button>
+    <button class="tab" onclick="showTab('labs',this)">🧪 التحاليل</button>
+    <button class="tab" onclick="showTab('child',this)">🍼 الأطفال</button>
     <button class="tab" onclick="showTab('bmi',this)">📊 BMI</button>
-    <button class="tab" onclick="showTab('calories',this)">🔥 السعرات</button>
+    <button class="tab" onclick="showTab('calories',this)">🍎 التغذية</button>
     <button class="tab" onclick="showTab('interaction',this)">⚠️ التفاعلات</button>
     <button class="tab" onclick="showTab('reminders',this)">⏰ التذكيرات</button>
-    <button class="tab" onclick="showTab('patient',this)">👤 ملف المريض</button>
-    <button class="tab" onclick="showTab('ai',this)">🤖 مساعد AI</button>
+    <button class="tab" onclick="showTab('patient',this)">👤 المريض</button>
+    <button class="tab" onclick="showTab('ai',this)">🤖 المساعد AI</button>
     <button class="tab" onclick="showTab('waitlist',this)">⭐ الاشتراك</button>
   </div>
 </div>
@@ -645,6 +697,110 @@ doseLoadAccount();
 </div>
 
 <!-- ════════════════ CHILD DOSES ════════════════ -->
+
+<!-- ════════════════ LABS ════════════════ -->
+<div id="tab-labs" class="section">
+
+  <div class="card">
+    <h2>🧪 التحاليل الطبية</h2>
+
+    <p class="muted">
+      أدخل نتيجة التحليل للحصول على قراءة أولية للقيمة
+      مقارنة بالمجال المرجعي.
+    </p>
+
+    <div class="grid-2">
+
+      <div class="field">
+        <label>التحليل</label>
+        <select id="labTest">
+          <option value="hb">Hemoglobin — Hb</option>
+          <option value="wbc">White Blood Cells — WBC</option>
+          <option value="platelets">Platelets — PLT</option>
+          <option value="glucose">Glucose</option>
+          <option value="hba1c">HbA1c</option>
+          <option value="creatinine">Creatinine</option>
+          <option value="sodium">Sodium — Na</option>
+          <option value="potassium">Potassium — K</option>
+          <option value="alt">ALT</option>
+          <option value="ast">AST</option>
+          <option value="bilirubin">Total Bilirubin</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>القيمة</label>
+        <input
+          id="labValue"
+          type="number"
+          step="any"
+          placeholder="أدخل القيمة"
+        >
+      </div>
+
+    </div>
+
+    <button class="primary" onclick="analyzeLab()">
+      🔬 تحليل النتيجة
+    </button>
+
+    
+<!-- LAB BATCH ANALYSIS -->
+<div style="margin-top:22px;padding-top:18px;border-top:1px solid rgba(127,127,127,.2)">
+  <h3>📋 تحليل عدة نتائج</h3>
+  <p class="muted">أدخل عدة نتائج مخبرية ثم اضغط تحليل الكل.</p>
+
+  <div id="labBatch">
+    <div class="grid-2 lab-row">
+      <div class="field">
+        <label>التحليل</label>
+        <select class="lab-batch-test">
+          <option value="hb">Hemoglobin — Hb</option>
+          <option value="wbc">White Blood Cells — WBC</option>
+          <option value="platelets">Platelets — PLT</option>
+          <option value="glucose">Glucose</option>
+          <option value="hba1c">HbA1c</option>
+          <option value="creatinine">Creatinine</option>
+          <option value="sodium">Sodium — Na</option>
+          <option value="potassium">Potassium — K</option>
+          <option value="alt">ALT</option>
+          <option value="ast">AST</option>
+          <option value="bilirubin">Total Bilirubin</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>القيمة</label>
+        <input class="lab-batch-value" type="number" step="any" placeholder="القيمة">
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+    <button type="button" onclick="addLabRow()">➕ إضافة تحليل</button>
+    <button type="button" class="primary" onclick="analyzeAllLabs()">🔬 تحليل الكل</button>
+  </div>
+
+  <div id="labBatchResult" style="margin-top:18px"></div>
+</div>
+
+
+<div class="card" style="margin-top:18px">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+  <h3 style="margin:0">📚 سجل التحاليل</h3>
+  <button type="button" onclick="clearLabHistory()">🧹 مسح السجل</button>
+</div>
+  <div id="labHistory">
+    <p class="muted">لا توجد نتائج محفوظة حتى الآن.</p>
+  </div>
+</div>
+
+<div id="labResult" style="margin-top:18px"></div>
+
+  </div>
+
+</div>
+
 <div id="tab-child" class="section">
   <div class="med-disclaimer">
     <strong>⚕️ جرعات الأطفال — تحذير مهم</strong>
@@ -1927,6 +2083,361 @@ function toast(msg) {
 
 // ════════════════ START ════════════════
 init();
+
+
+function addLabRow() {
+  const box = document.getElementById("labBatch");
+  if (!box) return;
+
+  const row = document.createElement("div");
+  row.className = "grid-2 lab-row";
+  row.style.marginTop = "10px";
+
+  row.innerHTML = `
+    <div class="field">
+      <label>التحليل</label>
+      <select class="lab-batch-test">
+        <option value="hb">Hemoglobin — Hb</option>
+        <option value="wbc">White Blood Cells — WBC</option>
+        <option value="platelets">Platelets — PLT</option>
+        <option value="glucose">Glucose</option>
+        <option value="hba1c">HbA1c</option>
+        <option value="creatinine">Creatinine</option>
+        <option value="sodium">Sodium — Na</option>
+        <option value="potassium">Potassium — K</option>
+        <option value="alt">ALT</option>
+        <option value="ast">AST</option>
+        <option value="bilirubin">Total Bilirubin</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>القيمة</label>
+      <input class="lab-batch-value" type="number" step="any" placeholder="القيمة">
+    </div>
+  `;
+
+  box.appendChild(row);
+}
+
+function analyzeAllLabs() {
+  const rows = document.querySelectorAll("#labBatch .lab-row");
+  const result = document.getElementById("labBatchResult");
+
+  if (!result) return;
+
+  const ranges = {
+    hb: ["Hemoglobin (Hb)", "g/dL", 12, 17.5],
+    wbc: ["White Blood Cells (WBC)", "×10⁹/L", 4, 11],
+    platelets: ["Platelets (PLT)", "×10⁹/L", 150, 450],
+    glucose: ["Glucose", "mg/dL", 70, 140],
+    hba1c: ["HbA1c", "%", 4, 5.6],
+    creatinine: ["Creatinine", "mg/dL", 0.6, 1.3],
+    sodium: ["Sodium (Na)", "mmol/L", 135, 145],
+    potassium: ["Potassium (K)", "mmol/L", 3.5, 5.1],
+    alt: ["ALT", "U/L", 7, 56],
+    ast: ["AST", "U/L", 10, 40],
+    bilirubin: ["Total Bilirubin", "mg/dL", 0.1, 1.2]
+  };
+
+  let html = "";
+  let count = 0;
+
+  rows.forEach(row => {
+    const test = row.querySelector(".lab-batch-test")?.value;
+    const value = parseFloat(row.querySelector(".lab-batch-value")?.value);
+
+    if (!test || !Number.isFinite(value) || !ranges[test]) return;
+
+    count++;
+
+    const r = ranges[test];
+    let status = "طبيعي";
+    let icon = "🟢";
+
+    if (value < r[2]) {
+      status = "منخفض";
+      icon = "🟡";
+    } else if (value > r[3]) {
+      status = "مرتفع";
+      icon = "🟠";
+    }
+
+    if (test === "hba1c") {
+      if (value >= 6.5) {
+        status = "مرتفع";
+        icon = "🟠";
+      } else if (value >= 5.7) {
+        status = "مرتفع عن الطبيعي";
+        icon = "🟡";
+      }
+    }
+
+    html += `
+      <div style="padding:12px;margin:8px 0;border-radius:12px;background:rgba(127,127,127,.08)">
+        <strong>${icon} ${r[0]}</strong>
+        <div style="margin-top:5px">
+          ${value} ${r[1]} — <strong>${status}</strong>
+        </div>
+        <div class="muted" style="font-size:13px;margin-top:4px">
+          المجال التقريبي: ${r[2]} – ${r[3]} ${r[1]}
+        </div>
+      </div>
+    `;
+  });
+
+  if (!count) {
+    result.innerHTML =
+      '<div class="card"><strong>⚠️ أدخل قيمة واحدة على الأقل.</strong></div>';
+    return;
+  }
+
+  result.innerHTML = `
+    <div class="card">
+      <h3>📊 ملخص النتائج</h3>
+      ${html}
+      <p class="muted">
+        ⚕️ المقارنة تعليمية؛ المجال المرجعي المطبوع في تقرير المختبر هو المرجع الأساسي،
+        ولا تُفسَّر النتائج منفردة عن السياق السريري.
+      </p>
+    </div>
+  `;
+}
+
+
+function saveLabResult(test, value, status) {
+  try {
+    const history = JSON.parse(localStorage.getItem("lab_history") || "[]");
+
+    history.unshift({
+      id: Date.now(),
+      test: test,
+      value: value,
+      status: status,
+      date: new Date().toLocaleString("ar-SA")
+    });
+
+    localStorage.setItem("lab_history", JSON.stringify(history.slice(0, 100)));
+
+    if (typeof renderLabHistory === "function") {
+      renderLabHistory();
+    }
+
+    return true;
+  } catch (e) {
+    console.error("LAB SAVE ERROR", e);
+    return false;
+  }
+}
+
+
+function deleteLabResult(id) {
+  try {
+    const history = JSON.parse(localStorage.getItem("lab_history") || "[]");
+    const updated = history.filter(item => item.id !== id);
+
+    localStorage.setItem("lab_history", JSON.stringify(updated));
+    renderLabHistory();
+  } catch (e) {
+    console.error("LAB DELETE ERROR", e);
+  }
+}
+
+function clearLabHistory() {
+  if (!confirm("هل تريد حذف جميع نتائج التحاليل المحفوظة؟")) return;
+
+  localStorage.removeItem("lab_history");
+  renderLabHistory();
+}
+
+function renderLabHistory() {
+  const box = document.getElementById("labHistory");
+  if (!box) return;
+
+  let history = [];
+
+  try {
+    history = JSON.parse(localStorage.getItem("lab_history") || "[]");
+  } catch (e) {
+    history = [];
+  }
+
+  if (!history.length) {
+    box.innerHTML = '<p class="muted">لا توجد نتائج محفوظة حتى الآن.</p>';
+    return;
+  }
+
+  box.innerHTML = history.map(item => `
+    <div style="padding:12px;margin:8px 0;border-radius:12px;background:rgba(127,127,127,.08)">
+      <strong>${item.test}</strong>
+      <div style="margin-top:5px">
+        ${item.value} — ${item.status}
+      </div>
+      <div class="muted" style="font-size:13px;margin-top:4px">
+        ${item.date}
+      </div>
+      <button type="button"
+        style="margin-top:8px"
+        onclick="deleteLabResult(${item.id})">
+        🗑️ حذف
+      </button>
+    </div>
+  `).join("");
+}
+
+function analyzeLab() {
+  const test = document.getElementById("labTest")?.value;
+  const value = parseFloat(document.getElementById("labValue")?.value);
+  const out = document.getElementById("labResult");
+
+  if (!out) return;
+
+  if (!test || !Number.isFinite(value)) {
+    out.innerHTML = '<div class="card"><strong>⚠️ أدخل قيمة صحيحة للتحليل.</strong></div>';
+    return;
+  }
+
+  const ranges = {
+    hb: {
+      name: "Hemoglobin (Hb)",
+      unit: "g/dL",
+      low: 12,
+      high: 17.5,
+      note: "المجال تقريبي للبالغين وقد يختلف حسب الجنس والعمر والحمل والمختبر."
+    },
+    wbc: {
+      name: "White Blood Cells (WBC)",
+      unit: "×10⁹/L",
+      low: 4,
+      high: 11,
+      note: "القيمة تتأثر بالعمر والحالة الالتهابية والأدوية وغيرها."
+    },
+    platelets: {
+      name: "Platelets (PLT)",
+      unit: "×10⁹/L",
+      low: 150,
+      high: 450,
+      note: "تفسير الصفائح يعتمد على السياق السريري وبقية تعداد الدم."
+    },
+    glucose: {
+      name: "Glucose",
+      unit: "mg/dL",
+      low: 70,
+      high: 140,
+      note: "تفسير الغلوكوز يعتمد بشدة على كون العينة صيامية أو عشوائية وتوقيت الوجبة."
+    },
+    hba1c: {
+      name: "HbA1c",
+      unit: "%",
+      low: 4,
+      high: 5.6,
+      note: "قيم HbA1c من 5.7–6.4% قد تقع ضمن مجال ما قبل السكري، و≥6.5% قد تستوفي معيارًا تشخيصيًا في سياق مناسب، لكن التشخيص لا يعتمد على هذه الأداة وحدها."
+    },
+    creatinine: {
+      name: "Creatinine",
+      unit: "mg/dL",
+      low: 0.6,
+      high: 1.3,
+      note: "الكرياتينين يتأثر بالعمر والجنس والكتلة العضلية والأدوية. لا يمكن حساب eGFR بشكل موثوق من الكرياتينين وحده."
+    },
+    sodium: {
+      name: "Sodium (Na)",
+      unit: "mmol/L",
+      low: 135,
+      high: 145,
+      note: "اضطرابات الصوديوم تحتاج تفسيرًا مع حالة السوائل والأدوية والسياق السريري."
+    },
+    potassium: {
+      name: "Potassium (K)",
+      unit: "mmol/L",
+      low: 3.5,
+      high: 5.1,
+      note: "البوتاسيوم مهم سريريًا، وقد تتطلب القيم الشديدة أو وجود أعراض تقييمًا عاجلًا."
+    },
+    alt: {
+      name: "ALT",
+      unit: "U/L",
+      low: 7,
+      high: 56,
+      note: "المجالات المرجعية تختلف بين المختبرات، وارتفاع ALT لا يحدد سببًا واحدًا بمفرده."
+    },
+    ast: {
+      name: "AST",
+      unit: "U/L",
+      low: 10,
+      high: 40,
+      note: "AST قد يرتفع لأسباب كبدية أو عضلية وغيرها، لذلك يجب تفسيره مع بقية النتائج."
+    },
+    bilirubin: {
+      name: "Total Bilirubin",
+      unit: "mg/dL",
+      low: 0.1,
+      high: 1.2,
+      note: "يجب تفسير البيليروبين مع المباشر/غير المباشر ووظائف الكبد والسياق السريري."
+    }
+  };
+
+  const r = ranges[test];
+
+  if (!r) {
+    out.innerHTML = '<div class="card"><strong>⚠️ هذا التحليل غير مدعوم حاليًا.</strong></div>';
+    return;
+  }
+
+  let status = "طبيعي";
+  let icon = "🟢";
+  let cls = "normal";
+  let explanation = "القيمة ضمن المجال المرجعي التقريبي.";
+
+  if (value < r.low) {
+    status = "منخفض";
+    icon = "🟡";
+    cls = "low";
+    explanation = "القيمة أقل من المجال المرجعي التقريبي. يجب تفسيرها مع الأعراض وبقية التحاليل.";
+  } else if (value > r.high) {
+    status = "مرتفع";
+    icon = "🟠";
+    cls = "high";
+    explanation = "القيمة أعلى من المجال المرجعي التقريبي. الارتفاع وحده لا يحدد التشخيص أو السبب.";
+  }
+
+  if (test === "hba1c") {
+    if (value >= 6.5) {
+      status = "مرتفع";
+      icon = "🟠";
+      cls = "high";
+      explanation = "هذه القيمة تقع ضمن مجال يستدعي تقييمًا تشخيصيًا للسكري وفق السياق السريري ومعايير التشخيص المناسبة.";
+    } else if (value >= 5.7) {
+      status = "مرتفع عن الطبيعي";
+      icon = "🟡";
+      cls = "low";
+      explanation = "القيمة تقع ضمن مجال قد يتوافق مع ما قبل السكري، ويجب تأكيد التقييم وفق السياق والمعايير المعتمدة.";
+    }
+  }
+
+  saveLabResult(r.name, value, status);
+
+  out.innerHTML = `
+    <div class="card" style="border-right:5px solid currentColor;">
+      <h3>${icon} ${r.name}</h3>
+      <div style="font-size:22px;font-weight:700;margin:10px 0">
+        ${value} ${r.unit}
+      </div>
+      <div style="font-size:18px;font-weight:700">
+        الحالة: ${status}
+      </div>
+      <p>${explanation}</p>
+      <p class="muted">
+        المجال التقريبي: ${r.low} – ${r.high} ${r.unit}
+      </p>
+      <p class="muted">${r.note}</p>
+      <p class="muted">
+        ⚕️ هذه أداة تثقيفية وليست بديلًا عن تقييم الطبيب أو المجال المرجعي المطبوع في تقرير المختبر.
+      </p>
+    </div>
+  `;
+}
+
 </script>
 </body>
 </html>
