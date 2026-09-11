@@ -2441,25 +2441,3 @@ function analyzeLab() {
 </script>
 </body>
 </html>
-
-
-<!-- DoseBot AI Tools Card -->
-<section id="dose-ai-tools-card" style="margin:24px 0;">
-  <div style="background:linear-gradient(135deg,#eef7ff,#ffffff);border:1px solid #d7e8f7;border-radius:20px;padding:24px;box-shadow:0 8px 24px rgba(0,0,0,.06);">
-    <div style="font-size:32px;margin-bottom:8px;">🤖</div>
-    <h2 style="margin:0 0 8px;">الخدمات الذكية</h2>
-    <p style="margin:0 0 14px;color:#555;line-height:1.8;">
-      مجموعة أدوات DoseBot الذكية للأطباء والمرضى
-    </p>
-    <p style="margin:0 0 18px;color:#666;line-height:1.8;">
-      مساعد طبي بالذكاء الاصطناعي • تحليل التحاليل • جرعات الأطفال • التغذية العلاجية • ملف المريض • تلخيص المحاضرات
-    </p>
-    <a href="https://hussainsaf77-bit.github.io/Dose-web/ai-tools.html"
-       target="_blank"
-       rel="noopener"
-       style="display:inline-block;background:#1677ff;color:white;text-decoration:none;padding:12px 22px;border-radius:12px;font-weight:700;">
-      🚀 اكتشف الخدمات الذكية
-    </a>
-  </div>
-</section>
-<!-- /DoseBot AI Tools Card -->
