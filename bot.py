@@ -138,7 +138,7 @@ if os.path.exists(_env_file):
             if "=" in _line and not _line.startswith("#"):
                 _k, _v = _line.split("=", 1)
                 os.environ.setdefault(_k.strip(), _v.strip())
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 from telegram.request import HTTPXRequest
 from telegram.ext import PicklePersistence
 from telegram.ext import (Application, CommandHandler, CallbackQueryHandler,
@@ -1254,7 +1254,9 @@ def kb_lang():
         InlineKeyboardButton("🇬🇧 English", callback_data="lang_en")]])
 
 def kb_main(lang):
+    platform_url = "https://ais-dev-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app"
     return InlineKeyboardMarkup([
+        [InlineKeyboardButton("🌐 " + ("فتح المنصة الطبية الشاملة (Web App)" if lang=="ar" else "Open Medical Platform"), web_app=WebAppInfo(url=platform_url))],
         [InlineKeyboardButton(tx("btn_search", lang), callback_data="m_search")],
         [InlineKeyboardButton(tx("btn_child", lang), callback_data="m_child")],
         [InlineKeyboardButton(tx("btn_bmi", lang), callback_data="m_bmi")],
