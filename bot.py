@@ -221,7 +221,7 @@ REMINDER_SOUND = "reminder.mp3"
  STATE_FOOD_SEARCH, STATE_SUGAR, STATE_DIET, STATE_BP, STATE_BP_AGE,
  STATE_PAT_MENU, STATE_PAT_NAME, STATE_PAT_AGE, STATE_PAT_WEIGHT,
  STATE_PAT_GENDER, STATE_PAT_DISEASE, STATE_PAT_MEDS, STATE_PAT_ALLERGY,
- STATE_INTERACTION, STATE_DRUG_FORM, STATE_PAT_NOTE, STATE_PAT_LOG) = range(44)
+ STATE_INTERACTION, STATE_DRUG_FORM, STATE_PAT_NOTE, STATE_PAT_LOG, STATE_XRAY, STATE_LAB) = range(46)
 
 TEXTS = {
 "ar": {
@@ -1248,15 +1248,116 @@ async def analyze_image(img_bytes, lang):
         return ""
         return ""
 
+
+async def analyze_xray_ai(img_bytes, lang):
+    if not HTTPX_OK or not ANTHROPIC_API_KEY:
+        return "❌ الخدمة غير متاحة حالياً" if lang=="ar" else "❌ Service unavailable"
+    b64 = base64.b64encode(img_bytes).decode()
+    prompt_ar = (
+        "أنت طبيب استشاري أشعة تشخيصية خبير. قم بفحص وقراءة صورة الأشعة المرفقة بدقة سريرية عالية:\n"
+        "1. نوع الفحص والمنطقة (مثال: أشعة سينية للصدر Chest X-Ray، ركبة، حوض...)\n"
+        "2. المشاهدات والملاحظات السريرية (العظام، الأنسجة، الكسور، الالتهابات أو الارتشاح)\n"
+        "3. الانطباع التشخيصي الأولي (Impression)\n"
+        "4. التوصيات الطبية والخطوات التالية (مراجعة الطبيب، فحوصات تأكيدية)\n\n"
+        "قدم الإجابة بتنسيق Markdown أنيق، واختم بتذكير سريري: (هذا التحليل للاسترشاد الطبي فقط)."
+    )
+    prompt_en = (
+        "You are an expert diagnostic radiologist. Analyze this medical imaging (X-Ray/CT/MRI) with clinical precision:\n"
+        "1. Modality & Region (e.g. Chest X-Ray, Knee, Spine)\n"
+        "2. Key Findings (Bones, soft tissues, fractures, infiltrates)\n"
+        "3. Diagnostic Impression\n"
+        "4. Recommendations & Next Clinical Steps\n\n"
+        "Format in clean Markdown with clinical disclaimer at the end."
+    )
+    prompt = prompt_ar if lang=="ar" else prompt_en
+    try:
+        key = ANTHROPIC_API_KEY.encode("ascii", errors="ignore").decode("ascii").strip()
+        async with httpx.AsyncClient(timeout=45, http2=False) as c:
+            r = await c.post("https://api.anthropic.com/v1/messages",
+                headers={"x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                json={"model": "claude-haiku-4-5-20251001", "max_tokens": 1000,
+                    "messages": [{"role": "user", "content": [
+                        {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": b64}},
+                        {"type": "text", "text": prompt}
+                    ]}]})
+            return r.json().get("content", [{}])[0].get("text", "").strip()
+    except Exception as e:
+        return f"❌ حدث خطأ أثناء الفحص: {str(e)[:60]}"
+
+async def analyze_lab_ai(img_bytes, lang):
+    if not HTTPX_OK or not ANTHROPIC_API_KEY:
+        return "❌ الخدمة غير متاحة حالياً" if lang=="ar" else "❌ Service unavailable"
+    b64 = base64.b64encode(img_bytes).decode()
+    prompt_ar = (
+        "أنت استشاري طب مخبري وتحاليل طبية خبير. اقرأ نتائج ورقة التحليل المرفقة بعناية:\n"
+        "1. اسم الفحص ونوعه (مثال: صورة دم كاملة CBC، وظائف كلى KFT، دهون...)\n"
+        "2. جدول أو قائمة بالنتائج مع تحديد القيم الطبيعية والقيم غير الطبيعية (مرتفعة ⬆️ أو منخفضة ⬇️)\n"
+        "3. التفسير السريري للأرقام غير الطبيعية والأسباب المحتملة\n"
+        "4. نصائح وإرشادات طبية والخطوة القادمة\n\n"
+        "قدم الإجابة بتنسيق Markdown واضح وأنيق، واختم بتذكير سريري: (النتائج للاسترشاد ويجب عرضها على الطبيب المعالج)."
+    )
+    prompt_en = (
+        "You are an expert clinical pathologist. Read and interpret this laboratory blood test report:\n"
+        "1. Test Type (e.g., CBC, Kidney function, Lipid profile)\n"
+        "2. Extracted Results highlighting normal vs abnormal (High ⬆️ / Low ⬇️)\n"
+        "3. Clinical interpretation of abnormalities\n"
+        "4. Recommendations & next steps\n\n"
+        "Format cleanly in Markdown with clinical disclaimer."
+    )
+    prompt = prompt_ar if lang=="ar" else prompt_en
+    try:
+        key = ANTHROPIC_API_KEY.encode("ascii", errors="ignore").decode("ascii").strip()
+        async with httpx.AsyncClient(timeout=45, http2=False) as c:
+            r = await c.post("https://api.anthropic.com/v1/messages",
+                headers={"x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                json={"model": "claude-haiku-4-5-20251001", "max_tokens": 1000,
+                    "messages": [{"role": "user", "content": [
+                        {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": b64}},
+                        {"type": "text", "text": prompt}
+                    ]}]})
+            return r.json().get("content", [{}])[0].get("text", "").strip()
+    except Exception as e:
+        return f"❌ حدث خطأ أثناء قراءة التحليل: {str(e)[:60]}"
+
+async def xray_photo_handler(u, ctx):
+    lang = get_lang(ctx)
+    msg = await u.message.reply_text("🩻 " + ("جارٍ فحص صورة الأشعة بالذكاء الاصطناعي..." if lang=="ar" else "Analyzing X-Ray image..."))
+    try:
+        photo = u.message.photo[-1]
+        f = await photo.get_file()
+        img = await f.download_as_bytearray()
+        result = await analyze_xray_ai(bytes(img), lang)
+        await msg.delete()
+        await u.message.reply_text(result, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+    except Exception as e:
+        await msg.delete()
+        await u.message.reply_text("❌ " + str(e)[:60], reply_markup=kb_back(lang))
+    return STATE_XRAY
+
+async def lab_photo_handler(u, ctx):
+    lang = get_lang(ctx)
+    msg = await u.message.reply_text("🧪 " + ("جارٍ قراءة وتحليل الفحص المخبري..." if lang=="ar" else "Analyzing lab results..."))
+    try:
+        photo = u.message.photo[-1]
+        f = await photo.get_file()
+        img = await f.download_as_bytearray()
+        result = await analyze_lab_ai(bytes(img), lang)
+        await msg.delete()
+        await u.message.reply_text(result, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+    except Exception as e:
+        await msg.delete()
+        await u.message.reply_text("❌ " + str(e)[:60], reply_markup=kb_back(lang))
+    return STATE_LAB
+
 def kb_lang():
     return InlineKeyboardMarkup([[
         InlineKeyboardButton("🇸🇦 العربية", callback_data="lang_ar"),
         InlineKeyboardButton("🇬🇧 English", callback_data="lang_en")]])
 
 def kb_main(lang):
-    platform_url = "https://ais-dev-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app"
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("🌐 " + ("فتح المنصة الطبية الشاملة (Web App)" if lang=="ar" else "Open Medical Platform"), web_app=WebAppInfo(url=platform_url))],
+        [InlineKeyboardButton("🩻 " + ("فحص وقراءة الأشعة (X-Ray)" if lang=="ar" else "X-Ray Analysis"), callback_data="m_xray")],
+        [InlineKeyboardButton("🧪 " + ("تحليل الفحوصات المخبرية" if lang=="ar" else "Lab Tests Analysis"), callback_data="m_lab")],
         [InlineKeyboardButton(tx("btn_search", lang), callback_data="m_search")],
         [InlineKeyboardButton(tx("btn_child", lang), callback_data="m_child")],
         [InlineKeyboardButton(tx("btn_bmi", lang), callback_data="m_bmi")],
@@ -1269,8 +1370,7 @@ def kb_main(lang):
         [InlineKeyboardButton(tx("btn_premium", lang), callback_data="m_premium")],
         [InlineKeyboardButton(tx("btn_settings", lang), callback_data="m_settings")],
         [InlineKeyboardButton("📖 " + ("دليل المستخدم" if lang=="ar" else "User Guide"), callback_data="m_guide")],
-        [InlineKeyboardButton("🥗 " + ("التغذية العلاجية" if lang=="ar" else "Therapeutic Diet"), callback_data="m_diet")],
-        [InlineKeyboardButton("🌐 " + ("تطبيق الويب" if lang=="ar" else "Web App"), url="https://ais-dev-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app")]])
+        [InlineKeyboardButton("🥗 " + ("التغذية العلاجية" if lang=="ar" else "Therapeutic Diet"), callback_data="m_diet")]])
 
 
 def kb_back(lang):
@@ -1818,7 +1918,25 @@ async def go_back(u, ctx):
 async def main_cb(u, ctx):
     q = u.callback_query; await q.answer()
     lang = get_lang(ctx)
-    if q.data == "m_search":
+    if q.data == "m_xray":
+        msg = ("🩻 *فحص وقراءة الأشعة السينية (X-Ray / MRI / CT)*\n\n"
+               "📸 *أرسل صورة الأشعة الآن كصورة عادية في الشات.*\n"
+               "سأقوم بفحصها بالذكاء الاصطناعي الطبي وإظهار التقرير السريري فوراً!") if lang=="ar" else (
+               "🩻 *X-Ray & Medical Imaging Scan*\n\n"
+               "📸 *Please send the X-Ray image now directly in this chat.*\n"
+               "I will analyze it and generate the clinical report instantly!")
+        await q.message.edit_text(msg, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+        return STATE_XRAY
+    elif q.data == "m_lab":
+        msg = ("🧪 *تحليل الفحوصات والتحاليل المخبرية*\n\n"
+               "📸 *التقط صورة لورقة التحليل (دم، كلى، كبد، سكر) وأرسلها هنا.*\n"
+               "سأقرأ النتائج وأوضح الشاذ منها والتوصيات السريرية فوراً!") if lang=="ar" else (
+               "🧪 *Lab Blood Test Analysis*\n\n"
+               "📸 *Please send a photo of the lab test report here.*\n"
+               "I will interpret the abnormal values and clinical insights instantly!")
+        await q.message.edit_text(msg, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
+        return STATE_LAB
+    elif q.data == "m_search":
         await q.message.edit_text(tx("search_prompt", lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
         return STATE_DRUG_SEARCH
     elif q.data == "m_child":
@@ -4860,6 +4978,12 @@ def build_conv():
             STATE_BMI_DRUG: [
                 CallbackQueryHandler(bmi_cb, pattern="^bmi_"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, bmi_text)],
+            STATE_XRAY: [
+                CallbackQueryHandler(go_back, pattern="^back$"),
+                MessageHandler(filters.PHOTO, xray_photo_handler)],
+            STATE_LAB: [
+                CallbackQueryHandler(go_back, pattern="^back$"),
+                MessageHandler(filters.PHOTO, lab_photo_handler)],
             STATE_DRUG_SEARCH: [
                 CallbackQueryHandler(manual_drug_input, pattern="^manual_input$"),
                 CallbackQueryHandler(go_back, pattern="^back$"),
