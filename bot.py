@@ -1356,7 +1356,7 @@ def kb_lang():
             InlineKeyboardButton("🇬🇧 English", callback_data="lang_en")
         ],
         [
-            InlineKeyboardButton("🌐 فتح تطبيق وموقع جرعة الطبي | Web App", url="https://tinyurl.com/dose-med")
+            InlineKeyboardButton("🌐 فتح تطبيق وموقع جرعة الطبي | Web App", url="https://ais-dev-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app")
         ]
     ])
 
@@ -1377,7 +1377,7 @@ def kb_main(lang):
         [InlineKeyboardButton(tx("btn_settings", lang), callback_data="m_settings")],
         [InlineKeyboardButton("📖 " + ("دليل المستخدم" if lang=="ar" else "User Guide"), callback_data="m_guide")],
         [InlineKeyboardButton("🥗 " + ("التغذية العلاجية" if lang=="ar" else "Therapeutic Diet"), callback_data="m_diet")],
-        [InlineKeyboardButton("🌐 " + ("فتح تطبيق الويب" if lang=="ar" else "Open Web App"), url="https://tinyurl.com/dose-med")]])
+        [InlineKeyboardButton("🌐 " + ("فتح تطبيق الويب" if lang=="ar" else "Open Web App"), url="https://ais-dev-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app")]])
 
 
 def kb_back(lang):
