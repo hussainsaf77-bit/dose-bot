@@ -231,7 +231,7 @@ TEXTS = {
 "btn_child": "🍼 جرعات الأطفال",
 "btn_remind": "⏰ التذكير بالأدوية",
 "btn_patient": "👤 ملف المريض",
-"btn_interaction": "⚠️ التفاعلات الدوائية",
+"btn_interaction": "⚠️ فحص التعارضات والتداخلات الدوائية",
 "btn_settings": "⚙️ الإعدادات",
 "btn_premium": "⭐ الاشتراك المميز",
 "premium_menu": "⭐ *الاشتراك المميز*\n\nاختر خطتك:\n\n🆓 المجاني: 3 استعلامات لكل ميزة\n📅 أسبوعي: $0.99\n📆 شهري: $2.99\n📦 3 أشهر: $6.99 + شهر مجاني\n📦 6 أشهر: $11.99 + شهرين مجاناً\n🏆 سنوي: $19.99 + 6 أشهر مجاناً",
@@ -310,7 +310,7 @@ TEXTS = {
 "btn_child": "🍼 Child Doses",
 "btn_remind": "⏰ Reminders",
 "btn_patient": "👤 Patient File",
-"btn_interaction": "⚠️ Drug Interactions",
+"btn_interaction": "⚠️ Drug Interactions Checker",
 "btn_settings": "⚙️ Settings",
 "btn_premium": "⭐ Premium Subscription",
 "premium_menu": "⭐ *Premium Subscription*\n\nChoose your plan:\n\n🆓 Free: 3 queries per feature\n📅 Weekly: $0.99\n📆 Monthly: $2.99\n📦 3 Months: $6.99 + 1 month free\n📦 6 Months: $11.99 + 2 months free\n🏆 Annual: $19.99 + 6 months free",
@@ -3892,7 +3892,12 @@ def normalize_drug_name(name):
         "بوتاسيوم":"potassium","potassium":"potassium",
         "كالسيوم":"calcium","calcium":"calcium",
         "كحول":"alcohol","alcohol":"alcohol",
-        "جريب فروت":"grapefruit","grapefruit":"grapefruit",
+        "جريب فروت":"grapefruit",
+        "وارفارين":"warfarin","اسبرين":"aspirin","أسبرين":"aspirin","جوسبرين":"aspirin","كومادين":"warfarin",
+        "باراسيتامول":"paracetamol","بنادول":"paracetamol","بندول":"paracetamol","أدول":"paracetamol","ادول":"paracetamol",
+        "ايبوبروفين":"ibuprofen","إيبوبروفين":"ibuprofen","بروفين":"ibuprofen","نوروفين":"ibuprofen",
+        "فولتارين":"diclofenac","ديكلوفيناك":"diclofenac","روفيناك":"diclofenac","كتفلام":"diclofenac",
+"grapefruit":"grapefruit",
     }
     return aliases.get(name, name)
 
@@ -3903,68 +3908,160 @@ def check_interaction(drug1, drug2):
     return result
 
 async def interaction_start(u, ctx):
-    q = u.callback_query; await q.answer()
+    q = u.callback_query
+    await q.answer()
     lang = get_lang(ctx)
-    msg = "⚠️ *التفاعلات الدوائية*\n\nاكتب اسم الدواء الأول:" if lang=="ar" else "⚠️ *Drug Interactions*\n\nEnter first drug name:"
+    if lang == "ar":
+        msg = (
+            "⚠️ *فاحص التعارضات والتداخلات الدوائية السريري* 💊\n\n"
+            "يمكنك كتابة الدواءين معاً في رسالة واحدة مثل:\n"
+            "▫️ `وارفارين + أسبرين`\n"
+            "▫️ `بنادول و بروفين`\n"
+            "▫️ `Metformin and Glimepiride`\n\n"
+            "أو اكتب الآن **اسم الدواء الأول**:"
+        )
+    else:
+        msg = (
+            "⚠️ *Clinical Drug Interactions Checker* 💊\n\n"
+            "You can enter both drugs in one message, e.g.:\n"
+            "▫️ `Warfarin + Aspirin`\n"
+            "▫️ `Panadol and Brufen`\n\n"
+            "Or enter the **first medicine name**:"
+        )
     await q.message.edit_text(msg, parse_mode=ParseMode.MARKDOWN)
     ctx.user_data["interaction_step"] = 1
     return STATE_INTERACTION
+
 
 async def interaction_input(u, ctx):
     lang = get_lang(ctx)
     step = ctx.user_data.get("interaction_step", 1)
     text = u.message.text.strip()
 
-    if step == 1:
-        ctx.user_data["drug1"] = text
-        ctx.user_data["interaction_step"] = 2
-        await u.message.reply_text("💊 " + ("الآن اكتب اسم الدواء الثاني:" if lang=="ar" else "Now enter second drug name:"))
-        return STATE_INTERACTION
+    drug1, drug2 = None, None
 
+    # Support entering both drugs in one line separated by (+, and, و, مع, comma)
+    if step == 1:
+        delimiters = [" + ", "+", " and ", " AND ", " مع ", " و ", ", ", ","]
+        found_split = False
+        for d in delimiters:
+            if d in text:
+                parts = [p.strip() for p in text.split(d, 1) if p.strip()]
+                if len(parts) == 2:
+                    drug1, drug2 = parts[0], parts[1]
+                    found_split = True
+                    break
+        if not found_split:
+            ctx.user_data["drug1"] = text
+            ctx.user_data["interaction_step"] = 2
+            prompt_next = "💊 *اكتب الآن اسم الدواء الثاني المراد فحصه:*" if lang == "ar" else "💊 *Now enter the second medicine name:*"
+            await u.message.reply_text(prompt_next, parse_mode=ParseMode.MARKDOWN)
+            return STATE_INTERACTION
     elif step == 2:
         drug1 = ctx.user_data.get("drug1", "")
         drug2 = text
 
-        # نتحقق أولاً من القاعدة المحلية
-        result = check_interaction(drug1, drug2)
+    thinking_msg = await u.message.reply_text(
+        "🔍 جارٍ فحص التداخلات والتعارضات سريرياً..." if lang == "ar" else "🔍 Analyzing clinical drug interactions..."
+    )
 
-        if result:
-            severity, effect, advice = result
-            msg = severity + " تفاعل دوائي\n\n💊 " + drug1 + " + " + drug2 + "\n\n⚡ التأثير: " + effect + "\n\n💡 النصيحة: " + advice if lang=="ar" else severity + " Drug Interaction\n\n💊 " + drug1 + " + " + drug2 + "\n\n⚡ Effect: " + effect + "\n\n💡 Advice: " + advice
-
+    # 1. Quick Local Database Check
+    local_res = check_interaction(drug1, drug2)
+    if local_res:
+        severity, effect, advice = local_res
+        if lang == "ar":
+            msg = (
+                f"{severity} *تعارض وتداخل دوائي*\n\n"
+                f"💊 *الأدوية المفحوصة:* `{drug1}` + `{drug2}`\n\n"
+                f"⚡ *التأثير والمخاطر:* {effect}\n\n"
+                f"💡 *التوصية السريرية:* {advice}\n\n"
+                f"⚠️ _ملاحظة: استشر الطبيب أو الصيدلي دائماً قبل تعديل الجرعات._"
+            )
         else:
-            # نستخدم Claude API للبحث
-            thinking_msg = await u.message.reply_text("🔍 " + ("جارٍ البحث عن التفاعلات..." if lang=="ar" else "Searching for interactions..."))
-            try:
-                prompt = f"""أنت صيدلاني خبير. اكتشف التفاعل الدوائي بين: {drug1} و {drug2}
+            msg = (
+                f"{severity} *Drug Interaction*\n\n"
+                f"💊 *Analyzed Drugs:* `{drug1}` + `{drug2}`\n\n"
+                f"⚡ *Clinical Effect:* {effect}\n\n"
+                f"💡 *Recommendation:* {advice}\n\n"
+                f"⚠️ _Always consult your doctor or pharmacist before changing medications._"
+            )
+    else:
+        # 2. Advanced Clinical AI Check
+        try:
+            if lang == "ar":
+                prompt = (
+                    f"أنت صيدلاني سريري واستشاري في علم الأدوية (Clinical Pharmacist).\n"
+                    f"قم بفحص وتقييم التداخل والتعارض الدوائي بدقة بالغة بين هذين الدوائين:\n"
+                    f"الدواء الأول: {drug1}\n"
+                    f"الدواء الثاني: {drug2}\n\n"
+                    f"قم بتحليل المواد الفعالة سواء كانت الأسماء المدخلة تجارية أو علمية.\n\n"
+                    f"أجب بدقة بالغة بالتنسيق التالي المحدد:\n"
+                    f"🔴 درجة الخطورة: [اختر بدقة: 🔴 خطير جداً (يحظر الجمع) / 🟠 متوسط الخطورة (يتطلب حذر ومراقبة) / 🟡 خفيف / 🟢 آمن (لا يوجد تعارض معروف)]\n\n"
+                    f"⚡ آلية التأثير والمخاطر: [اشرح بدقة ومباشرة ما يحدث عند تناولهما معاً مثل: زيادة خطر النزيف، هبوط الضغط، إطالة QT، انخفاض الفاعلية، إلخ]\n\n"
+                    f"💡 التوصية السريرية والبدائل: [توصية واضحة للطبيب أو المريض: هل يوقف أحدهما، هل يباعد بينهما بساعتين، ما هو البديل الآمن؟]\n\n"
+                    f"كن موجزاً، مباشراً، وطبياً موثوقاً دون مقدمات أو ختاميات إنشائية."
+                )
+            else:
+                prompt = (
+                    f"You are an expert Clinical Pharmacist.\n"
+                    f"Analyze the drug-drug interaction between:\n"
+                    f"Drug 1: {drug1}\n"
+                    f"Drug 2: {drug2}\n\n"
+                    f"Identify the active ingredients and evaluate both generic and brand names.\n\n"
+                    f"Respond strictly in this format:\n"
+                    f"🔴 Severity: [Choose one: 🔴 Severe / Contraindicated / 🟠 Moderate / Monitor Closely / 🟡 Minor / 🟢 Safe / No Known Interaction]\n\n"
+                    f"⚡ Clinical Mechanism & Risks: [Explain what happens physiologically]\n\n"
+                    f"💡 Clinical Recommendation & Safe Alternatives: [Actionable clinical guidance, timing separation, or safe substitutes]\n\n"
+                    f"Keep it concise, direct, and evidence-based."
+                )
 
-أجب بالتنسيق التالي فقط:
-درجة الخطورة: [🔴 خطير / 🟠 متوسط / 🟡 خفيف / ✅ آمن]
-التأثير: [وصف مختصر]
-النصيحة: [نصيحة عملية]
+            key = ANTHROPIC_API_KEY.encode("ascii", errors="ignore").decode("ascii").strip() if ANTHROPIC_API_KEY else ""
+            async with httpx.AsyncClient(timeout=35, http2=False) as c:
+                r = await c.post(
+                    "https://api.anthropic.com/v1/messages",
+                    headers={
+                        "x-api-key": key,
+                        "anthropic-version": "2023-06-01",
+                        "content-type": "application/json"
+                    },
+                    json={
+                        "model": "claude-haiku-4-5-20251001",
+                        "max_tokens": 800,
+                        "messages": [{"role": "user", "content": prompt}]
+                    }
+                )
+                if r.status_code == 200:
+                    ai_content = r.json().get("content", [{}])[0].get("text", "").strip()
+                    header = "⚠️ *تقرير التداخلات الدوائية السريري*" if lang == "ar" else "⚠️ *Clinical Interaction Report*"
+                    msg = f"{header}\n\n💊 `{drug1}` + `{drug2}`\n\n{ai_content}\n\n_⚠️ إخلاء مسؤولية: هذا الفحص للأغراض التثقيفية الطبية ولا يغني عن تقييم الطبيب المعالج._"
+                else:
+                    raise Exception(f"API status {r.status_code}")
+        except Exception as e:
+            logger.error(f"Interaction check error: {e}")
+            if lang == "ar":
+                msg = (
+                    f"⚠️ *تنبيه أمان:* تعذر فحص التداخل بين `{drug1}` و `{drug2}` في هذه اللحظة.\n\n"
+                    f"يرجى إعادة المحاولة أو استشارة الصيدلي مباشرة، وتجنب الجمع بين أدوية جديدة دون استشارة مختصة."
+                )
+            else:
+                msg = (
+                    f"⚠️ *Safety Alert:* Unable to verify interaction between `{drug1}` and `{drug2}` right now.\n\n"
+                    f"Please try again or consult a pharmacist before combining these medications."
+                )
 
-إذا لم يوجد تفاعل معروف اكتب: ✅ لا يوجد تفاعل دوائي معروف بين هذين الدوائين
+    try:
+        await thinking_msg.delete()
+    except Exception:
+        pass
 
-أجب {"بالعربية" if lang=="ar" else "in English"} فقط."""
+    btns = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🔄 " + ("فحص أدوية أخرى" if lang == "ar" else "Check Another"), callback_data="m_interaction")],
+        [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+    ])
+    await u.message.reply_text(msg, reply_markup=btns, parse_mode=ParseMode.MARKDOWN)
+    ctx.user_data["interaction_step"] = 1
+    return STATE_MAIN_MENU
 
-                async with httpx.AsyncClient(timeout=30, http2=False) as c:
-                    r = await c.post("https://api.anthropic.com/v1/messages",
-                        headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
-                        json={"model": "claude-haiku-4-5-20251001", "max_tokens": 300,
-                            "messages": [{"role": "user", "content": prompt}]})
-                    ai_result = r.json().get("content", [{}])[0].get("text", "").strip()
-                    msg = "⚠️ التفاعل الدوائي\n\n💊 " + drug1 + " + " + drug2 + "\n\n" + ai_result if lang=="ar" else "⚠️ Drug Interaction\n\n💊 " + drug1 + " + " + drug2 + "\n\n" + ai_result
-            except Exception as e:
-                msg = "✅ لا يوجد تفاعل معروف\n\n💊 " + drug1 + " + " + drug2 if lang=="ar" else "✅ No known interaction\n\n💊 " + drug1 + " + " + drug2
-            await thinking_msg.delete()
-
-        btns = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🔄 " + ("بحث جديد" if lang=="ar" else "New Search"), callback_data="m_interaction")],
-            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
-        ])
-        await u.message.reply_text(msg, reply_markup=btns, parse_mode=ParseMode.MARKDOWN)
-        ctx.user_data["interaction_step"] = 1
-        return STATE_MAIN_MENU
 
 
 async def ask_drug_form(u, ctx):
