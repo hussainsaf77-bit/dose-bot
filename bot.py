@@ -1350,9 +1350,15 @@ async def lab_photo_handler(u, ctx):
     return STATE_LAB
 
 def kb_lang():
-    return InlineKeyboardMarkup([[
-        InlineKeyboardButton("🇸🇦 العربية", callback_data="lang_ar"),
-        InlineKeyboardButton("🇬🇧 English", callback_data="lang_en")]])
+    return InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("🇸🇦 العربية", callback_data="lang_ar"),
+            InlineKeyboardButton("🇬🇧 English", callback_data="lang_en")
+        ],
+        [
+            InlineKeyboardButton("🌐 فتح تطبيق وموقع جرعة الطبي | Web App", url="https://tinyurl.com/dose-med")
+        ]
+    ])
 
 def kb_main(lang):
     return InlineKeyboardMarkup([
