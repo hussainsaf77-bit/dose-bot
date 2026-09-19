@@ -1,3 +1,4 @@
+from fastapi.responses import FileResponse, HTMLResponse
 import os, json, hmac, hashlib, uuid
 from datetime import datetime, timedelta, timezone
 from typing import Optional
@@ -128,7 +129,8 @@ class ReminderBody(BaseModel):
     days: Optional[list]=[]; email_notify: bool=False
 
 @app.get("/")
-async def root(): return {"status":"ok","service":"dose-web-api","version":"2.0.0"}
+def root():
+    return FileResponse("index.html")
 
 @app.get("/health")
 async def health(): return {"status":"ok","timestamp":datetime.utcnow().isoformat()}
