@@ -1,290 +1,371 @@
-2026-06-28 02:34:41,527 - INFO - API Key loaded: 108 chars
-/data/data/com.termux/files/home/dose-bot/bot.py:4581: PTBUserWarning: If 'per_message=False', 'CallbackQueryHandler' will not be tracked for every message. Read this FAQ entry to learn more about the per_* settings: https://github.com/python-telegram-bot/python-telegram-bot/wiki/Frequently-Asked-Questions#what-do-the-per_-settings-in-conversationhandler-do.
+nohup: ignoring input
+2026-09-14 23:06:08,782 - INFO - API Key loaded: 108 chars
+Exception in thread Thread-1 (run_ping_server):
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/threading.py", line 1044, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/threading.py", line 995, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/home/dose-bot/bot.py", line 169, in run_ping_server
+    server = HTTPServer(("0.0.0.0", port), PingHandler)
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 458, in __init__
+    self.server_activate()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 487, in server_activate
+    self.socket.listen(self.request_queue_size)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 98] Address already in use
+/data/data/com.termux/files/home/dose-bot/bot.py:4759: PTBUserWarning: If 'per_message=False', 'CallbackQueryHandler' will not be tracked for every message. Read this FAQ entry to learn more about the per_* settings: https://github.com/python-telegram-bot/python-telegram-bot/wiki/Frequently-Asked-Questions#what-do-the-per_-settings-in-conversationhandler-do.
   return ConversationHandler(
-2026-06-28 02:34:47,003 - ERROR - Network Retry Loop (Bootstrap Initialize Application): Timed out: Timed out. Failed run number 0 of 0. Aborting.
-Traceback (most recent call last):
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
-    yield
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_transports/default.py", line 394, in handle_async_request
-    resp = await self._pool.handle_async_request(req)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_async/connection_pool.py", line 256, in handle_async_request
-    raise exc from None
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_async/connection_pool.py", line 236, in handle_async_request
-    response = await connection.handle_async_request(
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        pool_request.request
-        ^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_async/connection.py", line 101, in handle_async_request
-    raise exc
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_async/connection.py", line 78, in handle_async_request
-    stream = await self._connect(request)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_async/connection.py", line 124, in _connect
-    stream = await self._network_backend.connect_tcp(**kwargs)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_backends/auto.py", line 31, in connect_tcp
-    return await self._backend.connect_tcp(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ...<5 lines>...
-    )
-    ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_backends/anyio.py", line 113, in connect_tcp
-    with map_exceptions(exc_map):
-         ~~~~~~~~~~~~~~^^^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/contextlib.py", line 162, in __exit__
-    self.gen.throw(value)
-    ~~~~~~~~~~~~~~^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
-    raise to_exc(exc) from exc
-httpcore.ConnectTimeout
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_httpxrequest.py", line 279, in do_request
-    res = await self._client.request(
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ...<6 lines>...
-    )
-    ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_client.py", line 1540, in request
-    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_client.py", line 1629, in send
-    response = await self._send_handling_auth(
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ...<4 lines>...
-    )
-    ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_client.py", line 1657, in _send_handling_auth
-    response = await self._send_handling_redirects(
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ...<3 lines>...
-    )
-    ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_client.py", line 1694, in _send_handling_redirects
-    response = await self._send_single_request(request)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_client.py", line 1730, in _send_single_request
-    response = await transport.handle_async_request(request)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_transports/default.py", line 393, in handle_async_request
-    with map_httpcore_exceptions():
-         ~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/contextlib.py", line 162, in __exit__
-    self.gen.throw(value)
-    ~~~~~~~~~~~~~~^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
-    raise mapped_exc(message) from exc
-httpx.ConnectTimeout
-
-The above exception was the direct cause of the following exception:
-
+2026-09-14 23:06:09,508 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getMe "HTTP/1.1 200 OK"
+2026-09-14 23:06:09,544 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-09-14 23:06:09,545 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-09-14 23:06:09,545 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-09-14 23:06:09,546 - INFO - sched: ميتفورمين x3 times=['17:05:00', '01:05:00', '09:05:00']
+2026-09-14 23:06:09,546 - INFO - ✅ تم استعادة 1 تذكير
+2026-09-14 23:06:09,670 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/deleteWebhook "HTTP/1.1 200 OK"
+2026-09-14 23:06:09,673 - INFO - Added job "rem_6298206492_ميتفورمين_0" to job store "default"
+2026-09-14 23:06:09,674 - INFO - Added job "rem_6298206492_ميتفورمين_1" to job store "default"
+2026-09-14 23:06:09,674 - INFO - Added job "rem_6298206492_ميتفورمين_2" to job store "default"
+2026-09-14 23:06:09,674 - INFO - Scheduler started
+2026-09-14 23:06:09,674 - INFO - Application started
+2026-09-14 23:06:43,905 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-14 23:06:43,907 - ERROR - No error handlers are registered, logging exception.
 Traceback (most recent call last):
   File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
     await do_action()
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 136, in do_action
-    await action_cb()
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_application.py", line 489, in initialize
-    await self.bot.initialize()
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 316, in initialize
-    await super().initialize()
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 857, in initialize
-    await self.get_me()
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 2008, in get_me
-    return await super().get_me(
-           ^^^^^^^^^^^^^^^^^^^^^
-    ...<5 lines>...
-    )
-    ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 990, in get_me
-    result = await self._post(
-             ^^^^^^^^^^^^^^^^^
-    ...<6 lines>...
-    )
-    ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 704, in _post
-    return await self._do_post(
-           ^^^^^^^^^^^^^^^^^^^^
-    ...<6 lines>...
-    )
-    ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 370, in _do_post
-    return await super()._do_post(
-           ^^^^^^^^^^^^^^^^^^^^^^^
-    ...<6 lines>...
-    )
-    ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 733, in _do_post
-    result = await request.post(
-             ^^^^^^^^^^^^^^^^^^^
-    ...<6 lines>...
-    )
-    ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
-    result = await self._request_wrapper(
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ...<7 lines>...
-    )
-    ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 305, in _request_wrapper
-    code, payload = await self.do_request(
-                    ^^^^^^^^^^^^^^^^^^^^^^
-    ...<7 lines>...
-    )
-    ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_httpxrequest.py", line 296, in do_request
-    raise TimedOut from err
-telegram.error.TimedOut: Timed out
-✅ تم تحميل 527 دواء
-✅ Supabase: False
-🚀 البوت يعمل!
-Traceback (most recent call last):
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
-    yield
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_transports/default.py", line 394, in handle_async_request
-    resp = await self._pool.handle_async_request(req)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_async/connection_pool.py", line 256, in handle_async_request
-    raise exc from None
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_async/connection_pool.py", line 236, in handle_async_request
-    response = await connection.handle_async_request(
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        pool_request.request
-        ^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_async/connection.py", line 101, in handle_async_request
-    raise exc
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_async/connection.py", line 78, in handle_async_request
-    stream = await self._connect(request)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_async/connection.py", line 124, in _connect
-    stream = await self._network_backend.connect_tcp(**kwargs)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_backends/auto.py", line 31, in connect_tcp
-    return await self._backend.connect_tcp(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ...<5 lines>...
-    )
-    ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_backends/anyio.py", line 113, in connect_tcp
-    with map_exceptions(exc_map):
-         ~~~~~~~~~~~~~~^^^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/contextlib.py", line 162, in __exit__
-    self.gen.throw(value)
-    ~~~~~~~~~~~~~~^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
-    raise to_exc(exc) from exc
-httpcore.ConnectTimeout
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_httpxrequest.py", line 279, in do_request
-    res = await self._client.request(
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ...<6 lines>...
-    )
-    ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_client.py", line 1540, in request
-    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_client.py", line 1629, in send
-    response = await self._send_handling_auth(
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ...<4 lines>...
-    )
-    ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_client.py", line 1657, in _send_handling_auth
-    response = await self._send_handling_redirects(
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
     ...<3 lines>...
     )
     ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_client.py", line 1694, in _send_handling_redirects
-    response = await self._send_single_request(request)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_client.py", line 1730, in _send_single_request
-    response = await transport.handle_async_request(request)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_transports/default.py", line 393, in handle_async_request
-    with map_httpcore_exceptions():
-         ~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/contextlib.py", line 162, in __exit__
-    self.gen.throw(value)
-    ~~~~~~~~~~~~~~^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
-    raise mapped_exc(message) from exc
-httpx.ConnectTimeout
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/data/data/com.termux/files/home/dose-bot/bot.py", line 5209, in <module>
-    main()
-    ~~~~^^
-  File "/data/data/com.termux/files/home/dose-bot/bot.py", line 5206, in main
-    app.run_polling(drop_pending_updates=True)
-    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_application.py", line 839, in run_polling
-    return self.__run(
-           ~~~~~~~~~~^
-        updater_coroutine=self.updater.start_polling(
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
     ...<9 lines>...
-        close_loop=close_loop,
-        ^^^^^^^^^^^^^^^^^^^^^^
     )
     ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_application.py", line 1054, in __run
-    loop.run_until_complete(self._bootstrap_initialize(max_retries=bootstrap_retries))
-    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
-    return future.result()
-           ~~~~~~~~~~~~~^^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_application.py", line 1014, in _bootstrap_initialize
-    await network_retry_loop(
-    ...<4 lines>...
-    )
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
-    await do_action()
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 136, in do_action
-    await action_cb()
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_application.py", line 489, in initialize
-    await self.bot.initialize()
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 316, in initialize
-    await super().initialize()
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 857, in initialize
-    await self.get_me()
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 2008, in get_me
-    return await super().get_me(
-           ^^^^^^^^^^^^^^^^^^^^^
-    ...<5 lines>...
-    )
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
     ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 990, in get_me
-    result = await self._post(
-             ^^^^^^^^^^^^^^^^^
-    ...<6 lines>...
-    )
-    ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 704, in _post
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
     return await self._do_post(
            ^^^^^^^^^^^^^^^^^^^^
     ...<6 lines>...
     )
     ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 370, in _do_post
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
     return await super()._do_post(
            ^^^^^^^^^^^^^^^^^^^^^^^
     ...<6 lines>...
     )
     ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 733, in _do_post
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-14 23:06:49,790 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-14 23:06:49,792 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-14 23:06:56,914 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-14 23:06:56,915 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-14 23:09:45,293 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-14 23:09:45,305 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-14 23:09:49,431 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_transports/default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_async/connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_async/connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        pool_request.request
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_async/connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_async/http11.py", line 136, in handle_async_request
+    raise exc
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_async/http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_async/http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.READ_NUM_BYTES, timeout=timeout
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_backends/anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_httpxrequest.py", line 279, in do_request
+    res = await self._client.request(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_transports/default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
     result = await request.post(
              ^^^^^^^^^^^^^^^^^^^
     ...<6 lines>...
@@ -302,6 +383,3387 @@ Traceback (most recent call last):
     ...<7 lines>...
     )
     ^
-  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_httpxrequest.py", line 296, in do_request
-    raise TimedOut from err
-telegram.error.TimedOut: Timed out
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_httpxrequest.py", line 303, in do_request
+    raise NetworkError(f"httpx.{err.__class__.__name__}: {err}") from err
+telegram.error.NetworkError: httpx.ReadError: 
+2026-09-14 23:10:44,787 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-14 23:10:44,796 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 20:50:46,873 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 44150)
+2026-09-16 20:50:47,019 - WARNING - Run time of job "rem_6298206492_ميتفورمين_1 (trigger: cron[day_of_week='sun,mon,tue,wed,thu,fri,sat', hour='1', minute='5', second='0'], next run at: 2026-09-17 01:05:00 +03)" was missed by 19:45:47.019351
+2026-09-16 20:50:47,020 - WARNING - Run time of job "rem_6298206492_ميتفورمين_2 (trigger: cron[day_of_week='sun,mon,tue,wed,thu,fri,sat', hour='9', minute='5', second='0'], next run at: 2026-09-17 09:05:00 +03)" was missed by 11:45:47.020530
+2026-09-16 20:50:47,021 - WARNING - Run time of job "rem_6298206492_ميتفورمين_0 (trigger: cron[day_of_week='sun,mon,tue,wed,thu,fri,sat', hour='17', minute='5', second='0'], next run at: 2026-09-17 17:05:00 +03)" was missed by 3:45:47.021268
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/http/server.py", line 447, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/http/server.py", line 435, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/data/data/com.termux/files/home/dose-bot/bot.py", line 5368, in do_GET
+    self.wfile.write(b"OK")
+    ~~~~~~~~~~~~~~~~^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+    ~~~~~~~~~~~~~~~~~~^^^
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 53892)
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/http/server.py", line 447, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/http/server.py", line 435, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/data/data/com.termux/files/home/dose-bot/bot.py", line 5368, in do_GET
+    self.wfile.write(b"OK")
+    ~~~~~~~~~~~~~~~~^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+    ~~~~~~~~~~~~~~~~~~^^^
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+2026-09-16 20:50:47,025 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:15:08,601 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:15:08,605 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:15:30,239 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:15:30,241 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:17:06,795 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:17:06,804 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:18:40,546 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:18:40,552 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:19:51,999 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:19:52,002 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:20:47,623 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:20:47,628 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:21:46,214 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:21:46,218 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:22:50,510 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:22:50,517 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:23:25,214 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:23:25,226 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:24:22,502 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:24:22,506 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:25:34,674 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:25:34,688 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:26:25,245 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:26:25,252 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:26:59,858 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:26:59,860 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:27:51,133 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:27:51,144 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:28:29,699 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:28:29,708 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:30:01,919 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:30:01,925 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:31:21,293 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:31:21,301 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:32:17,797 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:32:17,800 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:33:11,841 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:33:11,847 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:34:07,013 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:34:07,018 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:35:21,228 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:35:21,232 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:36:27,951 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:36:27,957 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:37:38,491 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:37:38,496 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:40:30,572 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:40:30,579 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 21:41:05,502 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 21:41:05,508 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 54438)
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/http/server.py", line 447, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/http/server.py", line 435, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/data/data/com.termux/files/home/dose-bot/bot.py", line 5368, in do_GET
+    if res2.data:
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+    ~~~~~~~~~~~~~~~~~~^^^
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+2026-09-16 22:22:50,393 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 22:22:50,396 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 39174)
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/http/server.py", line 447, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/http/server.py", line 435, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/data/data/com.termux/files/home/dose-bot/bot.py", line 5368, in do_GET
+    if res2.data:
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+    ~~~~~~~~~~~~~~~~~~^^^
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 44432)
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/http/server.py", line 447, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/http/server.py", line 435, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/data/data/com.termux/files/home/dose-bot/bot.py", line 5368, in do_GET
+    if res2.data:
+  File "/data/data/com.termux/files/usr/lib/python3.13/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+    ~~~~~~~~~~~~~~~~~~^^^
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+2026-09-16 23:07:11,539 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:07:11,546 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:09:22,957 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:09:22,963 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:10:23,438 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:10:23,443 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:12:14,964 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:12:14,976 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:13:29,722 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:13:29,733 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:14:07,150 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:14:07,153 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:16:09,267 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:16:09,273 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:18:01,483 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:18:01,490 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:19:02,059 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:19:02,065 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:19:32,882 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 200 OK"
+2026-09-16 23:19:37,107 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:19:37,108 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:19:42,913 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:19:42,914 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:19:48,742 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:19:48,743 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:19:55,296 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:19:55,301 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:20:40,760 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:20:40,770 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:20:47,891 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 200 OK"
+2026-09-16 23:20:51,148 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:20:51,149 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:22:06,855 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:22:06,866 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:22:12,363 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:22:12,365 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:22:18,202 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:22:18,203 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:23:02,854 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:23:02,866 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:23:10,544 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:23:10,545 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:23:57,909 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:23:57,923 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:24:06,530 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 200 OK"
+2026-09-16 23:24:10,209 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:24:10,211 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:24:16,011 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:24:16,013 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:24:21,872 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:24:21,873 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:35:11,928 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:35:11,935 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:35:20,153 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:35:20,155 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:36:23,557 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:36:23,580 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:36:35,792 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:36:35,793 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:36:51,752 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:36:51,754 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:56:15,702 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:56:15,706 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:57:05,655 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:57:05,662 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-16 23:58:22,240 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-16 23:58:22,247 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2026-09-17 00:12:17,004 - INFO - HTTP Request: POST https://api.telegram.org/bot8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4/getUpdates "HTTP/1.1 409 Conflict"
+2026-09-17 00:12:17,013 - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 154, in do_action
+    action_cb_task.result()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 680, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 4767, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 712, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 378, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/_bot.py", line 741, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/data/data/com.termux/files/usr/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
