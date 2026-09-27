@@ -1,3 +1,20 @@
+
+
+async def handle_symptoms_action(update, context):
+    query = update.callback_query
+    await query.answer()
+    lang = getattr(context, "user_data", {}).get("lang", "ar")
+    if lang == "en":
+        msg = "🩺 *Clinical Symptom Checker (DDx):*\n\nPlease describe your symptoms in a message, or open our web tool:"
+        btn = "🖥️ Open Symptom Checker Web"
+    else:
+        msg = "🩺 *فاحص الأعراض والتشخيص التفريقي السريري (DDx):*\n\nاكتب الآن أعراضك بالتفصيل في رسالة، أو افتح الفاحص التفاعلي بالموقع:"
+        btn = "🖥️ فتح فاحص الأعراض الشامل بالموقع"
+    from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+    kb = InlineKeyboardMarkup([[InlineKeyboardButton(btn, url="https://ais-dev-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app/#symptoms")]])
+    await query.message.reply_text(msg, reply_markup=kb, parse_mode="Markdown")
+
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import json, os, re, logging, asyncio, base64
@@ -520,7 +537,7 @@ async def check_limit(update, ctx, action="default"):
             count = len(logs.data) if logs.data else 0
             if count >= limit:
                 msg = f"⭐ *{'وصلت للحد المجاني' if lang=='ar' else 'Free limit reached'}*\n\n{'لقد استخدمت هذه الميزة' if lang=='ar' else 'You have used this feature'} {count} {'مرات' if lang=='ar' else 'times'}.\n\n{'اشترك للاستمرار بدون حدود!' if lang=='ar' else 'Subscribe to continue without limits!'}"
-                kb = InlineKeyboardMarkup([[InlineKeyboardButton("⭐ " + ("اشترك الآن" if lang=="ar" else "Subscribe Now"), callback_data="m_premium")]])
+                kb = InlineKeyboardMarkup([[InlineKeyboardButton("🩺 " + ("فاحص الأعراض (DDx)" if lang=="ar" else "Symptom Checker"), callback_data="symptoms")], [InlineKeyboardButton("⭐ " + ("اشترك الآن" if lang=="ar" else "Subscribe Now"), callback_data="m_premium")]])
                 await update.message.reply_text(msg, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
                 return False
         return True
@@ -5683,6 +5700,7 @@ def main():
     import asyncio
     app.post_init = restore_reminders
     print("🚀 البوت يعمل!")
+    app.add_handler(CallbackQueryHandler(handle_symptoms_action, pattern="^symptoms$"))
     app.run_polling(drop_pending_updates=True)
 
 if __name__ == "__main__":
