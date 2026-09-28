@@ -1965,6 +1965,54 @@ async def main_cb(u, ctx):
                "I will interpret the abnormal values and clinical insights instantly!")
         await q.message.edit_text(msg, reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
         return STATE_LAB
+    elif q.data == "m_symptoms":
+        await q.answer()
+        txt = (
+            "🩺 *فاحص الأعراض والتشخيص التفريقي السريري (DDx):*\n\n"
+            "✍️ *اكتب الآن في رسالة شكواك أو الأعراض بالتفصيل*\n"
+            "(مثال: ألم في الصدر مع ضيق تنفس، أو ألم حاد أسفل البطن جهة اليمين)...\n\n"
+            "👇 أو اختر أحد النماذج السريرية الجاهزة للفحص المباشر:"
+        ) if lang == "ar" else (
+            "🩺 *Clinical Symptom Checker (DDx):*\n\n"
+            "✍️ *Describe your symptoms in detail* in a message...\n\n"
+            "👇 Or choose a preset case below:"
+        )
+        kb = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🫀 ألم بالصدر وضيق تنفس", callback_data="sym_chest"),
+             InlineKeyboardButton("🍽️ ألم حاد بأسفل البطن", callback_data="sym_appendix")],
+            [InlineKeyboardButton("🧠 صداع نصفي وغثيان", callback_data="sym_migraine"),
+             InlineKeyboardButton("🫁 سعال مستمر وحمى", callback_data="sym_cough")],
+            [InlineKeyboardButton("👶 حرارة وسعال عند طفل", callback_data="sym_child"),
+             InlineKeyboardButton("🩸 حرقان بول وألم خاصرة", callback_data="sym_uti")],
+            [InlineKeyboardButton("🌐 فتح فاحص الأعراض بالموقع وتصدير PDF", url="https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app/#symptoms")],
+            [InlineKeyboardButton(tx("btn_back", lang), callback_data="back")]
+        ])
+        await q.message.edit_text(txt, reply_markup=kb, parse_mode=ParseMode.MARKDOWN)
+        return STATE_DRUG_SEARCH
+    elif q.data.startswith("sym_"):
+        await q.answer()
+        sym_cases = {
+            "sym_chest": ("ألم صدري حاد (Acute Chest Pain / Angina vs GERD)", "🚨 طوارئ عالية: يتطلب تخطيط قلب (ECG) وإنزيمات قلب فوراً.", ["تخطيط قلب (ECG)", "إنزيمات قلب (Troponin)", "أشعة سينية للصدر"]),
+            "sym_appendix": ("اشتباه التهاب الزائدة الدودية (Acute Appendicitis)", "⚠️ أولوية جراحية: مراجعة الطوارئ الجراحية وتجنب المسكنات القوية.", ["سونار بطن وحوض", "تحليل دم شامل (CBC)", "تحليل بول"]),
+            "sym_migraine": ("نوبة صداع نصفي حاد (Acute Migraine with Aura)", "🟡 حالة متوسطة: الراحة في غرفة مظلمة، والتوجه للطوارئ إذا حدث تيبس بالرقبة.", ["قياس ضغط الدم وقاع العين", "رنين مغناطيسي (MRI)"]),
+            "sym_cough": ("التهاب مجاري تنفسية حاد (Acute Bronchitis vs Pneumonia)", "🟡 حالة متوسطة: استشارة طبيب صدرية لفحص الصدر بالسماعة.", ["أشعة صدر (CXR)", "مؤشر الالتهاب (CRP)", "تحليل دم (CBC)"]),
+            "sym_child": ("حمى وسعال عند طفل (Pediatric Febrile Illness)", "⚠️ أولوية أطفال: مراقبة درجة الحرارة وإعطاء خافض حرارة حسب الوزن.", ["فحص سريري للأذن والحلق", "تحليل دم وبول"]),
+            "sym_uti": ("التهاب مسالك بولية (UTI / Renal Colic)", "🟡 حالة روتينية/عاجلة: شرب كميات وافرة من الماء وعمل تحليل بول.", ["تحليل وزراعة بول", "وظائف كلى", "سونار للمسالك"]),
+        }
+        item = sym_cases.get(q.data, ("تقييم سريري", "حالة متوسطة", ["تحليل دم", "فحص سريري"]))
+        rep = (
+            f"📋 *تقرير التشخيص التفريقي السريري (Clinical DDx):*\n\n"
+            f"🩺 *الانطباع الأولي:* {item[0]}\n\n"
+            f"🚨 *مستوى الفرز:* {item[1]}\n\n"
+            f"🔬 *الفحوصات المقترحة:*\n• " + "\n• ".join(item[2]) + "\n\n"
+            f"🌐 [فتح الفاحص بالموقع وتصدير PDF]("https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app/#symptoms")"
+        )
+        kb = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🔙 العودة لفاحص الأعراض", callback_data="m_symptoms")],
+            [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data="back")]
+        ])
+        await q.message.edit_text(rep, reply_markup=kb, parse_mode=ParseMode.MARKDOWN)
+        return STATE_DRUG_SEARCH
     elif q.data == "m_search":
         await q.message.edit_text(tx("search_prompt", lang), reply_markup=kb_back(lang), parse_mode=ParseMode.MARKDOWN)
         return STATE_DRUG_SEARCH
