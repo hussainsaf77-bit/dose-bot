@@ -23,7 +23,7 @@ import telebot
 from telebot import types
 
 API_BASE_URL = "https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app"
-BOT_TOKEN = "8755290007:AAE_Gg-caqSt42YYkIr8I0gTFhJsqABkpy4"
+BOT_TOKEN = "8755290007:AAHD4EJ7VfaoyU3DMKJ4HQBLMpnrs4O1hEk"
 
 if os.path.exists(".token.txt"):
     try:
@@ -352,4 +352,4 @@ if __name__ == "__main__":
     except Exception:
         pass
     print("✅ البوت متصل ومستعد لاستقبال الرسائل...")
-    bot.infinity_polling(skip_pending=True)
+    bot.infinity_polling(timeout=20, long_polling_timeout=20, skip_pending=True)
