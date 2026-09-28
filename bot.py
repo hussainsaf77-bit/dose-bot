@@ -352,4 +352,16 @@ if __name__ == "__main__":
     except Exception:
         pass
     print("✅ البوت متصل ومستعد لاستقبال الرسائل...")
-    bot.infinity_polling(timeout=20, long_polling_timeout=20, skip_pending=True)
+    import time
+    try:
+        bot.remove_webhook()
+        time.sleep(1)
+    except Exception:
+        pass
+
+    while True:
+        try:
+            bot.polling(none_stop=True, interval=1, timeout=30)
+        except Exception as e:
+            print(f"🔄 إعادة الاتصال خلال ثانيتين... ({e})")
+            time.sleep(2)
