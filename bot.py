@@ -1706,6 +1706,10 @@ DRUG_CONCS = {
 }
 
 async def start(u, ctx):
+    try:
+        await u.message.reply_text("✨ مرحباً بك في منصة جرعة الطبية", reply_markup=ReplyKeyboardRemove())
+    except Exception:
+        pass
     _tz = ctx.user_data.get("timezone"); ctx.user_data.clear(); ctx.user_data["timezone"] = _tz if _tz else ctx.user_data.get("timezone")
     await u.message.reply_text(tx("welcome", "ar"), reply_markup=kb_lang(), parse_mode=ParseMode.MARKDOWN)
     return STATE_LANGUAGE
