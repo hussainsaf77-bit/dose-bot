@@ -155,7 +155,7 @@ if os.path.exists(_env_file):
             if "=" in _line and not _line.startswith("#"):
                 _k, _v = _line.split("=", 1)
                 os.environ.setdefault(_k.strip(), _v.strip())
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
+from telegram import Update, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 from telegram.request import HTTPXRequest
 from telegram.ext import PicklePersistence
 from telegram.ext import (Application, CommandHandler, CallbackQueryHandler,
