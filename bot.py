@@ -1061,7 +1061,7 @@ def kb_lang():
 def kb_main(lang):
     WEB_URL = "https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app/#symptoms"
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("🩺 " + ("فاحص الأعراض (DDx)" if lang=="ar" else "Symptom Checker"), callback_data="m_symptoms")],
+        [InlineKeyboardButton("🩺 " + ("فاحص الأعراض والتشخيص السريري (DDx)" if lang=="ar" else "Symptom Checker (DDx)"), url="https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app/#symptoms")],
         [InlineKeyboardButton(tx("btn_search", lang), callback_data="m_search")],
         [InlineKeyboardButton(tx("btn_child", lang), callback_data="m_child")],
         [InlineKeyboardButton(tx("btn_bmi", lang), callback_data="m_bmi")],
