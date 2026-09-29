@@ -11,7 +11,7 @@ async def handle_symptoms_action(update, context):
         msg = "🩺 *فاحص الأعراض والتشخيص التفريقي السريري (DDx):*\n\nاكتب الآن أعراضك بالتفصيل في رسالة، أو افتح الفاحص التفاعلي بالموقع:"
         btn = "🖥️ فتح فاحص الأعراض الشامل بالموقع"
     from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-    kb = InlineKeyboardMarkup([[InlineKeyboardButton(btn, url="https://ais-dev-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app/#symptoms")]])
+    kb = InlineKeyboardMarkup([[InlineKeyboardButton(btn, url="https://web-dose.vercel.app/#symptoms")]])
     await query.message.reply_text(msg, reply_markup=kb, parse_mode="Markdown")
 
 
@@ -36,7 +36,7 @@ TIMEZONE = pytz.timezone("Asia/Riyadh")
 import urllib.request as _ur
 import json as _json
 
-API_BASE = os.environ.get("API_BASE", "https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app")
+API_BASE = os.environ.get("API_BASE", "https://web-dose.vercel.app")
 BOT_SECRET = os.environ.get("BOT_SECRET", "bot-secret-key-123")
 
 def api_check_sub(telegram_id: str) -> dict:
@@ -51,7 +51,7 @@ def api_check_sub(telegram_id: str) -> dict:
     except:
         return {"linked": False, "has_sub": False, "plan": "Free",
                 "search_limit": 5, "reminder_limit": 0,
-                "register_url": "https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app"}
+                "register_url": "https://web-dose.vercel.app"}
 
 def api_track_usage(telegram_id: str, action: str = "search") -> dict:
     """يسجّل استخدام ويعيد هل مسموح أم لا"""
@@ -70,7 +70,7 @@ LINK_MSG = {
     "ar": "🔗 *ربط حساب الموقع*\n\nبربط حسابك ستحصل على:\n✅ اشتراك موحد للموقع والبوت\n✅ لوحة تحكم كاملة\n✅ تاريخ بحث محفوظ\n\n👇 سجّل من هنا:",
     "en": "🔗 *Link Website Account*\n\nBy linking you get:\n✅ Unified subscription\n✅ Full dashboard\n✅ Saved history\n\n👇 Register here:"
 }
-LINK_URL = "https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app"
+LINK_URL = "https://web-dose.vercel.app"
 
 
 # قاموس الدول والمناطق الزمنية
@@ -192,7 +192,7 @@ threading.Thread(target=run_ping_server, daemon=True).start()
 import urllib.request
 def self_ping():
     import time
-    url = os.environ.get("RENDER_EXTERNAL_URL", "https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app")
+    url = os.environ.get("RENDER_EXTERNAL_URL", "https://web-dose.vercel.app")
     while True:
         time.sleep(600)
         try: urllib.request.urlopen(url, timeout=10)
@@ -242,7 +242,7 @@ REMINDER_SOUND = "reminder.mp3"
 
 TEXTS = {
 "ar": {
-"welcome": "🌟 *أهلاً بك في بوت جرعة الطبي!*\n\n━━━━━━━━━━━━━━━━━━━━\n\n⚕️ *إخلاء مسؤولية مهم:*\n\nهذا البوت أداة مرجعية تعليمية فقط ولا يُغني عن الاجتهاد السريري.\n\n• للكادر الصحي: المعلومات للاسترشاد فقط — القرار العلاجي يعود لك وحدك بناءً على تقييمك للمريض\n• للمرضى: لا تعتمد على البوت لتشخيص أو علاج أي حالة دون استشارة طبيبك\n• الجرعات تختلف حسب حالة كل مريض وعوامل أخرى لا يعلمها البوت\n• لا يتحمل القائمون على البوت أي مسؤولية قانونية أو طبية\n\n🚨 في الطوارئ: اتصل بالإسعاف فوراً\n\n━━━━━━━━━━━━━━━━━━━━\n\n🌟 *Welcome to Dose Medical Bot!*\n\n⚕️ *Important Disclaimer:*\n\nThis bot is a reference tool only and does not replace clinical judgment.\n\n• Healthcare professionals: Information is for reference only — clinical decisions are solely yours based on patient assessment\n• Patients: Never rely on this bot for diagnosis or treatment without consulting your doctor\n• Doses vary based on individual patient factors unknown to this bot\n• The bot operators bear no legal or medical responsibility\n\n🚨 Emergency: Call ambulance immediately\n\n━━━━━━━━━━━━━━━━━━━━\n\nاختر لغتك | Choose your language:\n\n🌐 [تطبيق الويب | Web App](https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app",
+"welcome": "🌟 *أهلاً بك في بوت جرعة الطبي!*\n\n━━━━━━━━━━━━━━━━━━━━\n\n⚕️ *إخلاء مسؤولية مهم:*\n\nهذا البوت أداة مرجعية تعليمية فقط ولا يُغني عن الاجتهاد السريري.\n\n• للكادر الصحي: المعلومات للاسترشاد فقط — القرار العلاجي يعود لك وحدك بناءً على تقييمك للمريض\n• للمرضى: لا تعتمد على البوت لتشخيص أو علاج أي حالة دون استشارة طبيبك\n• الجرعات تختلف حسب حالة كل مريض وعوامل أخرى لا يعلمها البوت\n• لا يتحمل القائمون على البوت أي مسؤولية قانونية أو طبية\n\n🚨 في الطوارئ: اتصل بالإسعاف فوراً\n\n━━━━━━━━━━━━━━━━━━━━\n\n🌟 *Welcome to Dose Medical Bot!*\n\n⚕️ *Important Disclaimer:*\n\nThis bot is a reference tool only and does not replace clinical judgment.\n\n• Healthcare professionals: Information is for reference only — clinical decisions are solely yours based on patient assessment\n• Patients: Never rely on this bot for diagnosis or treatment without consulting your doctor\n• Doses vary based on individual patient factors unknown to this bot\n• The bot operators bear no legal or medical responsibility\n\n🚨 Emergency: Call ambulance immediately\n\n━━━━━━━━━━━━━━━━━━━━\n\nاختر لغتك | Choose your language:\n\n🌐 [تطبيق الويب | Web App](https://web-dose.vercel.app",
 "main_menu": "📋 *القائمة الرئيسية*\n\nاختر:",
 "btn_search": "🔍 استعلام عن دواء",
 "btn_child": "🍼 جرعات الأطفال",
@@ -1373,13 +1373,13 @@ def kb_lang():
             InlineKeyboardButton("🇬🇧 English", callback_data="lang_en")
         ],
         [
-            InlineKeyboardButton("🌐 فتح تطبيق وموقع جرعة الطبي | Web App", url="https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app")
+            InlineKeyboardButton("🌐 فتح تطبيق وموقع جرعة الطبي | Web App", url="https://web-dose.vercel.app")
         ]
     ])
 
 def kb_main(lang):
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("🩺 " + ("فاحص الأعراض والتشخيص السريري (DDx)" if lang=="ar" else "Symptom Checker (DDx)"), url="https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app/#symptoms")],
+        [InlineKeyboardButton("🩺 " + ("فاحص الأعراض والتشخيص السريري (DDx)" if lang=="ar" else "Symptom Checker (DDx)"), url="https://web-dose.vercel.app/#symptoms")],
         
         [InlineKeyboardButton("🩻 " + ("فحص وقراءة الأشعة (X-Ray)" if lang=="ar" else "X-Ray Analysis"), callback_data="m_xray")],
         [InlineKeyboardButton("🧪 " + ("تحليل الفحوصات المخبرية" if lang=="ar" else "Lab Tests Analysis"), callback_data="m_lab")],
@@ -1396,7 +1396,7 @@ def kb_main(lang):
         [InlineKeyboardButton(tx("btn_settings", lang), callback_data="m_settings")],
         [InlineKeyboardButton("📖 " + ("دليل المستخدم" if lang=="ar" else "User Guide"), callback_data="m_guide")],
         [InlineKeyboardButton("🥗 " + ("التغذية العلاجية" if lang=="ar" else "Therapeutic Diet"), callback_data="m_diet")],
-        [InlineKeyboardButton("🌐 " + ("فتح تطبيق الويب" if lang=="ar" else "Open Web App"), url="https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app")]])
+        [InlineKeyboardButton("🌐 " + ("فتح تطبيق الويب" if lang=="ar" else "Open Web App"), url="https://web-dose.vercel.app")]])
 
 
 def kb_back(lang):
@@ -5532,7 +5532,7 @@ PADDLE_PRICES = {
     "biannual":  "pri_01kyf5w0g2fhw82p6554dt6m45",
     "annual":    "pri_01kyf5wszwtsneevhbqwqmwbj2",
 }
-PADDLE_CHECKOUT = "https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app"
+PADDLE_CHECKOUT = "https://web-dose.vercel.app"
 
 def kb_premium(lang):
     ar = lang == "ar"
@@ -5636,9 +5636,9 @@ async def link_account_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
         email = sub.get("email","")
         plan = sub.get("plan_ar", sub.get("plan","Free"))
         if lang == "ar":
-            msg = f"✅ *حسابك مرتبط*\n\n📧 البريد: {email}\n💳 الخطة: {plan}\n\n[🌐 فتح لوحة التحكم](https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app"
+            msg = f"✅ *حسابك مرتبط*\n\n📧 البريد: {email}\n💳 الخطة: {plan}\n\n[🌐 فتح لوحة التحكم](https://web-dose.vercel.app"
         else:
-            msg = f"✅ *Account Linked*\n\n📧 Email: {email}\n💳 Plan: {plan}\n\n[🌐 Open Dashboard](https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app"
+            msg = f"✅ *Account Linked*\n\n📧 Email: {email}\n💳 Plan: {plan}\n\n[🌐 Open Dashboard](https://web-dose.vercel.app"
     else:
         if lang == "ar":
             msg = f"🔗 *ربط حساب الموقع*\n\nاربط حسابك للحصول على:\n✅ اشتراك موحد للموقع والبوت\n✅ لوحة تحكم كاملة\n✅ تاريخ بحث محفوظ\n✅ تذكيرات متقدمة\n\n👇 سجّل أو ادخل من هنا:"
@@ -5647,7 +5647,7 @@ async def link_account_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
     keyboard = [[InlineKeyboardButton(
         "🌐 تسجيل / دخول" if lang=="ar" else "🌐 Register / Login",
-        url="https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app"
+        url="https://web-dose.vercel.app"
     )]]
     
     await update.message.reply_text(
@@ -5670,7 +5670,7 @@ async def upgrade_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     keyboard = [[InlineKeyboardButton(
         "⭐ الترقية الآن" if lang=="ar" else "⭐ Upgrade Now",
-        url="https://ais-pre-od4aemezdgaeup2ncw76si-295455119343.europe-west2.run.app"
+        url="https://web-dose.vercel.app"
     )]]
     
     await update.message.reply_text(
