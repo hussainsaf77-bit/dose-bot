@@ -1881,7 +1881,156 @@ function exportPatient() {
     <h2 style="margin-top:20px">📈 القراءات الأخيرة</h2>
     ${readings.slice(-10).map(r => `<p>• ${r.type_label} — ${r.val} — ${r.date}${r.note ? " — " + r.note : ""}</p>`).join("") || "<p>لا توجد قراءات</p>"}
     <hr><p style="color:#999;font-size:11px;">تاريخ الطباعة: ${new Date().toLocaleString("ar")} · جرعة — للأغراض التعليمية فقط</p>
-  </body></html>`);
+  
+<div id="doseWelcomeModal" style="position:fixed;inset:0;z-index:99999;background:rgba(15,23,42,0.85);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;direction:rtl;font-family:Arial,sans-serif;padding:16px;">
+  <div style="background:#ffffff;color:#0f172a;width:min(460px,96vw);border-radius:20px;padding:26px;box-shadow:0 25px 70px rgba(0,0,0,0.35);max-height:90vh;overflow-y:auto;">
+    
+    <div id="onboardingStep1">
+      <div style="text-align:center;margin-bottom:16px;">
+        <span style="font-size:42px;">🩺</span>
+        <h2 style="margin:8px 0 4px;font-size:22px;color:#0d9488;font-weight:bold;">مرحباً بك في منصة جرعة</h2>
+        <p style="color:#64748b;font-size:13px;margin:0;">Dose Medical Platform — المرجع السريري الذكي</p>
+      </div>
+
+      <div style="display:flex;justify-content:center;gap:10px;margin-bottom:18px;">
+        <button type="button" onclick="setDoseLang('ar')" id="btnLangAr" style="border:2px solid #0d9488;background:#f0fdfa;color:#0f766e;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:bold;cursor:pointer;">العربية 🇸🇦</button>
+        <button type="button" onclick="setDoseLang('en')" id="btnLangEn" style="border:1px solid #cbd5e1;background:#fff;color:#64748b;padding:6px 14px;border-radius:20px;font-size:13px;cursor:pointer;">English 🇬🇧</button>
+      </div>
+
+      <div style="background:#fffbeb;border:1px solid #fef08a;border-radius:12px;padding:14px;margin-bottom:18px;font-size:12px;color:#854d0e;line-height:1.6;">
+        <strong style="display:block;margin-bottom:4px;color:#a16207;">⚠️ إخلاء مسؤولية طبي وقانوني:</strong>
+        <span id="disclaimerText">منصة جرعة أداة استرشادية سريرية لحساب الجرعات ودعم القرار الطبي، وليست بديلاً عن الفحص الطبي المباشر أو تشخيص الطبيب المعالج أو حالات الطوارئ الحرجة.</span>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;font-size:13px;color:#334155;">
+        <input type="checkbox" id="agreeDisclaimer" style="width:18px;height:18px;accent-color:#0d9488;cursor:pointer;">
+        <label for="agreeDisclaimer" style="cursor:pointer;" id="agreeLabel">قرأت وفهمت إخلاء المسؤولية وأوافق على المتابعة</label>
+      </div>
+
+      <button type="button" onclick="goToOnboardingStep2()" style="width:100%;background:#0d9488;color:#fff;border:none;padding:13px;border-radius:12px;font-size:15px;font-weight:bold;cursor:pointer;">
+        <span id="btnNextLabel">المتابعة للتسجيل والربط ⬅️</span>
+      </button>
+    </div>
+
+    <div id="onboardingStep2" style="display:none;">
+      <div style="text-align:center;margin-bottom:16px;">
+        <span style="font-size:36px;">🔑</span>
+        <h2 style="margin:6px 0 2px;font-size:20px;color:#0f172a;font-weight:bold;" id="step2Title">ربط الحساب والتسجيل</h2>
+        <p style="color:#64748b;font-size:13px;margin:0;" id="step2Desc">سجل الدخول برقم حسابك في تليجرام</p>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:13px;font-weight:bold;margin-bottom:6px;color:#334155;" id="tgIdLabel">معرّف تليجرام (Telegram ID):</label>
+        <input type="text" id="onboardingTgId" placeholder="مثال: 123456789" style="width:100%;box-sizing:border-box;padding:11px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;background:#f8fafc;">
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:13px;font-weight:bold;margin-bottom:6px;color:#334155;" id="nameLabel">الاسم أو اللقب الطبي:</label>
+        <input type="text" id="onboardingName" placeholder="د. حسين / مستخدم جرعة" style="width:100%;box-sizing:border-box;padding:11px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;">
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label style="display:block;font-size:13px;font-weight:bold;margin-bottom:6px;color:#334155;" id="roleLabel">التصنيف المهني:</label>
+        <select id="onboardingRole" style="width:100%;box-sizing:border-box;padding:11px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;background:#fff;">
+          <option value="doctor">طبيب بشري 🩺</option>
+          <option value="pharmacist">صيدلي ممارس 💊</option>
+          <option value="student">طالب كليات صحية 📚</option>
+          <option value="patient">مراجع / مريض 🧑‍⚕️</option>
+        </select>
+      </div>
+
+      <button type="button" onclick="completeDoseOnboarding()" style="width:100%;background:#0d9488;color:#fff;border:none;padding:13px;border-radius:12px;font-size:15px;font-weight:bold;cursor:pointer;">
+        <span id="btnLaunchLabel">تأكيد والانطلاق للصفحة الرئيسية 🚀</span>
+      </button>
+
+      <button type="button" onclick="backToStep1()" style="width:100%;background:none;border:none;color:#64748b;padding:10px;margin-top:6px;font-size:13px;cursor:pointer;">
+        ⬅️ العودة للخطوة السابقة
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let doseSelectedLang = 'ar';
+
+function setDoseLang(l) {
+  doseSelectedLang = l;
+  const isEn = l === 'en';
+  document.getElementById('btnLangAr').style.border = isEn ? '1px solid #cbd5e1' : '2px solid #0d9488';
+  document.getElementById('btnLangAr').style.background = isEn ? '#fff' : '#f0fdfa';
+  document.getElementById('btnLangEn').style.border = isEn ? '2px solid #0d9488' : '1px solid #cbd5e1';
+  document.getElementById('btnLangEn').style.background = isEn ? '#f0fdfa' : '#fff';
+  
+  if (isEn) {
+    document.getElementById('disclaimerText').innerText = 'Dose Platform is a clinical guideline tool for dosage calculation and medical decision support. It is not a substitute for clinical examination or medical emergencies.';
+    document.getElementById('agreeLabel').innerText = 'I have read and agree to the medical disclaimer';
+    document.getElementById('btnNextLabel').innerText = 'Proceed to Registration ➡️';
+    document.getElementById('step2Title').innerText = 'Account & Telegram Link';
+    document.getElementById('step2Desc').innerText = 'Sign in or register with your Telegram ID';
+    document.getElementById('tgIdLabel').innerText = 'Telegram User ID:';
+    document.getElementById('nameLabel').innerText = 'Name / Professional Title:';
+    document.getElementById('roleLabel').innerText = 'Profession / Role:';
+    document.getElementById('btnLaunchLabel').innerText = 'Confirm & Launch Platform 🚀';
+  } else {
+    document.getElementById('disclaimerText').innerText = 'منصة جرعة أداة استرشادية سريرية لحساب الجرعات ودعم القرار الطبي، وليست بديلاً عن الفحص الطبي المباشر أو تشخيص الطبيب المعالج أو حالات الطوارئ الحرجة.';
+    document.getElementById('agreeLabel').innerText = 'قرأت وفهمت إخلاء المسؤولية وأوافق على المتابعة';
+    document.getElementById('btnNextLabel').innerText = 'المتابعة للتسجيل والربط ⬅️';
+    document.getElementById('step2Title').innerText = 'ربط الحساب والتسجيل';
+    document.getElementById('step2Desc').innerText = 'سجل الدخول برقم حسابك في تليجرام';
+    document.getElementById('tgIdLabel').innerText = 'معرّف تليجرام (Telegram ID):';
+    document.getElementById('nameLabel').innerText = 'الاسم أو اللقب الطبي:';
+    document.getElementById('roleLabel').innerText = 'التصنيف المهني:';
+    document.getElementById('btnLaunchLabel').innerText = 'تأكيد والانطلاق للصفحة الرئيسية 🚀';
+  }
+}
+
+function goToOnboardingStep2() {
+    alert(doseSelectedLang === 'en' ? 'Please agree to the disclaimer to continue.' : 'يرجى الموافقة على إخلاء المسؤولية للمتابعة.');
+    return;
+  }
+  document.getElementById('onboardingStep1').style.display = 'none';
+  document.getElementById('onboardingStep2').style.display = 'block';
+}
+
+function backToStep1() {
+  document.getElementById('onboardingStep2').style.display = 'none';
+  document.getElementById('onboardingStep1').style.display = 'block';
+}
+
+function completeDoseOnboarding() {
+  const tgId = document.getElementById('onboardingTgId').value.trim() || '1001';
+  const name = document.getElementById('onboardingName').value.trim() || 'مستخدم جرعة';
+  const role = document.getElementById('onboardingRole').value;
+
+  localStorage.setItem('dose_onboarding_completed', 'true');
+  localStorage.setItem('dose_telegram_id', tgId);
+  localStorage.setItem('dose_user_name', name);
+  localStorage.setItem('dose_user_role', role);
+  localStorage.setItem('dose_lang', doseSelectedLang);
+
+  document.getElementById('doseWelcomeModal').style.display = 'none';
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search || window.location.hash.split('?')[1] || '');
+  const tgFromUrl = urlParams.get('tg_id') || urlParams.get('id');
+  const nameFromUrl = urlParams.get('name') || urlParams.get('user');
+
+  if (tgFromUrl) {
+    document.getElementById('onboardingTgId').value = tgFromUrl;
+  }
+  if (nameFromUrl) {
+    document.getElementById('onboardingName').value = decodeURIComponent(nameFromUrl);
+  }
+
+  // إذا كان قد أكمل التسجيل مسبقاً لا نزعجه مجدداً
+    document.getElementById('doseWelcomeModal').style.display = 'none';
+  }
+});
+</script>
+
+</body></html>`);
   w.document.close();
   w.print();
 }
@@ -2439,6 +2588,155 @@ function analyzeLab() {
 }
 
 </script>
+
+<div id="doseWelcomeModal" style="position:fixed;inset:0;z-index:99999;background:rgba(15,23,42,0.85);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;direction:rtl;font-family:Arial,sans-serif;padding:16px;">
+  <div style="background:#ffffff;color:#0f172a;width:min(460px,96vw);border-radius:20px;padding:26px;box-shadow:0 25px 70px rgba(0,0,0,0.35);max-height:90vh;overflow-y:auto;">
+    
+    <div id="onboardingStep1">
+      <div style="text-align:center;margin-bottom:16px;">
+        <span style="font-size:42px;">🩺</span>
+        <h2 style="margin:8px 0 4px;font-size:22px;color:#0d9488;font-weight:bold;">مرحباً بك في منصة جرعة</h2>
+        <p style="color:#64748b;font-size:13px;margin:0;">Dose Medical Platform — المرجع السريري الذكي</p>
+      </div>
+
+      <div style="display:flex;justify-content:center;gap:10px;margin-bottom:18px;">
+        <button type="button" onclick="setDoseLang('ar')" id="btnLangAr" style="border:2px solid #0d9488;background:#f0fdfa;color:#0f766e;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:bold;cursor:pointer;">العربية 🇸🇦</button>
+        <button type="button" onclick="setDoseLang('en')" id="btnLangEn" style="border:1px solid #cbd5e1;background:#fff;color:#64748b;padding:6px 14px;border-radius:20px;font-size:13px;cursor:pointer;">English 🇬🇧</button>
+      </div>
+
+      <div style="background:#fffbeb;border:1px solid #fef08a;border-radius:12px;padding:14px;margin-bottom:18px;font-size:12px;color:#854d0e;line-height:1.6;">
+        <strong style="display:block;margin-bottom:4px;color:#a16207;">⚠️ إخلاء مسؤولية طبي وقانوني:</strong>
+        <span id="disclaimerText">منصة جرعة أداة استرشادية سريرية لحساب الجرعات ودعم القرار الطبي، وليست بديلاً عن الفحص الطبي المباشر أو تشخيص الطبيب المعالج أو حالات الطوارئ الحرجة.</span>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;font-size:13px;color:#334155;">
+        <input type="checkbox" id="agreeDisclaimer" style="width:18px;height:18px;accent-color:#0d9488;cursor:pointer;">
+        <label for="agreeDisclaimer" style="cursor:pointer;" id="agreeLabel">قرأت وفهمت إخلاء المسؤولية وأوافق على المتابعة</label>
+      </div>
+
+      <button type="button" onclick="goToOnboardingStep2()" style="width:100%;background:#0d9488;color:#fff;border:none;padding:13px;border-radius:12px;font-size:15px;font-weight:bold;cursor:pointer;">
+        <span id="btnNextLabel">المتابعة للتسجيل والربط ⬅️</span>
+      </button>
+    </div>
+
+    <div id="onboardingStep2" style="display:none;">
+      <div style="text-align:center;margin-bottom:16px;">
+        <span style="font-size:36px;">🔑</span>
+        <h2 style="margin:6px 0 2px;font-size:20px;color:#0f172a;font-weight:bold;" id="step2Title">ربط الحساب والتسجيل</h2>
+        <p style="color:#64748b;font-size:13px;margin:0;" id="step2Desc">سجل الدخول برقم حسابك في تليجرام</p>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:13px;font-weight:bold;margin-bottom:6px;color:#334155;" id="tgIdLabel">معرّف تليجرام (Telegram ID):</label>
+        <input type="text" id="onboardingTgId" placeholder="مثال: 123456789" style="width:100%;box-sizing:border-box;padding:11px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;background:#f8fafc;">
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:13px;font-weight:bold;margin-bottom:6px;color:#334155;" id="nameLabel">الاسم أو اللقب الطبي:</label>
+        <input type="text" id="onboardingName" placeholder="د. حسين / مستخدم جرعة" style="width:100%;box-sizing:border-box;padding:11px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;">
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label style="display:block;font-size:13px;font-weight:bold;margin-bottom:6px;color:#334155;" id="roleLabel">التصنيف المهني:</label>
+        <select id="onboardingRole" style="width:100%;box-sizing:border-box;padding:11px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;background:#fff;">
+          <option value="doctor">طبيب بشري 🩺</option>
+          <option value="pharmacist">صيدلي ممارس 💊</option>
+          <option value="student">طالب كليات صحية 📚</option>
+          <option value="patient">مراجع / مريض 🧑‍⚕️</option>
+        </select>
+      </div>
+
+      <button type="button" onclick="completeDoseOnboarding()" style="width:100%;background:#0d9488;color:#fff;border:none;padding:13px;border-radius:12px;font-size:15px;font-weight:bold;cursor:pointer;">
+        <span id="btnLaunchLabel">تأكيد والانطلاق للصفحة الرئيسية 🚀</span>
+      </button>
+
+      <button type="button" onclick="backToStep1()" style="width:100%;background:none;border:none;color:#64748b;padding:10px;margin-top:6px;font-size:13px;cursor:pointer;">
+        ⬅️ العودة للخطوة السابقة
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let doseSelectedLang = 'ar';
+
+function setDoseLang(l) {
+  doseSelectedLang = l;
+  const isEn = l === 'en';
+  document.getElementById('btnLangAr').style.border = isEn ? '1px solid #cbd5e1' : '2px solid #0d9488';
+  document.getElementById('btnLangAr').style.background = isEn ? '#fff' : '#f0fdfa';
+  document.getElementById('btnLangEn').style.border = isEn ? '2px solid #0d9488' : '1px solid #cbd5e1';
+  document.getElementById('btnLangEn').style.background = isEn ? '#f0fdfa' : '#fff';
+  
+  if (isEn) {
+    document.getElementById('disclaimerText').innerText = 'Dose Platform is a clinical guideline tool for dosage calculation and medical decision support. It is not a substitute for clinical examination or medical emergencies.';
+    document.getElementById('agreeLabel').innerText = 'I have read and agree to the medical disclaimer';
+    document.getElementById('btnNextLabel').innerText = 'Proceed to Registration ➡️';
+    document.getElementById('step2Title').innerText = 'Account & Telegram Link';
+    document.getElementById('step2Desc').innerText = 'Sign in or register with your Telegram ID';
+    document.getElementById('tgIdLabel').innerText = 'Telegram User ID:';
+    document.getElementById('nameLabel').innerText = 'Name / Professional Title:';
+    document.getElementById('roleLabel').innerText = 'Profession / Role:';
+    document.getElementById('btnLaunchLabel').innerText = 'Confirm & Launch Platform 🚀';
+  } else {
+    document.getElementById('disclaimerText').innerText = 'منصة جرعة أداة استرشادية سريرية لحساب الجرعات ودعم القرار الطبي، وليست بديلاً عن الفحص الطبي المباشر أو تشخيص الطبيب المعالج أو حالات الطوارئ الحرجة.';
+    document.getElementById('agreeLabel').innerText = 'قرأت وفهمت إخلاء المسؤولية وأوافق على المتابعة';
+    document.getElementById('btnNextLabel').innerText = 'المتابعة للتسجيل والربط ⬅️';
+    document.getElementById('step2Title').innerText = 'ربط الحساب والتسجيل';
+    document.getElementById('step2Desc').innerText = 'سجل الدخول برقم حسابك في تليجرام';
+    document.getElementById('tgIdLabel').innerText = 'معرّف تليجرام (Telegram ID):';
+    document.getElementById('nameLabel').innerText = 'الاسم أو اللقب الطبي:';
+    document.getElementById('roleLabel').innerText = 'التصنيف المهني:';
+    document.getElementById('btnLaunchLabel').innerText = 'تأكيد والانطلاق للصفحة الرئيسية 🚀';
+  }
+}
+
+function goToOnboardingStep2() {
+    alert(doseSelectedLang === 'en' ? 'Please agree to the disclaimer to continue.' : 'يرجى الموافقة على إخلاء المسؤولية للمتابعة.');
+    return;
+  }
+  document.getElementById('onboardingStep1').style.display = 'none';
+  document.getElementById('onboardingStep2').style.display = 'block';
+}
+
+function backToStep1() {
+  document.getElementById('onboardingStep2').style.display = 'none';
+  document.getElementById('onboardingStep1').style.display = 'block';
+}
+
+function completeDoseOnboarding() {
+  const tgId = document.getElementById('onboardingTgId').value.trim() || '1001';
+  const name = document.getElementById('onboardingName').value.trim() || 'مستخدم جرعة';
+  const role = document.getElementById('onboardingRole').value;
+
+  localStorage.setItem('dose_onboarding_completed', 'true');
+  localStorage.setItem('dose_telegram_id', tgId);
+  localStorage.setItem('dose_user_name', name);
+  localStorage.setItem('dose_user_role', role);
+  localStorage.setItem('dose_lang', doseSelectedLang);
+
+  document.getElementById('doseWelcomeModal').style.display = 'none';
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search || window.location.hash.split('?')[1] || '');
+  const tgFromUrl = urlParams.get('tg_id') || urlParams.get('id');
+  const nameFromUrl = urlParams.get('name') || urlParams.get('user');
+
+  if (tgFromUrl) {
+    document.getElementById('onboardingTgId').value = tgFromUrl;
+  }
+  if (nameFromUrl) {
+    document.getElementById('onboardingName').value = decodeURIComponent(nameFromUrl);
+  }
+
+  // إذا كان قد أكمل التسجيل مسبقاً لا نزعجه مجدداً
+    document.getElementById('doseWelcomeModal').style.display = 'none';
+  }
+});
+</script>
+
 </body>
 </html>
 
