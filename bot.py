@@ -5620,7 +5620,10 @@ class PingHandler(BaseHTTPRequestHandler):
     def log_message(self, *args): pass
 
 def run_web():
-    server = HTTPServer(("0.0.0.0", 8080), PingHandler)
+    try:
+        server = HTTPServer(("0.0.0.0", 8080), PingHandler)
+    except Exception:
+        return
     server.serve_forever()
 
 threading.Thread(target=run_web, daemon=True).start()
@@ -5707,7 +5710,7 @@ def main():
     app.post_init = restore_reminders
     print("🚀 البوت يعمل!")
     app.add_handler(CallbackQueryHandler(handle_symptoms_action, pattern="^symptoms$"))
-    app.run_polling(drop_pending_updates=True)
+    app.run_polling(drop_pending_updates=True, bootstrap_retries=-1, timeout=30)
 
 if __name__ == "__main__":
     main()
