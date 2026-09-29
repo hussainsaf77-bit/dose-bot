@@ -11,7 +11,7 @@ async def handle_symptoms_action(update, context):
         msg = "🩺 *فاحص الأعراض والتشخيص التفريقي السريري (DDx):*\n\nاكتب الآن أعراضك بالتفصيل في رسالة، أو افتح الفاحص التفاعلي بالموقع:"
         btn = "🖥️ فتح فاحص الأعراض الشامل بالموقع"
     from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-    kb = InlineKeyboardMarkup([[InlineKeyboardButton(btn, url="https://web-dose.vercel.app/?welcome=1#symptoms")]])
+    kb = InlineKeyboardMarkup([[InlineKeyboardButton(btn, url="https://web-dose.vercel.app/#symptoms")]])
     await query.message.reply_text(msg, reply_markup=kb, parse_mode="Markdown")
 
 
@@ -51,7 +51,7 @@ def api_check_sub(telegram_id: str) -> dict:
     except:
         return {"linked": False, "has_sub": False, "plan": "Free",
                 "search_limit": 5, "reminder_limit": 0,
-                "register_url": "https://web-dose.vercel.app/?welcome=1"}
+                "register_url": "https://web-dose.vercel.app"}
 
 def api_track_usage(telegram_id: str, action: str = "search") -> dict:
     """يسجّل استخدام ويعيد هل مسموح أم لا"""
@@ -1373,13 +1373,13 @@ def kb_lang():
             InlineKeyboardButton("🇬🇧 English", callback_data="lang_en")
         ],
         [
-            InlineKeyboardButton("🌐 فتح تطبيق وموقع جرعة الطبي | Web App", url=f"https://web-dose.vercel.app/?welcome=1&tg_id={uid}&name={context.user_data.get('name','')}")
+            InlineKeyboardButton("🌐 فتح تطبيق وموقع جرعة الطبي | Web App", url="https://web-dose.vercel.app")
         ]
     ])
 
 def kb_main(lang):
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("🩺 " + ("فاحص الأعراض والتشخيص السريري (DDx)" if lang=="ar" else "Symptom Checker (DDx)"), url="https://web-dose.vercel.app/?welcome=1#symptoms")],
+        [InlineKeyboardButton("🩺 " + ("فاحص الأعراض والتشخيص السريري (DDx)" if lang=="ar" else "Symptom Checker (DDx)"), url="https://web-dose.vercel.app/#symptoms")],
         
         [InlineKeyboardButton("🩻 " + ("فحص وقراءة الأشعة (X-Ray)" if lang=="ar" else "X-Ray Analysis"), callback_data="m_xray")],
         [InlineKeyboardButton("🧪 " + ("تحليل الفحوصات المخبرية" if lang=="ar" else "Lab Tests Analysis"), callback_data="m_lab")],
@@ -1396,7 +1396,7 @@ def kb_main(lang):
         [InlineKeyboardButton(tx("btn_settings", lang), callback_data="m_settings")],
         [InlineKeyboardButton("📖 " + ("دليل المستخدم" if lang=="ar" else "User Guide"), callback_data="m_guide")],
         [InlineKeyboardButton("🥗 " + ("التغذية العلاجية" if lang=="ar" else "Therapeutic Diet"), callback_data="m_diet")],
-        [InlineKeyboardButton("🌐 " + ("فتح تطبيق الويب" if lang=="ar" else "Open Web App"), url=f"https://web-dose.vercel.app/?welcome=1&tg_id={uid}&name={context.user_data.get('name','')}")]])
+        [InlineKeyboardButton("🌐 " + ("فتح تطبيق الويب" if lang=="ar" else "Open Web App"), url="https://web-dose.vercel.app")]])
 
 
 def kb_back(lang):
@@ -5650,7 +5650,7 @@ async def link_account_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
     keyboard = [[InlineKeyboardButton(
         "🌐 تسجيل / دخول" if lang=="ar" else "🌐 Register / Login",
-        url=f"https://web-dose.vercel.app/?welcome=1&tg_id={uid}&name={context.user_data.get('name','')}"
+        url="https://web-dose.vercel.app"
     )]]
     
     await update.message.reply_text(
@@ -5673,7 +5673,7 @@ async def upgrade_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     keyboard = [[InlineKeyboardButton(
         "⭐ الترقية الآن" if lang=="ar" else "⭐ Upgrade Now",
-        url=f"https://web-dose.vercel.app/?welcome=1&tg_id={uid}&name={context.user_data.get('name','')}"
+        url="https://web-dose.vercel.app"
     )]]
     
     await update.message.reply_text(
