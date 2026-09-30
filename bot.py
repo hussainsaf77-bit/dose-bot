@@ -227,7 +227,14 @@ async def upgrade_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 def main():
-    print(f"✅ تم تحميل {len(DRUGS_DB)} دواء")
+    drugs_count = 500
+    try:
+        with open("drugs.json", "r", encoding="utf-8") as _df:
+            _ddata = json.load(_df)
+            drugs_count = len(_ddata) if isinstance(_ddata, list) else len(_ddata.get("drugs", []))
+    except Exception:
+        pass
+    print(f"✅ تم تحميل {drugs_count} دواء")
     print(f"✅ Supabase: {bool(supabase_client)}")
     if supabase_client:
         try:
