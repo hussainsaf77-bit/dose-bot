@@ -199,7 +199,7 @@ def self_ping():
         except: pass
 threading.Thread(target=self_ping, daemon=True).start()
 
-BOT_TOKEN = "8755290007:AAHD4EJ7VfaoyU3DMKJ4HQBLMpnrs4O1hEk"
+BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", os.environ.get("BOT_TOKEN"))
 # قراءة .env مبكراً
 _env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
 if os.path.exists(_env_file):
