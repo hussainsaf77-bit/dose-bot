@@ -1884,14 +1884,15 @@ function exportPatient() {
   
 <!-- DOSE WELCOME ONBOARDING GATEWAY -->
 <div id="doseWelcomeModal" style="display:none;position:fixed;inset:0;z-index:999999;background:rgba(15,23,42,0.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:16px;direction:rtl;font-family:system-ui,-apple-system,sans-serif;">
-  <div style="background:#ffffff;border-radius:20px;max-width:540px;width:100%;padding:28px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);border:1px solid #e2e8f0;text-align:right;">
+  <div style="background:#ffffff;border-radius:20px;max-width:520px;width:100%;padding:28px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);border:1px solid #e2e8f0;text-align:right;">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
       <div style="width:48px;height:48px;border-radius:14px;background:#f0fdfa;display:flex;align-items:center;justify-content:center;font-size:24px;">💊</div>
       <div>
-        <h2 style="margin:0;font-size:20px;font-weight:700;color:#0f172a;">منصة وبوت جرعة الطبي</h2>
-        <p style="margin:0;font-size:13px;color:#64748b;">Dose Medical Platform & Bot</p>
+        <h2 style="margin:0;font-size:20px;font-weight:700;color:#0f172a;">منصة جرعة الطبية</h2>
+        <p style="margin:0;font-size:13px;color:#64748b;">Dose Medical Platform</p>
       </div>
     </div>
+    
     <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:14px;margin-bottom:20px;">
       <div style="display:flex;align-items:center;gap:8px;color:#92400e;font-weight:700;font-size:14px;margin-bottom:6px;">
         <span>⚕️</span> إخلاء مسؤولية طبي مهم
@@ -1900,6 +1901,7 @@ function exportPatient() {
         هذا التطبيق أداة مرجعية تعليمية واسترشادية فقط ولا يغني عن الاستشارة الطبية المتخصصة. الجرعات والتشخيصات للاسترشاد، القرار العلاجي النهائي يعود للطبيب المعالج. في الحالات الطارئة يرجى الاتصال بالإسعاف فوراً.
       </p>
     </div>
+
     <div style="margin-bottom:20px;">
       <label style="display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:8px;">اختر لغة الاستخدام / Language</label>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
@@ -1907,6 +1909,7 @@ function exportPatient() {
         <button type="button" onclick="window.selectDoseLang('en')" id="btnLangEn" style="padding:10px;border-radius:10px;border:1px solid #cbd5e1;background:#ffffff;color:#475569;font-weight:600;cursor:pointer;">🇬🇧 English</button>
       </div>
     </div>
+
     <div style="display:flex;gap:10px;">
       <button type="button" onclick="window.dismissWelcomeModal()" style="flex:1;background:#0d9488;color:#ffffff;border:none;border-radius:12px;padding:12px 20px;font-weight:700;font-size:15px;cursor:pointer;">
         متابعة والدخول للمنصة 🚀
@@ -1914,6 +1917,7 @@ function exportPatient() {
     </div>
   </div>
 </div>
+
 <script>
 window.selectDoseLang = function(l) {
   localStorage.setItem('dose_lang', l);
@@ -1929,15 +1933,13 @@ window.selectDoseLang = function(l) {
     }
   }
 };
+
 window.dismissWelcomeModal = function() {
   const modal = document.getElementById('doseWelcomeModal');
   if (modal) modal.style.display = 'none';
   sessionStorage.setItem('dose_welcome_shown', '1');
-  if (window.location.hash) {
-    const el = document.querySelector(window.location.hash);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  }
 };
+
 window.addEventListener('DOMContentLoaded', function() {
   const urlParams = new URLSearchParams(window.location.search);
   const isWelcome = urlParams.get('welcome') === '1';
@@ -2510,14 +2512,15 @@ function analyzeLab() {
 
 <!-- DOSE WELCOME ONBOARDING GATEWAY -->
 <div id="doseWelcomeModal" style="display:none;position:fixed;inset:0;z-index:999999;background:rgba(15,23,42,0.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:16px;direction:rtl;font-family:system-ui,-apple-system,sans-serif;">
-  <div style="background:#ffffff;border-radius:20px;max-width:540px;width:100%;padding:28px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);border:1px solid #e2e8f0;text-align:right;">
+  <div style="background:#ffffff;border-radius:20px;max-width:520px;width:100%;padding:28px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);border:1px solid #e2e8f0;text-align:right;">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
       <div style="width:48px;height:48px;border-radius:14px;background:#f0fdfa;display:flex;align-items:center;justify-content:center;font-size:24px;">💊</div>
       <div>
-        <h2 style="margin:0;font-size:20px;font-weight:700;color:#0f172a;">منصة وبوت جرعة الطبي</h2>
-        <p style="margin:0;font-size:13px;color:#64748b;">Dose Medical Platform & Bot</p>
+        <h2 style="margin:0;font-size:20px;font-weight:700;color:#0f172a;">منصة جرعة الطبية</h2>
+        <p style="margin:0;font-size:13px;color:#64748b;">Dose Medical Platform</p>
       </div>
     </div>
+    
     <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:14px;margin-bottom:20px;">
       <div style="display:flex;align-items:center;gap:8px;color:#92400e;font-weight:700;font-size:14px;margin-bottom:6px;">
         <span>⚕️</span> إخلاء مسؤولية طبي مهم
@@ -2526,6 +2529,7 @@ function analyzeLab() {
         هذا التطبيق أداة مرجعية تعليمية واسترشادية فقط ولا يغني عن الاستشارة الطبية المتخصصة. الجرعات والتشخيصات للاسترشاد، القرار العلاجي النهائي يعود للطبيب المعالج. في الحالات الطارئة يرجى الاتصال بالإسعاف فوراً.
       </p>
     </div>
+
     <div style="margin-bottom:20px;">
       <label style="display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:8px;">اختر لغة الاستخدام / Language</label>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
@@ -2533,6 +2537,7 @@ function analyzeLab() {
         <button type="button" onclick="window.selectDoseLang('en')" id="btnLangEn" style="padding:10px;border-radius:10px;border:1px solid #cbd5e1;background:#ffffff;color:#475569;font-weight:600;cursor:pointer;">🇬🇧 English</button>
       </div>
     </div>
+
     <div style="display:flex;gap:10px;">
       <button type="button" onclick="window.dismissWelcomeModal()" style="flex:1;background:#0d9488;color:#ffffff;border:none;border-radius:12px;padding:12px 20px;font-weight:700;font-size:15px;cursor:pointer;">
         متابعة والدخول للمنصة 🚀
@@ -2540,6 +2545,7 @@ function analyzeLab() {
     </div>
   </div>
 </div>
+
 <script>
 window.selectDoseLang = function(l) {
   localStorage.setItem('dose_lang', l);
@@ -2555,15 +2561,13 @@ window.selectDoseLang = function(l) {
     }
   }
 };
+
 window.dismissWelcomeModal = function() {
   const modal = document.getElementById('doseWelcomeModal');
   if (modal) modal.style.display = 'none';
   sessionStorage.setItem('dose_welcome_shown', '1');
-  if (window.location.hash) {
-    const el = document.querySelector(window.location.hash);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  }
 };
+
 window.addEventListener('DOMContentLoaded', function() {
   const urlParams = new URLSearchParams(window.location.search);
   const isWelcome = urlParams.get('welcome') === '1';
@@ -2577,3 +2581,25 @@ window.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
+
+
+<!-- DoseBot AI Tools Card -->
+<section id="dose-ai-tools-card" style="margin:24px 0;">
+  <div style="background:linear-gradient(135deg,#eef7ff,#ffffff);border:1px solid #d7e8f7;border-radius:20px;padding:24px;box-shadow:0 8px 24px rgba(0,0,0,.06);">
+    <div style="font-size:32px;margin-bottom:8px;">🤖</div>
+    <h2 style="margin:0 0 8px;">الخدمات الذكية</h2>
+    <p style="margin:0 0 14px;color:#555;line-height:1.8;">
+      مجموعة أدوات DoseBot الذكية للأطباء والمرضى
+    </p>
+    <p style="margin:0 0 18px;color:#666;line-height:1.8;">
+      مساعد طبي بالذكاء الاصطناعي • تحليل التحاليل • جرعات الأطفال • التغذية العلاجية • ملف المريض • تلخيص المحاضرات
+    </p>
+    <a href="https://hussainsaf77-bit.github.io/Dose-web/ai-tools.html"
+       target="_blank"
+       rel="noopener"
+       style="display:inline-block;background:#1677ff;color:white;text-decoration:none;padding:12px 22px;border-radius:12px;font-weight:700;">
+      🚀 اكتشف الخدمات الذكية
+    </a>
+  </div>
+</section>
+<!-- /DoseBot AI Tools Card -->
