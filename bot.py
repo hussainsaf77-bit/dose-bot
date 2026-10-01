@@ -1,3 +1,5 @@
+import os
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 
 async def handle_symptoms_action(update, context):
