@@ -1,0 +1,201 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+  <defs>
+    <style>
+      .title { font-family: sans-serif; font-size: 20px; font-weight: bold; fill: #0f172a; }
+      .subtitle { font-family: sans-serif; font-size: 13px; fill: #475569; }
+      .header-meta { font-family: sans-serif; font-size: 12px; fill: #334155; }
+      .meta-val { font-weight: bold; fill: #0f172a; }
+      .th { font-family: sans-serif; font-size: 13px; font-weight: bold; fill: #ffffff; }
+      .td-name { font-family: sans-serif; font-size: 12px; font-weight: 600; fill: #1e293b; }
+      .td-val { font-family: monospace; font-size: 13px; font-weight: bold; fill: #0f172a; }
+      .td-ref { font-family: sans-serif; font-size: 12px; fill: #64748b; }
+      .status-badge { font-family: sans-serif; font-size: 11px; font-weight: bold; }
+    </style>
+  </defs>
+
+  <!-- Sheet Background -->
+  <rect width="800" height="1000" fill="#ffffff" rx="8"/>
+  <rect x="15" y="15" width="770" height="970" fill="none" stroke="#e2e8f0" stroke-width="2" rx="6"/>
+
+  <!-- Top Lab Header -->
+  <rect x="25" y="25" width="750" height="100" fill="#f8fafc" rx="6" stroke="#cbd5e1" stroke-width="1"/>
+  
+  <!-- Hospital / Lab Logo Symbol -->
+  <circle cx="75" cy="75" r="30" fill="#0d9488"/>
+  <path d="M 75 55 L 75 95 M 55 75 L 95 75" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+  
+  <text x="125" y="62" class="title">مختبرات النخبة الطبية للتحاليل السريرية</text>
+  <text x="125" y="85" class="subtitle">ELITE CLINICAL &amp; MOLECULAR LABORATORIES — ACCREDITED ISO 15189</text>
+  <text x="125" y="105" class="subtitle">تقرير الفحوصات المخبرية الرسمية | Official Laboratory Test Report</text>
+
+  <!-- Barcode & Report ID -->
+  <g transform="translate(620, 45)">
+    <rect x="0" y="0" width="3" height="35" fill="#1e293b"/>
+    <rect x="6" y="0" width="1" height="35" fill="#1e293b"/>
+    <rect x="10" y="0" width="4" height="35" fill="#1e293b"/>
+    <rect x="18" y="0" width="2" height="35" fill="#1e293b"/>
+    <rect x="23" y="0" width="5" height="35" fill="#1e293b"/>
+    <rect x="32" y="0" width="2" height="35" fill="#1e293b"/>
+    <rect x="37" y="0" width="4" height="35" fill="#1e293b"/>
+    <rect x="44" y="0" width="1" height="35" fill="#1e293b"/>
+    <rect x="48" y="0" width="6" height="35" fill="#1e293b"/>
+    <rect x="58" y="0" width="2" height="35" fill="#1e293b"/>
+    <rect x="63" y="0" width="3" height="35" fill="#1e293b"/>
+    <rect x="70" y="0" width="4" height="35" fill="#1e293b"/>
+    <rect x="78" y="0" width="2" height="35" fill="#1e293b"/>
+    <rect x="83" y="0" width="5" height="35" fill="#1e293b"/>
+    <rect x="91" y="0" width="1" height="35" fill="#1e293b"/>
+    <rect x="95" y="0" width="3" height="35" fill="#1e293b"/>
+    <rect x="102" y="0" width="4" height="35" fill="#1e293b"/>
+    <rect x="110" y="0" width="2" height="35" fill="#1e293b"/>
+    <text x="5" y="48" font-family="monospace" font-size="10" fill="#475569">LAB-2026-98124</text>
+  </g>
+
+  <!-- Patient Meta Box -->
+  <rect x="25" y="135" width="750" height="90" fill="#f1f5f9" rx="6" stroke="#e2e8f0" stroke-width="1"/>
+  
+  <text x="45" y="160" class="header-meta">اسم المريض (Patient Name): <tspan class="meta-val">سعيد خالد العبدالله</tspan></text>
+  <text x="45" y="185" class="header-meta">العمر / الجنس (Age/Gender): <tspan class="meta-val">34 سنة / ذكر (Male)</tspan></text>
+  <text x="45" y="210" class="header-meta">الطبيب المعالج (Referring Physician): <tspan class="meta-val">د. ياسر المنصوري (باطنية)</tspan></text>
+
+  <text x="430" y="160" class="header-meta">تاريخ السحب (Collection Date): <tspan class="meta-val">2026-10-04 08:30 AM</tspan></text>
+  <text x="430" y="185" class="header-meta">نوع العينة (Specimen): <tspan class="meta-val">Whole Blood (EDTA Tube)</tspan></text>
+  <text x="430" y="210" class="header-meta">حالة العينة (Sample Condition): <tspan class="meta-val">Adequate / No Hemolysis</tspan></text>
+
+  <!-- Panel Section Title -->
+  <rect x="25" y="240" width="750" height="34" fill="#0f766e" rx="4"/>
+  <text x="45" y="262" font-family="sans-serif" font-size="14" font-weight="bold" fill="#ffffff">
+    HEMATOLOGY: Complete Blood Count &amp; Erythrocyte Indices (فحص صورة الدم الكاملة CBC)
+  </text>
+
+  <!-- Table Header -->
+  <rect x="25" y="280" width="750" height="30" fill="#1e293b"/>
+  <text x="45" y="300" class="th">الفحص المخبري (Investigation / Test)</text>
+  <text x="310" y="300" class="th">النتيجة (Result)</text>
+  <text x="430" y="300" class="th">الوحدة (Unit)</text>
+  <text x="530" y="300" class="th">المدى المرجعي (Reference Range)</text>
+  <text x="705" y="300" class="th">الحالة</text>
+
+  <!-- Row 1: Hemoglobin (Low) -->
+  <rect x="25" y="315" width="750" height="36" fill="#fef2f2"/>
+  <text x="45" y="338" class="td-name">Hemoglobin (Hb / خضاب الدم)</text>
+  <text x="310" y="338" class="td-val" fill="#dc2626">9.4 *</text>
+  <text x="430" y="338" class="td-ref">g/dL</text>
+  <text x="530" y="338" class="td-ref">13.0 - 17.5</text>
+  <rect x="690" y="323" width="70" height="20" fill="#fee2e2" rx="4" stroke="#f87171" stroke-width="1"/>
+  <text x="705" y="337" class="status-badge" fill="#b91c1c">LOW ↓</text>
+
+  <!-- Row 2: RBC Count (Low) -->
+  <rect x="25" y="355" width="750" height="36" fill="#ffffff"/>
+  <text x="45" y="378" class="td-name">RBC Count (تعداد الكريات الحمراء)</text>
+  <text x="310" y="378" class="td-val" fill="#dc2626">3.90 *</text>
+  <text x="430" y="378" class="td-ref">×10^6/µL</text>
+  <text x="530" y="378" class="td-ref">4.50 - 5.90</text>
+  <rect x="690" y="363" width="70" height="20" fill="#fee2e2" rx="4" stroke="#f87171" stroke-width="1"/>
+  <text x="705" y="377" class="status-badge" fill="#b91c1c">LOW ↓</text>
+
+  <!-- Row 3: Hematocrit (Low) -->
+  <rect x="25" y="395" width="750" height="36" fill="#fef2f2"/>
+  <text x="45" y="418" class="td-name">Hematocrit (HCT / PCV)</text>
+  <text x="310" y="418" class="td-val" fill="#dc2626">29.8 *</text>
+  <text x="430" y="418" class="td-ref">%</text>
+  <text x="530" y="418" class="td-ref">40.0 - 52.0</text>
+  <rect x="690" y="403" width="70" height="20" fill="#fee2e2" rx="4" stroke="#f87171" stroke-width="1"/>
+  <text x="705" y="417" class="status-badge" fill="#b91c1c">LOW ↓</text>
+
+  <!-- Row 4: MCV (Low) -->
+  <rect x="25" y="435" width="750" height="36" fill="#ffffff"/>
+  <text x="45" y="458" class="td-name">MCV (Mean Corpuscular Volume)</text>
+  <text x="310" y="458" class="td-val" fill="#dc2626">71.2 *</text>
+  <text x="430" y="458" class="td-ref">fL</text>
+  <text x="530" y="458" class="td-ref">80.0 - 100.0</text>
+  <rect x="690" y="443" width="70" height="20" fill="#fee2e2" rx="4" stroke="#f87171" stroke-width="1"/>
+  <text x="705" y="457" class="status-badge" fill="#b91c1c">LOW ↓</text>
+
+  <!-- Row 5: MCH (Low) -->
+  <rect x="25" y="475" width="750" height="36" fill="#fef2f2"/>
+  <text x="45" y="498" class="td-name">MCH (Mean Corpuscular Hemoglobin)</text>
+  <text x="310" y="498" class="td-val" fill="#dc2626">22.8 *</text>
+  <text x="430" y="498" class="td-ref">pg</text>
+  <text x="530" y="498" class="td-ref">27.0 - 33.0</text>
+  <rect x="690" y="483" width="70" height="20" fill="#fee2e2" rx="4" stroke="#f87171" stroke-width="1"/>
+  <text x="705" y="497" class="status-badge" fill="#b91c1c">LOW ↓</text>
+
+  <!-- Row 6: RDW (High) -->
+  <rect x="25" y="515" width="750" height="36" fill="#fffbeb"/>
+  <text x="45" y="538" class="td-name">RDW (Red Cell Distribution Width)</text>
+  <text x="310" y="538" class="td-val" fill="#d97706">16.9 *</text>
+  <text x="430" y="538" class="td-ref">%</text>
+  <text x="530" y="538" class="td-ref">11.5 - 14.5</text>
+  <rect x="690" y="523" width="70" height="20" fill="#fef3c7" rx="4" stroke="#fcd34d" stroke-width="1"/>
+  <text x="705" y="537" class="status-badge" fill="#b45309">HIGH ↑</text>
+
+  <!-- Row 7: WBC (Normal) -->
+  <rect x="25" y="555" width="750" height="36" fill="#f0fdf4"/>
+  <text x="45" y="578" class="td-name">WBC (White Blood Cells / الكريات البيضاء)</text>
+  <text x="310" y="578" class="td-val">6,400</text>
+  <text x="430" y="578" class="td-ref">/µL</text>
+  <text x="530" y="578" class="td-ref">4,000 - 11,000</text>
+  <rect x="690" y="563" width="70" height="20" fill="#dcfce7" rx="4" stroke="#86efac" stroke-width="1"/>
+  <text x="702" y="577" class="status-badge" fill="#15803d">NORMAL</text>
+
+  <!-- Row 8: Platelets (Normal) -->
+  <rect x="25" y="595" width="750" height="36" fill="#ffffff"/>
+  <text x="45" y="618" class="td-name">Platelet Count (الصفائح الدموية)</text>
+  <text x="310" y="618" class="td-val">295,000</text>
+  <text x="430" y="618" class="td-ref">/µL</text>
+  <text x="530" y="618" class="td-ref">150,000 - 450,000</text>
+  <rect x="690" y="603" width="70" height="20" fill="#dcfce7" rx="4" stroke="#86efac" stroke-width="1"/>
+  <text x="702" y="617" class="status-badge" fill="#15803d">NORMAL</text>
+
+  <!-- Additional Chemistry Strip: Fasting Glucose & Creatinine -->
+  <rect x="25" y="650" width="750" height="28" fill="#334155" rx="4"/>
+  <text x="45" y="669" font-family="sans-serif" font-size="13" font-weight="bold" fill="#ffffff">
+    BIOCHEMISTRY: Glucose &amp; Renal Profile (الكيمياء الحيوية السريرية)
+  </text>
+
+  <rect x="25" y="685" width="750" height="36" fill="#f8fafc"/>
+  <text x="45" y="708" class="td-name">Fasting Blood Glucose (السكر الصائم)</text>
+  <text x="310" y="708" class="td-val">92</text>
+  <text x="430" y="708" class="td-ref">mg/dL</text>
+  <text x="530" y="708" class="td-ref">70 - 99</text>
+  <rect x="690" y="693" width="70" height="20" fill="#dcfce7" rx="4" stroke="#86efac" stroke-width="1"/>
+  <text x="702" y="707" class="status-badge" fill="#15803d">NORMAL</text>
+
+  <rect x="25" y="725" width="750" height="36" fill="#ffffff"/>
+  <text x="45" y="748" class="td-name">Serum Creatinine (الكرياتينين)</text>
+  <text x="310" y="748" class="td-val">0.95</text>
+  <text x="430" y="748" class="td-ref">mg/dL</text>
+  <text x="530" y="748" class="td-ref">0.70 - 1.20</text>
+  <rect x="690" y="733" width="70" height="20" fill="#dcfce7" rx="4" stroke="#86efac" stroke-width="1"/>
+  <text x="702" y="747" class="status-badge" fill="#15803d">NORMAL</text>
+
+  <!-- Pathologist Lab Impression Box -->
+  <rect x="25" y="780" width="750" height="110" fill="#f8fafc" rx="6" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="45" y="805" font-family="sans-serif" font-size="12" font-weight="bold" fill="#0f172a">
+    PATHOLOGIST IMPRESSION &amp; REMARKS (ملاحظات الطبيب الاستشاري بالمختبر):
+  </text>
+  <text x="45" y="830" font-family="sans-serif" font-size="12" fill="#334155">
+    • Microcytic Hypochromic Anemia with elevated RDW, suggestive of Iron Deficiency Anemia.
+  </text>
+  <text x="45" y="852" font-family="sans-serif" font-size="12" fill="#334155">
+    • Recommendation: Serum Ferritin &amp; TIBC correlation advised. Normal WBC count and Platelet morphology.
+  </text>
+  <text x="45" y="874" font-family="sans-serif" font-size="11" fill="#64748b">
+    • Verified electronically by Chief Clinical Pathologist. Signature on file.
+  </text>
+
+  <!-- Footer Seal & Signature -->
+  <g transform="translate(600, 905)">
+    <circle cx="50" cy="40" r="35" fill="none" stroke="#0d9488" stroke-width="2" stroke-dasharray="4,2"/>
+    <text x="18" y="38" font-family="sans-serif" font-size="10" font-weight="bold" fill="#0d9488">ELITE LAB</text>
+    <text x="18" y="52" font-family="sans-serif" font-size="9" fill="#0d9488">VERIFIED</text>
+  </g>
+  <text x="45" y="935" font-family="sans-serif" font-size="11" fill="#94a3b8">
+    * Values marked with an asterisk indicate findings outside reference ranges. Electronic report generated by Elite Medical System.
+  </text>
+  <line x1="25" y1="950" x2="775" y2="950" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="45" y="972" font-family="sans-serif" font-size="10" fill="#94a3b8">
+    DOSE Medical Intelligence Platform — Clinical Laboratory OCR &amp; Diagnostic Engine
+  </text>
+</svg>
